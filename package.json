@@ -1,22 +1,54 @@
 {
   "name": "vite-mhb-email",
+  "version": "1.0.0",
+  "description": "Email template development toolkit integrating Maizzle, Handlebars and Vite",
+  "keywords": [
+    "email",
+    "maizzle",
+    "handlebars",
+    "vite",
+    "template",
+    "tailwindcss"
+  ],
+  "private": true,
+  "author": "Frank-0511",
+  "contributors": [
+    {
+      "name": "Frank-0511",
+      "email": "frank05111996@gmail.com",
+      "url": "https://github.com/Frank-0511"
+    }
+  ],
+  "homepage": "https://github.com/Frank-0511/vite-mhb-email",
+  "bugs": {
+    "url": "https://github.com/Frank-0511/vite-mhb-email/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Frank-0511/vite-mhb-email"
+  },
   "packageManager": "yarn@4.13.0",
   "type": "module",
-  "devDependencies": {
-    "@maizzle/framework": "^5.5.0",
-    "autoprefixer": "^10.4.27",
-    "fs-extra": "^11.3.4",
-    "glob": "^13.0.6",
-    "maizzle": "^0.0.1",
-    "path": "^0.12.7",
-    "postcss": "^8.5.8",
-    "tailwindcss": "^4.2.1",
-    "vite": "^7.3.1",
-    "vite-plugin-handlebars": "^2.0.0"
+  "engines": {
+    "node": ">=20",
+    "yarn": ">=4"
   },
   "scripts": {
     "dev": "vite",
     "build": "maizzle build",
     "create:template": "node scripts/generate-email.js"
+  },
+  "devDependencies": {
+    "@maizzle/framework": "5.5.0",
+    "autoprefixer": "10.4.27",
+    "fs-extra": "11.3.4",
+    "glob": "13.0.6",
+    "maizzle": "0.0.1",
+    "path": "0.12.7",
+    "postcss": "8.5.8",
+    "tailwindcss": "4.2.1",
+    "vite": "7.3.1",
+    "vite-plugin-handlebars": "2.0.0"
   }
 }
