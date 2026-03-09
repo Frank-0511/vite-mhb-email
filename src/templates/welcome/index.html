@@ -1,0 +1,54 @@
+---
+title: "Bienvenido a Mi Empresa"
+previewText: "Estamos felices de tenerte con nosotros. Descubre todo lo que puedes hacer."
+titleTemplate: "Email de Bienvenida"
+---
+<x-main>
+
+  <!-- Saludo principal -->
+  <h1>¡Hola, {{ first_name }}! 👋</h1>
+  <p>Bienvenido a <strong>Mi Empresa</strong>. Estamos muy contentos de tenerte a bordo. Tu cuenta ya está lista y puedes empezar a usarla de inmediato.</p>
+
+  <!-- Divisor -->
+  <hr style="border: none; border-top: 1px solid #e4e4e7; margin: 28px 0;">
+
+  <!-- Features / Próximos pasos -->
+  <p style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #a1a1aa; margin-bottom: 16px;">¿Por dónde empezar?</p>
+
+  <table cellpadding="0" cellspacing="0" width="100%" role="none">
+    <tr>
+      <td width="32" valign="top" style="padding-bottom: 16px; font-size: 20px;">✅</td>
+      <td valign="top" style="padding-bottom: 16px; padding-left: 8px;">
+        <p style="margin: 0; font-weight: 700; color: #18181b; font-family: Arial, sans-serif; font-size: 15px;">Completá tu perfil</p>
+        <p style="margin: 4px 0 0; font-size: 14px; color: #71717a; font-family: Arial, sans-serif;">Agregá tu foto y datos para personalizar tu experiencia.</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="32" valign="top" style="padding-bottom: 16px; font-size: 20px;">🔔</td>
+      <td valign="top" style="padding-bottom: 16px; padding-left: 8px;">
+        <p style="margin: 0; font-weight: 700; color: #18181b; font-family: Arial, sans-serif; font-size: 15px;">Configurá tus notificaciones</p>
+        <p style="margin: 4px 0 0; font-size: 14px; color: #71717a; font-family: Arial, sans-serif;">Elegí cómo y cuándo querés recibir avisos.</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="32" valign="top" style="font-size: 20px;">🚀</td>
+      <td valign="top" style="padding-left: 8px;">
+        <p style="margin: 0; font-weight: 700; color: #18181b; font-family: Arial, sans-serif; font-size: 15px;">Explorá el panel</p>
+        <p style="margin: 4px 0 0; font-size: 14px; color: #71717a; font-family: Arial, sans-serif;">Conocé todas las funciones disponibles para vos.</p>
+      </td>
+    </tr>
+  </table>
+
+  <!-- Divisor -->
+  <hr style="border: none; border-top: 1px solid #e4e4e7; margin: 28px 0;">
+
+  <!-- CTA -->
+  <p style="text-align: center; margin-bottom: 24px;">
+    <a href="{{ dashboard_url }}" class="btn">Ir a mi cuenta →</a>
+  </p>
+
+  <!-- Sign off -->
+  <p>Si tenés alguna pregunta no dudes en responder este email. Estamos aquí para ayudarte.</p>
+  <p>Un saludo,<br><strong>El equipo de Mi Empresa</strong></p>
+
+</x-main>
