@@ -13,9 +13,7 @@ import path from "path";
 const name = process.argv[2];
 
 if (!name) {
-  console.error(
-    "❌ Por favor, indica el nombre del template: yarn g:email nombre-del-correo",
-  );
+  console.error("❌ Por favor, indica el nombre del template: yarn g:email nombre-del-correo");
   process.exit(1);
 }
 
@@ -74,9 +72,7 @@ async function createTemplate() {
       fs.writeJson(jsonFile, jsonContent, { spaces: 2 }),
     ]);
 
-    console.log(
-      `✅ Template "${name}" creado con éxito en src/templates/${name}`,
-    );
+    console.log(`✅ Template "${name}" creado con éxito en src/templates/${name}`);
   } catch (err) {
     /** @type {Error} */
     const error = err;

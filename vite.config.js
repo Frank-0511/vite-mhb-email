@@ -26,10 +26,7 @@ const maizzlePlugin = () => ({
         const { html: maizzleHtml } = await render(html, {
           useTransformers: false,
           components: {
-            folders: [
-              resolve(__dirname, "src/layouts"),
-              resolve(__dirname, "src/partials"),
-            ],
+            folders: [resolve(__dirname, "src/layouts"), resolve(__dirname, "src/partials")],
             tagPrefix: "x-",
           },
           expressions: {
@@ -103,10 +100,7 @@ export default defineConfig({
             )
             .join("\n");
 
-          return html.replace(
-            /(<div[^>]*id="template-list"[^>]*>)\s*<\/div>/s,
-            `$1${cards}</div>`,
-          );
+          return html.replace(/(<div[^>]*id="template-list"[^>]*>)\s*<\/div>/s, `$1${cards}</div>`);
         },
       },
     },

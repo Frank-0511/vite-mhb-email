@@ -1,66 +1,55 @@
 {
-	"folders": [
-		{
-			"path": "."
-		}
-	],
-	"settings": {
-		/* --- Editor & Formato --- */
-		"editor.formatOnSave": true,
-		"editor.defaultFormatter": "esbenp.prettier-vscode",
-		"editor.linkedEditing": true,
-		"editor.quickSuggestions": {
-			"strings": "on"
-		},
-		"html.autoClosingTags": true,
-		"files.associations": {
-			"*.css": "tailwindcss",
-			"*.html": "html"
-		},
-		/* --- Configuración de Extensiones --- */
-		// Aseguramos que Tailwind funcione en archivos de templates y layouts
-		"tailwindCSS.includeLanguages": {
-			"html": "html",
-			"handlebars": "html"
-		},
-		"tailwindCSS.emmetCompletions": true,
-		"tailwindCSS.experimental.configFile": {
-			"src/css/app.css": "**"
-		},
-		"tailwindCSS.experimental.classRegex": [
-			[
-				"class=\"([^\"]*)\"",
-				"([a-zA-Z0-9\\-:]+)"
-			],
-			[
-				"<x-[^>]*class=\"([^\"]*)\"",
-				"([a-zA-Z0-9\\-:]+)"
-			] // Para detectar clases dentro de tus tags <x-main>
-		],
-		"tailwindCSS.files.exclude": [
-			"**/.git/**",
-			"**/node_modules/**",
-			"**/dist/**",
-			"**/.yarn/**"
-		],
-		/* --- HTMLHint (Sintaxis Email) --- */
-		"htmlhint.options": {
-			"doctype-first": false,
-			"title-require": false,
-			"tagname-lowercase": true,
-			"attr-lowercase": true,
-			"spec-char-escape": false // Para que no chille con tus tags [[ ]]
-		}
-	},
-	"extensions": {
-		"recommendations": [
-			"bradlc.vscode-tailwindcss",
-			"mkaufman.htmlhint",
-			"irongeek.vscode-caniemail",
-			"vincaslt.highlight-matching-tag",
-			"esbenp.prettier-vscode",
-			"formulahendry.auto-close-tag",
-			"formulahendry.auto-rename-tag"
-		]
-	}
+  "folders": [
+    {
+      "path": ".",
+    },
+  ],
+  "settings": {
+    /* --- Editor & Formato --- */
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.linkedEditing": true,
+    "editor.quickSuggestions": {
+      "strings": "on",
+    },
+    "html.autoClosingTags": true,
+    "files.associations": {
+      "*.css": "tailwindcss",
+      "*.html": "html",
+    },
+    /* --- Configuración de Extensiones --- */
+    // Aseguramos que Tailwind funcione en archivos de templates y layouts
+    "tailwindCSS.includeLanguages": {
+      "html": "html",
+      "handlebars": "html",
+    },
+    "tailwindCSS.emmetCompletions": true,
+    "tailwindCSS.experimental.configFile": {
+      "src/css/app.css": "**",
+    },
+    "tailwindCSS.experimental.classRegex": [
+      ["class=\"([^\"]*)\"", "([a-zA-Z0-9\\-:]+)"],
+      ["<x-[^>]*class=\"([^\"]*)\"", "([a-zA-Z0-9\\-:]+)"], // Para detectar clases dentro de tus tags <x-main>
+    ],
+    "tailwindCSS.files.exclude": ["**/.git/**", "**/node_modules/**", "**/dist/**", "**/.yarn/**"],
+    /* --- HTMLHint (Sintaxis Email) --- */
+    "htmlhint.options": {
+      "doctype-first": false,
+      "title-require": false,
+      "tagname-lowercase": true,
+      "attr-lowercase": true,
+      "spec-char-escape": false, // Para que no chille con tus tags [[ ]]
+    },
+  },
+  "extensions": {
+    "recommendations": [
+      "bradlc.vscode-tailwindcss",
+      "mkaufman.htmlhint",
+      "irongeek.vscode-caniemail",
+      "vincaslt.highlight-matching-tag",
+      "esbenp.prettier-vscode",
+      "formulahendry.auto-close-tag",
+      "formulahendry.auto-rename-tag",
+    ],
+  },
 }
