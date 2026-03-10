@@ -4,5 +4,41 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		/* --- Editor & Formato --- */
+		"editor.formatOnSave": true,
+		"editor.defaultFormatter": "esbenp.prettier-vscode",
+		"editor.linkedEditing": true,
+		"html.autoClosingTags": true,
+		/* --- Configuración de Extensiones --- */
+		// Aseguramos que Tailwind funcione en archivos de templates y layouts
+		"tailwindCSS.includeLanguages": {
+			"html": "html"
+		},
+		"tailwindCSS.experimental.classRegex": [
+			[
+				"class=\"([^\"]*)\"",
+				"([a-zA-Z0-9\\-:]+)"
+			]
+		],
+		/* --- HTMLHint (Sintaxis Email) --- */
+		"htmlhint.options": {
+			"doctype-first": false,
+			"title-require": false,
+			"tagname-lowercase": true,
+			"attr-lowercase": true,
+			"spec-char-escape": false // Para que no chille con tus tags [[ ]]
+		}
+	},
+	"extensions": {
+		"recommendations": [
+			"bradlc.vscode-tailwindcss",
+			"mkaufman.htmlhint",
+			"irongeek.vscode-caniemail",
+			"vincaslt.highlight-matching-tag",
+			"esbenp.prettier-vscode",
+			"formulahendry.auto-close-tag",
+			"formulahendry.auto-rename-tag"
+		]
+	}
 }
