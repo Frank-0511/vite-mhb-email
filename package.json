@@ -36,15 +36,18 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "maizzle build",
-    "create:template": "node scripts/generate-email.js"
+    "build": "yarn lint && maizzle build",
+    "cli": "node scripts/cli.js",
+    "lint": "htmlhint \"src/**/*.html\""
   },
   "devDependencies": {
     "@maizzle/framework": "5.5.0",
     "autoprefixer": "10.4.27",
     "fs-extra": "11.3.4",
     "glob": "13.0.6",
+    "htmlhint": "^1.9.2",
     "maizzle": "0.0.1",
+    "nodemailer": "6.10.0",
     "path": "0.12.7",
     "postcss": "8.5.8",
     "tailwindcss": "4.2.1",
