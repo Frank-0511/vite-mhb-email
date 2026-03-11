@@ -112,14 +112,6 @@ scripts/
 
 ---
 
-## Crear un nuevo template
-
-```bash
-yarn create:template nombre-del-template
-```
-
-Genera `src/templates/nombre-del-template/` con `index.html` y `data.json` base.
-
 ## Anatomía de un template
 
 ```html

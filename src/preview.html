@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email Preview & Edit</title>
+    <!-- Use the same Tailwind output -->
+    <link rel="stylesheet" href="/css/app.css" />
+
+    <!-- JSONEditor -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.10.4/jsoneditor.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.10.4/jsoneditor.min.js"></script>
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+      }
+      #left-panel {
+        width: 35%;
+        display: flex;
+        flex-direction: column;
+        background: #0f172a;
+        border-right: 1px solid #1e293b;
+      }
+      #editor-container {
+        flex: 1;
+        overflow: hidden;
+      }
+      #right-panel {
+        width: 65%;
+        display: flex;
+        flex-direction: column;
+        background: #f1f5f9;
+      }
+      #preview-iframe {
+        flex: 1;
+        width: 100%;
+        border: none;
+        background: #ffffff;
+      }
+
+      /* Make JSONEditor fit the dark theme nicely */
+      .jsoneditor {
+        border: none !important;
+      }
+      .jsoneditor-menu {
+        background-color: #1e293b !important;
+        border-bottom: 1px solid #334155 !important;
+      }
+      .jsoneditor-vue,
+      .jsoneditor-frame {
+        border: none !important;
+      }
+      div.jsoneditor-navigation-bar {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body class="font-sans text-slate-200">
+    <!-- Panel Izquierdo: Editor -->
+    <div id="left-panel">
+      <!-- Header del Editor -->
+      <div class="px-6 py-5 border-b border-slate-700 bg-slate-900 flex justify-between items-end">
+        <div>
+          <a
+            href="/"
+            class="text-sky-400 hover:text-sky-300 text-sm font-semibold mb-2 inline-flex items-center gap-1 transition-colors"
+          >
+            &larr; Volver al Dashboard
+          </a>
+          <h1 class="text-xl font-bold text-white flex items-center gap-2">
+            📝 <span id="template-name"></span>
+          </h1>
+        </div>
+      </div>
+
+      <!-- Contenedor del Editor -->
+      <div id="editor-container" class="bg-white"></div>
+
+      <!-- Acciones Inferiores -->
+      <div class="px-6 py-5 border-t border-slate-700 bg-slate-800 flex flex-col gap-3">
+        <button
+          id="btn-save"
+          class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg flex justify-center items-center gap-2 transition-all"
+        >
+          <span>💾 Guardar permanentemente en data.json</span>
+        </button>
+        <button
+          id="btn-reset"
+          class="w-full bg-slate-700 hover:bg-slate-600 text-slate-300 font-semibold py-2 px-4 rounded-lg transition-colors text-sm"
+        >
+          Descartar cambios (Recargar)
+        </button>
+      </div>
+    </div>
+
+    <!-- Panel Derecho: Preview -->
+    <div id="right-panel">
+      <!-- Top bar del iframe -->
+      <div
+        class="bg-white border-b border-slate-200 px-6 py-3 flex justify-between items-center shadow-sm z-10"
+      >
+        <div class="flex items-center gap-3">
+          <span class="font-medium text-slate-700 flex items-center gap-2"
+            >👁️ Vista previa en vivo</span
+          >
+        </div>
+        <span id="sync-status" class="text-green-600 font-medium text-sm flex items-center gap-1">
+          <span class="w-2 h-2 rounded-full bg-green-500"></span> Sincronizado
+        </span>
+      </div>
+
+      <!-- Iframe donde volcaremos el HTML vivo -->
+      <iframe id="preview-iframe" title="Template Preview"></iframe>
+    </div>
+
+    <!-- Lógica de Reactividad y API -->
+    <script>
+      const urlParams = new URLSearchParams(window.location.search);
+      const templateName = urlParams.get("template");
+
+      if (!templateName) {
+        document.body.innerHTML =
+          '<div class="p-8 text-red-500 font-bold">Error: No se especificó un template en la URL. (?template=nombre)</div>';
+        throw new Error("No template specified");
+      }
+
+      document.getElementById("template-name").textContent = templateName;
+      const iframe = document.getElementById("preview-iframe");
+      const syncStatus = document.getElementById("sync-status");
+
+      // La carga inicial del iframe puede ser simplemente la ruta del template renderizada por vite normal:
+      iframe.src = `/templates/${templateName}/index.html`;
+
+      let editor = null;
+      let initialData = {};
+      let debounceTimer = null;
+      let isFirstChange = true;
+
+      // Configurar JSONEditor
+      const container = document.getElementById("editor-container");
+      const options = {
+        mode: "code",
+        modes: ["code", "tree"], // Permite cambiar entre vista de código pura y árbol interactiv
+        onChangeText: function (jsonString) {
+          if (isFirstChange) {
+            isFirstChange = false;
+            return; // Ignorar el primer evento provocado por el .set(data) inicial
+          }
+          try {
+            const json = JSON.parse(jsonString);
+            scheduleRenderUrl(json);
+          } catch (e) {
+            setSyncStatus("JSON Inválido...", "text-yellow-600 font-medium", "bg-yellow-500");
+          }
+        },
+      };
+
+      editor = new JSONEditor(container, options);
+
+      // Cargar los datos.json físicos al arrancar
+      fetch(`/api/data?template=${templateName}`)
+        .then((res) => res.json())
+        .then((data) => {
+          initialData = data;
+          editor.set(data);
+          isFirstChange = true;
+        })
+        .catch((err) => {
+          console.error("Error loading data.json", err);
+          setSyncStatus("Error de red", "text-red-600 font-medium", "bg-red-500");
+        });
+
+      // Helpers de UI
+      function setSyncStatus(text, textColor, dotColor) {
+        syncStatus.className = `text-sm flex items-center gap-1 ${textColor}`;
+        syncStatus.innerHTML = `<span class="w-2 h-2 rounded-full ${dotColor}"></span> ${text}`;
+      }
+
+      function updateIframe(htmlContent) {
+        const doc = iframe.contentWindow.document;
+        doc.open();
+        doc.write(htmlContent);
+        doc.close();
+
+        // Ejecutar event listeners que el iframe o Maizzle pudieran necesitar si tuvieran
+        setSyncStatus("Sincronizado", "text-green-600 font-medium", "bg-green-500");
+      }
+
+      function scheduleRenderUrl(data) {
+        setSyncStatus("Actualizando...", "text-slate-500 font-medium", "bg-slate-400");
+
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+          fetch(`/api/render?template=${templateName}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          })
+            .then((res) => {
+              if (!res.ok) throw new Error("Render Failed");
+              return res.text();
+            })
+            .then((html) => updateIframe(html))
+            .catch((err) => {
+              console.error(err);
+              setSyncStatus("Error al renderizar", "text-red-600 font-bold", "bg-red-600");
+            });
+        }, 300); // Debounce para no saturar al tipear
+      }
+
+      // Descartar cambios
+      document.getElementById("btn-reset").addEventListener("click", () => {
+        if (
+          confirm(
+            "¿Seguro que quieres descartar los cambios no guardados? El editor volverá a los valores actuales físicos.",
+          )
+        ) {
+          isFirstChange = true;
+          editor.set(initialData);
+          // Forzar refresh recargando la ruta del iframe normal
+          iframe.src = `/templates/${templateName}/index.html`;
+          setSyncStatus("Sincronizado", "text-green-600 font-medium", "bg-green-500");
+        }
+      });
+
+      // Guardar a data.json
+      document.getElementById("btn-save").addEventListener("click", () => {
+        const btn = document.getElementById("btn-save");
+        const currentData = editor.get(); // Falla si el json es inválido, deberíamos catchearlo
+        let parsedData;
+        try {
+          parsedData = JSON.parse(editor.getText());
+        } catch (e) {
+          alert("No se puede guardar porque el JSON actual es inválido.");
+          return;
+        }
+
+        const originalText = btn.innerHTML;
+
+        btn.innerHTML = "<span>⏳ Guardando...</span>";
+        btn.disabled = true;
+
+        fetch(`/api/data?template=${templateName}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(parsedData),
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            if (res.success) {
+              initialData = parsedData; // Ahora este es el nuevo inicial
+              btn.innerHTML = "<span>✅ ¡Guardado con éxito!</span>";
+              btn.classList.replace("bg-sky-500", "bg-emerald-500");
+              btn.classList.replace("hover:bg-sky-600", "hover:bg-emerald-600");
+              setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.classList.replace("bg-emerald-500", "bg-sky-500");
+                btn.classList.replace("hover:bg-emerald-600", "hover:bg-sky-600");
+                btn.disabled = false;
+              }, 2500);
+            } else {
+              throw new Error("API devolvió success=false");
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+            alert("Error de red al intentar guardar en data.json");
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+          });
+      });
+    </script>
+  </body>
+</html>

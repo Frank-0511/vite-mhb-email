@@ -9,7 +9,10 @@ import fs from "node:fs";
 import path from "node:path";
 import { globSync } from "glob";
 
-const files = globSync("src/templates/*/data.json");
+let files = process.argv.slice(2);
+if (files.length === 0) {
+  files = globSync("src/templates/*/data.json");
+}
 
 if (files.length === 0) {
   console.log("validate-json: no se encontraron archivos data.json.");

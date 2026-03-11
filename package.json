@@ -44,11 +44,38 @@
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\"",
     "lint:json": "node scripts/validate-json.js",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "scripts/**/*.js": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "vite.config.js": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "src/**/*.html": [
+      "htmlhint",
+      "prettier --write"
+    ],
+    "src/templates/*/data.json": [
+      "node scripts/validate-json.js",
+      "prettier --write"
+    ],
+    "*.{json,css}": [
+      "prettier --write"
+    ],
+    "*.md": [
+      "markdownlint-cli2 --fix",
+      "prettier --write"
+    ]
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
     "@maizzle/framework": "5.5.0",
+    "@tailwindcss/vite": "^4.2.1",
     "autoprefixer": "10.4.27",
     "eslint": "^9.22.0",
     "eslint-config-prettier": "^10.1.1",
@@ -56,6 +83,8 @@
     "glob": "13.0.6",
     "globals": "^16.0.0",
     "htmlhint": "^1.9.2",
+    "husky": "^9.1.5",
+    "lint-staged": "^15.2.10",
     "maizzle": "0.0.1",
     "markdownlint-cli2": "^0.17.2",
     "nodemailer": "6.10.0",
