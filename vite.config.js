@@ -1,8 +1,8 @@
 import tailwindcss from "@tailwindcss/vite";
 import { resolve } from "path";
 import { defineConfig } from "vite";
-import { dashboardPlugin } from "../scripts/vite-plugins/dashboard.js";
-import { maizzlePlugin } from "../scripts/vite-plugins/maizzle.js";
+import { dashboardPlugin } from "./scripts/vite-plugins/dashboard.js";
+import { maizzlePlugin } from "./scripts/vite-plugins/maizzle.js";
 
 const rootDir = __dirname;
 

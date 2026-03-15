@@ -30,14 +30,14 @@ export const dashboardPlugin = (rootDir) => ({
           ({ name, title, path }) => `
       <a
         href="/preview.html?template=${name}"
-        class="block bg-slate-800 border border-slate-700 rounded-xl hover:border-sky-500 transition-colors overflow-hidden group"
+        class="block bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm dark:shadow-slate-900/60 hover:border-sky-500 dark:hover:border-sky-500 hover:shadow-md dark:hover:shadow-sky-500/20 transition-all overflow-hidden group"
       >
-        <div class="preview-wrapper border-b border-slate-700 group-hover:border-sky-500 transition-colors bg-white">
+        <div class="preview-wrapper border-b border-slate-200 dark:border-slate-700 group-hover:border-sky-500 transition-colors bg-white dark:bg-slate-900">
           <iframe src="${path}" title="Preview: ${title}" scrolling="no" tabindex="-1"></iframe>
         </div>
         <div class="p-5">
-          <h2 class="text-lg font-semibold">📧 ${title}</h2>
-          <p class="text-slate-500 text-sm mt-1">/templates/${name}/</p>
+          <h2 class="text-lg font-semibold text-slate-800 dark:text-white">📧 ${title}</h2>
+          <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">/templates/${name}/</p>
         </div>
       </a>`,
         )

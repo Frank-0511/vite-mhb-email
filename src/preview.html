@@ -7,14 +7,11 @@
     <!-- Use the same Tailwind output -->
     <link rel="stylesheet" href="/css/app.css" />
 
-    <!-- JSONEditor -->
+    <!-- Vanilla JSONEditor (Svelte JSONEditor) -->
     <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.10.4/jsoneditor.min.css"
+      href="https://cdn.jsdelivr.net/npm/vanilla-jsoneditor@3.11.0/themes/jse-theme-dark.css"
       rel="stylesheet"
-      type="text/css"
     />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.10.4/jsoneditor.min.js"></script>
-
     <style>
       body {
         margin: 0;
@@ -27,8 +24,8 @@
         width: 35%;
         display: flex;
         flex-direction: column;
-        background: #0f172a;
-        border-right: 1px solid #1e293b;
+        background: #ffffff;
+        border-right: 1px solid #e2e8f0;
       }
       #editor-container {
         flex: 1;
@@ -38,64 +35,85 @@
         width: 65%;
         display: flex;
         flex-direction: column;
-        background: #f1f5f9;
       }
       #preview-iframe {
         flex: 1;
         width: 100%;
         border: none;
-        background: #ffffff;
       }
 
-      /* Make JSONEditor fit the dark theme nicely */
-      .jsoneditor {
-        border: none !important;
+      /* Personalizar el tema claro de Vanilla JSONEditor */
+      .jse-theme-default {
+        --jse-theme-color: #0ea5e9; /* sky-500 */
+        --jse-theme-color-highlight: #0284c7; /* sky-600 */
+        --jse-background-color: #ffffff;
+        --jse-panel-background: #f8fafc; /* slate-50 */
+        --jse-main-border: none;
       }
-      .jsoneditor-menu {
-        background-color: #1e293b !important;
-        border-bottom: 1px solid #334155 !important;
-      }
-      .jsoneditor-vue,
-      .jsoneditor-frame {
-        border: none !important;
-      }
-      div.jsoneditor-navigation-bar {
-        display: none !important;
+      /* Personalizar el tema oscuro de Vanilla JSONEditor */
+      .jse-theme-dark {
+        --jse-theme-color: #38bdf8; /* sky-400 */
+        --jse-theme-color-highlight: #0ea5e9; /* sky-500 */
+        --jse-background-color: #0f172a; /* slate-900 */
+        --jse-panel-background: #1e293b; /* slate-800 */
+        --jse-main-border: none;
       }
     </style>
+    <script>
+      // Prevent FOUC by applying app theme immediately
+      if (localStorage.getItem("app-theme") === "dark" || !("app-theme" in localStorage)) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+    </script>
   </head>
-  <body class="font-sans text-slate-200">
+  <body class="font-sans text-slate-800 bg-slate-50 dark:bg-slate-900 dark:text-slate-200">
     <!-- Panel Izquierdo: Editor -->
-    <div id="left-panel">
+    <div id="left-panel" class="dark:border-slate-700 dark:bg-slate-900">
       <!-- Header del Editor -->
-      <div class="px-6 py-5 border-b border-slate-700 bg-slate-900 flex justify-between items-end">
+      <div
+        class="px-6 py-5 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 flex justify-between items-end"
+      >
         <div>
           <a
             href="/"
-            class="text-sky-400 hover:text-sky-300 text-sm font-semibold mb-2 inline-flex items-center gap-1 transition-colors"
+            class="text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 text-sm font-semibold mb-2 inline-flex items-center gap-1 transition-colors"
           >
             &larr; Volver al Dashboard
           </a>
-          <h1 class="text-xl font-bold text-white flex items-center gap-2">
+          <h1 class="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
             📝 <span id="template-name"></span>
           </h1>
         </div>
+
+        <!-- App Theme Toggle -->
+        <button
+          id="theme-toggle-app"
+          class="p-2 rounded-lg bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"
+          title="Toggle App Theme"
+        >
+          <span id="app-icon-light" class="hidden">🌞 App</span>
+          <span id="app-icon-dark" class="hidden">🌙 App</span>
+        </button>
       </div>
 
       <!-- Contenedor del Editor -->
-      <div id="editor-container" class="bg-white"></div>
+      <div id="editor-container"></div>
 
       <!-- Acciones Inferiores -->
-      <div class="px-6 py-5 border-t border-slate-700 bg-slate-800 flex flex-col gap-3">
+      <div
+        class="px-6 py-5 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex flex-col gap-3"
+      >
         <button
           id="btn-save"
-          class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg flex justify-center items-center gap-2 transition-all"
+          class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-4 rounded-lg shadow-sm dark:shadow-lg flex justify-center items-center gap-2 transition-all"
         >
           <span>💾 Guardar permanentemente en data.json</span>
         </button>
         <button
           id="btn-reset"
-          class="w-full bg-slate-700 hover:bg-slate-600 text-slate-300 font-semibold py-2 px-4 rounded-lg transition-colors text-sm"
+          class="w-full bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 font-semibold py-2 px-4 rounded-lg transition-colors text-sm border border-slate-200 dark:border-transparent"
         >
           Descartar cambios (Recargar)
         </button>
@@ -103,15 +121,24 @@
     </div>
 
     <!-- Panel Derecho: Preview -->
-    <div id="right-panel">
+    <div id="right-panel" class="bg-slate-100 dark:bg-slate-800">
       <!-- Top bar del iframe -->
       <div
-        class="bg-white border-b border-slate-200 px-6 py-3 flex justify-between items-center shadow-sm z-10"
+        class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 py-3 flex justify-between items-center shadow-sm dark:shadow-slate-900/50 z-10"
       >
-        <div class="flex items-center gap-3">
-          <span class="font-medium text-slate-700 flex items-center gap-2"
+        <div class="flex items-center gap-4">
+          <span class="font-medium text-slate-700 dark:text-slate-200 flex items-center gap-2"
             >👁️ Vista previa en vivo</span
           >
+          <!-- Template Theme Toggle -->
+          <button
+            id="theme-toggle-template"
+            class="p-1 px-2 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-semibold flex items-center transition-colors border border-slate-200 dark:border-slate-700"
+            title="Toggle Template Theme"
+          >
+            <span id="template-icon-light" class="hidden">🌞 Template</span>
+            <span id="template-icon-dark" class="hidden">🌙 Template</span>
+          </button>
         </div>
         <span id="sync-status" class="text-green-600 font-medium text-sm flex items-center gap-1">
           <span class="w-2 h-2 rounded-full bg-green-500"></span> Sincronizado
@@ -119,11 +146,17 @@
       </div>
 
       <!-- Iframe donde volcaremos el HTML vivo -->
-      <iframe id="preview-iframe" title="Template Preview"></iframe>
+      <iframe
+        id="preview-iframe"
+        title="Template Preview"
+        class="bg-white dark:bg-slate-900"
+      ></iframe>
     </div>
 
     <!-- Lógica de Reactividad y API -->
-    <script>
+    <script type="module">
+      import { JSONEditor } from "https://cdn.jsdelivr.net/npm/vanilla-jsoneditor@3.11.0/standalone.js";
+
       const urlParams = new URLSearchParams(window.location.search);
       const templateName = urlParams.get("template");
 
@@ -139,45 +172,83 @@
 
       // La carga inicial del iframe puede ser simplemente la ruta del template renderizada por vite normal:
       iframe.src = `/templates/${templateName}/index.html`;
+      iframe.onload = () => {
+        const isTemplateDark =
+          localStorage.getItem("template-theme") === "dark" || !("template-theme" in localStorage);
+        if (isTemplateDark) {
+          iframe.contentWindow.document.documentElement.classList.add("dark");
+        } else {
+          iframe.contentWindow.document.documentElement.classList.remove("dark");
+        }
+        // Force spacing inside preview only
+        iframe.contentWindow.document.body.style.padding = "32px 0";
+      };
 
       let editor = null;
       let initialData = {};
       let debounceTimer = null;
       let isFirstChange = true;
 
-      // Configurar JSONEditor
+      // Theme Management
+      const appToggleBtn = document.getElementById("theme-toggle-app");
+      const appIconLight = document.getElementById("app-icon-light");
+      const appIconDark = document.getElementById("app-icon-dark");
+
+      const templateToggleBtn = document.getElementById("theme-toggle-template");
+      const templateIconLight = document.getElementById("template-icon-light");
+      const templateIconDark = document.getElementById("template-icon-dark");
       const container = document.getElementById("editor-container");
-      const options = {
-        mode: "code",
-        modes: ["code", "tree"], // Permite cambiar entre vista de código pura y árbol interactiv
-        onChangeText: function (jsonString) {
-          if (isFirstChange) {
-            isFirstChange = false;
-            return; // Ignorar el primer evento provocado por el .set(data) inicial
-          }
-          try {
-            const json = JSON.parse(jsonString);
-            scheduleRenderUrl(json);
-          } catch (e) {
-            setSyncStatus("JSON Inválido...", "text-yellow-600 font-medium", "bg-yellow-500");
-          }
-        },
-      };
 
-      editor = new JSONEditor(container, options);
+      function updateAppThemeUI() {
+        const isDark = document.documentElement.classList.contains("dark");
+        if (isDark) {
+          appIconLight.classList.remove("hidden");
+          appIconDark.classList.add("hidden");
+          container.className = "jse-theme-dark";
+        } else {
+          appIconLight.classList.add("hidden");
+          appIconDark.classList.remove("hidden");
+          container.className = "jse-theme-default";
+        }
+      }
 
-      // Cargar los datos.json físicos al arrancar
-      fetch(`/api/data?template=${templateName}`)
-        .then((res) => res.json())
-        .then((data) => {
-          initialData = data;
-          editor.set(data);
-          isFirstChange = true;
-        })
-        .catch((err) => {
-          console.error("Error loading data.json", err);
-          setSyncStatus("Error de red", "text-red-600 font-medium", "bg-red-500");
-        });
+      function updateTemplateThemeUI() {
+        const isDark =
+          localStorage.getItem("template-theme") === "dark" || !("template-theme" in localStorage);
+        if (isDark) {
+          templateIconLight.classList.remove("hidden");
+          templateIconDark.classList.add("hidden");
+        } else {
+          templateIconLight.classList.add("hidden");
+          templateIconDark.classList.remove("hidden");
+        }
+      }
+
+      // Initial UI sync
+      updateAppThemeUI();
+      updateTemplateThemeUI();
+
+      appToggleBtn.addEventListener("click", () => {
+        document.documentElement.classList.toggle("dark");
+        const isDark = document.documentElement.classList.contains("dark");
+        localStorage.setItem("app-theme", isDark ? "dark" : "light");
+        updateAppThemeUI();
+      });
+
+      templateToggleBtn.addEventListener("click", () => {
+        const currentTheme = localStorage.getItem("template-theme") || "dark";
+        const newTheme = currentTheme === "dark" ? "light" : "dark";
+        localStorage.setItem("template-theme", newTheme);
+        updateTemplateThemeUI();
+
+        // Inject into iframe immediately
+        const iframeDoc = iframe.contentWindow.document.documentElement;
+        if (newTheme === "dark") {
+          iframeDoc.classList.add("dark");
+        } else {
+          iframeDoc.classList.remove("dark");
+        }
+      });
 
       // Helpers de UI
       function setSyncStatus(text, textColor, dotColor) {
@@ -190,6 +261,18 @@
         doc.open();
         doc.write(htmlContent);
         doc.close();
+
+        // Inject template theme class
+        const isTemplateDark =
+          localStorage.getItem("template-theme") === "dark" || !("template-theme" in localStorage);
+        if (isTemplateDark) {
+          doc.documentElement.classList.add("dark");
+        } else {
+          doc.documentElement.classList.remove("dark");
+        }
+
+        // Force spacing inside preview only
+        doc.body.style.padding = "32px 0";
 
         // Ejecutar event listeners que el iframe o Maizzle pudieran necesitar si tuvieran
         setSyncStatus("Sincronizado", "text-green-600 font-medium", "bg-green-500");
@@ -217,6 +300,64 @@
         }, 300); // Debounce para no saturar al tipear
       }
 
+      editor = new JSONEditor({
+        target: container,
+        props: {
+          content: { json: {} },
+          onRenderMenu(items, context) {
+            // El modo tabla solo funciona con arreglos de objetos.
+            // Para data.json (que es un solo objeto unificado), genera un error.
+            // Removemos recursivamente cualquier opción "table" del menú.
+            function filterTable(itemList) {
+              return itemList
+                .filter((item) => item.text !== "table" && item.value !== "table")
+                .map((item) => {
+                  if (item.items) {
+                    return { ...item, items: filterTable(item.items) };
+                  }
+                  return item;
+                });
+            }
+            return filterTable(items);
+          },
+          onChange: (updatedContent, previousContent, { contentErrors, patchResult }) => {
+            if (isFirstChange) {
+              isFirstChange = false;
+              return;
+            }
+
+            if (contentErrors && contentErrors.length > 0) {
+              setSyncStatus("JSON Inválido...", "text-yellow-600 font-medium", "bg-yellow-500");
+              return;
+            }
+
+            try {
+              // Parse el texto si es que está en modo texto o devuelva el obj json
+              const json =
+                updatedContent.json !== undefined
+                  ? updatedContent.json
+                  : JSON.parse(updatedContent.text);
+              scheduleRenderUrl(json);
+            } catch (e) {
+              setSyncStatus("JSON Inválido...", "text-yellow-600 font-medium", "bg-yellow-500");
+            }
+          },
+        },
+      });
+
+      // Cargar los datos.json físicos al arrancar
+      fetch(`/api/data?template=${templateName}`)
+        .then((res) => res.json())
+        .then((data) => {
+          initialData = data;
+          editor.updateProps({ content: { json: data } });
+          isFirstChange = true;
+        })
+        .catch((err) => {
+          console.error("Error loading data.json", err);
+          setSyncStatus("Error de red", "text-red-600 font-medium", "bg-red-500");
+        });
+
       // Descartar cambios
       document.getElementById("btn-reset").addEventListener("click", () => {
         if (
@@ -225,9 +366,23 @@
           )
         ) {
           isFirstChange = true;
-          editor.set(initialData);
+          editor.updateProps({ content: { json: initialData } });
           // Forzar refresh recargando la ruta del iframe normal
           iframe.src = `/templates/${templateName}/index.html`;
+
+          iframe.onload = () => {
+            const isTemplateDark =
+              localStorage.getItem("template-theme") === "dark" ||
+              !("template-theme" in localStorage);
+            if (isTemplateDark) {
+              iframe.contentWindow.document.documentElement.classList.add("dark");
+            } else {
+              iframe.contentWindow.document.documentElement.classList.remove("dark");
+            }
+            // Force spacing inside preview only
+            iframe.contentWindow.document.body.style.padding = "32px 0";
+          };
+
           setSyncStatus("Sincronizado", "text-green-600 font-medium", "bg-green-500");
         }
       });
@@ -235,10 +390,14 @@
       // Guardar a data.json
       document.getElementById("btn-save").addEventListener("click", () => {
         const btn = document.getElementById("btn-save");
-        const currentData = editor.get(); // Falla si el json es inválido, deberíamos catchearlo
+        const currentContent = editor.get();
+
         let parsedData;
         try {
-          parsedData = JSON.parse(editor.getText());
+          parsedData =
+            currentContent.json !== undefined
+              ? currentContent.json
+              : JSON.parse(currentContent.text);
         } catch (e) {
           alert("No se puede guardar porque el JSON actual es inválido.");
           return;

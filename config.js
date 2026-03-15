@@ -39,7 +39,7 @@ export default {
   },
 
   // Flatten: dist/welcome/index.html → dist/welcome.html
-  afterRender: async ({ html, config }) => {
+  afterRender: ({ html, config }) => {
     const currentPath = config.build.current.path;
     const folderName = currentPath.dir.split("/").pop();
     config.permalink = `dist/${folderName}.html`;
