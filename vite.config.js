@@ -1,4 +1,3 @@
-import tailwindcss from "@tailwindcss/vite";
 import { resolve } from "path";
 import { defineConfig } from "vite";
 import { dashboardPlugin } from "./scripts/vite-plugins/dashboard.js";
@@ -11,7 +10,7 @@ export default defineConfig({
   server: {
     open: true,
   },
-  plugins: [tailwindcss(), maizzlePlugin(rootDir), dashboardPlugin(rootDir)],
+  plugins: [maizzlePlugin(rootDir), dashboardPlugin(rootDir)],
   build: {
     outDir: "../dist",
     emptyOutDir: true,

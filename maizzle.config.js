@@ -1,6 +1,6 @@
 import { globSync } from "glob";
 import { rm } from "node:fs/promises";
-
+console.log("MAIZZLE CONFIG LOADED");
 export default {
   build: {
     content: ["src/templates/**/*.html"],

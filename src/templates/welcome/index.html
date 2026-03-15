@@ -6,98 +6,55 @@ titleTemplate: "Email de Bienvenida"
 
 <x-main>
   <!-- Saludo principal -->
-  <h1>¡Hola, {{ first_name }}! 👋</h1>
-  <p>
+  <h1 class="text-2xl font-bold mb-4">¡Hola, {{ first_name }}! 👋</h1>
+  <p class="text-base text-zinc-800">
     Bienvenido a <strong>Mi Empresa</strong>. Estamos muy contentos de tenerte a bordo. Tu cuenta ya
     está lista y puedes empezar a usarla de inmediato.
   </p>
 
   <!-- Divisor -->
-  <hr style="border: none; border-top: 1px solid #e4e4e7; margin: 28px 0" />
+  <hr class="border-none border-t border-zinc-200 my-7" />
 
   <!-- Features / Próximos pasos -->
-  <p
-    style="
-      font-size: 13px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #a1a1aa;
-      margin-bottom: 16px;
-    "
-  >
-    ¿Por dónde empezar?
-  </p>
+  <p class="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-4">¿Por dónde empezar?</p>
 
   <table cellpadding="0" cellspacing="0" width="100%" role="none">
     <tr>
-      <td width="32" valign="top" style="padding-bottom: 16px; font-size: 20px">✅</td>
-      <td valign="top" style="padding-bottom: 16px; padding-left: 8px">
-        <p
-          style="
-            margin: 0;
-            font-weight: 700;
-            color: #18181b;
-            font-family: Arial, sans-serif;
-            font-size: 15px;
-          "
-        >
-          Completá tu perfil
-        </p>
-        <p style="margin: 4px 0 0; font-size: 14px; color: #71717a; font-family: Arial, sans-serif">
+      <td width="32" valign="top" class="pb-4 text-xl">✅</td>
+      <td valign="top" class="pb-4 pl-2">
+        <p class="m-0 font-bold text-zinc-900 text-sm">Completá tu perfil</p>
+        <p class="mt-1 text-sm text-zinc-500">
           Agregá tu foto y datos para personalizar tu experiencia.
         </p>
       </td>
     </tr>
     <tr>
-      <td width="32" valign="top" style="padding-bottom: 16px; font-size: 20px">🔔</td>
-      <td valign="top" style="padding-bottom: 16px; padding-left: 8px">
-        <p
-          style="
-            margin: 0;
-            font-weight: 700;
-            color: #18181b;
-            font-family: Arial, sans-serif;
-            font-size: 15px;
-          "
-        >
-          Configurá tus notificaciones
-        </p>
-        <p style="margin: 4px 0 0; font-size: 14px; color: #71717a; font-family: Arial, sans-serif">
-          Elegí cómo y cuándo querés recibir avisos.
-        </p>
+      <td width="32" valign="top" class="pb-4 text-xl">🔔</td>
+      <td valign="top" class="pb-4 pl-2">
+        <p class="m-0 font-bold text-zinc-900 text-sm">Configurá tus notificaciones</p>
+        <p class="mt-1 text-sm text-zinc-500">Elegí cómo y cuándo querés recibir avisos.</p>
       </td>
     </tr>
     <tr>
-      <td width="32" valign="top" style="font-size: 20px">🚀</td>
-      <td valign="top" style="padding-left: 8px">
-        <p
-          style="
-            margin: 0;
-            font-weight: 700;
-            color: #18181b;
-            font-family: Arial, sans-serif;
-            font-size: 15px;
-          "
-        >
-          Explorá el panel
-        </p>
-        <p style="margin: 4px 0 0; font-size: 14px; color: #71717a; font-family: Arial, sans-serif">
-          Conocé todas las funciones disponibles para vos.
-        </p>
+      <td width="32" valign="top" class="text-xl">🚀</td>
+      <td valign="top" class="pl-2">
+        <p class="m-0 font-bold text-zinc-900 text-sm">Explorá el panel</p>
+        <p class="mt-1 text-sm text-zinc-500">Conocé todas las funciones disponibles para vos.</p>
       </td>
     </tr>
   </table>
 
   <!-- Divisor -->
-  <hr style="border: none; border-top: 1px solid #e4e4e7; margin: 28px 0" />
+  <hr class="border-none border-t border-zinc-200 my-7" />
 
   <!-- CTA -->
-  <p style="text-align: center; margin-bottom: 24px">
+  <p class="text-center mb-6">
     <a href="{{ dashboard_url }}" class="btn">Ir a mi cuenta →</a>
   </p>
 
   <!-- Sign off -->
-  <p>Si tenés alguna pregunta no dudes en responder este email. Estamos aquí para ayudarte.</p>
-  <p>Un saludo,<br /><strong>El equipo de Mi Empresa</strong></p>
+  <p class="text-base text-zinc-800">
+    Si tenés alguna pregunta no dudes en responder este email. Estamos aquí para ayudarte.
+  </p>
+  <p class="text-base text-zinc-800">Un saludo,<br /><strong>El equipo de Mi Empresa</strong></p>
 </x-main>

@@ -1,0 +1,6 @@
+/* src/css/tailwind.css */
+@config "../../tailwind.email.config.js";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

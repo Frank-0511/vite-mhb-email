@@ -1,7 +1,0 @@
-@import "tailwindcss";
-@source "../../scripts/vite-plugins/**/*.js";
-@source "../templates/**/*.html";
-@source "../partials/**/*.html";
-@source "../layouts/**/*.html";
-
-@variant dark (&:where(.dark, .dark *));
