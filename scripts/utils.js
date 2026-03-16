@@ -4,6 +4,7 @@
  * Centraliza colores ANSI, carga del .env, helpers de prompt y listado de templates.
  */
 
+import Handlebars from "handlebars";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -154,4 +155,40 @@ export function getBuiltTemplates() {
  */
 export function readBuiltTemplate(filename) {
   return fs.readFileSync(path.resolve(process.cwd(), "dist", filename), "utf-8");
+}
+
+// ─── Handlebars: cargar datos y aplicar variables ──────────────────────────────
+
+/**
+ * Carga el data.json correspondiente a un template.
+ * @param {string} templateName - Nombre del template (ej: "welcome.html")
+ * @returns {Object} Datos del template o objeto vacío si no existe
+ */
+export function getTemplateData(templateName) {
+  try {
+    const baseName = templateName.replace(".html", "");
+    const dataPath = path.resolve(process.cwd(), "src/templates", baseName, "data.json");
+    const content = fs.readFileSync(dataPath, "utf-8");
+    return JSON.parse(content);
+  } catch (err) {
+    // Silenciosamente ignorar si no existe el archivo
+    return {};
+  }
+}
+
+/**
+ * Procesa variables Handlebars en el HTML usando un objeto de datos.
+ * Requiere la librería `handlebars`.
+ * @param {string} html - HTML con variables Handlebars
+ * @param {Object} data - Datos para reemplazar
+ * @returns {string} HTML procesado
+ */
+export function applyHandlebars(html, data) {
+  try {
+    const template = Handlebars.compile(html);
+    return template(data);
+  } catch (err) {
+    // Si hay error, devolver el HTML sin procesar
+    return html;
+  }
 }

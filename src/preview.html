@@ -173,13 +173,30 @@
       // La carga inicial del iframe puede ser simplemente la ruta del template renderizada por vite normal:
       iframe.src = `/templates/${templateName}/index.html`;
       iframe.onload = () => {
-        const isTemplateDark =
-          localStorage.getItem("template-theme") === "dark" || !("template-theme" in localStorage);
+        const isTemplateDark = localStorage.getItem("template-theme") === "dark";
+
         if (isTemplateDark) {
-          iframe.contentWindow.document.documentElement.classList.add("dark");
-        } else {
-          iframe.contentWindow.document.documentElement.classList.remove("dark");
+          // Inyectar CSS para simular dark mode
+          const iframeDoc = iframe.contentWindow.document;
+          const styleEl = iframeDoc.createElement("style");
+          styleEl.id = "dark-mode-override";
+          styleEl.textContent = `
+            :root { color-scheme: dark !important; }
+            .bg-zinc-100, .dark\\:bg-zinc-900 { background-color: rgb(24,24,27) !important; }
+            .dark\\:bg-slate-950 { background-color: rgb(2,6,23) !important; }
+            .dark\\:bg-zinc-800 { background-color: rgb(39,39,42) !important; }
+            .text-zinc-800, .dark\\:text-zinc-100 { color: rgb(244,244,245) !important; }
+            .dark\\:text-zinc-200 { color: rgb(228,228,231) !important; }
+            .dark\\:text-zinc-300 { color: rgb(212,212,216) !important; }
+            .dark\\:text-zinc-400 { color: rgb(161,161,170) !important; }
+            .dark\\:text-zinc-500 { color: rgb(113,113,122) !important; }
+            .dark\\:border-zinc-600 { border-color: rgb(82,82,91) !important; }
+            .text-zinc-500, .text-zinc-400 { color: rgb(161,161,170) !important; }
+            .border-zinc-200, .dark\\:border-zinc-600 { border-color: rgb(82,82,91) !important; }
+          `;
+          iframeDoc.head.appendChild(styleEl);
         }
+
         // Force spacing inside preview only
         iframe.contentWindow.document.body.style.padding = "32px 0";
       };
@@ -236,17 +253,41 @@
       });
 
       templateToggleBtn.addEventListener("click", () => {
-        const currentTheme = localStorage.getItem("template-theme") || "dark";
+        const currentTheme = localStorage.getItem("template-theme") || "light";
         const newTheme = currentTheme === "dark" ? "light" : "dark";
         localStorage.setItem("template-theme", newTheme);
         updateTemplateThemeUI();
 
-        // Inject into iframe immediately
-        const iframeDoc = iframe.contentWindow.document.documentElement;
+        const iframeDoc = iframe.contentWindow.document;
+        let styleEl = iframeDoc.getElementById("dark-mode-override");
+
         if (newTheme === "dark") {
-          iframeDoc.classList.add("dark");
+          // Inyectar CSS que force dark mode mediante override
+          if (!styleEl) {
+            styleEl = iframeDoc.createElement("style");
+            styleEl.id = "dark-mode-override";
+            iframeDoc.head.appendChild(styleEl);
+          }
+
+          // Estilos que overridean las clases lighten forzando dark
+          styleEl.textContent = `
+            :root { color-scheme: dark !important; }
+            .bg-zinc-100, .dark\\:bg-zinc-900 { background-color: rgb(24,24,27) !important; }
+            .dark\\:bg-slate-950 { background-color: rgb(2,6,23) !important; }
+            .dark\\:bg-zinc-800 { background-color: rgb(39,39,42) !important; }
+            .text-zinc-800, .dark\\:text-zinc-100 { color: rgb(244,244,245) !important; }
+            .dark\\:text-zinc-200 { color: rgb(228,228,231) !important; }
+            .dark\\:text-zinc-300 { color: rgb(212,212,216) !important; }
+            .dark\\:text-zinc-400 { color: rgb(161,161,170) !important; }
+            .dark\\:text-zinc-500 { color: rgb(113,113,122) !important; }
+            .dark\\:border-zinc-600 { border-color: rgb(82,82,91) !important; }
+            .text-zinc-500, .text-zinc-400 { color: rgb(161,161,170) !important; }
+            .border-zinc-200, .dark\\:border-zinc-600 { border-color: rgb(82,82,91) !important; }
+          `;
         } else {
-          iframeDoc.classList.remove("dark");
+          if (styleEl) {
+            styleEl.remove();
+          }
         }
       });
 
@@ -262,13 +303,27 @@
         doc.write(htmlContent);
         doc.close();
 
-        // Inject template theme class
-        const isTemplateDark =
-          localStorage.getItem("template-theme") === "dark" || !("template-theme" in localStorage);
+        // Aplicar tema guardado medio para simular dark mode
+        const isTemplateDark = localStorage.getItem("template-theme") === "dark";
+
         if (isTemplateDark) {
-          doc.documentElement.classList.add("dark");
-        } else {
-          doc.documentElement.classList.remove("dark");
+          const styleEl = doc.createElement("style");
+          styleEl.id = "dark-mode-override";
+          styleEl.textContent = `
+            :root { color-scheme: dark !important; }
+            .bg-zinc-100, .dark\\:bg-zinc-900 { background-color: rgb(24,24,27) !important; }
+            .dark\\:bg-slate-950 { background-color: rgb(2,6,23) !important; }
+            .dark\\:bg-zinc-800 { background-color: rgb(39,39,42) !important; }
+            .text-zinc-800, .dark\\:text-zinc-100 { color: rgb(244,244,245) !important; }
+            .dark\\:text-zinc-200 { color: rgb(228,228,231) !important; }
+            .dark\\:text-zinc-300 { color: rgb(212,212,216) !important; }
+            .dark\\:text-zinc-400 { color: rgb(161,161,170) !important; }
+            .dark\\:text-zinc-500 { color: rgb(113,113,122) !important; }
+            .dark\\:border-zinc-600 { border-color: rgb(82,82,91) !important; }
+            .text-zinc-500, .text-zinc-400 { color: rgb(161,161,170) !important; }
+            .border-zinc-200, .dark\\:border-zinc-600 { border-color: rgb(82,82,91) !important; }
+          `;
+          doc.head.appendChild(styleEl);
         }
 
         // Force spacing inside preview only
@@ -371,14 +426,30 @@
           iframe.src = `/templates/${templateName}/index.html`;
 
           iframe.onload = () => {
-            const isTemplateDark =
-              localStorage.getItem("template-theme") === "dark" ||
-              !("template-theme" in localStorage);
+            const isTemplateDark = localStorage.getItem("template-theme") === "dark";
+
             if (isTemplateDark) {
-              iframe.contentWindow.document.documentElement.classList.add("dark");
-            } else {
-              iframe.contentWindow.document.documentElement.classList.remove("dark");
+              // Inyectar CSS para simular dark mode
+              const iframeDoc = iframe.contentWindow.document;
+              const styleEl = iframeDoc.createElement("style");
+              styleEl.id = "dark-mode-override";
+              styleEl.textContent = `
+                :root { color-scheme: dark !important; }
+                .bg-zinc-100, .dark\\:bg-zinc-900 { background-color: rgb(24,24,27) !important; }
+                .dark\\:bg-slate-950 { background-color: rgb(2,6,23) !important; }
+                .dark\\:bg-zinc-800 { background-color: rgb(39,39,42) !important; }
+                .text-zinc-800, .dark\\:text-zinc-100 { color: rgb(244,244,245) !important; }
+                .dark\\:text-zinc-200 { color: rgb(228,228,231) !important; }
+                .dark\\:text-zinc-300 { color: rgb(212,212,216) !important; }
+                .dark\\:text-zinc-400 { color: rgb(161,161,170) !important; }
+                .dark\\:text-zinc-500 { color: rgb(113,113,122) !important; }
+                .dark\\:border-zinc-600 { border-color: rgb(82,82,91) !important; }
+                .text-zinc-500, .text-zinc-400 { color: rgb(161,161,170) !important; }
+                .border-zinc-200, .dark\\:border-zinc-600 { border-color: rgb(82,82,91) !important; }
+              `;
+              iframeDoc.head.appendChild(styleEl);
             }
+
             // Force spacing inside preview only
             iframe.contentWindow.document.body.style.padding = "32px 0";
           };

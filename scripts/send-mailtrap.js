@@ -11,16 +11,18 @@
  *   MAILTRAP_TO_NAME    — nombre destinatario por defecto (opcional)
  */
 
+import { buildIfNeeded } from "./build-helper.js";
 import {
+  applyHandlebars,
   c,
-  paint,
-  loadEnv,
-  prompt,
-  pickFromList,
   getBuiltTemplates,
+  getTemplateData,
+  loadEnv,
+  paint,
+  pickFromList,
+  prompt,
   readBuiltTemplate,
 } from "./utils.js";
-import { buildIfNeeded } from "./build-helper.js";
 
 // ─── Envío a Mailtrap ─────────────────────────────────────────────────────────
 
@@ -94,7 +96,11 @@ export async function sendTemplate(rl) {
 
   console.log(paint(c.bold, "  Templates disponibles:\n"));
   const chosen = await pickFromList(rl, templates);
-  const html = readBuiltTemplate(chosen);
+  let html = readBuiltTemplate(chosen);
+
+  // Aplicar datos Handlebars desde data.json
+  const data = getTemplateData(chosen);
+  html = applyHandlebars(html, data);
 
   // 2. Datos del envío
   console.log();

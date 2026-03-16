@@ -11,17 +11,19 @@
  *   TEST_APPLE_TO       — destinatario por defecto para Apple Mail
  */
 
+import { buildIfNeeded } from "./build-helper.js";
+import { sendViaGmail } from "./gmail-transport.js";
 import {
+  applyHandlebars,
   c,
-  paint,
-  loadEnv,
-  prompt,
-  pickFromList,
   getBuiltTemplates,
+  getTemplateData,
+  loadEnv,
+  paint,
+  pickFromList,
+  prompt,
   readBuiltTemplate,
 } from "./utils.js";
-import { sendViaGmail } from "./gmail-transport.js";
-import { buildIfNeeded } from "./build-helper.js";
 
 // ─── Proveedores disponibles ──────────────────────────────────────────────────
 
@@ -98,7 +100,11 @@ export async function sendToInbox(rl) {
 
   console.log(paint(c.bold, "\n  Templates disponibles:\n"));
   const chosen = await pickFromList(rl, templates);
-  const html = readBuiltTemplate(chosen);
+  let html = readBuiltTemplate(chosen);
+
+  // Aplicar datos Handlebars desde data.json
+  const data = getTemplateData(chosen);
+  html = applyHandlebars(html, data);
 
   // 4. Remitente y asunto
   console.log();

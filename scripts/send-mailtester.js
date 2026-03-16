@@ -8,17 +8,19 @@
  *   MAILTESTER_TO_EMAIL — dirección de mail-tester.com por defecto (opcional)
  */
 
+import { buildIfNeeded } from "./build-helper.js";
+import { sendViaGmail } from "./gmail-transport.js";
 import {
+  applyHandlebars,
   c,
-  paint,
-  loadEnv,
-  prompt,
-  pickFromList,
   getBuiltTemplates,
+  getTemplateData,
+  loadEnv,
+  paint,
+  pickFromList,
+  prompt,
   readBuiltTemplate,
 } from "./utils.js";
-import { sendViaGmail } from "./gmail-transport.js";
-import { buildIfNeeded } from "./build-helper.js";
 
 // ─── Flujo principal (exportado para el CLI) ──────────────────────────────────
 
@@ -66,7 +68,11 @@ export async function sendToMailtester(rl) {
 
   console.log(paint(c.bold, "\n  Templates disponibles:\n"));
   const chosen = await pickFromList(rl, templates);
-  const html = readBuiltTemplate(chosen);
+  let html = readBuiltTemplate(chosen);
+
+  // Aplicar datos Handlebars desde data.json
+  const data = getTemplateData(chosen);
+  html = applyHandlebars(html, data);
 
   // 3. Remitente y asunto
   console.log();

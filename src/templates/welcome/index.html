@@ -6,24 +6,28 @@ titleTemplate: "Email de Bienvenida"
 
 <x-main>
   <!-- Saludo principal -->
-  <h1 class="text-2xl font-bold mb-4">¡Hola, {{ first_name }}! 👋</h1>
-  <p class="text-base text-zinc-800">
+  <h1 class="text-2xl font-bold mb-4 text-zinc-800 dark:text-zinc-100">
+    ¡Hola, {{ first_name }}! 👋
+  </h1>
+  <p class="text-base text-zinc-800 dark:text-zinc-300">
     Bienvenido a <strong>Mi Empresa</strong>. Estamos muy contentos de tenerte a bordo. Tu cuenta ya
     está lista y puedes empezar a usarla de inmediato.
   </p>
 
   <!-- Divisor -->
-  <hr class="border-none border-t border-zinc-200 my-7" />
+  <hr class="border-none border-t border-zinc-200 dark:border-zinc-600 my-7" />
 
   <!-- Features / Próximos pasos -->
-  <p class="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-4">¿Por dónde empezar?</p>
+  <p class="text-xs font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-4">
+    ¿Por dónde empezar?
+  </p>
 
   <table cellpadding="0" cellspacing="0" width="100%" role="none">
     <tr>
       <td width="32" valign="top" class="pb-4 text-xl">✅</td>
       <td valign="top" class="pb-4 pl-2">
-        <p class="m-0 font-bold text-zinc-900 text-sm">Completá tu perfil</p>
-        <p class="mt-1 text-sm text-zinc-500">
+        <p class="m-0 font-bold text-zinc-900 dark:text-zinc-200 text-sm">Completá tu perfil</p>
+        <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
           Agregá tu foto y datos para personalizar tu experiencia.
         </p>
       </td>
@@ -31,21 +35,27 @@ titleTemplate: "Email de Bienvenida"
     <tr>
       <td width="32" valign="top" class="pb-4 text-xl">🔔</td>
       <td valign="top" class="pb-4 pl-2">
-        <p class="m-0 font-bold text-zinc-900 text-sm">Configurá tus notificaciones</p>
-        <p class="mt-1 text-sm text-zinc-500">Elegí cómo y cuándo querés recibir avisos.</p>
+        <p class="m-0 font-bold text-zinc-900 dark:text-zinc-200 text-sm">
+          Configurá tus notificaciones
+        </p>
+        <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+          Elegí cómo y cuándo querés recibir avisos.
+        </p>
       </td>
     </tr>
     <tr>
       <td width="32" valign="top" class="text-xl">🚀</td>
       <td valign="top" class="pl-2">
-        <p class="m-0 font-bold text-zinc-900 text-sm">Explorá el panel</p>
-        <p class="mt-1 text-sm text-zinc-500">Conocé todas las funciones disponibles para vos.</p>
+        <p class="m-0 font-bold text-zinc-900 dark:text-zinc-200 text-sm">Explorá el panel</p>
+        <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+          Conocé todas las funciones disponibles para vos.
+        </p>
       </td>
     </tr>
   </table>
 
   <!-- Divisor -->
-  <hr class="border-none border-t border-zinc-200 my-7" />
+  <hr class="border-none border-t border-zinc-200 dark:border-zinc-600 my-7" />
 
   <!-- CTA -->
   <p class="text-center mb-6">
@@ -53,8 +63,10 @@ titleTemplate: "Email de Bienvenida"
   </p>
 
   <!-- Sign off -->
-  <p class="text-base text-zinc-800">
+  <p class="text-base text-zinc-800 dark:text-zinc-300">
     Si tenés alguna pregunta no dudes en responder este email. Estamos aquí para ayudarte.
   </p>
-  <p class="text-base text-zinc-800">Un saludo,<br /><strong>El equipo de Mi Empresa</strong></p>
+  <p class="text-base text-zinc-800 dark:text-zinc-300">
+    Un saludo,<br /><strong>El equipo de Mi Empresa</strong>
+  </p>
 </x-main>

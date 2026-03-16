@@ -96,5 +96,8 @@
   },
   "resolutions": {
     "css-select": "4.3.0"
+  },
+  "dependencies": {
+    "handlebars": "^4.7.8"
   }
 }
