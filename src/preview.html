@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Email Preview & Edit</title>
     <!-- Use the same Tailwind output -->
-    <link rel="stylesheet" href="/index.css" />
+    <link href="/css/tailwind.css" rel="stylesheet" />
 
     <!-- Vanilla JSONEditor (Svelte JSONEditor) -->
     <link
@@ -69,6 +69,26 @@
     </script>
   </head>
   <body class="font-sans text-slate-800 bg-slate-50 dark:bg-slate-900 dark:text-slate-200">
+    <!-- Aviso de modo oscuro -->
+    <div
+      id="dark-mode-warning"
+      style="
+        display: none;
+        position: fixed;
+        top: 16px;
+        right: 16px;
+        z-index: 9999;
+        background: #f87171;
+        color: #fff;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-weight: bold;
+        box-shadow: 0 2px 8px #0002;
+      "
+    >
+      ⚠️ El modo oscuro no se refleja en el preview. Puede ser por caché, emulación o clases
+      Tailwind.
+    </div>
     <!-- Panel Izquierdo: Editor -->
     <div id="left-panel" class="dark:border-slate-700 dark:bg-slate-900">
       <!-- Header del Editor -->
@@ -174,31 +194,25 @@
       iframe.src = `/templates/${templateName}/index.html`;
       iframe.onload = () => {
         const isTemplateDark = localStorage.getItem("template-theme") === "dark";
-
+        const iframeWin = iframe.contentWindow;
+        const iframeDoc = iframeWin.document;
+        // Forzar clase 'dark' en el <html> del iframe
         if (isTemplateDark) {
-          // Inyectar CSS para simular dark mode
-          const iframeDoc = iframe.contentWindow.document;
-          const styleEl = iframeDoc.createElement("style");
-          styleEl.id = "dark-mode-override";
-          styleEl.textContent = `
-            :root { color-scheme: dark !important; }
-            .bg-zinc-100, .dark\\:bg-zinc-900 { background-color: rgb(24,24,27) !important; }
-            .dark\\:bg-slate-950 { background-color: rgb(2,6,23) !important; }
-            .dark\\:bg-zinc-800 { background-color: rgb(39,39,42) !important; }
-            .text-zinc-800, .dark\\:text-zinc-100 { color: rgb(244,244,245) !important; }
-            .dark\\:text-zinc-200 { color: rgb(228,228,231) !important; }
-            .dark\\:text-zinc-300 { color: rgb(212,212,216) !important; }
-            .dark\\:text-zinc-400 { color: rgb(161,161,170) !important; }
-            .dark\\:text-zinc-500 { color: rgb(113,113,122) !important; }
-            .dark\\:border-zinc-600 { border-color: rgb(82,82,91) !important; }
-            .text-zinc-500, .text-zinc-400 { color: rgb(161,161,170) !important; }
-            .border-zinc-200, .dark\\:border-zinc-600 { border-color: rgb(82,82,91) !important; }
-          `;
-          iframeDoc.head.appendChild(styleEl);
+          iframeDoc.documentElement.classList.add("dark");
+        } else {
+          iframeDoc.documentElement.classList.remove("dark");
         }
-
-        // Force spacing inside preview only
-        iframe.contentWindow.document.body.style.padding = "32px 0";
+        // Espaciado solo en preview
+        iframeDoc.body.style.padding = "32px 0";
+        // Comprobar si el modo oscuro se refleja
+        setTimeout(() => {
+          const warning = document.getElementById("dark-mode-warning");
+          if (isTemplateDark && !iframeDoc.documentElement.classList.contains("dark")) {
+            warning.style.display = "block";
+          } else {
+            warning.style.display = "none";
+          }
+        }, 600);
       };
 
       let editor = null;
@@ -258,36 +272,12 @@
         localStorage.setItem("template-theme", newTheme);
         updateTemplateThemeUI();
 
-        const iframeDoc = iframe.contentWindow.document;
-        let styleEl = iframeDoc.getElementById("dark-mode-override");
-
+        const iframeWin = iframe.contentWindow;
+        const iframeDoc = iframeWin.document;
         if (newTheme === "dark") {
-          // Inyectar CSS que force dark mode mediante override
-          if (!styleEl) {
-            styleEl = iframeDoc.createElement("style");
-            styleEl.id = "dark-mode-override";
-            iframeDoc.head.appendChild(styleEl);
-          }
-
-          // Estilos que overridean las clases lighten forzando dark
-          styleEl.textContent = `
-            :root { color-scheme: dark !important; }
-            .bg-zinc-100, .dark\\:bg-zinc-900 { background-color: rgb(24,24,27) !important; }
-            .dark\\:bg-slate-950 { background-color: rgb(2,6,23) !important; }
-            .dark\\:bg-zinc-800 { background-color: rgb(39,39,42) !important; }
-            .text-zinc-800, .dark\\:text-zinc-100 { color: rgb(244,244,245) !important; }
-            .dark\\:text-zinc-200 { color: rgb(228,228,231) !important; }
-            .dark\\:text-zinc-300 { color: rgb(212,212,216) !important; }
-            .dark\\:text-zinc-400 { color: rgb(161,161,170) !important; }
-            .dark\\:text-zinc-500 { color: rgb(113,113,122) !important; }
-            .dark\\:border-zinc-600 { border-color: rgb(82,82,91) !important; }
-            .text-zinc-500, .text-zinc-400 { color: rgb(161,161,170) !important; }
-            .border-zinc-200, .dark\\:border-zinc-600 { border-color: rgb(82,82,91) !important; }
-          `;
+          iframeDoc.documentElement.classList.add("dark");
         } else {
-          if (styleEl) {
-            styleEl.remove();
-          }
+          iframeDoc.documentElement.classList.remove("dark");
         }
       });
 
@@ -303,30 +293,34 @@
         doc.write(htmlContent);
         doc.close();
 
-        // Aplicar tema guardado medio para simular dark mode
+        // Simular dark mode con matchMedia hack
         const isTemplateDark = localStorage.getItem("template-theme") === "dark";
-
         if (isTemplateDark) {
-          const styleEl = doc.createElement("style");
-          styleEl.id = "dark-mode-override";
-          styleEl.textContent = `
-            :root { color-scheme: dark !important; }
-            .bg-zinc-100, .dark\\:bg-zinc-900 { background-color: rgb(24,24,27) !important; }
-            .dark\\:bg-slate-950 { background-color: rgb(2,6,23) !important; }
-            .dark\\:bg-zinc-800 { background-color: rgb(39,39,42) !important; }
-            .text-zinc-800, .dark\\:text-zinc-100 { color: rgb(244,244,245) !important; }
-            .dark\\:text-zinc-200 { color: rgb(228,228,231) !important; }
-            .dark\\:text-zinc-300 { color: rgb(212,212,216) !important; }
-            .dark\\:text-zinc-400 { color: rgb(161,161,170) !important; }
-            .dark\\:text-zinc-500 { color: rgb(113,113,122) !important; }
-            .dark\\:border-zinc-600 { border-color: rgb(82,82,91) !important; }
-            .text-zinc-500, .text-zinc-400 { color: rgb(161,161,170) !important; }
-            .border-zinc-200, .dark\\:border-zinc-600 { border-color: rgb(82,82,91) !important; }
+          const script = doc.createElement("script");
+          script.id = "matchmedia-dark-hack";
+          script.textContent = `
+            (() => {
+              const originalMatchMedia = window.matchMedia;
+              window.matchMedia = function(query) {
+                if (query === '(prefers-color-scheme: dark)') {
+                  return {
+                    matches: true,
+                    media: query,
+                    onchange: null,
+                    addListener: () => {},
+                    removeListener: () => {},
+                    addEventListener: () => {},
+                    removeEventListener: () => {},
+                    dispatchEvent: () => false
+                  };
+                }
+                return originalMatchMedia.call(window, query);
+              };
+            })();
           `;
-          doc.head.appendChild(styleEl);
+          doc.head.appendChild(script);
         }
-
-        // Force spacing inside preview only
+        // Espaciado solo en preview
         doc.body.style.padding = "32px 0";
 
         // Ejecutar event listeners que el iframe o Maizzle pudieran necesitar si tuvieran
@@ -435,17 +429,6 @@
               styleEl.id = "dark-mode-override";
               styleEl.textContent = `
                 :root { color-scheme: dark !important; }
-                .bg-zinc-100, .dark\\:bg-zinc-900 { background-color: rgb(24,24,27) !important; }
-                .dark\\:bg-slate-950 { background-color: rgb(2,6,23) !important; }
-                .dark\\:bg-zinc-800 { background-color: rgb(39,39,42) !important; }
-                .text-zinc-800, .dark\\:text-zinc-100 { color: rgb(244,244,245) !important; }
-                .dark\\:text-zinc-200 { color: rgb(228,228,231) !important; }
-                .dark\\:text-zinc-300 { color: rgb(212,212,216) !important; }
-                .dark\\:text-zinc-400 { color: rgb(161,161,170) !important; }
-                .dark\\:text-zinc-500 { color: rgb(113,113,122) !important; }
-                .dark\\:border-zinc-600 { border-color: rgb(82,82,91) !important; }
-                .text-zinc-500, .text-zinc-400 { color: rgb(161,161,170) !important; }
-                .border-zinc-200, .dark\\:border-zinc-600 { border-color: rgb(82,82,91) !important; }
               `;
               iframeDoc.head.appendChild(styleEl);
             }

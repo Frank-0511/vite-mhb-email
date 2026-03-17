@@ -170,7 +170,7 @@ export function getTemplateData(templateName) {
     const dataPath = path.resolve(process.cwd(), "src/templates", baseName, "data.json");
     const content = fs.readFileSync(dataPath, "utf-8");
     return JSON.parse(content);
-  } catch (err) {
+  } catch {
     // Silenciosamente ignorar si no existe el archivo
     return {};
   }
@@ -187,7 +187,7 @@ export function applyHandlebars(html, data) {
   try {
     const template = Handlebars.compile(html);
     return template(data);
-  } catch (err) {
+  } catch {
     // Si hay error, devolver el HTML sin procesar
     return html;
   }

@@ -36,7 +36,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "yarn lint && maizzle build",
+    "build": "yarn lint && node scripts/build.js",
     "cli": "node scripts/cli.js",
     "lint": "yarn lint:html && yarn lint:js && yarn lint:md && yarn lint:json",
     "lint:html": "htmlhint \"src/**/*.html\"",

@@ -1,5 +1,6 @@
 /* src/css/tailwind.css */
-@config "../../tailwind.email.config.js";
+/* Para Vite/preview: darkMode: "class" */
+@config "../../tailwind.config.js";
 
 @tailwind base;
 @tailwind components;

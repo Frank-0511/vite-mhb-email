@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es" xmlns:v="urn:schemas-microsoft-com:vml">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="supported-color-schemes" content="dark" />
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+    </style>
+    <style>
+      @import "src/css/tailwind.css";
+    </style>
+  </head>
+
+  <body class="bg-zinc-900 m-0 p-0">
+    <div class="w-full bg-zinc-900">
+      <table class="w-full max-w-2xl mx-auto" cellpadding="0" cellspacing="0" role="none">
+        <!-- HEADER -->
+        <tr>
+          <td class="bg-slate-950 px-8 py-6 text-center rounded-t-lg">
+            <a
+              href="[[ page.logoUrl || '#' ]]"
+              class="!text-white text-2xl font-bold no-underline tracking-tight inline-block"
+            >
+              🚀 Mi Empresa
+            </a>
+          </td>
+        </tr>
+
+        <!-- CONTENT (slot) -->
+        <tr>
+          <td class="bg-zinc-800 px-8 py-10 text-zinc-100">
+            <yield />
+          </td>
+        </tr>
+
+        <!-- FOOTER -->
+        <tr>
+          <td class="bg-slate-950 px-8 py-6 text-center rounded-b-lg">
+            <p class="mb-2 text-xs text-zinc-400 leading-snug">
+              Mi Empresa · Calle Ejemplo 123, Ciudad, País
+            </p>
+            <hr class="border-none border-t border-zinc-600 my-4" />
+            <p class="mb-0 text-xs text-zinc-400 leading-snug">
+              Recibiste este email porque te registraste en nuestros servicios.<br />
+              <a href="{{ unsubscribe_url }}" class="text-zinc-500 underline"
+                >Cancelar suscripción</a
+              >
+            </p>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

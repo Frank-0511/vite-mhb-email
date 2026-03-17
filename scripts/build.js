@@ -1,0 +1,26 @@
+#!/usr/bin/env node
+import { execSync } from "child_process";
+import { restorePreviewCss, switchToEmailCss } from "./css-switcher.js";
+
+async function build() {
+  try {
+    // Cambiar a CSS de email
+    await switchToEmailCss();
+
+    // Ejecutar el build de Maizzle
+    console.log("\n📦 Building with Maizzle...\n");
+    execSync("maizzle build", { stdio: "inherit" });
+
+    // Restaurar CSS de preview
+    await restorePreviewCss();
+
+    console.log("\n✅ Build completed successfully!\n");
+  } catch (err) {
+    // Asegurar que se restore el CSS incluso si hay error
+    await restorePreviewCss();
+    console.error("\n❌ Build failed:", err.message);
+    process.exit(1);
+  }
+}
+
+build();

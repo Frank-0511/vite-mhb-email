@@ -4,61 +4,49 @@ previewText: "Ya podés acceder a tu cuenta con tus credenciales."
 titleTemplate: "Cuenta Creada"
 ---
 
-<x-main>
+<x-main-dark>
   <!-- Ícono / Ilustración -->
   <p class="text-center text-5xl m-0 mb-4">🎉</p>
 
   <!-- Título -->
-  <h1 class="text-center dark:text-zinc-100">¡Tu cuenta está lista, {{ first_name }}!</h1>
+  <h1 class="text-center text-zinc-100">¡Tu cuenta está lista, {{ first_name }}!</h1>
 
-  <p class="text-center dark:text-zinc-300">
+  <p class="text-center text-zinc-300">
     Tu cuenta en <strong>Mi Empresa</strong> fue creada exitosamente. A continuación encontrás tus
     datos de acceso.
   </p>
 
   <!-- Divisor -->
-  <hr class="border-none border-t border-zinc-200 dark:border-zinc-600 my-7" />
+  <hr class="border-none border-t border-zinc-600 my-7" />
 
   <!-- Datos de acceso -->
-  <p class="text-xs font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500 mb-4">
-    Tus credenciales
-  </p>
+  <p class="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">Tus credenciales</p>
 
   <table cellpadding="0" cellspacing="0" width="100%" role="none">
     <tr>
-      <td
-        class="p-3.5 bg-zinc-100 dark:bg-zinc-700 rounded-t-md border-b border-zinc-200 dark:border-zinc-600"
-      >
-        <p
-          class="m-0 text-xs text-zinc-400 dark:text-zinc-400 font-semibold uppercase tracking-wider"
-        >
-          Email
-        </p>
-        <p class="m-0 mt-1 text-sm font-semibold text-zinc-900 dark:text-zinc-100">{{ email }}</p>
+      <td class="p-3.5 bg-zinc-700 rounded-t-md border-b border-zinc-600">
+        <p class="m-0 text-xs text-zinc-400 font-semibold uppercase tracking-wider">Email</p>
+        <p class="m-0 mt-1 text-sm font-semibold text-zinc-100">{{ email }}</p>
       </td>
     </tr>
     <tr>
-      <td class="p-3.5 bg-zinc-100 dark:bg-zinc-700 rounded-b-md">
-        <p
-          class="m-0 text-xs text-zinc-400 dark:text-zinc-400 font-semibold uppercase tracking-wider"
-        >
+      <td class="p-3.5 bg-zinc-700 rounded-b-md">
+        <p class="m-0 text-xs text-zinc-400 font-semibold uppercase tracking-wider">
           Contraseña temporal
         </p>
-        <p
-          class="m-0 mt-1 text-sm font-semibold text-zinc-900 dark:text-zinc-100 font-mono tracking-widest"
-        >
+        <p class="m-0 mt-1 text-sm font-semibold text-zinc-100 font-mono tracking-widest">
           {{ temp_password }}
         </p>
       </td>
     </tr>
   </table>
 
-  <p class="text-xs text-zinc-400 dark:text-zinc-500 mt-2.5">
+  <p class="text-xs text-zinc-500 mt-2.5">
     ⚠️ Por seguridad, te recomendamos cambiar tu contraseña al ingresar por primera vez.
   </p>
 
   <!-- Divisor -->
-  <hr class="border-none border-t border-zinc-200 dark:border-zinc-600 my-7" />
+  <hr class="border-none border-t border-zinc-600 my-7" />
 
   <!-- CTA -->
   <p class="text-center mb-6">
@@ -66,11 +54,9 @@ titleTemplate: "Cuenta Creada"
   </p>
 
   <!-- Sign off -->
-  <p class="text-base text-zinc-800 dark:text-zinc-300">
+  <p class="text-base text-zinc-300">
     Si no solicitaste esta cuenta o creés que es un error, respondé este email y te ayudamos de
     inmediato.
   </p>
-  <p class="text-base text-zinc-800 dark:text-zinc-300">
-    Un saludo,<br /><strong>El equipo de Mi Empresa</strong>
-  </p>
-</x-main>
+  <p class="text-base text-zinc-300">Un saludo,<br /><strong>El equipo de Mi Empresa</strong></p>
+</x-main-dark>

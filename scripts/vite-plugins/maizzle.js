@@ -4,8 +4,20 @@ import Handlebars from "handlebars";
 import { resolve } from "path";
 
 // Exportamos el helper por si otro script lo necesita, aunque principalmente se usa aquí
-export async function compileTemplate(filePath, data, rootDir) {
-  const html = fs.readFileSync(filePath, "utf8");
+export async function compileTemplate(filePath, data, rootDir, isPreview = true) {
+  let html = fs.readFileSync(filePath, "utf8");
+
+  // En preview (Vite): asegurar que se usa tailwind.config.js (darkMode: "class")
+  // En build (Maizzle): reemplazar con tailwind.email.config.js (darkMode: "media")
+  if (!isPreview) {
+    // Reemplazar src/css/tailwind.css con src/css/tailwind.email.css para el build
+    html = html.replace(
+      /@import "src\/css\/tailwind\.css"/g,
+      '@import "src/css/tailwind.email.css"',
+    );
+  }
+  // En preview, mantenemos src/css/tailwind.css que usa tailwind.config.js
+
   const { html: maizzleHtml } = await render(html, {
     useTransformers: false,
     components: {
