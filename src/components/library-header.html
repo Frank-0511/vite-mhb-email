@@ -1,14 +1,14 @@
 <!-- Library Header Component -->
 <header class="library-header">
   <div class="library-header__left">
-    <a href="/" class="library-header__back-link">
-      <span class="library-header__back-icon">←</span>
+    <a href="/" class="library-header__back-link flex items-center gap-2">
+      <i data-lucide="arrow-left" class="w-5 h-5"></i>
       <span>Volver al Dashboard</span>
     </a>
-    <h1 class="library-header__title">📚 Component Library</h1>
+    <h1 class="library-header__title flex items-center gap-2">
+      <i data-lucide="book-open" class="w-6 h-6"></i>
+      <span>Component Library</span>
+    </h1>
   </div>
-  <button id="theme-toggle" class="library-header__theme-toggle" aria-label="Toggle theme">
-    <span id="theme-icon-light" class="library-header__theme-icon" aria-label="Light mode">☀️</span>
-    <span id="theme-icon-dark" class="library-header__theme-icon" aria-label="Dark mode">🌙</span>
-  </button>
+  <theme-toggle></theme-toggle>
 </header>

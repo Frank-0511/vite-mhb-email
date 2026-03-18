@@ -19,7 +19,7 @@ export function getTemplates(rootDir) {
 export const dashboardPlugin = (rootDir) => ({
   name: "vite-dashboard-context",
   configureServer(server) {
-    server.middlewares.use(async (req, res, next) => {
+    server.middlewares.use((req, res, next) => {
       // API endpoint: GET /api/template-sizes
       if (req.url?.startsWith("/api/template-sizes")) {
         const templates = getTemplates(rootDir);
@@ -68,8 +68,12 @@ export const dashboardPlugin = (rootDir) => ({
         <div class="p-6 space-y-4">
           <!-- Title -->
           <div>
-            <h2 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">
-              📧 ${title}
+            <h2 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-500 dark:text-amber-400">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+              ${title}
             </h2>
             <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">/templates/${name}/</p>
           </div>
@@ -137,7 +141,7 @@ export const dashboardPlugin = (rootDir) => ({
           }
         }
         loadTemplateSizes();
-      <\/script>`;
+      </script>`;
 
       return html
         .replace(/(<div[^>]*id="template-list"[^>]*>)\s*<\/div>/s, `$1${cards}</div>`)

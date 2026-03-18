@@ -4,9 +4,44 @@ previewText: "Ya podés acceder a tu cuenta con tus credenciales."
 titleTemplate: "Cuenta Creada"
 ---
 
+<style>
+  .icon-light {
+    display: block !important;
+  }
+  .icon-dark {
+    display: none !important;
+  }
+
+  /* Para clientes de correo que respetan prefers-color-scheme (SOLO si no tiene clase dark) */
+  @media (prefers-color-scheme: dark) {
+    html:not(.dark) .icon-light {
+      display: none !important;
+    }
+    html:not(.dark) .icon-dark {
+      display: block !important;
+    }
+  }
+
+  /* Para desarrollo local con clase .dark en el html */
+  html.dark .icon-light {
+    display: none !important;
+  }
+  html.dark .icon-dark {
+    display: block !important;
+  }
+</style>
+
 <x-main-dark>
   <!-- Ícono / Ilustración -->
-  <p class="text-center text-5xl m-0 mb-4">🎉</p>
+  <p class="text-center text-5xl m-0 mb-4">
+    <img
+      src="https://api.iconify.design/lucide:party-popper.svg"
+      alt="Party Popper"
+      width="48"
+      height="48"
+      style="display: inline-block; color: #fbbf24"
+    />
+  </p>
 
   <!-- Título -->
   <h1 class="text-center text-zinc-100">¡Tu cuenta está lista, {{ first_name }}!</h1>
@@ -41,8 +76,15 @@ titleTemplate: "Cuenta Creada"
     </tr>
   </table>
 
-  <p class="text-xs text-zinc-500 mt-2.5">
-    ⚠️ Por seguridad, te recomendamos cambiar tu contraseña al ingresar por primera vez.
+  <p class="text-xs text-zinc-500 mt-2.5 flex items-start gap-2">
+    <img
+      src="https://api.iconify.design/lucide:alert-triangle.svg"
+      alt="Warning"
+      width="16"
+      height="16"
+      style="flex-shrink: 0; margin-top: 0.125rem; color: #ef4444; display: block"
+    />
+    <span>Por seguridad, te recomendamos cambiar tu contraseña al ingresar por primera vez.</span>
   </p>
 
   <!-- Divisor -->

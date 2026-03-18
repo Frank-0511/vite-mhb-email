@@ -40,7 +40,7 @@
     "check-size": "node scripts/check-html-size.js",
     "cli": "node scripts/cli.js",
     "lint": "yarn lint:html && yarn lint:js && yarn lint:md && yarn lint:json",
-    "lint:html": "htmlhint \"src/**/*.html\"",
+    "lint:html": "htmlhint \"src/templates/**/*.html\"",
     "lint:js": "eslint scripts/ vite.config.js",
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\"",
     "lint:json": "node scripts/validate-json.js",

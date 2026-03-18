@@ -11,6 +11,21 @@
       :root {
         color-scheme: light dark;
       }
+
+      .icon-light {
+        display: block !important;
+      }
+      .icon-dark {
+        display: none !important;
+      }
+
+      /* Para desarrollo local con clase .dark en el html (SIEMPRE tiene prioridad) */
+      html.dark .icon-light {
+        display: none !important;
+      }
+      html.dark .icon-dark {
+        display: block !important;
+      }
     </style>
     <style>
       @import "src/css/tailwind.css";
@@ -25,9 +40,16 @@
           <td class="bg-slate-800 dark:bg-slate-950 px-8 py-6 text-center rounded-t-lg">
             <a
               href="[[ page.logoUrl || '#' ]]"
-              class="!text-white text-2xl font-bold no-underline tracking-tight inline-block"
+              class="!text-white text-2xl font-bold no-underline tracking-tight inline-block flex items-center gap-2"
             >
-              🚀 Mi Empresa
+              <img
+                src="https://api.iconify.design/lucide:rocket.svg?color=%23e5e7eb"
+                alt="Rocket"
+                width="24"
+                height="24"
+                style="display: inline-block"
+              />
+              <span>Mi Empresa</span>
             </a>
           </td>
         </tr>

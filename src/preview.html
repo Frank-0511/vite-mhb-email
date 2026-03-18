@@ -93,29 +93,24 @@
     <div id="left-panel" class="dark:border-slate-700 dark:bg-slate-900">
       <!-- Header del Editor -->
       <div
-        class="px-6 py-5 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 flex justify-between items-end"
+        class="px-6 py-5 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 flex justify-between items-center"
       >
-        <div>
+        <div class="flex items-center gap-3">
           <a
             href="/"
-            class="text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 text-sm font-semibold mb-2 inline-flex items-center gap-1 transition-colors"
+            class="text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 font-semibold inline-flex items-center gap-2 transition-colors"
           >
-            &larr; Volver al Dashboard
+            <i data-lucide="arrow-left" class="w-5 h-5"></i>
           </a>
-          <h1 class="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
-            📝 <span id="template-name"></span>
+          <div class="h-5 border-l border-slate-300 dark:border-slate-600"></div>
+          <h1 class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2 m-0">
+            <i data-lucide="file-text" class="w-5 h-5"></i>
+            <span id="template-name"></span>
           </h1>
         </div>
 
         <!-- App Theme Toggle -->
-        <button
-          id="theme-toggle-app"
-          class="p-2 rounded-lg bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"
-          title="Toggle App Theme"
-        >
-          <span id="app-icon-light" class="hidden">🌞 App</span>
-          <span id="app-icon-dark" class="hidden">🌙 App</span>
-        </button>
+        <theme-toggle></theme-toggle>
       </div>
 
       <!-- Contenedor del Editor -->
@@ -129,7 +124,8 @@
           id="btn-save"
           class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-4 rounded-lg shadow-sm dark:shadow-lg flex justify-center items-center gap-2 transition-all"
         >
-          <span>💾 Guardar permanentemente en data.json</span>
+          <i data-lucide="save" class="w-5 h-5"></i>
+          <span>Guardar permanentemente en data.json</span>
         </button>
         <button
           id="btn-reset"
@@ -147,17 +143,19 @@
         class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 py-3 flex justify-between items-center shadow-sm dark:shadow-slate-900/50 z-10"
       >
         <div class="flex items-center gap-4">
-          <span class="font-medium text-slate-700 dark:text-slate-200 flex items-center gap-2"
-            >👁️ Vista previa en vivo</span
-          >
+          <span class="font-medium text-slate-700 dark:text-slate-200 flex items-center gap-2">
+            <i data-lucide="eye" class="w-4 h-4"></i>
+            <span>Vista previa en vivo</span>
+          </span>
           <!-- Template Theme Toggle -->
           <button
             id="theme-toggle-template"
             class="p-1 px-2 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-semibold flex items-center transition-colors border border-slate-200 dark:border-slate-700"
             title="Toggle Template Theme"
           >
-            <span id="template-icon-light" class="hidden">🌞 Template</span>
-            <span id="template-icon-dark" class="hidden">🌙 Template</span>
+            <i id="template-icon-light" data-lucide="sun" class="hidden w-4 h-4 mr-1"></i>
+            <i id="template-icon-dark" data-lucide="moon" class="hidden w-4 h-4 mr-1"></i>
+            <span>Template</span>
           </button>
         </div>
         <span id="sync-status" class="text-green-600 font-medium text-sm flex items-center gap-1">
@@ -172,6 +170,9 @@
         class="bg-white dark:bg-slate-900"
       ></iframe>
     </div>
+
+    <!-- Main App -->
+    <script type="module" src="/js/app.js"></script>
 
     <!-- Lógica de Reactividad y API -->
     <script type="module">
@@ -220,11 +221,7 @@
       let debounceTimer = null;
       let isFirstChange = true;
 
-      // Theme Management
-      const appToggleBtn = document.getElementById("theme-toggle-app");
-      const appIconLight = document.getElementById("app-icon-light");
-      const appIconDark = document.getElementById("app-icon-dark");
-
+      // Theme Management - App theme is handled by themeToggleComponent
       const templateToggleBtn = document.getElementById("theme-toggle-template");
       const templateIconLight = document.getElementById("template-icon-light");
       const templateIconDark = document.getElementById("template-icon-dark");
@@ -232,26 +229,18 @@
 
       function updateAppThemeUI() {
         const isDark = document.documentElement.classList.contains("dark");
-        if (isDark) {
-          appIconLight.classList.remove("hidden");
-          appIconDark.classList.add("hidden");
-          container.className = "jse-theme-dark";
-        } else {
-          appIconLight.classList.add("hidden");
-          appIconDark.classList.remove("hidden");
-          container.className = "jse-theme-default";
-        }
+        container.className = isDark ? "jse-theme-dark" : "jse-theme-default";
       }
 
       function updateTemplateThemeUI() {
         const isDark =
           localStorage.getItem("template-theme") === "dark" || !("template-theme" in localStorage);
         if (isDark) {
-          templateIconLight.classList.remove("hidden");
-          templateIconDark.classList.add("hidden");
-        } else {
           templateIconLight.classList.add("hidden");
           templateIconDark.classList.remove("hidden");
+        } else {
+          templateIconLight.classList.remove("hidden");
+          templateIconDark.classList.add("hidden");
         }
       }
 
@@ -259,12 +248,8 @@
       updateAppThemeUI();
       updateTemplateThemeUI();
 
-      appToggleBtn.addEventListener("click", () => {
-        document.documentElement.classList.toggle("dark");
-        const isDark = document.documentElement.classList.contains("dark");
-        localStorage.setItem("app-theme", isDark ? "dark" : "light");
-        updateAppThemeUI();
-      });
+      // Listen for theme changes from themeToggleComponent
+      window.addEventListener("theme-changed", updateAppThemeUI);
 
       templateToggleBtn.addEventListener("click", () => {
         const currentTheme = localStorage.getItem("template-theme") || "light";
@@ -459,7 +444,7 @@
 
         const originalText = btn.innerHTML;
 
-        btn.innerHTML = "<span>⏳ Guardando...</span>";
+        btn.innerHTML = `<i data-lucide="clock" class="w-5 h-5 inline"></i> <span>Guardando...</span>`;
         btn.disabled = true;
 
         fetch(`/api/data?template=${templateName}`, {
@@ -471,7 +456,7 @@
           .then((res) => {
             if (res.success) {
               initialData = parsedData; // Ahora este es el nuevo inicial
-              btn.innerHTML = "<span>✅ ¡Guardado con éxito!</span>";
+              btn.innerHTML = `<i data-lucide="check-circle" class="w-5 h-5 inline"></i> <span>¡Guardado con éxito!</span>`;
               btn.classList.replace("bg-sky-500", "bg-emerald-500");
               btn.classList.replace("hover:bg-sky-600", "hover:bg-emerald-600");
               setTimeout(() => {

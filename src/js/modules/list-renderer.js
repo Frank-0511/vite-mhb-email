@@ -1,4 +1,6 @@
 // List renderer module
+import { ArrowLeft, Box, Building, createIcons, Dna, List, Moon, Package, Sun } from "lucide";
+
 export const listRenderer = {
   container: null,
   onComponentSelect: null,
@@ -98,5 +100,19 @@ export const listRenderer = {
       groupDiv.appendChild(itemsContainer);
       this.container.appendChild(groupDiv);
     }
+
+    // Process any dynamically created Lucide icons
+    createIcons({
+      icons: {
+        Box,
+        Dna,
+        List,
+        Building,
+        ArrowLeft,
+        Sun,
+        Moon,
+        Package,
+      },
+    });
   },
 };

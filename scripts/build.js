@@ -2,6 +2,7 @@
 import { execSync } from "child_process";
 import { checkHtmlSize } from "./check-html-size.js";
 import { restorePreviewCss, switchToEmailCss } from "./css-switcher.js";
+import { injectEmailMediaQueries } from "./inject-email-media-queries.js";
 
 async function build() {
   try {
@@ -11,6 +12,10 @@ async function build() {
     // Ejecutar el build de Maizzle
     console.log("\n📦 Building with Maizzle...\n");
     execSync("maizzle build", { stdio: "inherit" });
+
+    // Inyectar media queries para dark mode en emails
+    console.log("\n🎨 Injecting dark mode media queries...\n");
+    injectEmailMediaQueries();
 
     // Restaurar CSS de preview
     await restorePreviewCss();

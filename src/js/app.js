@@ -1,22 +1,44 @@
 // Main application orchestrator
-import { ArrowLeft, createIcons, Dna, List, Moon, Package, Sun } from "lucide";
+import {
+  ArrowLeft,
+  BookOpen,
+  CheckCircle,
+  Clock,
+  createIcons,
+  Dna,
+  Eye,
+  FileText,
+  List,
+  Moon,
+  Package,
+  Rocket,
+  Save,
+  Sun,
+} from "lucide";
 import { componentsManager } from "./modules/components.js";
 import { formRenderer } from "./modules/form-renderer.js";
 import { listRenderer } from "./modules/list-renderer.js";
 import { previewManager } from "./modules/preview.js";
 import { search } from "./modules/search.js";
-import { theme } from "./modules/theme.js";
+import "./modules/theme-toggle-component.js"; // Web Component auto-registers
 
 // Initialize Lucide Icons
 const initLucideIcons = () => {
   createIcons({
     icons: {
       ArrowLeft,
+      BookOpen,
+      CheckCircle,
+      Clock,
+      Dna,
+      Eye,
+      FileText,
       List,
-      Sun,
       Moon,
       Package,
-      Dna,
+      Rocket,
+      Save,
+      Sun,
     },
   });
 };
@@ -35,14 +57,8 @@ class ComponentLibraryApp {
     // Initialize Lucide icons
     initLucideIcons();
 
-    // Initialize theme
-    theme.init(
-      document.getElementById("theme-toggle"),
-      document.getElementById("theme-icon-light"),
-      document.getElementById("theme-icon-dark"),
-    );
-
-    // Initialize preview manager
+    // Preview manager is initialized by themeToggleComponent
+    // which handles theme management across pages
     previewManager.init(
       document.getElementById("preview-iframe"),
       document.getElementById("empty-preview"),
