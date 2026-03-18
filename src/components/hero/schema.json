@@ -1,0 +1,46 @@
+{
+  "name": "Hero Section",
+  "description": "Sección hero con título, subtítulo y botón de CTA",
+  "component": "src/components/hero",
+  "variants": [
+    {
+      "id": "v1",
+      "name": "Sky Gradient",
+      "description": "Fondo con gradiente azul cielo"
+    },
+    {
+      "id": "v2",
+      "name": "Dark Modern",
+      "description": "Fondo oscuro con diseño moderno"
+    }
+  ],
+  "props": {
+    "title": {
+      "type": "string",
+      "default": "Bienvenido a Mi Empresa",
+      "label": "Título principal",
+      "required": true
+    },
+    "subtitle": {
+      "type": "string",
+      "default": "Descubre todo lo que podemos hacer por ti",
+      "label": "Subtítulo",
+      "required": true
+    },
+    "buttonText": {
+      "type": "string",
+      "default": "Explorar ahora",
+      "label": "Texto del botón"
+    },
+    "buttonUrl": {
+      "type": "string",
+      "default": "https://ejemplo.com",
+      "label": "URL del botón"
+    },
+    "showButton": {
+      "type": "boolean",
+      "default": true,
+      "label": "Mostrar botón CTA"
+    }
+  }
+}

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { execSync } from "child_process";
+import { checkHtmlSize } from "./check-html-size.js";
 import { restorePreviewCss, switchToEmailCss } from "./css-switcher.js";
 
 async function build() {
@@ -14,7 +15,10 @@ async function build() {
     // Restaurar CSS de preview
     await restorePreviewCss();
 
-    console.log("\n✅ Build completed successfully!\n");
+    // Chequear tamaño de archivos HTML
+    await checkHtmlSize();
+
+    console.log("✅ Build completed successfully!\n");
   } catch (err) {
     // Asegurar que se restore el CSS incluso si hay error
     await restorePreviewCss();
