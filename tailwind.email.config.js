@@ -1,5 +1,4 @@
 // tailwind.email.config.js
-console.log("TAILWIND CONFIG EMAIL LOADED");
 
 /** @type {import('tailwindcss').Config} */
 export default {

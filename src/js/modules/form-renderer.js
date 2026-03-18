@@ -1,4 +1,7 @@
 // Form renderer module
+const INPUT_BASE_CLASS =
+  "w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded text-sm font-inherit bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 transition-all focus:outline-none focus:border-cyan-500 dark:focus:border-cyan-400 focus:ring-4 focus:ring-cyan-500/10 dark:focus:ring-cyan-400/10";
+
 export const formRenderer = {
   container: null,
   placeholder: null,
@@ -59,8 +62,7 @@ export const formRenderer = {
         continue;
       } else if (prop.type === "select") {
         input = document.createElement("select");
-        input.className =
-          "w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded text-sm font-inherit bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 transition-all focus:outline-none focus:border-cyan-500 dark:focus:border-cyan-400 focus:ring-4 focus:ring-cyan-500/10 dark:focus:ring-cyan-400/10";
+        input.className = INPUT_BASE_CLASS;
         for (const option of prop.options || []) {
           const opt = document.createElement("option");
           opt.value = option.value;
@@ -77,26 +79,22 @@ export const formRenderer = {
         }
       } else if (prop.type === "textarea") {
         input = document.createElement("textarea");
-        input.className =
-          "w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded text-sm font-inherit bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 transition-all focus:outline-none focus:border-cyan-500 dark:focus:border-cyan-400 focus:ring-4 focus:ring-cyan-500/10 dark:focus:ring-cyan-400/10 resize-vertical min-h-24";
+        input.className = INPUT_BASE_CLASS + " resize-vertical min-h-24";
         input.value = formData[key] || prop.default;
       } else if (prop.type === "number") {
         input = document.createElement("input");
         input.type = "number";
-        input.className =
-          "w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded text-sm font-inherit bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 transition-all focus:outline-none focus:border-cyan-500 dark:focus:border-cyan-400 focus:ring-4 focus:ring-cyan-500/10 dark:focus:ring-cyan-400/10";
+        input.className = INPUT_BASE_CLASS;
         input.value = formData[key] || prop.default;
       } else if (prop.type === "date") {
         input = document.createElement("input");
         input.type = "date";
-        input.className =
-          "w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded text-sm font-inherit bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 transition-all focus:outline-none focus:border-cyan-500 dark:focus:border-cyan-400 focus:ring-4 focus:ring-cyan-500/10 dark:focus:ring-cyan-400/10";
+        input.className = INPUT_BASE_CLASS;
         input.value = formData[key] || prop.default;
       } else {
         input = document.createElement("input");
         input.type = "text";
-        input.className =
-          "w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded text-sm font-inherit bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 transition-all focus:outline-none focus:border-cyan-500 dark:focus:border-cyan-400 focus:ring-4 focus:ring-cyan-500/10 dark:focus:ring-cyan-400/10";
+        input.className = INPUT_BASE_CLASS;
         input.placeholder = prop.default;
         input.value = formData[key] || prop.default;
       }
