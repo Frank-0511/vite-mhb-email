@@ -1,7 +1,7 @@
 import { render } from "@maizzle/framework";
 import fs from "fs-extra";
 import Handlebars from "handlebars";
-import { resolve } from "path";
+import { resolve } from "node:path";
 
 /**
  * Compila una plantilla HTML con Maizzle y Handlebars

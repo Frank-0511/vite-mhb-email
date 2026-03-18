@@ -1,6 +1,6 @@
 import fs from "fs-extra";
 import { globSync } from "glob";
-import { resolve } from "path";
+import { resolve } from "node:path";
 
 // Build the template list for the dashboard
 export function getTemplates(rootDir) {

@@ -40,7 +40,6 @@
       }
     </style>
     <script>
-      // Prevent FOUC by applying theme immediately
       if (localStorage.getItem("app-theme") === "dark" || !("app-theme" in localStorage)) {
         document.documentElement.classList.add("dark");
       } else {

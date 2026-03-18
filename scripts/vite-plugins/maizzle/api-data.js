@@ -1,5 +1,5 @@
 import fs from "fs-extra";
-import { resolve } from "path";
+import { resolve } from "node:path";
 
 /**
  * Maneja las rutas /api/data para GET y POST

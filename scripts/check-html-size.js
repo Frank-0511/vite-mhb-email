@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import fs from "fs-extra";
 import { globSync } from "glob";
-import { resolve } from "path";
+import { resolve } from "node:path";
 
 const rootDir = process.cwd();
 const GMAIL_LIMIT = 102 * 1024; // 102KB

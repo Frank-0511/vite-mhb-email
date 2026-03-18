@@ -1,5 +1,5 @@
 // Main application orchestrator
-import { ArrowLeft, Box, Building, createIcons, Dna, List, Moon, Package, Sun } from "lucide";
+import { ArrowLeft, createIcons, Dna, List, Moon, Package, Sun } from "lucide";
 import { componentsManager } from "./modules/components.js";
 import { formRenderer } from "./modules/form-renderer.js";
 import { listRenderer } from "./modules/list-renderer.js";
@@ -16,8 +16,6 @@ const initLucideIcons = () => {
       Sun,
       Moon,
       Package,
-      Box,
-      Building,
       Dna,
     },
   });
@@ -29,6 +27,8 @@ class ComponentLibraryApp {
     this.currentVariant = null;
     this.formData = {};
     this.allComponents = [];
+    this.STORAGE_KEY = "selectedComponentId";
+    this.updatePreviewTimeout = null;
   }
 
   async init() {
@@ -74,6 +74,15 @@ class ComponentLibraryApp {
 
     // Re-render icons after DOM update
     initLucideIcons();
+
+    // Restore previously selected component if exists
+    const savedComponentId = localStorage.getItem(this.STORAGE_KEY);
+    if (savedComponentId) {
+      const savedComponent = this.allComponents.find((c) => (c.id || c.name) === savedComponentId);
+      if (savedComponent) {
+        this.selectComponent(savedComponent);
+      }
+    }
   }
 
   async selectComponent(comp) {
@@ -82,6 +91,9 @@ class ComponentLibraryApp {
     const fullSchema = await componentsManager.loadFull(componentId);
     this.currentComponent = fullSchema || comp;
     this.currentComponent._id = componentId;
+
+    // Save selection to localStorage
+    localStorage.setItem(this.STORAGE_KEY, componentId);
 
     // Initialize variant
     if (this.currentComponent.variants && this.currentComponent.variants.length > 0) {
@@ -102,16 +114,46 @@ class ComponentLibraryApp {
     // Re-render icons after DOM update
     initLucideIcons();
 
-    // Show preview and render
+    // Show preview and render immediately
     previewManager.show();
-    this.updatePreview();
+    if (this.updatePreviewTimeout) {
+      clearTimeout(this.updatePreviewTimeout);
+    }
+    await this.renderPreview();
   }
 
-  async updatePreview() {
+  updatePreview() {
+    // Debounce preview rendering to avoid flickering on rapid input changes
+    if (this.updatePreviewTimeout) {
+      clearTimeout(this.updatePreviewTimeout);
+    }
+
+    this.updatePreviewTimeout = setTimeout(() => {
+      this.renderPreview();
+    }, 300); // Wait 300ms after user stops typing before rendering
+  }
+
+  async renderPreview() {
     if (!this.currentComponent || !this.currentVariant) return;
 
     const componentId = this.currentComponent._id || this.currentComponent.id;
     await previewManager.render(componentId, this.currentVariant, this.formData);
+
+    // Maintain selection highlight in list
+    this.maintainSelection();
+  }
+
+  maintainSelection() {
+    if (!this.currentComponent) return;
+    const componentId = this.currentComponent._id || this.currentComponent.id;
+    const allItems = document.querySelectorAll("[data-component-id]");
+    allItems.forEach((item) => {
+      if (item.dataset.componentId === componentId) {
+        item.classList.add("selected");
+      } else {
+        item.classList.remove("selected");
+      }
+    });
   }
 
   handleSearch(query) {
@@ -121,6 +163,9 @@ class ComponentLibraryApp {
 
     // Re-render icons after DOM update
     initLucideIcons();
+
+    // Maintain selection highlight after list re-render
+    this.maintainSelection();
   }
 }
 

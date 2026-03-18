@@ -1,4 +1,4 @@
-import { resolve } from "path";
+import { resolve } from "node:path";
 import { defineConfig } from "vite";
 import { dashboardPlugin } from "./scripts/vite-plugins/dashboard.js";
 import { maizzlePlugin } from "./scripts/vite-plugins/maizzle.js";

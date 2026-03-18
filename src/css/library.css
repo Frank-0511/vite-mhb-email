@@ -18,7 +18,7 @@ body {
 /* Sidebar with smooth scrollbar */
 #component-list {
   scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 transparent;
+  scrollbar-color: rgb(203 213 225) transparent; /* slate-300 */
 }
 
 #component-list::-webkit-scrollbar {
@@ -27,36 +27,35 @@ body {
 }
 
 #component-list::-webkit-scrollbar-track {
-  background: transparent;
+  @apply bg-transparent;
 }
 
 #component-list::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
+  @apply bg-slate-300 rounded;
 }
 
 #component-list::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  @apply bg-slate-500;
 }
 
 /* Dark mode scrollbar */
 .dark #component-list {
-  scrollbar-color: #475569 transparent;
+  scrollbar-color: rgb(71 85 105) transparent; /* slate-600 */
 }
 
 .dark #component-list::-webkit-scrollbar-thumb {
-  background: #475569;
+  @apply bg-slate-600;
 }
 
 .dark #component-list::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
+  @apply bg-slate-700;
 }
 
 /* Preview and form section scrollbars */
 .library-preview,
 .library-form {
   scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 transparent;
+  scrollbar-color: rgb(203 213 225) transparent; /* slate-300 */
 }
 
 .library-preview::-webkit-scrollbar,
@@ -67,33 +66,32 @@ body {
 
 .library-preview::-webkit-scrollbar-track,
 .library-form::-webkit-scrollbar-track {
-  background: transparent;
+  @apply bg-transparent;
 }
 
 .library-preview::-webkit-scrollbar-thumb,
 .library-form::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
+  @apply bg-slate-300 rounded;
 }
 
 .library-preview::-webkit-scrollbar-thumb:hover,
 .library-form::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  @apply bg-slate-500;
 }
 
 .dark .library-preview,
 .dark .library-form {
-  scrollbar-color: #475569 transparent;
+  scrollbar-color: rgb(71 85 105) transparent; /* slate-600 */
 }
 
 .dark .library-preview::-webkit-scrollbar-thumb,
 .dark .library-form::-webkit-scrollbar-thumb {
-  background: #475569;
+  @apply bg-slate-600;
 }
 
 .dark .library-preview::-webkit-scrollbar-thumb:hover,
 .dark .library-form::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
+  @apply bg-slate-700;
 }
 
 /* Component List Item Styles */
@@ -136,19 +134,6 @@ body {
   margin-right: 0.5rem;
 }
 
-/* Toggle rotation and collapse animations */
-.rotate-\[-90deg\] {
-  transform: rotate(-90deg);
-}
-
-.max-h-0 {
-  max-height: 0;
-}
-
-.max-h-1000 {
-  max-height: 1000px;
-}
-
 /* Toggle Switch Styles */
 .toggle-switch {
   display: inline-flex;
@@ -159,78 +144,58 @@ body {
 }
 
 .toggle-switch-input {
-  appearance: none;
-  width: 2.5rem;
-  height: 1.5rem;
-  border-radius: 9999px;
-  background-color: #cbd5e1;
-  cursor: pointer;
-  position: relative;
-  transition: background-color 0.3s ease;
-  border: none;
-  padding: 0;
-  margin: 0;
-  flex-shrink: 0;
+  @apply appearance-none w-10 h-6 rounded-full bg-slate-300 cursor-pointer
+    relative transition-colors duration-300 border-0 p-0 m-0 flex-shrink-0;
 }
 
 .toggle-switch-input:hover {
-  background-color: #bfdbfe;
+  @apply bg-blue-200;
 }
 
 .toggle-switch-input:checked {
-  background-color: #06b6d4;
+  @apply bg-cyan-500;
 }
 
 .toggle-switch-input:checked:hover {
-  background-color: #0891b2;
+  @apply bg-cyan-600;
 }
 
 .dark .toggle-switch-input {
-  background-color: #475569;
+  @apply bg-slate-600;
 }
 
 .dark .toggle-switch-input:hover {
-  background-color: #64748b;
+  @apply bg-slate-700;
 }
 
 .dark .toggle-switch-input:checked {
-  background-color: #06b6d4;
+  @apply bg-cyan-500;
 }
 
 .dark .toggle-switch-input:checked:hover {
-  background-color: #0891b2;
+  @apply bg-cyan-600;
 }
 
 /* Dot that slides inside the toggle */
 .toggle-switch-input::before {
   content: "";
-  position: absolute;
-  width: 1.25rem;
-  height: 1.25rem;
-  background-color: white;
-  border-radius: 50%;
-  top: 0.125rem;
-  left: 0.125rem;
-  transition: left 0.3s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  @apply absolute w-5 h-5 bg-white rounded-full top-0.5 left-0.5
+    transition-all duration-300 shadow-sm;
 }
 
 .toggle-switch-input:checked::before {
-  left: 1.125rem;
+  @apply left-4.5;
 }
 
 .dark .toggle-switch-input::before {
-  background-color: #f8fafc;
+  @apply bg-slate-50;
 }
 
 /* Label text styling */
 .toggle-switch-label {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #1e293b;
-  transition: color 0.3s ease;
+  @apply text-sm font-medium text-slate-800 transition-colors duration-300;
 }
 
 .dark .toggle-switch-label {
-  color: #e2e8f0;
+  @apply text-slate-200;
 }

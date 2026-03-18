@@ -1,5 +1,5 @@
 import fs from "fs-extra";
-import { resolve } from "path";
+import { resolve } from "node:path";
 
 const rootDir = process.cwd();
 

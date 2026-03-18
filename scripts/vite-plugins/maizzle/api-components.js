@@ -1,7 +1,7 @@
 import { render } from "@maizzle/framework";
 import fs from "fs-extra";
 import Handlebars from "handlebars";
-import { resolve } from "path";
+import { resolve } from "node:path";
 
 /**
  * Busca un componente recursivamente en un directorio

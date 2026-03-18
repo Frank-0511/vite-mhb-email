@@ -84,7 +84,7 @@ export const listRenderer = {
       }
 
       header.addEventListener("click", () => {
-        toggle.classList.toggle("rotate-[-90deg]");
+        toggle.classList.toggle("-rotate-90");
         if (itemsContainer.classList.contains("max-h-0")) {
           itemsContainer.classList.remove("max-h-0");
           itemsContainer.classList.add("max-h-1000");
