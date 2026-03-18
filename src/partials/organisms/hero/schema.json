@@ -1,7 +1,7 @@
 {
   "name": "Hero Section",
-  "description": "Sección hero con título, subtítulo y botón de CTA",
-  "component": "src/components/hero",
+  "description": "Sección hero con título, subtítulo y botón de CTA. Soporta múltiples variantes",
+  "component": "src/partials/organisms/hero",
   "variants": [
     {
       "id": "v1",
@@ -15,6 +15,21 @@
     }
   ],
   "props": {
+    "variant": {
+      "type": "select",
+      "default": "v1",
+      "label": "Variante",
+      "options": [
+        {
+          "value": "v1",
+          "label": "Sky Gradient"
+        },
+        {
+          "value": "v2",
+          "label": "Dark Modern"
+        }
+      ]
+    },
     "title": {
       "type": "string",
       "default": "Bienvenido a Mi Empresa",

@@ -1,0 +1,236 @@
+/* Library Component - Additional Custom Styles */
+/* Styles that are imported after tailwind.css to extend with custom CSS */
+
+/* Reset and base styles */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: inherit;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* Sidebar with smooth scrollbar */
+#component-list {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+#component-list::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+#component-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#component-list::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+#component-list::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Dark mode scrollbar */
+.dark #component-list {
+  scrollbar-color: #475569 transparent;
+}
+
+.dark #component-list::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
+.dark #component-list::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Preview and form section scrollbars */
+.library-preview,
+.library-form {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.library-preview::-webkit-scrollbar,
+.library-form::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.library-preview::-webkit-scrollbar-track,
+.library-form::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.library-preview::-webkit-scrollbar-thumb,
+.library-form::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.library-preview::-webkit-scrollbar-thumb:hover,
+.library-form::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.dark .library-preview,
+.dark .library-form {
+  scrollbar-color: #475569 transparent;
+}
+
+.dark .library-preview::-webkit-scrollbar-thumb,
+.dark .library-form::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
+.dark .library-preview::-webkit-scrollbar-thumb:hover,
+.dark .library-form::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Component List Item Styles */
+.component-item {
+  @apply block w-full px-4 py-2.5 mb-1.5 rounded border border-transparent
+    bg-transparent cursor-pointer text-sm text-slate-700 dark:text-slate-300
+    font-medium transition-all hover:bg-slate-100 dark:hover:bg-slate-600
+    hover:border-slate-300 dark:hover:border-slate-500 text-left
+    border-l-4 border-l-transparent;
+}
+
+.component-item-icon {
+  @apply w-5 h-5 inline-block align-middle text-slate-600 dark:text-slate-300;
+  margin-right: 0.5rem;
+}
+
+/* Component Item - Selected State */
+.component-item.selected {
+  @apply bg-cyan-100 dark:bg-cyan-900/30
+    border-l-cyan-500 dark:border-l-amber-400
+    text-cyan-900 dark:text-amber-300
+    font-semibold shadow-sm;
+}
+
+.component-item.selected .component-item-icon {
+  @apply text-cyan-600 dark:text-amber-300;
+}
+
+/* Group Header Styles */
+.component-group-header {
+  @apply flex items-center gap-2 w-full px-4 py-3 cursor-pointer
+    font-semibold text-sm text-slate-800 dark:text-slate-200
+    bg-transparent rounded
+    hover:bg-slate-50 dark:hover:bg-slate-800
+    transition-colors select-none;
+}
+
+.component-group-header-icon {
+  @apply w-5 h-5 text-slate-700 dark:text-amber-300;
+  margin-right: 0.5rem;
+}
+
+/* Toggle rotation and collapse animations */
+.rotate-\[-90deg\] {
+  transform: rotate(-90deg);
+}
+
+.max-h-0 {
+  max-height: 0;
+}
+
+.max-h-1000 {
+  max-height: 1000px;
+}
+
+/* Toggle Switch Styles */
+.toggle-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle-switch-input {
+  appearance: none;
+  width: 2.5rem;
+  height: 1.5rem;
+  border-radius: 9999px;
+  background-color: #cbd5e1;
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.3s ease;
+  border: none;
+  padding: 0;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.toggle-switch-input:hover {
+  background-color: #bfdbfe;
+}
+
+.toggle-switch-input:checked {
+  background-color: #06b6d4;
+}
+
+.toggle-switch-input:checked:hover {
+  background-color: #0891b2;
+}
+
+.dark .toggle-switch-input {
+  background-color: #475569;
+}
+
+.dark .toggle-switch-input:hover {
+  background-color: #64748b;
+}
+
+.dark .toggle-switch-input:checked {
+  background-color: #06b6d4;
+}
+
+.dark .toggle-switch-input:checked:hover {
+  background-color: #0891b2;
+}
+
+/* Dot that slides inside the toggle */
+.toggle-switch-input::before {
+  content: "";
+  position: absolute;
+  width: 1.25rem;
+  height: 1.25rem;
+  background-color: white;
+  border-radius: 50%;
+  top: 0.125rem;
+  left: 0.125rem;
+  transition: left 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-switch-input:checked::before {
+  left: 1.125rem;
+}
+
+.dark .toggle-switch-input::before {
+  background-color: #f8fafc;
+}
+
+/* Label text styling */
+.toggle-switch-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1e293b;
+  transition: color 0.3s ease;
+}
+
+.dark .toggle-switch-label {
+  color: #e2e8f0;
+}

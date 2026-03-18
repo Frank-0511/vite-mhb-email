@@ -4,293 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Component Library - Email Factory</title>
-    <link rel="stylesheet" href="/index.css" />
-    <style>
-      * {
-        box-sizing: border-box;
-      }
-
-      body {
-        margin: 0;
-        padding: 0;
-        min-height: 100vh;
-      }
-
-      header {
-        padding: 1rem 2rem;
-        background: white;
-        border-bottom: 1px solid #e2e8f0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        position: sticky;
-        top: 0;
-        z-index: 10;
-      }
-
-      .dark header {
-        background: #1e293b;
-        border-bottom-color: #334155;
-      }
-
-      .back-link {
-        color: #0ea5e9;
-        text-decoration: none;
-        font-size: 0.875rem;
-        font-weight: 600;
-      }
-
-      .back-link:hover {
-        color: #0284c7;
-      }
-
-      .container {
-        display: flex;
-        height: calc(100vh - 65px);
-      }
-
-      /* Sidebar */
-      .sidebar {
-        width: 280px;
-        border-right: 1px solid #e2e8f0;
-        overflow-y: auto;
-        background: #ffffff;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .dark .sidebar {
-        background: #1e293b;
-        border-right-color: #334155;
-      }
-
-      .sidebar-header {
-        padding: 1.5rem;
-        border-bottom: 1px solid #e2e8f0;
-        position: sticky;
-        top: 0;
-        background: white;
-      }
-
-      .dark .sidebar-header {
-        background: #1e293b;
-        border-bottom-color: #334155;
-      }
-
-      .search-input {
-        width: 100%;
-        padding: 0.5rem;
-        border: 1px solid #cbd5e1;
-        border-radius: 0.375rem;
-        font-size: 0.875rem;
-        font-family: inherit;
-      }
-
-      .dark .search-input {
-        background: #334155;
-        border-color: #475569;
-        color: #e2e8f0;
-      }
-
-      .component-list {
-        flex: 1;
-        overflow-y: auto;
-        padding: 0.5rem;
-      }
-
-      .component-item {
-        padding: 0.75rem 1rem;
-        margin-bottom: 0.5rem;
-        border-radius: 0.375rem;
-        cursor: pointer;
-        border: 1px solid transparent;
-        transition: all 0.2s;
-        font-size: 0.875rem;
-        color: #475569;
-        background: none;
-        width: 100%;
-        text-align: left;
-      }
-
-      .dark .component-item {
-        color: #cbd5e1;
-      }
-
-      .component-item:hover {
-        background: #f1f5f9;
-        border-color: #e2e8f0;
-      }
-
-      .dark .component-item:hover {
-        background: #334155;
-        border-color: #475569;
-      }
-
-      .component-item.active {
-        background: #0ea5e9;
-        color: white;
-        border-color: #0284c7;
-        font-weight: 600;
-      }
-
-      /* Main */
-      .main {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-      }
-
-      .main-header {
-        padding: 1rem 2rem;
-        background: white;
-        border-bottom: 1px solid #e2e8f0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .dark .main-header {
-        background: #1e293b;
-        border-bottom-color: #334155;
-      }
-
-      .content {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        background: #f1f5f9;
-      }
-
-      .dark .content {
-        background: #0f172a;
-      }
-
-      .preview-section {
-        flex: 0 1 auto;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        max-height: 50%;
-      }
-
-      .preview-wrapper {
-        flex: 1;
-        overflow: auto;
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        padding: 2rem;
-      }
-
-      .preview-iframe {
-        background: white;
-        border-radius: 0.5rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        max-width: 600px;
-        width: 100%;
-        border: none;
-      }
-
-      .form-section {
-        flex: 1;
-        border-top: 1px solid #e2e8f0;
-        background: white;
-        overflow-y: auto;
-        padding: 2rem;
-      }
-
-      .dark .form-section {
-        background: #1e293b;
-        border-top-color: #334155;
-      }
-
-      .form-group {
-        margin-bottom: 1.5rem;
-      }
-
-      .form-label {
-        display: block;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-        user-select: none;
-        color: #1e293b;
-        font-size: 0.875rem;
-      }
-
-      .dark .form-label {
-        color: #e2e8f0;
-      }
-
-      .form-input,
-      .form-select,
-      .form-textarea {
-        width: 100%;
-        padding: 0.5rem;
-        border: 1px solid #cbd5e1;
-        border-radius: 0.375rem;
-        font-size: 0.875rem;
-        font-family: inherit;
-      }
-
-      .dark .form-input,
-      .dark .form-select,
-      .dark .form-textarea {
-        background: #334155;
-        border-color: #475569;
-        color: #e2e8f0;
-      }
-
-      .form-checkbox {
-        margin-right: 0.5rem;
-      }
-
-      .checkbox-wrapper {
-        display: flex;
-        align-items: center;
-      }
-
-      .section-title {
-        font-size: 1rem;
-        font-weight: bold;
-        margin-bottom: 1rem;
-        color: #1e293b;
-      }
-
-      .dark .section-title {
-        color: #e2e8f0;
-      }
-
-      .divider {
-        border: none;
-        border-top: 1px solid #e2e8f0;
-        margin: 1.5rem 0;
-      }
-
-      .dark .divider {
-        border-top-color: #334155;
-      }
-
-      .empty-state {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        min-height: 300px;
-        color: #94a3b8;
-        text-align: center;
-      }
-
-      .dark .empty-state {
-        color: #64748b;
-      }
-
-      .empty-state-icon {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-      }
-    </style>
+    <link rel="stylesheet" href="/css/tailwind.css" />
+    <link rel="stylesheet" href="/css/library.css" />
 
     <script>
       if (localStorage.getItem("app-theme") === "dark" || !("app-theme" in localStorage)) {
@@ -301,337 +16,105 @@
     </script>
   </head>
 
-  <body class="font-sans text-slate-800 dark:text-slate-200">
-    <header class="dark:bg-slate-900">
-      <div>
-        <a href="/" class="back-link">← Volver al Dashboard</a>
-        <h1 class="text-xl font-bold mt-2 text-slate-800 dark:text-white">📚 Component Library</h1>
-      </div>
-      <button
-        id="theme-toggle"
-        class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"
-      >
-        <span id="theme-icon-light" class="hidden">🌞</span>
-        <span id="theme-icon-dark" class="hidden">🌙</span>
-      </button>
-    </header>
-
-    <div class="container">
+  <body class="font-sans text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-slate-900 m-0 p-0">
+    <!-- Main Container -->
+    <div class="flex h-screen gap-0">
       <!-- Sidebar: Component List -->
-      <aside class="sidebar dark:bg-slate-900">
-        <div class="sidebar-header">
+      <aside
+        class="w-80 border-r-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex flex-col overflow-hidden"
+      >
+        <div
+          class="p-4 border-b-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 z-10 flex items-center justify-between gap-4 flex-wrap"
+        >
+          <div class="flex items-center gap-3 flex-1 min-w-0">
+            <a
+              href="/"
+              class="text-cyan-500 no-underline flex items-center justify-center w-9 h-9 rounded border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-700 cursor-pointer transition-all hover:bg-slate-200 dark:hover:bg-slate-600 hover:border-slate-400 dark:hover:border-slate-500 flex-shrink-0"
+              aria-label="Back to dashboard"
+            >
+              <i data-lucide="arrow-left" class="w-6 h-6 text-slate-600 dark:text-amber-400"></i>
+            </a>
+            <h1
+              class="text-base font-bold text-slate-800 dark:text-slate-100 m-0 whitespace-nowrap tracking-tight"
+            >
+              <i
+                data-lucide="list"
+                class="w-6 h-6 inline-block align-middle text-slate-600 dark:text-amber-400"
+                style="margin-right: 0.5rem"
+              ></i>
+              Component Library
+            </h1>
+          </div>
+          <button
+            id="theme-toggle"
+            class="flex items-center justify-center w-9 h-9 rounded border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-700 cursor-pointer transition-all hover:bg-slate-200 dark:hover:bg-slate-600 hover:border-slate-400 dark:hover:border-slate-500 flex-shrink-0"
+            aria-label="Toggle theme"
+          >
+            <i
+              id="theme-icon-light"
+              data-lucide="sun"
+              class="w-6 h-6 text-slate-600 dark:text-amber-400"
+            ></i>
+            <i id="theme-icon-dark" data-lucide="moon" class="w-6 h-6 hidden text-amber-400"></i>
+          </button>
+        </div>
+        <div class="w-full pt-3 px-3">
           <input
             type="text"
             id="search-input"
-            class="search-input"
+            class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded text-sm font-inherit transition-all bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:outline-none focus:border-cyan-500 dark:focus:border-cyan-400 focus:ring-4 focus:ring-cyan-500/10 dark:focus:ring-cyan-400/10"
             placeholder="Buscar componentes..."
+            aria-label="Search components"
           />
         </div>
-        <div class="component-list" id="component-list"></div>
+        <div class="flex-1 overflow-y-auto p-3" id="component-list"></div>
       </aside>
 
       <!-- Main: Preview + Form -->
-      <main class="main">
-        <div class="main-header dark:bg-slate-900">
-          <div>
-            <h2 id="component-name" class="text-lg font-semibold text-slate-800 dark:text-white">
-              Selecciona un componente
-            </h2>
-            <p id="component-desc" class="text-sm text-slate-500 dark:text-slate-400 mt-1">
-              &nbsp;
-            </p>
-          </div>
-        </div>
-
-        <div class="content">
-          <div class="preview-section">
-            <div class="preview-wrapper">
-              <div id="empty-preview" class="empty-state">
-                <div class="empty-state-icon">📦</div>
-                <p>Selecciona un componente para verlo aquí</p>
+      <main class="flex-1 flex flex-col overflow-hidden">
+        <!-- Content: Preview & Form -->
+        <div class="flex-1 flex flex-col overflow-hidden bg-slate-50 dark:bg-slate-900">
+          <!-- Preview Section -->
+          <div
+            class="flex-[0_0_60%] flex flex-col overflow-auto border-b border-slate-200 dark:border-slate-700 library-preview"
+          >
+            <div class="flex-1 flex justify-center items-stretch p-8">
+              <div
+                id="empty-preview"
+                class="flex flex-col justify-center items-center min-h-96 text-slate-400 dark:text-slate-600 text-center"
+              >
+                <div class="text-5xl mb-4">
+                  <i
+                    data-lucide="package"
+                    class="w-14 h-14 inline-block text-slate-400 dark:text-amber-400"
+                  ></i>
+                </div>
+                <p class="text-sm m-0">Selecciona un componente para verlo aquí</p>
               </div>
               <iframe
                 id="preview-iframe"
-                class="preview-iframe"
+                class="bg-white rounded shadow-lg max-w-2xl w-full h-full border-0 transition-shadow hover:shadow-2xl overflow-hidden"
                 style="display: none"
                 title="Component Preview"
+                sandbox="allow-same-origin"
               ></iframe>
             </div>
           </div>
 
-          <!-- Form -->
-          <div class="form-section dark:bg-slate-900">
-            <div id="form-placeholder">
-              <p style="font-size: 0.875rem; color: #94a3b8">Selecciona un componente</p>
+          <!-- Form Section -->
+          <div
+            class="flex-[0_0_40%] bg-white dark:bg-slate-800 overflow-y-auto p-8 border-t border-slate-200 dark:border-slate-700 library-form"
+          >
+            <div id="form-placeholder" class="text-slate-400 dark:text-slate-600 text-sm">
+              <p class="m-0">Selecciona un componente</p>
             </div>
-            <div id="form-container"></div>
+            <div id="form-container" class=""></div>
           </div>
         </div>
       </main>
     </div>
 
-    <script>
-      const searchInput = document.getElementById("search-input");
-      const componentList = document.getElementById("component-list");
-      const componentName = document.getElementById("component-name");
-      const componentDesc = document.getElementById("component-desc");
-      const formContainer = document.getElementById("form-container");
-      const formPlaceholder = document.getElementById("form-placeholder");
-      const previewIframe = document.getElementById("preview-iframe");
-      const emptyPreview = document.getElementById("empty-preview");
-      const themeToggle = document.getElementById("theme-toggle");
-      const themeIconLight = document.getElementById("theme-icon-light");
-      const themeIconDark = document.getElementById("theme-icon-dark");
-
-      let allComponents = [];
-      let currentComponent = null;
-      let currentVariant = null;
-      let formData = {};
-
-      // Load all components
-      async function loadComponents() {
-        try {
-          const response = await fetch("/api/components");
-          allComponents = await response.json();
-          renderComponentList(allComponents);
-        } catch (err) {
-          console.error("Error loading components:", err);
-        }
-      }
-
-      // Render component list
-      function renderComponentList(components) {
-        componentList.innerHTML = "";
-        if (components.length === 0) {
-          componentList.innerHTML =
-            "<p style='padding: 1rem; text-align: center; font-size: 0.875rem; color: #94a3b8'>No se encontraron componentes</p>";
-          return;
-        }
-
-        for (const comp of components) {
-          const item = document.createElement("button");
-          item.className = "component-item";
-          item.textContent = `${comp.icon || "📦"} ${comp.name}`;
-          item.addEventListener("click", () => selectComponent(comp));
-          componentList.appendChild(item);
-        }
-      }
-
-      // Select component
-      async function selectComponent(comp) {
-        // Load full component schema using the ID (directory name)
-        const componentId = comp.id || comp.name;
-        try {
-          const response = await fetch(`/api/components/${componentId}`);
-          const fullSchema = await response.json();
-          currentComponent = fullSchema;
-          currentComponent._id = componentId; // Store the ID for rendering
-        } catch (err) {
-          console.error("Error loading component schema:", err);
-          currentComponent = comp;
-          currentComponent._id = componentId;
-        }
-
-        // Safe variant initialization
-        if (currentComponent.variants && currentComponent.variants.length > 0) {
-          currentVariant = currentComponent.variants[0].id || "v1";
-        } else {
-          currentVariant = "v1";
-        }
-        formData = {};
-
-        // Initialize form data with defaults
-        for (const [key, prop] of Object.entries(currentComponent.props || {})) {
-          formData[key] = prop.default;
-        }
-
-        // Update sidebar highlighting
-        document.querySelectorAll(".component-item").forEach((item) => {
-          item.classList.toggle("active", item.textContent.includes(comp.name));
-        });
-
-        // Update header
-        componentName.textContent = currentComponent.name || comp.name;
-        componentDesc.textContent = currentComponent.description || "";
-
-        // Render form
-        renderForm(currentComponent);
-
-        // Show preview
-        emptyPreview.style.display = "none";
-        previewIframe.style.display = "block";
-        updatePreview();
-      }
-
-      // Render dynamic form
-      function renderForm(comp) {
-        formContainer.innerHTML = "";
-        formPlaceholder.style.display = "none";
-
-        // Variant selector
-        if (comp.variants && comp.variants.length > 1) {
-          const variantGroup = document.createElement("div");
-          variantGroup.className = "form-group";
-
-          const label = document.createElement("label");
-          label.className = "form-label";
-          label.textContent = "Variante";
-
-          const select = document.createElement("select");
-          select.className = "form-select";
-
-          for (const variant of comp.variants) {
-            const option = document.createElement("option");
-            option.value = variant.id;
-            option.textContent = `${variant.name} – ${variant.description}`;
-            select.appendChild(option);
-          }
-
-          select.value = currentVariant;
-          select.addEventListener("change", (e) => {
-            currentVariant = e.target.value;
-            updatePreview();
-          });
-
-          variantGroup.appendChild(label);
-          variantGroup.appendChild(select);
-          formContainer.appendChild(variantGroup);
-
-          const divider = document.createElement("hr");
-          divider.className = "divider";
-          formContainer.appendChild(divider);
-        }
-
-        // Props section title
-        if (Object.keys(comp.props || {}).length > 0) {
-          const title = document.createElement("div");
-          title.className = "section-title";
-          title.textContent = "Props";
-          formContainer.appendChild(title);
-        }
-
-        // Props inputs
-        for (const [key, prop] of Object.entries(comp.props || {})) {
-          const group = document.createElement("div");
-          group.className = "form-group";
-
-          const label = document.createElement("label");
-          label.className = "form-label";
-          label.textContent = prop.label || key;
-
-          let input;
-
-          if (prop.type === "boolean") {
-            const wrapper = document.createElement("div");
-            wrapper.className = "checkbox-wrapper";
-            input = document.createElement("input");
-            input.type = "checkbox";
-            input.className = "form-checkbox";
-            input.checked = formData[key] || false;
-            input.addEventListener("change", (e) => {
-              formData[key] = e.target.checked;
-              updatePreview();
-            });
-            wrapper.appendChild(input);
-            wrapper.appendChild(label);
-            group.appendChild(wrapper);
-            formContainer.appendChild(group);
-            continue;
-          } else if (prop.type === "select") {
-            input = document.createElement("select");
-            input.className = "form-select";
-            for (const option of prop.options || []) {
-              const opt = document.createElement("option");
-              opt.value = option.value;
-              opt.textContent = option.label || option.value;
-              input.appendChild(opt);
-            }
-            input.value = formData[key] || prop.default;
-          } else if (prop.type === "textarea") {
-            input = document.createElement("textarea");
-            input.className = "form-textarea";
-            input.style.minHeight = "80px";
-            input.value = formData[key] || prop.default;
-          } else if (prop.type === "number") {
-            input = document.createElement("input");
-            input.type = "number";
-            input.className = "form-input";
-            input.value = formData[key] || prop.default;
-          } else if (prop.type === "date") {
-            input = document.createElement("input");
-            input.type = "date";
-            input.className = "form-input";
-            input.value = formData[key] || prop.default;
-          } else {
-            input = document.createElement("input");
-            input.type = "text";
-            input.className = "form-input";
-            input.placeholder = prop.default;
-            input.value = formData[key] || prop.default;
-          }
-
-          input.addEventListener("input", (e) => {
-            const value = prop.type === "number" ? parseFloat(e.target.value) : e.target.value;
-            formData[key] = value;
-            updatePreview();
-          });
-
-          group.appendChild(label);
-          group.appendChild(input);
-          formContainer.appendChild(group);
-        }
-      }
-
-      // Update preview
-      async function updatePreview() {
-        if (!currentComponent || !currentVariant) return;
-
-        const componentId = currentComponent._id || currentComponent.id;
-        try {
-          const response = await fetch(`/api/components/${componentId}/render`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              variant: currentVariant,
-              props: formData,
-            }),
-          });
-
-          const html = await response.text();
-          previewIframe.srcdoc = html;
-        } catch (err) {
-          console.error("Error rendering component:", err);
-        }
-      }
-
-      // Search
-      searchInput.addEventListener("input", (e) => {
-        const query = e.target.value.toLowerCase();
-        const filtered = allComponents.filter((c) => c.name.toLowerCase().includes(query));
-        renderComponentList(filtered);
-      });
-
-      // Theme toggle
-      function updateThemeIcon() {
-        if (document.documentElement.classList.contains("dark")) {
-          themeIconLight.classList.remove("hidden");
-          themeIconDark.classList.add("hidden");
-        } else {
-          themeIconLight.classList.add("hidden");
-          themeIconDark.classList.remove("hidden");
-        }
-      }
-
-      updateThemeIcon();
-      themeToggle.addEventListener("click", () => {
-        document.documentElement.classList.toggle("dark");
-        const isDark = document.documentElement.classList.contains("dark");
-        localStorage.setItem("app-theme", isDark ? "dark" : "light");
-        updateThemeIcon();
-      });
-
-      // Initialize
-      loadComponents();
-    </script>
+    <!-- Main App -->
+    <script type="module" src="/js/app.js"></script>
   </body>
 </html>

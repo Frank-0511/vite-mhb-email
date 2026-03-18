@@ -1,0 +1,21 @@
+<script props>
+  module.exports = {
+    variant: props.variant || "v1",
+    title: props.title || "Bienvenido a Mi Empresa",
+    subtitle: props.subtitle || "Descubre todo lo que podemos hacer por ti",
+    buttonText: props["button-text"] || "Explorar ahora",
+    showButton: props["show-button"] !== "false",
+  };
+</script>
+
+<if condition="variant === 'v1'">
+  <x-hero-v1 showButton="[[showButton]]" />
+</if>
+
+<elseif condition="variant === 'v2'">
+  <x-hero-v2 showButton="[[showButton]]" />
+</elseif>
+
+<else>
+  <x-hero-v1 showButton="[[showButton]]" />
+</else>

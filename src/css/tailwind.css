@@ -5,3 +5,69 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Library custom utilities layer */
+@layer utilities {
+  /* Scrollbar styling for light mode */
+  .scrollbar-light {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+  }
+
+  .scrollbar-light::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .scrollbar-light::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-light::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+  }
+
+  .scrollbar-light::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+
+  /* Scrollbar styling for dark mode */
+  .dark .scrollbar-dark {
+    scrollbar-width: thin;
+    scrollbar-color: #475569 transparent;
+  }
+
+  .dark .scrollbar-dark::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .dark .scrollbar-dark::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .dark .scrollbar-dark::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 4px;
+  }
+
+  .dark .scrollbar-dark::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+  }
+
+  /* Animation for collapsible toggle */
+  .toggle-collapsed {
+    @apply transition-transform duration-200;
+  }
+
+  /* Prevent text select on buttons */
+  .no-select {
+    @apply select-none;
+  }
+
+  /* Icon base styles */
+  .icon-base {
+    @apply inline-flex items-center justify-center;
+  }
+}
