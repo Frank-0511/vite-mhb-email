@@ -69,7 +69,16 @@ yarn cli          # Abre el menú interactivo
 yarn cli --help   # Muestra la ayuda y sale
 ```
 
-Lanza un menú interactivo desde la terminal con todas las opciones del proyecto:
+Lanza un menú interactivo desde la terminal con todas las opciones del proyecto.
+
+**Características:**
+
+- ✅ Verifica el estado de `.env` al arrancar
+- ✅ Muestra advertencias si faltan variables críticas
+- ✅ Ofrece buildear automáticamente si `dist/` está vacío
+- ✅ Interfaz modular y fácil de extender
+
+**Opciones disponibles:**
 
 | Opción | Acción                                                  |
 | ------ | ------------------------------------------------------- |
@@ -79,35 +88,81 @@ Lanza un menú interactivo desde la terminal con todas las opciones del proyecto
 | `4`    | 📨 Enviar template a **Mailtrap** (sandbox)             |
 | `5`    | 🧪 Testear con **Mail-Tester** vía Gmail SMTP           |
 | `6`    | 📬 Enviar a bandeja real (Gmail / Outlook / Apple Mail) |
+| `7`    | 📸 Exportar template como PNG                           |
 | `0`    | 👋 Salir                                                |
 
-> Al arrancar, el CLI verifica el estado del `.env` y muestra advertencias si faltan variables críticas para las opciones de envío.
-> Si `dist/` está vacío al intentar enviar (opciones 4/5/6), el CLI ofrece buildear el proyecto en el momento.
+### Submódulos de opciones
 
-### Envío a Mailtrap
+#### [4] Envío a Mailtrap
 
 Usa la API REST de Mailtrap para enviar el HTML compilado a tu inbox de sandbox. Permite validar rendering sin llegar a bandejas reales.
 
-### Envío a Mail-Tester
+#### [5] Envío a Mail-Tester
 
 Envía el template vía Gmail SMTP a una dirección temporal de [mail-tester.com](https://www.mail-tester.com) para obtener un score de entregabilidad (spam, SPF, DKIM, etc.).
 
-### Envío a bandeja real
+#### [6] Envío a bandeja real
 
 Envía el template vía Gmail SMTP directamente a una o varias cuentas (Gmail, Outlook, Apple Mail) para validar el rendering en clientes reales.
+
+#### [7] Exportar template como PNG
+
+**Opción [7]** del CLI permite capturar un screenshot PNG de cualquier template compilado.
+
+```bash
+yarn export-screenshot nombre-template
+```
+
+**Características:**
+
+- Compila el HTML con Handlebars usando los datos de `data.json`
+- Renderiza a PNG de alta calidad usando `wkhtmltoimage` (con fallbacks a puppeteer/PDF+ImageMagick)
+- Guarda el screenshot en `screenshots/nombre-template.png`
+- Soporta templates con variables SendGrid (`{{ variable }}`) y Maizzle (`[[ page.variable ]]`)
+
+---
 
 ### Estructura de scripts
 
 ```text
 scripts/
-├── cli.js               # Punto de entrada del CLI (menú interactivo)
-├── utils.js             # Utilidades compartidas: colores, .env, prompts, templates
-├── gmail-transport.js   # Transporte Gmail SMTP (nodemailer)
-├── build-helper.js      # buildIfNeeded(): ofrece buildear si dist/ está vacío
-├── send-mailtrap.js     # Flujo de envío a Mailtrap (opción 4)
-├── send-mailtester.js   # Flujo de envío a Mail-Tester (opción 5)
-├── send-inbox.js        # Flujo de envío a bandeja real (opción 6)
-└── generate-email.js    # Generador de nuevos templates (opción 3)
+├── cli/                      # CLI modular (menú interactivo)
+│   ├── index.js              # Loop principal
+│   ├── ui.js                 # UI: banner, menú, ayuda, validación .env
+│   ├── helpers.js            # Helpers: run, ask*, input
+│   └── actions.js            # Acciones: [1]-[7] del menú
+├── cli.js                    # Entry point del CLI (importa cli/index.js)
+├── build/                    # Build y validaciones
+│   ├── build.js              # Orquestador del build (Maizzle + CSS inlining)
+│   ├── build-helper.js       # buildIfNeeded(): ofrece buildear si dist/ vacío
+│   ├── check-html-size.js    # Valida tamaño de templates compilados
+│   ├── inject-email-media-queries.js  # Inyecta media queries para mobile
+│   └── validate-json.js      # Valida JSON en templates
+├── mail/                     # Envío de emails
+│   ├── gmail-transport.js    # Transporte Gmail SMTP (nodemailer)
+│   ├── send-inbox.js         # Flujo: Enviar a bandeja real (opción 6)
+│   ├── send-mailtester.js    # Flujo: Testear con Mail-Tester (opción 5)
+│   └── send-mailtrap.js      # Flujo: Enviar a Mailtrap (opción 4)
+├── generators/               # Generadores de templates/assets
+│   ├── css-switcher.js       # Cambia entre CSS preview vs. email
+│   └── generate-email.js     # Generador de nuevos templates (opción 3)
+├── exporters/                # Exportar templates a imagen (opción 7)
+│   ├── index.js              # Orquestador principal
+│   ├── compilers.js          # Compilación Handlebars + datos
+│   ├── renderers.js          # Renderización: wkhtmltoimage, puppeteer, PDF+ImageMagick
+│   └── file-manager.js       # Gestión de archivos temporales
+├── export-screenshot.js      # Entry point para exportar PNG
+├── utils.js                  # Utilidades compartidas: colores, .env, prompts
+└── vite-plugins/             # Plugins para Vite/Maizzle
+    ├── dashboard.js          # Dashboard de preview
+    ├── maizzle.js            # Plugin Maizzle para Vite
+    └── maizzle/
+        ├── api-components.js # API de componentes
+        ├── api-data.js       # API de datos
+        ├── api-render.js     # API de renderizado
+        ├── api-template.js   # API de templates
+        ├── compile.js        # Lógica de compilación
+        └── index.js          # Punto de entrada del plugin
 ```
 
 ---
@@ -159,7 +214,7 @@ MAILTRAP_TO_NAME=          # Nombre del destinatario
 
 ### Gmail SMTP — Mail-Tester y bandeja real (opciones 5 y 6)
 
-Requiere un **App Password** de Google (no tu contraseña normal):  
+Requiere un **App Password** de Google (no tu contraseña normal):
 → [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords)
 
 ```env
