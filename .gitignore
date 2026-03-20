@@ -18,3 +18,7 @@ node_modules
 
 #!.yarn/cache
 .pnp.*
+
+# Screenshots y archivos temporales
+screenshots/
+.temp-screenshots/

@@ -8,7 +8,7 @@
  *   MAILTESTER_TO_EMAIL — dirección de mail-tester.com por defecto (opcional)
  */
 
-import { buildIfNeeded } from "./build-helper.js";
+import { buildIfNeeded } from "../build/build-helper.js";
 import { sendViaGmail } from "./gmail-transport.js";
 import {
   applyHandlebars,
@@ -20,7 +20,7 @@ import {
   pickFromList,
   prompt,
   readBuiltTemplate,
-} from "./utils.js";
+} from "../utils.js";
 
 // ─── Flujo principal (exportado para el CLI) ──────────────────────────────────
 

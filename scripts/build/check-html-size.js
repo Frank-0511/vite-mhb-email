@@ -7,7 +7,7 @@ const rootDir = process.cwd();
 const GMAIL_LIMIT = 102 * 1024; // 102KB
 const WARNING_THRESHOLD = 100 * 1024; // 100KB
 
-export async function checkHtmlSize() {
+export function checkHtmlSize() {
   const distDir = resolve(rootDir, "dist");
   const htmlFiles = globSync("**/*.html", { cwd: distDir });
 

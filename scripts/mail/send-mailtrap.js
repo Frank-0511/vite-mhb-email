@@ -11,7 +11,7 @@
  *   MAILTRAP_TO_NAME    — nombre destinatario por defecto (opcional)
  */
 
-import { buildIfNeeded } from "./build-helper.js";
+import { buildIfNeeded } from "../build/build-helper.js";
 import {
   applyHandlebars,
   c,
@@ -22,7 +22,7 @@ import {
   pickFromList,
   prompt,
   readBuiltTemplate,
-} from "./utils.js";
+} from "../utils.js";
 
 // ─── Envío a Mailtrap ─────────────────────────────────────────────────────────
 

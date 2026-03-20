@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { execSync } from "child_process";
+import { restorePreviewCss, switchToEmailCss } from "../generators/css-switcher.js";
 import { checkHtmlSize } from "./check-html-size.js";
-import { restorePreviewCss, switchToEmailCss } from "./css-switcher.js";
 import { injectEmailMediaQueries } from "./inject-email-media-queries.js";
 
 async function build() {

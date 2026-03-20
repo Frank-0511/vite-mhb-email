@@ -6,7 +6,7 @@ import { compileTemplate } from "./compile.js";
  * Maneja la ruta /api/render para POST
  */
 export function setupRenderApi(server, rootDir) {
-  server.middlewares.use(async (req, res, next) => {
+  server.middlewares.use((req, res, next) => {
     if (!req.url?.startsWith("/api/render")) {
       return next();
     }

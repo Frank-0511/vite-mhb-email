@@ -11,7 +11,7 @@
  *   TEST_APPLE_TO       — destinatario por defecto para Apple Mail
  */
 
-import { buildIfNeeded } from "./build-helper.js";
+import { buildIfNeeded } from "../build/build-helper.js";
 import { sendViaGmail } from "./gmail-transport.js";
 import {
   applyHandlebars,
@@ -23,7 +23,7 @@ import {
   pickFromList,
   prompt,
   readBuiltTemplate,
-} from "./utils.js";
+} from "../utils.js";
 
 // ─── Proveedores disponibles ──────────────────────────────────────────────────
 

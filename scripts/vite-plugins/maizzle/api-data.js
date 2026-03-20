@@ -5,7 +5,7 @@ import { resolve } from "node:path";
  * Maneja las rutas /api/data para GET y POST
  */
 export function setupDataApi(server, rootDir) {
-  server.middlewares.use(async (req, res, next) => {
+  server.middlewares.use((req, res, next) => {
     if (!req.url?.startsWith("/api/data")) {
       return next();
     }
