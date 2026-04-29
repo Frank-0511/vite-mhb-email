@@ -1,29 +1,98 @@
-# Agent Notes
+# Copilot Instructions
 
-Project overview and workflow details live in [README.md](README.md).
+Guia obligatoria para agentes y Copilot en este repositorio.
 
-## Quickstart
+Este archivo define reglas globales CRITICAS y delega detalles operativos a
+skills en `docs/agent-skills/`.
 
-- Requires Node >=20 y Bun >=1.0.0.
-- `bun install`
-- `bun run dev` para el dashboard de Vite.
-- `bun run build` ejecuta lint y el pipeline de emails.
-- `bun run cli` abre el menú interactivo.
+---
 
-## Conventions and pitfalls
+## Mandato
 
-- Templates use dual delimiters: `[[ page.* ]]` for Maizzle and `{{ * }}` for ESP variables. Keep `{{ }}` intact; see [maizzle.config.js](maizzle.config.js).
-- The build pipeline swaps preview vs email CSS and injects dark-mode media queries via [scripts/build/build.js](../scripts/build/build.js). Avoid running `maizzle build` directly unless you also handle the CSS swap/restore.
-- Output is flattened to `dist/<template>.html` by [maizzle.config.js](../maizzle.config.js).
-- Email validation runs during `bun run build`. Usa `bun run validate-email` cuando iteres.
+Este proyecto es un sistema de desarrollo, preview, validacion y exportacion de
+templates HTML de email basado en Bun, Vite, Maizzle y Handlebars.
 
-## Key paths
+Todo cambio debe preservar el flujo principal:
 
-- Template example: [src/templates/welcome/index.html](../src/templates/welcome/index.html) and [src/templates/welcome/data.json](../src/templates/welcome/data.json).
-- Layouts: [src/layouts/main-light.html](../src/layouts/main-light.html) and [src/layouts/main-dark.html](../src/layouts/main-dark.html).
-- Component example: [src/partials/organisms/hero/index.html](../src/partials/organisms/hero/index.html).
-- CLI entry: [scripts/cli.js](../scripts/cli.js). Build entry: [scripts/build/build.js](../scripts/build/build.js).
+1. editar templates en `src/templates/*`;
+2. previsualizar con Vite;
+3. renderizar datos de preview con Handlebars;
+4. compilar con Maizzle mediante el pipeline del proyecto;
+5. validar compatibilidad de email;
+6. producir HTML final plano en `dist/<template>.html`.
 
-## Commits
+---
 
-- Usa el formato [Conventional Commits](https://www.conventionalcommits.org/es/v1.0.0/) para los mensajes de commit (ejemplo: `feat: agrega validación de emails`).
+## ⚠️ Reglas Globales CRITICAS (SIEMPRE APLICAR)
+
+Estas reglas tienen prioridad sobre cualquier sugerencia generada automaticamente por Copilot.
+
+- - Usa Bun. Nunca usar `npm`, `npx`, `yarn` o `pnpm` bajo ninguna circunstancia.
+- El build SIEMPRE es: `bun run build`
+- No ejecutar `maizzle build` directamente
+- Mantener intactas las variables ESP con `{{ }}` en el output final
+- No introducir JS incompatible con email
+- No romper el pipeline de Maizzle
+- No escribir fuera del workspace
+- No imprimir secretos ni credenciales
+- No ocultar errores: deben ser explicitos, con mensajes claros y accionables
+
+---
+
+## Skills Repo-Locales
+
+Para tareas especificas, consulta y aplica las reglas en:
+
+- `docs/agent-skills/project-stack.md`
+- `docs/agent-skills/quality-gates.md`
+- `docs/agent-skills/refactor-type-safety.md`
+- `docs/agent-skills/email-compatibility.md`
+- `docs/agent-skills/workflow-git.md`
+
+### Importante
+
+Copilot puede no cargar automaticamente estos archivos.
+Si no estan disponibles, aplica las mejores practicas segun:
+
+- Bun + Vite + Maizzle
+- HTML email compatibility (inline CSS, tablas, sin JS)
+- Handlebars templating
+
+---
+
+## Reglas de Implementacion
+
+- Todo JS en `scripts/`, `src/js/` y `scripts/vite-plugins/` debe incluir JSDoc suficiente
+- ESLint debe cubrir cualquier codigo JS modificado
+- No migrar todo a TypeScript sin aprobacion explicita
+- No revertir cambios existentes que no hayas hecho
+- Mantener consistencia con el pipeline actual
+
+---
+
+## Comandos Oficiales
+
+```bash
+bun install
+bun run dev
+bun run build
+bun run lint
+bun run validate-email
+bun run cli
+bun run format
+bun run format:check
+```
+
+---
+
+## Definicion de Terminado
+
+Un cambio esta terminado solo si:
+
+1. implementa el comportamiento solicitado;
+2. mantiene compatibilidad del pipeline de email;
+3. agrega JSDoc en contratos nuevos o modificados;
+4. maneja errores relevantes;
+5. ejecuta validaciones necesarias;
+6. no introduce artefactos no solicitados;
+7. resume archivos cambiados, comandos ejecutados y riesgos residuales.

@@ -37,9 +37,10 @@
         flex-direction: column;
       }
       #preview-iframe {
-        flex: 1;
         width: 100%;
+        height: 100%;
         border: none;
+        display: block;
       }
 
       /* Personalizar el tema claro de Vanilla JSONEditor */
@@ -157,18 +158,80 @@
             <i id="template-icon-dark" data-lucide="moon" class="hidden w-4 h-4 mr-1"></i>
             <span>Template</span>
           </button>
+
+          <!-- Viewport Toggle -->
+          <div class="flex items-center gap-2" aria-label="Viewport">
+            <div
+              class="inline-flex overflow-hidden rounded border border-slate-200 dark:border-slate-700"
+              role="group"
+              aria-label="Viewport selector"
+            >
+              <button
+                id="viewport-desktop"
+                type="button"
+                class="px-2.5 py-1.5 text-xs font-semibold bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                title="Desktop (600px)"
+              >
+                Desktop (600px)
+              </button>
+              <button
+                id="viewport-mobile"
+                type="button"
+                class="px-2.5 py-1.5 text-xs font-semibold bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border-l border-slate-200 dark:border-slate-700"
+                title="Mobile (375px)"
+              >
+                Mobile (375px)
+              </button>
+              <button
+                id="viewport-custom"
+                type="button"
+                class="px-2.5 py-1.5 text-xs font-semibold bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border-l border-slate-200 dark:border-slate-700"
+                title="Custom"
+              >
+                Custom
+              </button>
+            </div>
+
+            <div id="viewport-custom-input-wrap" class="hidden items-center gap-2">
+              <input
+                id="viewport-custom-input"
+                type="number"
+                inputmode="numeric"
+                min="280"
+                max="1200"
+                step="1"
+                class="w-24 px-2 py-1 text-xs rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-4 focus:ring-sky-500/10 dark:focus:ring-sky-400/10"
+                aria-label="Custom viewport width"
+              />
+              <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">px</span>
+            </div>
+          </div>
         </div>
         <span id="sync-status" class="text-green-600 font-medium text-sm flex items-center gap-1">
           <span class="w-2 h-2 rounded-full bg-green-500"></span> Sincronizado
         </span>
       </div>
 
-      <!-- Iframe donde volcaremos el HTML vivo -->
-      <iframe
-        id="preview-iframe"
-        title="Template Preview"
-        class="bg-white dark:bg-slate-900"
-      ></iframe>
+      <!-- Preview area -->
+      <div class="flex-1 overflow-auto">
+        <div class="min-h-full flex justify-center p-6">
+          <div
+            id="preview-frame"
+            class="bg-white dark:bg-slate-900 overflow-hidden"
+            style="width: 600px"
+          >
+            <!-- Iframe donde volcaremos el HTML vivo -->
+            <iframe id="preview-iframe" title="Template Preview"></iframe>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom bar: current width indicator -->
+      <div
+        class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 px-6 py-2 text-xs text-slate-600 dark:text-slate-300"
+      >
+        Ancho actual: <span id="viewport-width-indicator" class="font-semibold">600px</span>
+      </div>
     </div>
 
     <!-- Main App -->
@@ -190,6 +253,95 @@
       document.getElementById("template-name").textContent = templateName;
       const iframe = document.getElementById("preview-iframe");
       const syncStatus = document.getElementById("sync-status");
+
+      // Viewport (preview width) controls
+      const viewportDesktopBtn = document.getElementById("viewport-desktop");
+      const viewportMobileBtn = document.getElementById("viewport-mobile");
+      const viewportCustomBtn = document.getElementById("viewport-custom");
+      const viewportCustomInputWrap = document.getElementById("viewport-custom-input-wrap");
+      const viewportCustomInput = document.getElementById("viewport-custom-input");
+      const previewFrame = document.getElementById("preview-frame");
+      const viewportWidthIndicator = document.getElementById("viewport-width-indicator");
+
+      const VIEWPORT_MODE_KEY = "preview-viewport-mode";
+      const VIEWPORT_CUSTOM_WIDTH_KEY = "preview-viewport-custom-width";
+
+      const VIEWPORT_PRESETS = {
+        desktop: 600,
+        mobile: 375,
+      };
+
+      function clampWidth(width) {
+        const parsed = Number(width);
+        if (!Number.isFinite(parsed)) return VIEWPORT_PRESETS.desktop;
+        return Math.max(280, Math.min(1200, Math.round(parsed)));
+      }
+
+      function setActiveViewportButton(active) {
+        const selectedClasses = [
+          "bg-sky-500",
+          "text-white",
+          "hover:bg-sky-600",
+          "dark:bg-sky-500",
+          "dark:text-white",
+          "dark:hover:bg-sky-600",
+        ];
+        const unselectedClasses = [
+          "bg-white",
+          "dark:bg-slate-900",
+          "text-slate-600",
+          "dark:text-slate-300",
+          "hover:bg-slate-100",
+          "dark:hover:bg-slate-800",
+        ];
+
+        const setSelected = (button, isSelected) => {
+          button.classList.remove(...selectedClasses, ...unselectedClasses);
+          button.classList.add(...(isSelected ? selectedClasses : unselectedClasses));
+        };
+
+        setSelected(viewportDesktopBtn, active === "desktop");
+        setSelected(viewportMobileBtn, active === "mobile");
+        setSelected(viewportCustomBtn, active === "custom");
+      }
+
+      function applyViewport(mode, customWidth) {
+        const resolvedMode = mode === "mobile" || mode === "custom" ? mode : "desktop";
+        const width =
+          resolvedMode === "custom" ? clampWidth(customWidth) : VIEWPORT_PRESETS[resolvedMode];
+
+        previewFrame.style.width = `${width}px`;
+        viewportWidthIndicator.textContent = `${width}px`;
+
+        viewportCustomInputWrap.classList.toggle("hidden", resolvedMode !== "custom");
+        viewportCustomInputWrap.classList.toggle("flex", resolvedMode === "custom");
+        if (resolvedMode === "custom") {
+          viewportCustomInput.value = String(width);
+        }
+
+        setActiveViewportButton(resolvedMode);
+
+        localStorage.setItem(VIEWPORT_MODE_KEY, resolvedMode);
+        if (resolvedMode === "custom") {
+          localStorage.setItem(VIEWPORT_CUSTOM_WIDTH_KEY, String(width));
+        }
+      }
+
+      // Restore saved viewport preference
+      const savedViewportMode = localStorage.getItem(VIEWPORT_MODE_KEY) || "desktop";
+      const savedCustomWidth = localStorage.getItem(VIEWPORT_CUSTOM_WIDTH_KEY) || "600";
+      applyViewport(savedViewportMode, savedCustomWidth);
+
+      viewportDesktopBtn.addEventListener("click", () => applyViewport("desktop"));
+      viewportMobileBtn.addEventListener("click", () => applyViewport("mobile"));
+      viewportCustomBtn.addEventListener("click", () => {
+        const storedCustomWidth =
+          localStorage.getItem(VIEWPORT_CUSTOM_WIDTH_KEY) || viewportCustomInput.value || "600";
+        applyViewport("custom", storedCustomWidth);
+      });
+      viewportCustomInput.addEventListener("input", () =>
+        applyViewport("custom", viewportCustomInput.value),
+      );
 
       // La carga inicial del iframe puede ser simplemente la ruta del template renderizada por vite normal:
       iframe.src = `/templates/${templateName}/index.html`;

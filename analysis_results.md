@@ -2,14 +2,14 @@
 
 ## Estado actual del proyecto
 
-Tu proyecto es una herramienta sólida y bien estructurada. Integra Maizzle + Handlebars + Vite de forma inteligente, con un CLI completo, preview en vivo, component library, y un pipeline de build que produce HTML listo para ESPs. Recientemente se ha añadido un sistema automático de validación de compatibilidad con clientes de email (Outlook, Gmail, etc.), lo que lo hace notablemente más maduro que la mayoría de boilerplates de email.
+Tu proyecto es una herramienta sólida y bien estructurada. Integra Maizzle + Handlebars + Vite de forma inteligente, con un CLI completo, preview en vivo, component library, y un pipeline de build que produce HTML listo para ESPs. Recientemente se ha añadido un sistema automático de validación de compatibilidad con clientes de email (Outlook, Gmail, etc.) y una vista responsive (Desktop/Mobile/Custom) en el preview, lo que lo hace notablemente más maduro que la mayoría de boilerplates de email.
 
 ### ✅ Fortalezas actuales
 
 | Área                          | Detalle                                                                                   |
 | ----------------------------- | ----------------------------------------------------------------------------------------- |
 | **Arquitectura**              | Separación limpia: plugins Vite, CLI modular, scripts de build independientes             |
-| **DX (Developer Experience)** | Hot reload, JSON editor reactivo, dark mode toggle, preview en vivo                       |
+| **DX (Developer Experience)** | Hot reload, JSON editor reactivo, dark mode toggle, preview en vivo + viewport responsive |
 | **Pipeline de build**         | CSS switch, media query injection, HTML size check, validación de compatibilidad email    |
 | **CLI**                       | 8 opciones funcionales, validación de `.env`, `--help`, build automático si falta `dist/` |
 | **Envío/testing**             | Mailtrap sandbox, Mail-Tester, bandeja real, validador automático de reglas de email      |
@@ -34,7 +34,7 @@ El proyecto **no tiene ningún test**. Esto es la mejora más importante porque:
 - Agregar Vitest (integración nativa con Vite)
 - Tests unitarios para: `compileTemplate()`, `applyHandlebars()`, `checkHtmlSize()`, `injectEmailMediaQueries()`, `loadEnv()`, `checkEnv()`, validadores JSON
 - Tests de integración para el build pipeline completo (build → verify output)
-- Agregar `yarn test` al script de CI y al pre-commit hook
+- Agregar `bun run test` al script de CI y al pre-commit hook
 
 ---
 
@@ -48,7 +48,7 @@ Se ha implementado un sistema de diagnóstico que analiza los archivos en `dist/
 
 - **Core:** `scripts/build/validate-email-html.js` con soporte para severidades (ERROR/WARNING/INFO).
 - **Reglas:** 12 validadores que detectan problemas comunes como `display: flex`, falta de `alt`, o links rotos `#`.
-- **Pipeline:** Integrado automáticamente en `yarn build`.
+- **Pipeline:** Integrado automáticamente en `bun run build`.
 - **CLI:** Opción `[8] 🔍 Validar compatibilidad email` añadida para ejecución manual.
 
 ---
@@ -93,18 +93,18 @@ Actualmente `generate-email.js` genera un template mínimo idéntico siempre. No
 
 ---
 
-### 5. Vista responsive (mobile preview)
+### 5. Vista responsive (mobile preview) ✅ Implementado
 
 **Categoría:** Herramienta de email
 
-El preview actual solo muestra desktop (600px). No hay forma de ver cómo se ve el email en mobile (320-375px), que es donde el **60%+** de los emails se abren.
+El preview ahora permite alternar rápidamente entre desktop, mobile y un ancho personalizado para validar rendering en tamaños típicos de email.
 
-**Propuesta:**
+**Implementación:**
 
-- Agregar toggle de viewport en la barra del preview: `Desktop (600px)` | `Mobile (375px)` | `Custom`
-- El iframe ajusta su `width` dinámicamente
-- Persistir la preferencia en `localStorage`
-- Barra inferior con indicador visual del ancho actual
+- Toggle de viewport en la barra superior: `Desktop (600px)` | `Mobile (375px)` | `Custom`
+- El iframe ajusta su ancho dinámicamente (centrado en el panel de preview)
+- Preferencia persistida en `localStorage`
+- Barra inferior con indicador del ancho actual
 
 ---
 
@@ -127,11 +127,11 @@ Para usar el template en SendGrid/Mailchimp, el usuario tiene que abrir `dist/we
 
 **Categoría:** Experiencia de codificación
 
-El build actual es one-shot. Si estás iterando sobre el output de producción (revisando el HTML final con CSS inline), hay que correr `yarn build` manualmente cada vez.
+El build actual es one-shot. Si estás iterando sobre el output de producción (revisando el HTML final con CSS inline), hay que correr `bun run build` manualmente cada vez.
 
 **Propuesta:**
 
-- `yarn build --watch` que observe cambios en `src/` y re-compile automáticamente
+- `bun run build --watch` que observe cambios en `src/` y re-compile automáticamente
 - Usar `chokidar` o el file watcher de Node.js
 - Solo recompilar el template que cambió (build incremental)
 - Agregar como opción en el CLI: `[2b] 📦 Build + Watch`
@@ -152,7 +152,7 @@ Los delimitadores `{{ }}` están hardcodeados para SendGrid. Otros ESPs usan sin
 
 - Configuración en `data.json` o un `esp.config.json` que permita elegir el ESP target
 - El build transforma las variables `{{ }}` al formato del ESP elegido
-- Opción en el CLI al buildear: "¿Para qué ESP?" o un flag `yarn build --esp=mailchimp`
+- Opción en el CLI al buildear: "¿Para qué ESP?" o un flag `bun run build --esp=mailchimp`
 
 ---
 
@@ -279,9 +279,9 @@ No hay pipeline de CI/CD configurado.
 **Propuesta:**
 
 - GitHub Action que en cada PR:
-  1. `yarn lint`
-  2. `yarn test` (cuando existan tests)
-  3. `yarn build`
+  1. `bun run lint`
+  2. `bun run test` (cuando existan tests)
+  3. `bun run build`
   4. Verificar size limits
   5. Generar screenshots de los templates y adjuntarlos como artefactos del PR
 - Badge de status en el README
@@ -377,7 +377,7 @@ Actualmente hay: `maizzle.config.js`, `tailwind.config.js`, `tailwind.email.conf
 | 🔴 Crítica | 2   | Validación compatibilidad email ✅     | Email        |
 | 🔴 Crítica | 3   | Librería de componentes reutilizables  | Email        |
 | 🟠 Alta    | 4   | Presets para el generador de templates | Email        |
-| 🟠 Alta    | 5   | Vista responsive (mobile preview)      | Email        |
+| 🟠 Alta    | 5   | Vista responsive (mobile preview) ✅   | Email        |
 | 🟠 Alta    | 6   | Copiar HTML al clipboard               | Email        |
 | 🟠 Alta    | 7   | Watch mode en build                    | Codificación |
 | 🟠 Alta    | 8   | Soporte multi-ESP                      | Email        |
@@ -401,4 +401,4 @@ Actualmente hay: `maizzle.config.js`, `tailwind.config.js`, `tailwind.email.conf
 
 ---
 
-> [!TIP] > **Recomendación de roadmap:** Empezar con **#1 (Testing)** + **#3 (Componentes)** en paralelo. Testing te da la red de seguridad para todo lo demás, y los componentes son lo que más valor visible agrega a la herramienta. Después **#5 (Mobile preview)** + **#6 (Copy HTML)** son quick wins de alto impacto.
+> [!TIP] > **Recomendación de roadmap:** Empezar con **#1 (Testing)** + **#3 (Componentes)** en paralelo. Testing te da la red de seguridad para todo lo demás, y los componentes son lo que más valor visible agrega a la herramienta. Después **#6 (Copy HTML)** son quick wins de alto impacto.
