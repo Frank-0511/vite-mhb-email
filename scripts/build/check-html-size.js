@@ -27,8 +27,8 @@ export function checkHtmlSize() {
     const sizeInKB = stats.size / 1024;
     totalSize += stats.size;
 
-    let status = "✅";
-    let color = "";
+    let status;
+    let color;
 
     if (stats.size > GMAIL_LIMIT) {
       status = "❌ EXCEEDS";

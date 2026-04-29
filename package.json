@@ -28,23 +28,23 @@
     "type": "git",
     "url": "https://github.com/Frank-0511/vite-mhb-email"
   },
-  "packageManager": "yarn@4.13.0",
+  "packageManager": "bun@1.2.2",
   "type": "module",
   "engines": {
     "node": ">=20",
-    "yarn": ">=4"
+    "bun": ">=1.0.0"
   },
   "scripts": {
     "dev": "vite",
-    "build": "yarn lint && node scripts/build/build.js",
-    "check-size": "node scripts/build/check-html-size.js",
-    "validate-email": "node scripts/build/validate-email-html.js",
-    "cli": "node scripts/cli.js",
-    "lint": "yarn lint:html && yarn lint:js && yarn lint:md && yarn lint:json",
+    "build": "bun run lint && bun scripts/build/build.js",
+    "check-size": "bun scripts/build/check-html-size.js",
+    "validate-email": "bun scripts/build/validate-email-html.js",
+    "cli": "bun scripts/cli.js",
+    "lint": "bun run lint:html && bun run lint:js && bun run lint:md && bun run lint:json",
     "lint:html": "htmlhint \"src/templates/**/*.html\"",
     "lint:js": "eslint scripts/ vite.config.js",
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\" \"#analysis_results.md\"",
-    "lint:json": "node scripts/build/validate-json.js",
+    "lint:json": "bun scripts/build/validate-json.js",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prepare": "husky"
@@ -63,7 +63,7 @@
       "prettier --write"
     ],
     "src/templates/*/data.json": [
-      "node scripts/validate-json.js",
+      "bun scripts/validate-json.js",
       "prettier --write"
     ],
     "*.{json,css}": [
@@ -75,31 +75,28 @@
     ]
   },
   "devDependencies": {
-    "@eslint/js": "9.22.0",
+    "@eslint/js": "10.0.1",
     "@maizzle/framework": "5.5.0",
-    "autoprefixer": "10.4",
-    "eslint": "9.22.0",
-    "eslint-config-prettier": "10.1.1",
+    "autoprefixer": "10.5.0",
+    "eslint": "10.2.1",
+    "eslint-config-prettier": "10.1.8",
     "fs-extra": "11.3.4",
     "glob": "13.0.6",
-    "globals": "16.0.0",
+    "globals": "17.5.0",
     "htmlhint": "1.9.2",
-    "husky": "9.1.5",
-    "lint-staged": "15.2.10",
-    "maizzle": "0.0.1",
-    "markdownlint-cli2": "0.17.2",
-    "nodemailer": "6.10.0",
-    "postcss": "8.4",
-    "prettier": "3.5.3",
-    "puppeteer-core": "^24.40.0",
-    "tailwindcss": "3.4.17",
-    "vite": "7.3.1"
-  },
-  "resolutions": {
-    "css-select": "4.3.0"
+    "husky": "9.1.7",
+    "lint-staged": "16.4.0",
+    "maizzle": "1.1.0",
+    "markdownlint-cli2": "0.22.1",
+    "nodemailer": "8.0.7",
+    "postcss": "8.5.12",
+    "prettier": "3.8.3",
+    "puppeteer-core": "24.42.0",
+    "tailwindcss": "3.4.19",
+    "vite": "8.0.10"
   },
   "dependencies": {
-    "handlebars": "4.7.8",
-    "lucide": "^0.577.0"
+    "handlebars": "4.7.9",
+    "lucide": "^1.14.0"
   }
 }

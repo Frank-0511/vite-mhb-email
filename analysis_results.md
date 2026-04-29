@@ -2,18 +2,18 @@
 
 ## Estado actual del proyecto
 
-Tu proyecto es una herramienta sólida y bien estructurada. Integra Maizzle + Handlebars + Vite de forma inteligente, con un CLI completo, preview en vivo, component library, y un pipeline de build que produce HTML listo para ESPs. Es notablemente más maduro que la mayoría de boilerplates de email.
+Tu proyecto es una herramienta sólida y bien estructurada. Integra Maizzle + Handlebars + Vite de forma inteligente, con un CLI completo, preview en vivo, component library, y un pipeline de build que produce HTML listo para ESPs. Recientemente se ha añadido un sistema automático de validación de compatibilidad con clientes de email (Outlook, Gmail, etc.), lo que lo hace notablemente más maduro que la mayoría de boilerplates de email.
 
 ### ✅ Fortalezas actuales
 
-| Área | Detalle |
-|------|---------|
-| **Arquitectura** | Separación limpia: plugins Vite, CLI modular, scripts de build independientes |
-| **DX (Developer Experience)** | Hot reload, JSON editor reactivo, dark mode toggle, preview en vivo |
-| **Pipeline de build** | CSS switch, media query injection, HTML size check, flatten automático |
-| **CLI** | 7 opciones funcionales, validación de `.env`, `--help`, build automático si falta `dist/` |
-| **Envío/testing** | Mailtrap sandbox, Mail-Tester, bandeja real, exportación a PNG |
-| **Calidad de código** | ESLint, Prettier, HTMLHint, markdownlint, Husky + lint-staged, JSDoc |
+| Área                          | Detalle                                                                                   |
+| ----------------------------- | ----------------------------------------------------------------------------------------- |
+| **Arquitectura**              | Separación limpia: plugins Vite, CLI modular, scripts de build independientes             |
+| **DX (Developer Experience)** | Hot reload, JSON editor reactivo, dark mode toggle, preview en vivo                       |
+| **Pipeline de build**         | CSS switch, media query injection, HTML size check, validación de compatibilidad email    |
+| **CLI**                       | 8 opciones funcionales, validación de `.env`, `--help`, build automático si falta `dist/` |
+| **Envío/testing**             | Mailtrap sandbox, Mail-Tester, bandeja real, validador automático de reglas de email      |
+| **Calidad de código**         | ESLint, Prettier, HTMLHint, markdownlint, Email Compatibility Validator, JSDoc            |
 
 ---
 
@@ -24,11 +24,13 @@ Tu proyecto es una herramienta sólida y bien estructurada. Integra Maizzle + Ha
 **Categoría:** Experiencia de codificación
 
 El proyecto **no tiene ningún test**. Esto es la mejora más importante porque:
+
 - El pipeline de build tiene lógica compleja (CSS switching, media query injection, Handlebars compilation) que puede romperse silenciosamente
 - Los scripts de CLI manejan envío de emails que necesitan validación
 - Cada refactor futuro es un riesgo sin red de seguridad
 
 **Propuesta:**
+
 - Agregar Vitest (integración nativa con Vite)
 - Tests unitarios para: `compileTemplate()`, `applyHandlebars()`, `checkHtmlSize()`, `injectEmailMediaQueries()`, `loadEnv()`, `checkEnv()`, validadores JSON
 - Tests de integración para el build pipeline completo (build → verify output)
@@ -36,21 +38,18 @@ El proyecto **no tiene ningún test**. Esto es la mejora más importante porque:
 
 ---
 
-### 2. Validación de compatibilidad con clientes de email (HTML Email Linting)
+### 2. Validación de compatibilidad con clientes de email (HTML Email Linting) ✅ Implementado
 
 **Categoría:** Herramienta de email
 
-Actualmente no hay ninguna validación de que el HTML producido sea compatible con Outlook, Gmail, Apple Mail, etc. El `htmlhint` solo valida sintaxis genérica, no reglas de email.
+Se ha implementado un sistema de diagnóstico que analiza los archivos en `dist/` detectando 12 reglas críticas de renderizado (flexbox, gap, dimensiones de imagen, doctype, scripts, etc.).
 
-**Propuesta:**
-- Integrar [email-comb](https://codsen.com/os/email-comb) o reglas custom post-build que validen:
-  - No usar propiedades CSS no soportadas (ej: `flexbox` en Outlook)
-  - No usar `<div>` sin fallback `<table>` para Outlook
-  - Verificar que todo CSS esté inlineado donde debe
-  - Verificar alt text en todas las `<img>`
-  - Verificar que no haya clases sin purge en el build final
-- Agregar como paso post-build con reporte visual (✅/⚠️/❌)
-- **CLI opción nueva:** `[8] 🔍 Validar compatibilidad email`
+**Implementación:**
+
+- **Core:** `scripts/build/validate-email-html.js` con soporte para severidades (ERROR/WARNING/INFO).
+- **Reglas:** 12 validadores que detectan problemas comunes como `display: flex`, falta de `alt`, o links rotos `#`.
+- **Pipeline:** Integrado automáticamente en `yarn build`.
+- **CLI:** Opción `[8] 🔍 Validar compatibilidad email` añadida para ejecución manual.
 
 ---
 
@@ -62,11 +61,11 @@ Los directorios `src/partials/atoms/` y `src/partials/molecules/` están **vací
 
 **Propuesta:** Crear un set base de componentes email-safe:
 
-| Tipo | Componentes |
-|------|-------------|
-| **Atoms** | `button`, `heading`, `paragraph`, `image`, `spacer`, `divider`, `badge`, `social-icon` |
+| Tipo          | Componentes                                                                                                    |
+| ------------- | -------------------------------------------------------------------------------------------------------------- |
+| **Atoms**     | `button`, `heading`, `paragraph`, `image`, `spacer`, `divider`, `badge`, `social-icon`                         |
 | **Molecules** | `feature-row` (icono + texto), `stat-card`, `testimonial`, `pricing-row`, `notification-bar`, `image-text-row` |
-| **Organisms** | `hero` (ya existe), `feature-grid`, `pricing-table`, `footer-social`, `header-nav`, `cta-section` |
+| **Organisms** | `hero` (ya existe), `feature-grid`, `pricing-table`, `footer-social`, `header-nav`, `cta-section`              |
 
 Cada uno con `schema.json`, variantes (v1, v2), y props configurables desde la Component Library.
 
@@ -81,6 +80,7 @@ Cada uno con `schema.json`, variantes (v1, v2), y props configurables desde la C
 Actualmente `generate-email.js` genera un template mínimo idéntico siempre. No hay variedad.
 
 **Propuesta:**
+
 - Al crear un nuevo template, ofrecer elegir un preset:
   - `welcome` — Email de bienvenida con hero + features
   - `transactional` — Confirmación de pedido/acción
@@ -100,6 +100,7 @@ Actualmente `generate-email.js` genera un template mínimo idéntico siempre. No
 El preview actual solo muestra desktop (600px). No hay forma de ver cómo se ve el email en mobile (320-375px), que es donde el **60%+** de los emails se abren.
 
 **Propuesta:**
+
 - Agregar toggle de viewport en la barra del preview: `Desktop (600px)` | `Mobile (375px)` | `Custom`
 - El iframe ajusta su `width` dinámicamente
 - Persistir la preferencia en `localStorage`
@@ -114,6 +115,7 @@ El preview actual solo muestra desktop (600px). No hay forma de ver cómo se ve 
 Para usar el template en SendGrid/Mailchimp, el usuario tiene que abrir `dist/welcome.html`, copiar el contenido, y pegarlo. No hay acceso directo desde la UI.
 
 **Propuesta:**
+
 - Botón "📋 Copiar HTML" en la página de preview (junto a "Guardar")
 - Copia el HTML compilado (con Handlebars aplicado) al clipboard
 - Feedback visual: "¡Copiado!" con animación
@@ -128,6 +130,7 @@ Para usar el template en SendGrid/Mailchimp, el usuario tiene que abrir `dist/we
 El build actual es one-shot. Si estás iterando sobre el output de producción (revisando el HTML final con CSS inline), hay que correr `yarn build` manualmente cada vez.
 
 **Propuesta:**
+
 - `yarn build --watch` que observe cambios en `src/` y re-compile automáticamente
 - Usar `chokidar` o el file watcher de Node.js
 - Solo recompilar el template que cambió (build incremental)
@@ -140,11 +143,13 @@ El build actual es one-shot. Si estás iterando sobre el output de producción (
 **Categoría:** Herramienta de email
 
 Los delimitadores `{{ }}` están hardcodeados para SendGrid. Otros ESPs usan sintaxis distinta:
+
 - Mailchimp: `*|VARIABLE|*`
 - HubSpot: `{{ contact.property }}`
 - Klaviyo: `{{ person.property }}`
 
 **Propuesta:**
+
 - Configuración en `data.json` o un `esp.config.json` que permita elegir el ESP target
 - El build transforma las variables `{{ }}` al formato del ESP elegido
 - Opción en el CLI al buildear: "¿Para qué ESP?" o un flag `yarn build --esp=mailchimp`
@@ -160,6 +165,7 @@ Los delimitadores `{{ }}` están hardcodeados para SendGrid. Otros ESPs usan sin
 No hay manera de ver versiones anteriores de un template. Si alguien edita el `data.json` desde la UI y guarda, el estado anterior se pierde.
 
 **Propuesta:**
+
 - Antes de cada save, crear un backup en `.template-history/welcome/2026-04-28T19-35-39.json`
 - Botón "📜 Ver historial" en la UI del editor
 - Posibilidad de restaurar una versión anterior
@@ -173,6 +179,7 @@ No hay manera de ver versiones anteriores de un template. Si alguien edita el `d
 Los emails profesionales siempre incluyen una versión plain text como fallback. Actualmente no hay generación ni preview de esto.
 
 **Propuesta:**
+
 - Post-build: generar automáticamente `dist/welcome.txt` a partir del HTML (strip tags, preservar estructura)
 - Preview tab en la UI: `HTML` | `Plain Text` | `Source`
 - El envío vía CLI incluye automáticamente el plain text como `multipart/alternative`
@@ -186,6 +193,7 @@ Los emails profesionales siempre incluyen una versión plain text como fallback.
 No hay validación de accesibilidad en los emails generados.
 
 **Propuesta:**
+
 - Verificar post-build:
   - `alt` en todas las `<img>`
   - `role="presentation"` en tablas de layout
@@ -203,6 +211,7 @@ No hay validación de accesibilidad en los emails generados.
 Solo se exporta a PNG. Pero para presentaciones, documentación o stakeholders sería útil tener más opciones.
 
 **Propuesta:**
+
 - Exportar a: PNG (ya existe), PDF, MJML (reverse-engineer), y un ZIP con HTML + assets
 - El ZIP es especialmente útil para entregar a equipos de marketing
 
@@ -215,7 +224,9 @@ Solo se exporta a PNG. Pero para presentaciones, documentación o stakeholders s
 Los valores de marca (nombre empresa, colores, logo URL, dirección, etc.) están **hardcodeados** en los layouts y templates: `"Mi Empresa"`, `"Calle Ejemplo 123"`, colores hex, etc.
 
 **Propuesta:**
+
 - Crear `src/brand.json` con tokens:
+
   ```json
   {
     "company_name": "Mi Empresa",
@@ -225,6 +236,7 @@ Los valores de marca (nombre empresa, colores, logo URL, dirección, etc.) está
     "social": { "twitter": "...", "linkedin": "..." }
   }
   ```
+
 - Los layouts y partials consumen estos tokens vía `[[ page.brand.company_name ]]`
 - El CLI ofrece un wizard para configurar estos valores inicialmente
 
@@ -237,6 +249,7 @@ Los valores de marca (nombre empresa, colores, logo URL, dirección, etc.) está
 Desde el preview no hay forma de ver el HTML source del template compilado sin abrir archivos manualmente.
 
 **Propuesta:**
+
 - Tab "Source" en el preview que muestre el HTML generado con syntax highlighting
 - Botón para ver el diff entre el source y el build output
 - Útil para debugging de CSS inline y media queries
@@ -250,6 +263,7 @@ Desde el preview no hay forma de ver el HTML source del template compilado sin a
 Actualmente el preview recarga el iframe completo con cada cambio. Con templates complejos esto puede causar flashes.
 
 **Propuesta:**
+
 - Implementar partial updates: si solo cambia el `data.json`, solo re-renderizar el Handlebars sin recompilar Maizzle
 - Si cambia el HTML, hacer full reload
 - Reducir el debounce de 300ms a algo adaptativo
@@ -263,8 +277,9 @@ Actualmente el preview recarga el iframe completo con cada cambio. Con templates
 No hay pipeline de CI/CD configurado.
 
 **Propuesta:**
+
 - GitHub Action que en cada PR:
-  1. `yarn lint` 
+  1. `yarn lint`
   2. `yarn test` (cuando existan tests)
   3. `yarn build`
   4. Verificar size limits
@@ -280,6 +295,7 @@ No hay pipeline de CI/CD configurado.
 El proyecto usa `// @ts-check` en algunos archivos y JSDoc en otros, pero no hay type-checking real.
 
 **Propuesta:**
+
 - Agregar `tsconfig.json` con `allowJs: true` y `checkJs: true`
 - Configurar el build para que `tsc --noEmit` valide tipos
 - Gradualmente migrar archivos críticos a `.ts` (empezando por `utils.js` y `compile.js`)
@@ -355,35 +371,34 @@ Actualmente hay: `maizzle.config.js`, `tailwind.config.js`, `tailwind.email.conf
 
 ## Resumen por prioridad
 
-| Prioridad | # | Mejora | Categoría |
-|-----------|---|--------|-----------|
-| 🔴 Crítica | 1 | Testing automatizado | Codificación |
-| 🔴 Crítica | 2 | Validación compatibilidad email | Email |
-| 🔴 Crítica | 3 | Librería de componentes reutilizables | Email |
-| 🟠 Alta | 4 | Presets para el generador de templates | Email |
-| 🟠 Alta | 5 | Vista responsive (mobile preview) | Email |
-| 🟠 Alta | 6 | Copiar HTML al clipboard | Email |
-| 🟠 Alta | 7 | Watch mode en build | Codificación |
-| 🟠 Alta | 8 | Soporte multi-ESP | Email |
-| 🟡 Media | 9 | Historial de versiones | Email |
-| 🟡 Media | 10 | Preview plain text | Email |
-| 🟡 Media | 11 | Accessibility checker | Email |
-| 🟡 Media | 12 | Exportación multi-formato | Email |
-| 🟡 Media | 13 | Brand tokens globales | Email |
-| 🟡 Media | 14 | Inline source viewer | Codificación |
-| 🟡 Media | 15 | HMR granular | Codificación |
-| 🟡 Media | 16 | CI/CD Pipeline | Codificación |
-| 🟡 Media | 17 | TypeScript gradual | Codificación |
-| 🟢 Baja | 18 | Dashboard analytics | Email |
-| 🟢 Baja | 19 | Drag & drop ordering | Email |
-| 🟢 Baja | 20 | Template tags/categories | Email |
-| 🟢 Baja | 21 | i18n (multi-idioma) | Email |
-| 🟢 Baja | 22 | Custom Handlebars helpers | Email |
-| 🟢 Baja | 23 | Isolated component testing | Codificación |
-| 🟢 Baja | 24 | Plugin architecture | Codificación |
-| 🟢 Baja | 25 | Config unificado | Codificación |
+| Prioridad  | #   | Mejora                                 | Categoría    |
+| ---------- | --- | -------------------------------------- | ------------ |
+| 🔴 Crítica | 1   | Testing automatizado                   | Codificación |
+| 🔴 Crítica | 2   | Validación compatibilidad email ✅     | Email        |
+| 🔴 Crítica | 3   | Librería de componentes reutilizables  | Email        |
+| 🟠 Alta    | 4   | Presets para el generador de templates | Email        |
+| 🟠 Alta    | 5   | Vista responsive (mobile preview)      | Email        |
+| 🟠 Alta    | 6   | Copiar HTML al clipboard               | Email        |
+| 🟠 Alta    | 7   | Watch mode en build                    | Codificación |
+| 🟠 Alta    | 8   | Soporte multi-ESP                      | Email        |
+| 🟡 Media   | 9   | Historial de versiones                 | Email        |
+| 🟡 Media   | 10  | Preview plain text                     | Email        |
+| 🟡 Media   | 11  | Accessibility checker                  | Email        |
+| 🟡 Media   | 12  | Exportación multi-formato              | Email        |
+| 🟡 Media   | 13  | Brand tokens globales                  | Email        |
+| 🟡 Media   | 14  | Inline source viewer                   | Codificación |
+| 🟡 Media   | 15  | HMR granular                           | Codificación |
+| 🟡 Media   | 16  | CI/CD Pipeline                         | Codificación |
+| 🟡 Media   | 17  | TypeScript gradual                     | Codificación |
+| 🟢 Baja    | 18  | Dashboard analytics                    | Email        |
+| 🟢 Baja    | 19  | Drag & drop ordering                   | Email        |
+| 🟢 Baja    | 20  | Template tags/categories               | Email        |
+| 🟢 Baja    | 21  | i18n (multi-idioma)                    | Email        |
+| 🟢 Baja    | 22  | Custom Handlebars helpers              | Email        |
+| 🟢 Baja    | 23  | Isolated component testing             | Codificación |
+| 🟢 Baja    | 24  | Plugin architecture                    | Codificación |
+| 🟢 Baja    | 25  | Config unificado                       | Codificación |
 
 ---
 
-> [!TIP]
-> **Recomendación de roadmap:** Empezar con **#1 (Testing)** + **#3 (Componentes)** en paralelo. Testing te da la red de seguridad para todo lo demás, y los componentes son lo que más valor visible agrega a la herramienta. Después **#5 (Mobile preview)** + **#6 (Copy HTML)** son quick wins de alto impacto.
+> [!TIP] > **Recomendación de roadmap:** Empezar con **#1 (Testing)** + **#3 (Componentes)** en paralelo. Testing te da la red de seguridad para todo lo demás, y los componentes son lo que más valor visible agrega a la herramienta. Después **#5 (Mobile preview)** + **#6 (Copy HTML)** son quick wins de alto impacto.

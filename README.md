@@ -15,7 +15,7 @@ Herramienta de desarrollo de emails HTML que integra **Maizzle**, **Handlebars**
 ### Modo de desarrollo
 
 ```bash
-yarn dev
+bun run dev
 ```
 
 Vite levanta el dashboard en `http://localhost:5173`. Cada template en `src/templates/*/` aparece como una tarjeta con preview en vivo.
@@ -28,7 +28,7 @@ Vite levanta el dashboard en `http://localhost:5173`. Cada template en `src/temp
 ### Build de producción
 
 ```bash
-yarn build
+bun run build
 ```
 
 Maizzle compila los templates a `dist/` aplicando:
@@ -65,8 +65,8 @@ dist/
 ## CLI interactivo
 
 ```bash
-yarn cli          # Abre el menú interactivo
-yarn cli --help   # Muestra la ayuda y sale
+bun run cli          # Abre el menú interactivo
+bun run cli --help   # Muestra la ayuda y sale
 ```
 
 Lanza un menú interactivo desde la terminal con todas las opciones del proyecto.
@@ -111,7 +111,7 @@ Envía el template vía Gmail SMTP directamente a una o varias cuentas (Gmail, O
 **Opción [7]** del CLI permite capturar un screenshot PNG de cualquier template compilado.
 
 ```bash
-yarn export-screenshot nombre-template
+bun run export-screenshot nombre-template
 ```
 
 **Características:**
@@ -128,25 +128,25 @@ compatibilidad con clientes de email (Outlook, Gmail, Apple Mail, Yahoo).
 También se ejecuta automáticamente como parte del build.
 
 ```bash
-yarn validate-email
+bun run validate-email
 ```
 
 **Reglas incluidas:**
 
-| Severidad | Regla | Qué valida |
-|-----------|-------|------------|
-| ❌ Error | `img-dimensions` | `<img>` sin `width`/`height` como atributos HTML |
-| ❌ Error | `css-unsupported-props` | CSS no soportado: `flex`, `grid`, `position`, `gap`, etc. |
-| ❌ Error | `doctype-present` | Falta `<!doctype html>` |
-| ❌ Error | `no-js-in-email` | Tags `<script>` en el output |
-| ⚠️ Warning | `img-alt` | Imágenes sin `alt` descriptivo |
-| ⚠️ Warning | `meta-charset` | Falta `<meta charset="utf-8">` |
-| ⚠️ Warning | `link-targets` | Links con `href="#"` en producción |
-| ⚠️ Warning | `max-width-check` | Email más ancho que 700px |
-| ⚠️ Warning | `unsubscribe-link` | Falta link de cancelar suscripción |
-| ℹ️ Info | `color-scheme-meta` | Falta `<meta name="color-scheme">` con dark mode |
-| ℹ️ Info | `nested-tables-depth` | Tablas anidadas a más de 4 niveles |
-| ℹ️ Info | `css-class-vs-inline` | Ratio de estilos en `<style>` vs inline |
+| Severidad  | Regla                   | Qué valida                                                |
+| ---------- | ----------------------- | --------------------------------------------------------- |
+| ❌ Error   | `img-dimensions`        | `<img>` sin `width`/`height` como atributos HTML          |
+| ❌ Error   | `css-unsupported-props` | CSS no soportado: `flex`, `grid`, `position`, `gap`, etc. |
+| ❌ Error   | `doctype-present`       | Falta `<!doctype html>`                                   |
+| ❌ Error   | `no-js-in-email`        | Tags `<script>` en el output                              |
+| ⚠️ Warning | `img-alt`               | Imágenes sin `alt` descriptivo                            |
+| ⚠️ Warning | `meta-charset`          | Falta `<meta charset="utf-8">`                            |
+| ⚠️ Warning | `link-targets`          | Links con `href="#"` en producción                        |
+| ⚠️ Warning | `max-width-check`       | Email más ancho que 700px                                 |
+| ⚠️ Warning | `unsubscribe-link`      | Falta link de cancelar suscripción                        |
+| ℹ️ Info    | `color-scheme-meta`     | Falta `<meta name="color-scheme">` con dark mode          |
+| ℹ️ Info    | `nested-tables-depth`   | Tablas anidadas a más de 4 niveles                        |
+| ℹ️ Info    | `css-class-vs-inline`   | Ratio de estilos en `<style>` vs inline                   |
 
 ---
 
@@ -263,12 +263,12 @@ TEST_APPLE_TO=             # Destinatario iCloud (opción 6)
 ## Requisitos
 
 - Node.js ≥ 20
-- Yarn 4 (`corepack enable`)
+- Bun ≥ 1.0.0
 
 ## Instalación
 
 ```bash
 git clone <repo>
 cd vite-mhb-email
-yarn install
+bun install
 ```
