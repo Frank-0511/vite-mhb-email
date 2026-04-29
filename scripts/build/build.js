@@ -3,6 +3,7 @@ import { execSync } from "child_process";
 import { restorePreviewCss, switchToEmailCss } from "../generators/css-switcher.js";
 import { checkHtmlSize } from "./check-html-size.js";
 import { injectEmailMediaQueries } from "./inject-email-media-queries.js";
+import { validateEmailHtml } from "./validate-email-html.js";
 
 async function build() {
   try {
@@ -21,7 +22,11 @@ async function build() {
     await restorePreviewCss();
 
     // Chequear tamaño de archivos HTML
-    await checkHtmlSize();
+    checkHtmlSize();
+
+    // Validar compatibilidad con clientes de email
+    console.log("\n🔍 Validating email HTML compatibility...\n");
+    validateEmailHtml();
 
     console.log("✅ Build completed successfully!\n");
   } catch (err) {

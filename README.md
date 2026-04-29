@@ -89,6 +89,7 @@ Lanza un menú interactivo desde la terminal con todas las opciones del proyecto
 | `5`    | 🧪 Testear con **Mail-Tester** vía Gmail SMTP           |
 | `6`    | 📬 Enviar a bandeja real (Gmail / Outlook / Apple Mail) |
 | `7`    | 📸 Exportar template como PNG                           |
+| `8`    | 🔍 Validar compatibilidad email                         |
 | `0`    | 👋 Salir                                                |
 
 ### Submódulos de opciones
@@ -120,6 +121,33 @@ yarn export-screenshot nombre-template
 - Guarda el screenshot en `screenshots/nombre-template.png`
 - Soporta templates con variables SendGrid (`{{ variable }}`) y Maizzle (`[[ page.variable ]]`)
 
+#### [8] Validar compatibilidad email
+
+**Opción [8]** analiza los templates compilados en `dist/` y reporta problemas de
+compatibilidad con clientes de email (Outlook, Gmail, Apple Mail, Yahoo).
+También se ejecuta automáticamente como parte del build.
+
+```bash
+yarn validate-email
+```
+
+**Reglas incluidas:**
+
+| Severidad | Regla | Qué valida |
+|-----------|-------|------------|
+| ❌ Error | `img-dimensions` | `<img>` sin `width`/`height` como atributos HTML |
+| ❌ Error | `css-unsupported-props` | CSS no soportado: `flex`, `grid`, `position`, `gap`, etc. |
+| ❌ Error | `doctype-present` | Falta `<!doctype html>` |
+| ❌ Error | `no-js-in-email` | Tags `<script>` en el output |
+| ⚠️ Warning | `img-alt` | Imágenes sin `alt` descriptivo |
+| ⚠️ Warning | `meta-charset` | Falta `<meta charset="utf-8">` |
+| ⚠️ Warning | `link-targets` | Links con `href="#"` en producción |
+| ⚠️ Warning | `max-width-check` | Email más ancho que 700px |
+| ⚠️ Warning | `unsubscribe-link` | Falta link de cancelar suscripción |
+| ℹ️ Info | `color-scheme-meta` | Falta `<meta name="color-scheme">` con dark mode |
+| ℹ️ Info | `nested-tables-depth` | Tablas anidadas a más de 4 niveles |
+| ℹ️ Info | `css-class-vs-inline` | Ratio de estilos en `<style>` vs inline |
+
 ---
 
 ### Estructura de scripts
@@ -137,6 +165,7 @@ scripts/
 │   ├── build-helper.js       # buildIfNeeded(): ofrece buildear si dist/ vacío
 │   ├── check-html-size.js    # Valida tamaño de templates compilados
 │   ├── inject-email-media-queries.js  # Inyecta media queries para mobile
+│   ├── validate-email-html.js # Valida compatibilidad con clientes de email
 │   └── validate-json.js      # Valida JSON en templates
 ├── mail/                     # Envío de emails
 │   ├── gmail-transport.js    # Transporte Gmail SMTP (nodemailer)

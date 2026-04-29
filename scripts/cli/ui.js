@@ -49,6 +49,7 @@ export function printMenu() {
       color: c.magenta,
     },
     { key: "7", icon: "📸", label: "Exportar template como PNG", color: c.green },
+    { key: "8", icon: "🔍", label: "Validar compatibilidad email", color: c.cyan },
     { key: "0", icon: "👋", label: "Salir", color: c.red },
   ];
 
@@ -80,6 +81,7 @@ ${paint(c.cyan + c.bold, "  vite-mhb-email CLI")}
     ${paint(c.cyan, "[5]")}  🧪  Testear con Mail-Tester (Gmail)   (requiere GMAIL_*)
     ${paint(c.magenta, "[6]")}  📬  Enviar a bandeja real             (requiere GMAIL_*)
     ${paint(c.green, "[7]")}  📸  Exportar template como PNG
+    ${paint(c.cyan, "[8]")}  🔍  Validar compatibilidad email
     ${paint(c.red, "[0]")}  👋  Salir
 
   ${bold("Variables de entorno:")}

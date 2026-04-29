@@ -3,10 +3,11 @@
  * Cada acción corresponde a una opción del menú.
  */
 
+import { buildIfNeeded } from "../build/build-helper.js";
 import { sendToInbox } from "../mail/send-inbox.js";
 import { sendToMailtester } from "../mail/send-mailtester.js";
 import { sendTemplate } from "../mail/send-mailtrap.js";
-import { c, paint } from "../utils.js";
+import { c, getBuiltTemplates, paint } from "../utils.js";
 import { askSelectTemplate, askTemplateName, run } from "./helpers.js";
 import { clearScreen } from "./ui.js";
 
@@ -106,4 +107,28 @@ export async function exportScreenshot(rl) {
   if (code !== 0) {
     console.log(paint(c.red, `\n  ❌ Error al exportar la imagen (código ${code}).\n`));
   }
+}
+
+/**
+ * Acción [8]: Validar compatibilidad email
+ * @param {import('readline').Interface} rl
+ * @returns {Promise<void>}
+ */
+export async function validateEmails(rl) {
+  clearScreen();
+  console.log(paint(c.cyan + c.bold, "\n  🔍 Validar compatibilidad email\n"));
+
+  let templates = getBuiltTemplates();
+  if (templates.length === 0) {
+    const built = await buildIfNeeded(rl);
+    if (!built) return;
+    templates = getBuiltTemplates();
+    if (templates.length === 0) {
+      console.log(paint(c.red, "\n  ❌ El build no generó templates en dist/.\n"));
+      return;
+    }
+  }
+
+  const { validateEmailHtml } = await import("../build/validate-email-html.js");
+  validateEmailHtml();
 }

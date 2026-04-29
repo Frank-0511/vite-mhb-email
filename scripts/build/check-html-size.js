@@ -64,7 +64,6 @@ export function checkHtmlSize() {
   return hasWarnings;
 }
 
-checkHtmlSize().catch((err) => {
-  console.error("Error checking HTML size:", err);
-  process.exit(1);
-});
+if (import.meta.url === `file://${process.argv[1]}`) {
+  checkHtmlSize();
+}

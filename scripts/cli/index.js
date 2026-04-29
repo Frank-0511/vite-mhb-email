@@ -13,6 +13,7 @@ import {
   sendInbox,
   sendMailtrap,
   testMailTester,
+  validateEmails,
 } from "./actions.js";
 import { askMenuChoice } from "./helpers.js";
 import { clearScreen, printBanner, printHelp, printMenu, warnMissingEnv } from "./ui.js";
@@ -73,6 +74,11 @@ export async function main() {
       case "7":
         await exportScreenshot(rl);
         await new Promise((r) => setTimeout(r, 1500));
+        break;
+
+      case "8":
+        await validateEmails(rl);
+        await new Promise((r) => setTimeout(r, 2000));
         break;
 
       case "0":
