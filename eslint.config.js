@@ -5,19 +5,25 @@ import prettierConfig from "eslint-config-prettier";
 
 /** @type {import("eslint").Linter.Config[]} */
 export default [
-  // Archivos a analizar
-  {
-    files: ["scripts/**/*.js", "vite.config.js"],
-  },
-
   // Reglas recomendadas de ESLint
   js.configs.recommended,
 
   // Entorno Node.js — define process, console, __dirname, etc.
   {
+    files: ["scripts/**/*.js", "vite.config.js"],
     languageOptions: {
       globals: {
         ...globals.node,
+      },
+    },
+  },
+
+  // Entorno Browser — define window, document, customElements, etc.
+  {
+    files: ["src/js/**/*.js"],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
       },
     },
   },

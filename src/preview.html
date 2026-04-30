@@ -240,6 +240,7 @@
     <!-- Lógica de Reactividad y API -->
     <script type="module">
       import { JSONEditor } from "https://cdn.jsdelivr.net/npm/vanilla-jsoneditor@3.11.0/standalone.js";
+      import { initViewportControls } from "/js/modules/viewport-controls.js";
 
       const urlParams = new URLSearchParams(window.location.search);
       const templateName = urlParams.get("template");
@@ -263,85 +264,15 @@
       const previewFrame = document.getElementById("preview-frame");
       const viewportWidthIndicator = document.getElementById("viewport-width-indicator");
 
-      const VIEWPORT_MODE_KEY = "preview-viewport-mode";
-      const VIEWPORT_CUSTOM_WIDTH_KEY = "preview-viewport-custom-width";
-
-      const VIEWPORT_PRESETS = {
-        desktop: 600,
-        mobile: 375,
-      };
-
-      function clampWidth(width) {
-        const parsed = Number(width);
-        if (!Number.isFinite(parsed)) return VIEWPORT_PRESETS.desktop;
-        return Math.max(280, Math.min(1200, Math.round(parsed)));
-      }
-
-      function setActiveViewportButton(active) {
-        const selectedClasses = [
-          "bg-sky-500",
-          "text-white",
-          "hover:bg-sky-600",
-          "dark:bg-sky-500",
-          "dark:text-white",
-          "dark:hover:bg-sky-600",
-        ];
-        const unselectedClasses = [
-          "bg-white",
-          "dark:bg-slate-900",
-          "text-slate-600",
-          "dark:text-slate-300",
-          "hover:bg-slate-100",
-          "dark:hover:bg-slate-800",
-        ];
-
-        const setSelected = (button, isSelected) => {
-          button.classList.remove(...selectedClasses, ...unselectedClasses);
-          button.classList.add(...(isSelected ? selectedClasses : unselectedClasses));
-        };
-
-        setSelected(viewportDesktopBtn, active === "desktop");
-        setSelected(viewportMobileBtn, active === "mobile");
-        setSelected(viewportCustomBtn, active === "custom");
-      }
-
-      function applyViewport(mode, customWidth) {
-        const resolvedMode = mode === "mobile" || mode === "custom" ? mode : "desktop";
-        const width =
-          resolvedMode === "custom" ? clampWidth(customWidth) : VIEWPORT_PRESETS[resolvedMode];
-
-        previewFrame.style.width = `${width}px`;
-        viewportWidthIndicator.textContent = `${width}px`;
-
-        viewportCustomInputWrap.classList.toggle("hidden", resolvedMode !== "custom");
-        viewportCustomInputWrap.classList.toggle("flex", resolvedMode === "custom");
-        if (resolvedMode === "custom") {
-          viewportCustomInput.value = String(width);
-        }
-
-        setActiveViewportButton(resolvedMode);
-
-        localStorage.setItem(VIEWPORT_MODE_KEY, resolvedMode);
-        if (resolvedMode === "custom") {
-          localStorage.setItem(VIEWPORT_CUSTOM_WIDTH_KEY, String(width));
-        }
-      }
-
-      // Restore saved viewport preference
-      const savedViewportMode = localStorage.getItem(VIEWPORT_MODE_KEY) || "desktop";
-      const savedCustomWidth = localStorage.getItem(VIEWPORT_CUSTOM_WIDTH_KEY) || "600";
-      applyViewport(savedViewportMode, savedCustomWidth);
-
-      viewportDesktopBtn.addEventListener("click", () => applyViewport("desktop"));
-      viewportMobileBtn.addEventListener("click", () => applyViewport("mobile"));
-      viewportCustomBtn.addEventListener("click", () => {
-        const storedCustomWidth =
-          localStorage.getItem(VIEWPORT_CUSTOM_WIDTH_KEY) || viewportCustomInput.value || "600";
-        applyViewport("custom", storedCustomWidth);
+      initViewportControls({
+        desktopButton: viewportDesktopBtn,
+        mobileButton: viewportMobileBtn,
+        customButton: viewportCustomBtn,
+        customInputWrap: viewportCustomInputWrap,
+        customInput: viewportCustomInput,
+        previewFrame: previewFrame,
+        widthIndicator: viewportWidthIndicator,
       });
-      viewportCustomInput.addEventListener("input", () =>
-        applyViewport("custom", viewportCustomInput.value),
-      );
 
       // La carga inicial del iframe puede ser simplemente la ruta del template renderizada por vite normal:
       iframe.src = `/templates/${templateName}/index.html`;

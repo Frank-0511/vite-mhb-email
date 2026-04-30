@@ -73,7 +73,7 @@ class ComponentLibraryApp {
     formRenderer.init(
       document.getElementById("form-container"),
       document.getElementById("form-placeholder"),
-      (key, value) => this.updatePreview(),
+      () => this.updatePreview(),
       (variant) => {
         this.currentVariant = variant;
         this.updatePreview();
@@ -185,13 +185,26 @@ class ComponentLibraryApp {
   }
 }
 
+/**
+ * Boots shared preview assets on every page and starts the component library
+ * only when the dashboard DOM is present.
+ *
+ * @returns {void}
+ */
+function initializeComponentLibraryApp() {
+  initLucideIcons();
+
+  if (!document.getElementById("component-list")) return;
+
+  const app = new ComponentLibraryApp();
+  app.init().catch((error) => {
+    console.error("Error initializing component library:", error);
+  });
+}
+
 // Initialize app when DOM is ready
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", () => {
-    const app = new ComponentLibraryApp();
-    app.init();
-  });
+  document.addEventListener("DOMContentLoaded", initializeComponentLibraryApp);
 } else {
-  const app = new ComponentLibraryApp();
-  app.init();
+  initializeComponentLibraryApp();
 }
