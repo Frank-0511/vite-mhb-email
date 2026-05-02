@@ -47,7 +47,8 @@
     "lint:json": "bun scripts/build/validate-json.js",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "agents:sync": "bun scripts/ai/sync-agents.js"
   },
   "lint-staged": {
     "scripts/**/*.js": [
