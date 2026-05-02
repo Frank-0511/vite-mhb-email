@@ -18,6 +18,7 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, "src/index.html"),
         library: resolve(__dirname, "src/components-library.html"),
+        preview: resolve(__dirname, "src/preview.html"),
       },
     },
   },

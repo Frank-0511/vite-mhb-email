@@ -24,58 +24,53 @@ function searchComponentDir(baseDir, componentName) {
 
 /**
  * Obtiene la lista de todos los componentes disponibles
+ * Busca SOLO en src/partials - src/components es para UI web, no para email
  */
 function getComponentsList(rootDir) {
   const components = [];
-  const searchDirs = [
-    { path: resolve(rootDir, "src/components"), prefix: "src/components" },
-    { path: resolve(rootDir, "src/partials"), prefix: "src/partials" },
-  ];
+  const searchDir = resolve(rootDir, "src/partials");
 
-  for (const { path: searchDir, prefix } of searchDirs) {
-    if (!fs.existsSync(searchDir)) continue;
-
-    const findComponents = (dir, relativePath = "") => {
-      const items = fs.readdirSync(dir);
-      for (const item of items) {
-        const itemPath = resolve(dir, item);
-        const stat = fs.statSync(itemPath);
-
-        if (stat.isDirectory()) {
-          const schemaPath = resolve(itemPath, "schema.json");
-          if (fs.existsSync(schemaPath)) {
-            const schema = fs.readJsonSync(schemaPath);
-            const fullRelativePath = relativePath ? `${relativePath}/${item}` : item;
-            components.push({
-              id: item,
-              path: `${prefix}/${fullRelativePath}`,
-              dirPath: itemPath,
-              ...schema,
-              name: schema.name || item,
-            });
-          } else {
-            const nextRelativePath = relativePath ? `${relativePath}/${item}` : item;
-            findComponents(itemPath, nextRelativePath);
-          }
-        }
-      }
-    };
-
-    findComponents(searchDir);
+  if (!fs.existsSync(searchDir)) {
+    return components;
   }
 
+  const findComponents = (dir, relativePath = "") => {
+    const items = fs.readdirSync(dir);
+    for (const item of items) {
+      const itemPath = resolve(dir, item);
+      const stat = fs.statSync(itemPath);
+
+      if (stat.isDirectory()) {
+        const schemaPath = resolve(itemPath, "schema.json");
+        if (fs.existsSync(schemaPath)) {
+          const schema = fs.readJsonSync(schemaPath);
+          const fullRelativePath = relativePath ? `${relativePath}/${item}` : item;
+          components.push({
+            id: item,
+            path: `src/partials/${fullRelativePath}`,
+            dirPath: itemPath,
+            ...schema,
+            name: schema.name || item,
+          });
+        } else {
+          const nextRelativePath = relativePath ? `${relativePath}/${item}` : item;
+          findComponents(itemPath, nextRelativePath);
+        }
+      }
+    }
+  };
+
+  findComponents(searchDir);
   return components;
 }
 
 /**
  * Obtiene el schema de un componente específico
+ * Busca SOLO en src/partials - src/components es para UI web, no para email
  */
 function getComponentSchema(rootDir, componentName) {
-  let componentDir = resolve(rootDir, "src/components", componentName);
-
-  if (!fs.existsSync(resolve(componentDir, "schema.json"))) {
-    componentDir = searchComponentDir(resolve(rootDir, "src/partials"), componentName);
-  }
+  // Search in src/partials only
+  const componentDir = searchComponentDir(resolve(rootDir, "src/partials"), componentName);
 
   if (!componentDir) {
     return null;
