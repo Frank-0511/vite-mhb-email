@@ -3,16 +3,14 @@
  * Handles component selection, preview rendering, and form management for components-library.html
  */
 
-import { componentsManager } from "../../modules/components.js";
-import { formRenderer } from "../../modules/form-renderer.js";
-import { listRenderer } from "../../modules/list-renderer.js";
-import { previewManager } from "../../modules/preview.js";
-import { search } from "../../modules/search.js";
 import { initLucideIcons } from "../../shared/lucide-setup.js";
 import "../../shared/theme-toggle-component.js"; // Web Component auto-registers
-
-// Import modules from the old location for now (src/js/modules)
-// These will be moved to src/js/features/library/ in a future refactor
+import { componentsManager } from "./components-api.js";
+import { formRenderer } from "./form-renderer.js";
+import { listRenderer } from "./list-renderer.js";
+import { previewManager } from "./preview.js";
+import { search } from "./search.js";
+import "./styles.css";
 
 // Storage key for selected component
 const STORAGE_KEY = "selectedComponentId";

@@ -5,6 +5,7 @@
 
 import { initLucideIcons } from "../../shared/lucide-setup.js";
 import "../../shared/theme-toggle-component.js"; // Web Component auto-registers
+import "./styles.css";
 
 /**
  * Initialize Lucide icons and render Lucide elements on the page

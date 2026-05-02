@@ -15,12 +15,13 @@ import { queryRequired, querySafe } from "../../shared/dom-helpers.js";
 import { initLucideIcons } from "../../shared/lucide-setup.js";
 import "../../shared/theme-toggle-component.js"; // Web Component auto-registers
 
-import { initViewportControls } from "../../modules/viewport-controls.js";
 import { initializeEditor } from "./editor.js";
 import { createIframeManager } from "./iframe-manager.js";
 import { createRenderAPI } from "./render-api.js";
 import { setupResetButton, setupSaveButton } from "./save-reset.js";
+import "./styles.css";
 import { setupTemplateThemeToggle } from "./theme-manager.js";
+import { initViewportControls } from "./viewport-controls.js";
 
 /**
  * Initialize sync status UI

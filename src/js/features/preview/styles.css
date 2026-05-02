@@ -1,0 +1,68 @@
+/* Preview Feature Styles */
+/* Extracted from src/preview.html */
+
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+}
+
+#left-panel {
+  width: 35%;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-right: 1px solid #e2e8f0;
+}
+
+#editor-container {
+  flex: 1;
+  overflow: hidden;
+}
+
+#right-panel {
+  width: 65%;
+  display: flex;
+  flex-direction: column;
+}
+
+#preview-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+/* Personalizar el tema claro de Vanilla JSONEditor */
+.jse-theme-default {
+  --jse-theme-color: #0ea5e9; /* sky-500 */
+  --jse-theme-color-highlight: #0284c7; /* sky-600 */
+  --jse-background-color: #ffffff;
+  --jse-panel-background: #f8fafc; /* slate-50 */
+  --jse-main-border: none;
+}
+
+/* Personalizar el tema oscuro de Vanilla JSONEditor */
+.jse-theme-dark {
+  --jse-theme-color: #38bdf8; /* sky-400 */
+  --jse-theme-color-highlight: #0ea5e9; /* sky-500 */
+  --jse-background-color: #0f172a; /* slate-900 */
+  --jse-panel-background: #1e293b; /* slate-800 */
+  --jse-main-border: none;
+}
+
+#dark-mode-warning {
+  display: none;
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 9999;
+  background: #f87171;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  box-shadow: 0 2px 8px #0002;
+}
