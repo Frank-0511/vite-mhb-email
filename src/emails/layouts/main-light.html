@@ -28,19 +28,35 @@
       }
     </style>
     <style>
-      @import "src/web/styles/tailwind.css";
+      @import "src/emails/styles/tailwind.email.css";
+    </style>
+    <style>
+      /* Consistent font family for email compatibility */
+      body,
+      table,
+      td,
+      p,
+      a,
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-family: Arial, Helvetica, sans-serif;
+      }
     </style>
   </head>
 
   <body class="bg-zinc-100 dark:bg-zinc-900 m-0 p-0">
-    <div class="w-full bg-zinc-100 dark:bg-zinc-900 px-6 md:px-0">
+    <div class="bg-zinc-100 dark:bg-zinc-900 px-6 md:px-0">
       <table class="w-full max-w-2xl mx-auto" cellpadding="0" cellspacing="0" role="none">
         <!-- HEADER -->
         <tr>
           <td class="bg-slate-800 dark:bg-slate-950 px-8 py-6 text-center rounded-t-lg">
             <a
               href="[[ page.logoUrl || '#' ]]"
-              class="!text-white text-2xl font-bold no-underline tracking-tight"
+              class="!text-white no-underline"
               style="display: inline-block"
             >
               <table cellpadding="0" cellspacing="0" role="none" style="display: inline-table">
@@ -55,7 +71,12 @@
                     />
                   </td>
                   <td style="vertical-align: middle">
-                    <span>Mi Empresa</span>
+                    <span
+                      class="text-2xl font-bold tracking-tight"
+                      style="font-size: 24px; line-height: 32px; font-weight: 700; color: #ffffff"
+                    >
+                      Mi Empresa
+                    </span>
                   </td>
                 </tr>
               </table>

@@ -10,6 +10,7 @@ import { createDebounceTimer, fetchText } from "../../shared/http-helpers.js";
  * @property {Function} onSuccess - Callback on successful render
  * @property {Function} onError - Callback on render error
  * @property {Function} onStatusChange - Callback for status updates
+ * @property {Function} getTheme - Optional function to get current theme (default: get from localStorage)
  */
 
 /**
@@ -18,7 +19,16 @@ import { createDebounceTimer, fetchText } from "../../shared/http-helpers.js";
  * @returns {Object} Render API
  */
 export function createRenderAPI(config) {
-  const { onSuccess, onError, onStatusChange } = config;
+  const { onSuccess, onError, onStatusChange, getTheme } = config;
+
+  /**
+   * Get current template theme
+   * @returns {string} 'light' or 'dark'
+   */
+  function getCurrentTheme() {
+    if (getTheme) return getTheme();
+    return localStorage.getItem("template-theme") || "light";
+  }
 
   /**
    * Render template with given data via API
@@ -30,7 +40,8 @@ export function createRenderAPI(config) {
     try {
       onStatusChange("Actualizando...", "text-slate-500 font-medium", "bg-slate-400");
 
-      const html = await fetchText(`/api/render?template=${templateName}`, {
+      const theme = getCurrentTheme();
+      const html = await fetchText(`/api/render?template=${templateName}&theme=${theme}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
