@@ -2,9 +2,9 @@
 export default {
   darkMode: "class", // Usar clase 'dark' para activar dark mode
   content: [
-    "./src/index.html",
-    "./src/preview.html",
-    "./src/components-library.html",
+    "./src/web/index.html",
+    "./src/web/preview.html",
+    "./src/web/components-library.html",
     "./src/**/*.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],

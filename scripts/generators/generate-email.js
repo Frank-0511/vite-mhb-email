@@ -18,7 +18,7 @@ if (!name) {
 }
 
 /** @type {string} - Ruta absoluta al directorio del template */
-const dir = path.join(process.cwd(), "src/templates", name);
+const dir = path.join(process.cwd(), "src/emails/templates", name);
 
 /** @type {string} - Ruta absoluta al archivo index.html */
 const htmlFile = path.join(dir, "index.html");
@@ -72,7 +72,7 @@ async function createTemplate() {
       fs.writeJson(jsonFile, jsonContent, { spaces: 2 }),
     ]);
 
-    console.log(`✅ Template "${name}" creado con éxito en src/templates/${name}`);
+    console.log(`✅ Template "${name}" creado con éxito en src/emails/templates/${name}`);
   } catch (err) {
     /** @type {Error} */
     const error = err;

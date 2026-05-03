@@ -8,11 +8,11 @@ import { compileTemplate } from "./compile.js";
 export function setupTemplateApi(server, rootDir) {
   server.middlewares.use(async (req, res, next) => {
     const reqPath = req.url?.split("?")[0] || "";
-    if (!reqPath.includes("/templates/") || !reqPath.endsWith(".html")) {
+    if (!reqPath.startsWith("/templates/") || !reqPath.endsWith(".html")) {
       return next();
     }
 
-    const filePath = resolve(rootDir, "src", reqPath.slice(1));
+    const filePath = resolve(rootDir, "src/emails", reqPath.slice(1));
     if (!fs.existsSync(filePath)) return next();
 
     try {

@@ -167,7 +167,7 @@ export function readBuiltTemplate(filename) {
 export function getTemplateData(templateName) {
   try {
     const baseName = templateName.replace(".html", "");
-    const dataPath = path.resolve(process.cwd(), "src/templates", baseName, "data.json");
+    const dataPath = path.resolve(process.cwd(), "src/emails/templates", baseName, "data.json");
     const content = fs.readFileSync(dataPath, "utf-8");
     return JSON.parse(content);
   } catch {

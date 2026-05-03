@@ -14,7 +14,7 @@ export function setupDataApi(server, rootDir) {
     const templateName = url.searchParams.get("template");
     if (!templateName) return next();
 
-    const dataPath = resolve(rootDir, "src/templates", templateName, "data.json");
+    const dataPath = resolve(rootDir, "src/emails/templates", templateName, "data.json");
 
     if (req.method === "GET") {
       const data = fs.existsSync(dataPath) ? fs.readJsonSync(dataPath) : {};

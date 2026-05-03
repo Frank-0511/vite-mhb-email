@@ -22,7 +22,7 @@ export function setupRenderApi(server, rootDir) {
       req.on("end", async () => {
         try {
           const data = JSON.parse(body);
-          const filePath = resolve(rootDir, "src/templates", templateName, "index.html");
+          const filePath = resolve(rootDir, "src/emails/templates", templateName, "index.html");
           if (!fs.existsSync(filePath)) {
             res.statusCode = 404;
             return res.end("Template not found");

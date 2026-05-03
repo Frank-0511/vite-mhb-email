@@ -41,8 +41,8 @@
     "validate-email": "bun scripts/build/validate-email-html.js",
     "cli": "bun scripts/cli.js",
     "lint": "bun run lint:html && bun run lint:js && bun run lint:md && bun run lint:json",
-    "lint:html": "htmlhint \"src/templates/**/*.html\"",
-    "lint:js": "eslint scripts/ src/js/ vite.config.js",
+    "lint:html": "htmlhint \"src/emails/templates/**/*.html\"",
+    "lint:js": "eslint scripts/ src/web/ vite.config.js",
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\" \"#analysis_results.md\"",
     "lint:json": "bun scripts/build/validate-json.js",
     "format": "prettier --write .",
@@ -59,12 +59,16 @@
       "eslint --fix",
       "prettier --write"
     ],
-    "src/**/*.html": [
+    "src/web/**/*.html": [
       "htmlhint",
       "prettier --write"
     ],
-    "src/templates/*/data.json": [
-      "bun scripts/validate-json.js",
+    "src/emails/templates/**/*.html": [
+      "htmlhint",
+      "prettier --write"
+    ],
+    "src/emails/templates/*/data.json": [
+      "bun scripts/build/validate-json.js",
       "prettier --write"
     ],
     "*.{json,css}": [

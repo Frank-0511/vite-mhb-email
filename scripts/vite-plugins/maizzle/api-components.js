@@ -24,11 +24,11 @@ function searchComponentDir(baseDir, componentName) {
 
 /**
  * Obtiene la lista de todos los componentes disponibles
- * Busca SOLO en src/partials - src/components es para UI web, no para email
+ * Busca SOLO en src/emails/partials - src/web/features/library/components es para UI web, no para email
  */
 function getComponentsList(rootDir) {
   const components = [];
-  const searchDir = resolve(rootDir, "src/partials");
+  const searchDir = resolve(rootDir, "src/emails/partials");
 
   if (!fs.existsSync(searchDir)) {
     return components;
@@ -47,7 +47,7 @@ function getComponentsList(rootDir) {
           const fullRelativePath = relativePath ? `${relativePath}/${item}` : item;
           components.push({
             id: item,
-            path: `src/partials/${fullRelativePath}`,
+            path: `src/emails/partials/${fullRelativePath}`,
             dirPath: itemPath,
             ...schema,
             name: schema.name || item,
@@ -66,11 +66,11 @@ function getComponentsList(rootDir) {
 
 /**
  * Obtiene el schema de un componente específico
- * Busca SOLO en src/partials - src/components es para UI web, no para email
+ * Busca SOLO en src/emails/partials - src/web/features/library/components es para UI web, no para email
  */
 function getComponentSchema(rootDir, componentName) {
-  // Search in src/partials only
-  const componentDir = searchComponentDir(resolve(rootDir, "src/partials"), componentName);
+  // Search in src/emails/partials only
+  const componentDir = searchComponentDir(resolve(rootDir, "src/emails/partials"), componentName);
 
   if (!componentDir) {
     return null;
@@ -105,10 +105,10 @@ function getComponentSchema(rootDir, componentName) {
  * Renderiza un componente con una variante específica y props
  */
 async function renderComponent(rootDir, componentName, variant, props) {
-  let componentDir = resolve(rootDir, "src/components", componentName);
+  let componentDir = resolve(rootDir, "src/emails/partials", componentName);
 
   if (!fs.existsSync(componentDir)) {
-    componentDir = searchComponentDir(resolve(rootDir, "src/partials"), componentName);
+    componentDir = searchComponentDir(resolve(rootDir, "src/emails/partials"), componentName);
   }
 
   if (!componentDir) {
@@ -176,7 +176,7 @@ async function renderComponent(rootDir, componentName, variant, props) {
     }
   </style>
   <style>
-    @import "src/css/tailwind.email.css";
+    @import "src/emails/styles/tailwind.email.css";
   </style>
 </head>
 <body class="bg-zinc-100 dark:bg-zinc-900 m-0 p-0">
@@ -197,7 +197,7 @@ async function renderComponent(rootDir, componentName, variant, props) {
   const { html: maizzleHtml } = await render(fullHtml, {
     useTransformers: false,
     components: {
-      folders: [resolve(rootDir, "src/layouts"), resolve(rootDir, "src/partials")],
+      folders: [resolve(rootDir, "src/emails/layouts"), resolve(rootDir, "src/emails/partials")],
       tagPrefix: "x-",
     },
     expressions: {

@@ -1,7 +1,7 @@
 // @ts-check
 import js from "@eslint/js";
-import globals from "globals";
 import prettierConfig from "eslint-config-prettier";
+import globals from "globals";
 
 /** @type {import("eslint").Linter.Config[]} */
 export default [
@@ -20,7 +20,7 @@ export default [
 
   // Entorno Browser — define window, document, customElements, etc.
   {
-    files: ["src/js/**/*.js"],
+    files: ["src/web/**/*.js"],
     languageOptions: {
       globals: {
         ...globals.browser,
