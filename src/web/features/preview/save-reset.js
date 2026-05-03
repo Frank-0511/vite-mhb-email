@@ -3,8 +3,8 @@
  * Handles persisting data to data.json and resetting to initial state
  */
 
-import { queryRequired } from "../../shared/dom-helpers.js";
-import { postJSON } from "../../shared/http-helpers.js";
+import { queryRequired } from "../../shared/utils/dom-helpers.js";
+import { postJSON } from "../../shared/utils/http-helpers.js";
 
 /**
  * @typedef {Object} SaveResetConfig

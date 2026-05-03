@@ -3,90 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Email Factory Dashboard</title>
-    <link href="/styles/tailwind.css" rel="stylesheet" />
-    <style>
-      .preview-wrapper {
-        position: relative;
-        width: 100%;
-        height: 220px;
-        overflow: hidden;
-        pointer-events: none;
-      }
-
-      .preview-wrapper iframe {
-        position: absolute;
-        top: 0;
-        left: 50%;
-        width: 600px;
-        height: 900px;
-        border: none;
-        transform: translateX(-50%) scale(0.48);
-        transform-origin: top center;
-        pointer-events: none;
-      }
-
-      /* Template cards enhancement */
-      #template-list a {
-        --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-      }
-
-      #template-list a:hover {
-        --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-      }
-
-      .dark #template-list a:hover {
-        --tw-shadow: 0 10px 15px -3px rgb(15 23 42 / 0.3);
-      }
-    </style>
-    <script>
-      if (localStorage.getItem("app-theme") === "dark" || !("app-theme" in localStorage)) {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
-    </script>
+    <title>Email Factory</title>
+    <!-- Route / is handled by the page-resolver Vite plugin which rewrites
+         this request to features/home/index.html before it reaches this file. -->
   </head>
-  <body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-white font-sans">
-    <!-- Header -->
-    <header
-      class="border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-8 py-5 flex items-center justify-between shadow-sm dark:shadow-slate-900/50"
-    >
-      <span class="text-2xl font-bold text-sky-600 dark:text-sky-400 flex items-center gap-2">
-        <i data-lucide="rocket" class="w-7 h-7"></i>
-        <span>Email Factory</span>
-      </span>
-      <div class="flex items-center gap-4">
-        <a
-          href="/components-library.html"
-          class="text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-sky-600 dark:hover:text-sky-400 transition-colors flex items-center gap-1"
-          title="Ver Component Library"
-        >
-          <i data-lucide="book-open" class="w-4 h-4"></i>
-          <span>Components</span>
-        </a>
-        <theme-toggle></theme-toggle>
-      </div>
-    </header>
-
-    <!-- Grid -->
-    <main class="p-8">
-      <div
-        style="
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-          gap: 1.5rem;
-        "
-        id="template-list"
-      ></div>
-    </main>
-
-    <script>
-      if (localStorage.getItem("app-theme") === "dark" || !("app-theme" in localStorage)) {
-        document.documentElement.classList.add("dark");
-      }
-    </script>
-
-    <script type="module" src="./features/home/main.js"></script>
-  </body>
+  <body></body>
 </html>

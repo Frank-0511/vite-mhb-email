@@ -3,7 +3,7 @@
  * Handles template rendering via /api/render endpoint
  */
 
-import { createDebounceTimer, fetchText } from "../../shared/http-helpers.js";
+import { createDebounceTimer, fetchText } from "../../shared/utils/http-helpers.js";
 
 /**
  * @typedef {Object} RenderAPIConfig
