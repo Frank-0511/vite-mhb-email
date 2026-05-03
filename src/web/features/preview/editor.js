@@ -4,7 +4,7 @@
  */
 
 import { JSONEditor } from "https://cdn.jsdelivr.net/npm/vanilla-jsoneditor@3.11.0/standalone.js";
-import { fetchJSON } from "../../shared/http-helpers.js";
+import { fetchJSON } from "../../shared/utils/http-helpers.js";
 
 /**
  * @typedef {Object} EditorConfig

@@ -3,7 +3,7 @@
  * Handles app theme and template theme toggle
  */
 
-import { queryRequired, querySafe } from "../../shared/dom-helpers.js";
+import { queryRequired, querySafe } from "../../shared/utils/dom-helpers.js";
 
 /**
  * Setup template theme toggle button

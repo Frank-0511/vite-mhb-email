@@ -3,8 +3,8 @@
  * Handles template listing and grid initialization for index.html
  */
 
-import { initLucideIcons } from "../../shared/lucide-setup.js";
-import "../../shared/theme-toggle-component.js"; // Web Component auto-registers
+import { initLucideIcons } from "../../shared/utils/lucide-setup.js";
+import "../../shared/utils/theme-toggle-component.js"; // Web Component auto-registers
 import "./styles.css";
 
 /**

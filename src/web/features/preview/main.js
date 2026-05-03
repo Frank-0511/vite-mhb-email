@@ -11,9 +11,9 @@
  * - Viewport controls (desktop/mobile/custom)
  */
 
-import { queryRequired, querySafe } from "../../shared/dom-helpers.js";
-import { initLucideIcons } from "../../shared/lucide-setup.js";
-import "../../shared/theme-toggle-component.js"; // Web Component auto-registers
+import { queryRequired, querySafe } from "../../shared/utils/dom-helpers.js";
+import { initLucideIcons } from "../../shared/utils/lucide-setup.js";
+import "../../shared/utils/theme-toggle-component.js"; // Web Component auto-registers
 
 import { initializeEditor } from "./editor.js";
 import { createIframeManager } from "./iframe-manager.js";

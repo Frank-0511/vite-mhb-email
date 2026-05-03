@@ -56,7 +56,7 @@ export const dashboardPlugin = (rootDir) => ({
         .map(
           ({ name, title, path }) => `
       <a
-        href="/preview.html?template=${name}"
+        href="/preview?template=${name}"
         class="block bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm dark:shadow-slate-900/50 hover:border-sky-400 dark:hover:border-sky-500 hover:shadow-lg dark:hover:shadow-sky-500/30 transition-all duration-300 overflow-hidden group"
       >
         <!-- Preview Section -->
