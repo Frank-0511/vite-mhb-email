@@ -1,3 +1,4 @@
+import { setupCacheApi } from "./api-cache.js";
 import { setupComponentsApi } from "./api-components.js";
 import { setupDataApi } from "./api-data.js";
 import { setupRenderApi } from "./api-render.js";
@@ -16,6 +17,8 @@ export { compileTemplate };
  * - GET /api/components - Lista todos los componentes
  * - GET /api/components/:name - Obtiene el schema de un componente
  * - POST /api/components/:name/render - Renderiza un componente
+ * - POST /api/cache/invalidate?template=name - Invalida cache de un template
+ * - POST /api/cache/clean - Limpia toda la cache
  * - Cualquier ruta /templates/*.html - Renderiza una plantilla de template
  */
 export const maizzlePlugin = (rootDir) => ({
@@ -26,5 +29,6 @@ export const maizzlePlugin = (rootDir) => ({
     setupRenderApi(server, rootDir);
     setupComponentsApi(server, rootDir);
     setupTemplateApi(server, rootDir);
+    setupCacheApi(server, rootDir);
   },
 });

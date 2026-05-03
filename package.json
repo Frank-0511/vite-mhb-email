@@ -37,6 +37,7 @@
   "scripts": {
     "dev": "vite",
     "build": "bun run lint && bun scripts/build/build.js",
+    "build-selective": "bun scripts/build/build-selective.js",
     "check-size": "bun scripts/build/check-html-size.js",
     "validate-email": "bun scripts/build/validate-email-html.js",
     "cli": "bun scripts/cli.js",

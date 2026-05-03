@@ -96,13 +96,28 @@ async function initializePreview() {
   // Create debounced render function (reuses same timer across onChange calls)
   debouncedRender = renderAPI.createDebouncedRender(templateName, () => editorAPI.get(), 300);
 
-  // Load initial template in iframe
-  iframeManager.loadTemplate(templateName);
+  /**
+   * Renderiza el template con el contenido actual del editor.
+   *
+   * @returns {Promise<void>}
+   */
+  async function renderCurrentTemplate() {
+    const currentContent = editorAPI.get();
+    const data =
+      currentContent.json !== undefined ? currentContent.json : JSON.parse(currentContent.text);
+
+    await renderAPI.render(templateName, data);
+  }
+
+  // Render inicial usando el mismo endpoint que los cambios live.
+  await renderCurrentTemplate();
 
   // Setup template theme toggle
   setupTemplateThemeToggle({
     onThemeChange: () => {
-      iframeManager.applyTemplateTheme();
+      renderCurrentTemplate().catch((error) => {
+        console.error("Theme render error:", error);
+      });
     },
   });
 
@@ -126,7 +141,7 @@ async function initializePreview() {
       editorAPI.updateContent(editorAPI.getInitialData());
     },
     resetIframe: (name) => {
-      iframeManager.reset(name);
+      renderAPI.render(name, editorAPI.getInitialData());
     },
   });
 

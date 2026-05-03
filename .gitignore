@@ -22,3 +22,6 @@ node_modules
 # Screenshots y archivos temporales
 screenshots/
 .temp-screenshots/
+
+# Preview cache (temporary hydrated renders for editor)
+.cache/preview/
