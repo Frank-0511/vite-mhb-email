@@ -3,17 +3,17 @@ import { rm } from "node:fs/promises";
 
 export default {
   build: {
-    content: ["src/templates/**/*.html"],
+    content: ["src/emails/templates/**/*.html"],
     output: {
       path: "dist",
-      from: ["src/templates"],
+      from: ["src/emails/templates"],
     },
     summary: true,
   },
 
   // Tell Maizzle where to find layout components (x-main, etc.)
   components: {
-    folders: ["src/layouts", "src/partials"],
+    folders: ["src/emails/layouts", "src/emails/partials"],
     tagPrefix: "x-",
   },
 

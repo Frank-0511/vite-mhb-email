@@ -5,11 +5,11 @@
     <meta name="x-apple-disable-message-reformatting" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no" />
-    <meta name="color-scheme" content="dark" />
-    <meta name="supported-color-schemes" content="dark" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="supported-color-schemes" content="light dark" />
     <style>
       :root {
-        color-scheme: dark;
+        color-scheme: light dark;
       }
 
       .icon-light {
@@ -19,7 +19,7 @@
         display: none !important;
       }
 
-      /* Para desarrollo local con clase .dark en el html */
+      /* Para desarrollo local con clase .dark en el html (SIEMPRE tiene prioridad) */
       html.dark .icon-light {
         display: none !important;
       }
@@ -28,16 +28,16 @@
       }
     </style>
     <style>
-      @import "src/css/tailwind.css";
+      @import "src/web/styles/tailwind.css";
     </style>
   </head>
 
-  <body class="bg-zinc-900 m-0 p-0">
-    <div class="w-full bg-zinc-900 px-6 md:px-0">
+  <body class="bg-zinc-100 dark:bg-zinc-900 m-0 p-0">
+    <div class="w-full bg-zinc-100 dark:bg-zinc-900 px-6 md:px-0">
       <table class="w-full max-w-2xl mx-auto" cellpadding="0" cellspacing="0" role="none">
         <!-- HEADER -->
         <tr>
-          <td class="bg-slate-950 px-8 py-6 text-center rounded-t-lg">
+          <td class="bg-slate-800 dark:bg-slate-950 px-8 py-6 text-center rounded-t-lg">
             <a
               href="[[ page.logoUrl || '#' ]]"
               class="!text-white text-2xl font-bold no-underline tracking-tight"
@@ -47,11 +47,11 @@
                 <tr>
                   <td style="vertical-align: middle; padding-right: 8px">
                     <img
-                      src="https://api.iconify.design/lucide:rocket.svg"
+                      src="https://api.iconify.design/lucide:rocket.svg?color=%23e5e7eb"
                       alt="Rocket"
                       width="24"
                       height="24"
-                      style="display: block; color: #fbbf24"
+                      style="display: block"
                     />
                   </td>
                   <td style="vertical-align: middle">
@@ -65,21 +65,21 @@
 
         <!-- CONTENT (slot) -->
         <tr>
-          <td class="bg-zinc-800 px-8 py-10 text-zinc-100">
+          <td class="bg-white dark:bg-zinc-800 px-8 py-10 dark:text-zinc-100">
             <yield />
           </td>
         </tr>
 
         <!-- FOOTER -->
         <tr>
-          <td class="bg-slate-950 px-8 py-6 text-center rounded-b-lg">
-            <p class="mb-2 text-xs text-zinc-400 leading-snug">
+          <td class="bg-slate-800 dark:bg-slate-950 px-8 py-6 text-center rounded-b-lg">
+            <p class="mb-2 text-xs text-gray-300 dark:text-zinc-400 leading-snug">
               Mi Empresa · Calle Ejemplo 123, Ciudad, País
             </p>
-            <hr class="border-none border-t border-zinc-600 my-4" />
-            <p class="mb-0 text-xs text-zinc-400 leading-snug">
+            <hr class="border-none border-t border-slate-700 dark:border-zinc-600 my-4" />
+            <p class="mb-0 text-xs text-gray-300 dark:text-zinc-400 leading-snug">
               Recibiste este email porque te registraste en nuestros servicios.<br />
-              <a href="{{ unsubscribe_url }}" class="text-zinc-500 underline"
+              <a href="{{ unsubscribe_url }}" class="text-gray-300 dark:text-zinc-500 underline"
                 >Cancelar suscripción</a
               >
             </p>

@@ -4,9 +4,9 @@ import { resolve } from "node:path";
 
 // Build the template list for the dashboard
 export function getTemplates(rootDir) {
-  return globSync("src/templates/*/index.html").map((file) => {
+  return globSync("src/emails/templates/*/index.html").map((file) => {
     const name = file.split("/").slice(-2, -1)[0];
-    const dataPath = resolve(rootDir, "src/templates", name, "data.json");
+    const dataPath = resolve(rootDir, "src/emails/templates", name, "data.json");
     const data = fs.existsSync(dataPath) ? fs.readJsonSync(dataPath) : {};
     return {
       name,

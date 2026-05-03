@@ -1,6 +1,6 @@
-/* src/css/tailwind.email.css */
+/* src/emails/styles/tailwind.email.css */
 /* Para Maizzle/build: darkMode: "media" para compatibilidad con clientes de email */
-@config "../../tailwind.email.config.js";
+@config "../../../tailwind.email.config.js";
 
 @tailwind base;
 @tailwind components;

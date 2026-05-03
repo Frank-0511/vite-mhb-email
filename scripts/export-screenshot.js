@@ -40,7 +40,7 @@ if (!fs.existsSync(htmlPath)) {
 
 // ─── Obtener datos del template ──────────────────────────────────────────────
 
-const dataPath = path.join(process.cwd(), "src/templates", templateName, "data.json");
+const dataPath = path.join(process.cwd(), "src/emails/templates", templateName, "data.json");
 
 let templateData = {};
 if (fs.existsSync(dataPath)) {

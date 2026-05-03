@@ -26,7 +26,7 @@ export async function compileTemplate(filePath, data, rootDir, isPreview = true)
   const { html: maizzleHtml } = await render(html, {
     useTransformers: false,
     components: {
-      folders: [resolve(rootDir, "src/layouts"), resolve(rootDir, "src/partials")],
+      folders: [resolve(rootDir, "src/emails/layouts"), resolve(rootDir, "src/emails/partials")],
       tagPrefix: "x-",
     },
     expressions: {

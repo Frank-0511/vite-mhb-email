@@ -1,16 +1,20 @@
 #!/usr/bin/env node
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const buildDir = path.join(__dirname, "../dist");
+const buildDir = path.resolve(process.cwd(), "dist");
 
 /**
  * Inyecta media queries para soporte de dark mode en emails
  * Se ejecuta después del build de Maizzle
  */
 function injectEmailMediaQueries() {
+  // Validate that dist directory exists
+  if (!fs.existsSync(buildDir)) {
+    console.error(`❌ Build directory not found: ${buildDir}`);
+    console.error("Ensure 'bun run build' has completed successfully before running this step.");
+    process.exit(1);
+  }
   // Media query minificado para coincidir con CSS minificado
   const mediaQuery =
     "@media (prefers-color-scheme:dark){.icon-light{display:none!important}.icon-dark{display:block!important}}";
@@ -70,9 +74,22 @@ function findHtmlFiles(dir) {
   return files;
 }
 
+/**
+ * Main execution with error handling
+ */
+function main() {
+  try {
+    injectEmailMediaQueries();
+    console.log("\n✨ Email media queries injection completed successfully!");
+  } catch (err) {
+    console.error("\n❌ Fatal error during email media queries injection:", err.message);
+    process.exit(1);
+  }
+}
+
 // Ejecutar si se llama directamente
 if (import.meta.url === `file://${process.argv[1]}`) {
-  injectEmailMediaQueries();
+  main();
 }
 
 export { injectEmailMediaQueries };

@@ -6,19 +6,19 @@ import { maizzlePlugin } from "./scripts/vite-plugins/maizzle.js";
 const rootDir = __dirname;
 
 export default defineConfig({
-  root: "src",
+  root: "src/web",
   server: {
     open: true,
   },
   plugins: [maizzlePlugin(rootDir), dashboardPlugin(rootDir)],
   build: {
-    outDir: "../dist",
+    outDir: "../../dist",
     emptyOutDir: true,
     rollupOptions: {
       input: {
-        main: resolve(__dirname, "src/index.html"),
-        library: resolve(__dirname, "src/components-library.html"),
-        preview: resolve(__dirname, "src/preview.html"),
+        main: resolve(__dirname, "src/web/index.html"),
+        library: resolve(__dirname, "src/web/components-library.html"),
+        preview: resolve(__dirname, "src/web/preview.html"),
       },
     },
   },

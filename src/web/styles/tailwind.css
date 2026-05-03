@@ -1,6 +1,6 @@
-/* src/css/tailwind.css */
+/* src/web/styles/tailwind.css */
 /* Para Vite/preview: darkMode: "class" */
-@config "../../tailwind.config.js";
+@config "../../../tailwind.config.js";
 
 @tailwind base;
 @tailwind components;
