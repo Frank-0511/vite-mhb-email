@@ -6,6 +6,7 @@
 import fs from "fs-extra";
 import { createHash } from "node:crypto";
 import { resolve } from "node:path";
+const TEMPLATE_NAME_PATTERN = /^[a-z0-9-]+$/;
 
 /**
  * @typedef {Object} CacheEntry
@@ -19,6 +20,18 @@ class PreviewCacheManager {
   constructor(rootDir) {
     this.rootDir = rootDir;
     this.cacheDir = resolve(rootDir, ".cache", "preview");
+  }
+
+  /**
+   * Valida nombres de template usados para rutas de cache.
+   *
+   * @param {string} templateName
+   * @returns {void}
+   */
+  assertValidTemplateName(templateName) {
+    if (!TEMPLATE_NAME_PATTERN.test(templateName)) {
+      throw new Error(`invalid template name for cache path: ${templateName}`);
+    }
   }
 
   /**
@@ -74,6 +87,7 @@ class PreviewCacheManager {
    * @returns {string}
    */
   getCachePath(templateName) {
+    this.assertValidTemplateName(templateName);
     return resolve(this.cacheDir, templateName, "rendered.html");
   }
 

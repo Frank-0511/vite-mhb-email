@@ -1,5 +1,29 @@
 import fs from "fs-extra";
-import { resolve } from "node:path";
+import { relative, resolve, sep } from "node:path";
+
+const TEMPLATE_NAME_PATTERN = /^[a-z0-9-]+$/;
+
+/**
+ * Valida nombres de template permitidos para evitar path traversal.
+ *
+ * @param {string} templateName
+ * @returns {boolean}
+ */
+function isValidTemplateName(templateName) {
+  return TEMPLATE_NAME_PATTERN.test(templateName);
+}
+
+/**
+ * Verifica que una ruta permanezca dentro de una carpeta base.
+ *
+ * @param {string} basePath
+ * @param {string} candidatePath
+ * @returns {boolean}
+ */
+function isPathInside(basePath, candidatePath) {
+  const relPath = relative(basePath, candidatePath);
+  return relPath !== "" && !relPath.startsWith(`..${sep}`) && relPath !== "..";
+}
 
 /**
  * Maneja las rutas /api/data para GET y POST
@@ -14,7 +38,17 @@ export function setupDataApi(server, rootDir) {
     const templateName = url.searchParams.get("template");
     if (!templateName) return next();
 
-    const dataPath = resolve(rootDir, "src/emails/templates", templateName, "data.json");
+    if (!isValidTemplateName(templateName)) {
+      res.statusCode = 400;
+      return res.end("Invalid template name");
+    }
+
+    const templatesRoot = resolve(rootDir, "src/emails/templates");
+    const dataPath = resolve(templatesRoot, templateName, "data.json");
+    if (!isPathInside(templatesRoot, dataPath)) {
+      res.statusCode = 400;
+      return res.end("Invalid template path");
+    }
 
     if (req.method === "GET") {
       const data = fs.existsSync(dataPath) ? fs.readJsonSync(dataPath) : {};
