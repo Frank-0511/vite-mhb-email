@@ -1,9 +1,10 @@
 import fs from "fs-extra";
-import { resolve } from "node:path";
+import { relative, resolve, sep } from "node:path";
 import { compileTemplate } from "../services/maizzle-compiler.js";
 import { createPreviewCacheManager, createPreviewDataHash } from "../services/preview-cache.js";
 
 let cacheManager;
+const TEMPLATE_NAME_PATTERN = /^[a-z0-9-]+$/;
 
 /**
  * Encuentra la llave de cierre correspondiente a una llave de apertura.
@@ -87,6 +88,28 @@ function applyPreviewTheme(html, theme) {
 }
 
 /**
+ * Verifica que un nombre de template sea seguro y usable en rutas.
+ *
+ * @param {string} templateName
+ * @returns {boolean}
+ */
+function isValidTemplateName(templateName) {
+  return TEMPLATE_NAME_PATTERN.test(templateName);
+}
+
+/**
+ * Verifica que `candidatePath` quede contenido dentro de `basePath`.
+ *
+ * @param {string} basePath
+ * @param {string} candidatePath
+ * @returns {boolean}
+ */
+function isPathInside(basePath, candidatePath) {
+  const relPath = relative(basePath, candidatePath);
+  return relPath !== "" && !relPath.startsWith(`..${sep}`) && relPath !== "..";
+}
+
+/**
  * Maneja la ruta /api/render para POST
  * Con cache en .cache/preview/<template>/rendered.html
  */
@@ -112,9 +135,20 @@ export function setupRenderApi(server, rootDir) {
       });
       req.on("end", async () => {
         try {
+          if (!isValidTemplateName(templateName)) {
+            res.statusCode = 400;
+            return res.end("Invalid template name");
+          }
+
+          const templatesRoot = resolve(rootDir, "src/emails/templates");
+          const filePath = resolve(templatesRoot, templateName, "index.html");
+          if (!isPathInside(templatesRoot, filePath)) {
+            res.statusCode = 400;
+            return res.end("Invalid template path");
+          }
+
           const data = JSON.parse(body);
           const dataHash = createPreviewDataHash(data);
-          const filePath = resolve(rootDir, "src/emails/templates", templateName, "index.html");
           if (!fs.existsSync(filePath)) {
             res.statusCode = 404;
             return res.end("Template not found");
