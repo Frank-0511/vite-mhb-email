@@ -19,7 +19,7 @@ import { clearScreen } from "./ui.js";
 export async function devServer() {
   clearScreen();
   console.log(paint(c.green + c.bold, "\n  ⚡ Iniciando servidor de desarrollo…\n"));
-  await run("yarn", ["dev"]);
+  await run("bun", ["run", "dev"]);
 }
 
 /**
@@ -29,7 +29,7 @@ export async function devServer() {
 export async function buildProd() {
   clearScreen();
   console.log(paint(c.yellow + c.bold, "\n  📦 Buildeando para producción…\n"));
-  const code = await run("yarn", ["build"]);
+  const code = await run("bun", ["run", "build"]);
   if (code === 0) {
     console.log(paint(c.green + c.bold, "\n  ✅ Build completado exitosamente.\n"));
   } else {
@@ -53,7 +53,7 @@ export async function createTemplate(rl) {
   }
 
   console.log();
-  const code = await run("node", ["scripts/generators/generate-email.js", name]);
+  const code = await run("bun", ["scripts/generators/generate-email.js", name]);
   if (code !== 0) {
     console.log(paint(c.red, `\n  ❌ Error al crear el template (código ${code}).\n`));
   }
@@ -104,7 +104,7 @@ export async function exportScreenshot(rl) {
   }
 
   console.log();
-  const code = await run("node", ["scripts/export-screenshot.js", templateName]);
+  const code = await run("bun", ["scripts/export-screenshot.js", templateName]);
   if (code !== 0) {
     console.log(paint(c.red, `\n  ❌ Error al exportar la imagen (código ${code}).\n`));
   }

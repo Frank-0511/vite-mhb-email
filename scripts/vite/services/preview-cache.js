@@ -6,7 +6,7 @@
 import fs from "fs-extra";
 import { createHash } from "node:crypto";
 import { resolve } from "node:path";
-const TEMPLATE_NAME_PATTERN = /^[a-z0-9-]+$/;
+import { assertValidTemplateName } from "../../shared/path-safety.js";
 
 /**
  * @typedef {Object} CacheEntry
@@ -32,9 +32,7 @@ class PreviewCacheManager {
    * @returns {void}
    */
   assertValidTemplateName(templateName) {
-    if (!TEMPLATE_NAME_PATTERN.test(templateName)) {
-      throw new Error(`invalid template name for cache path: ${templateName}`);
-    }
+    assertValidTemplateName(templateName);
   }
 
   /**

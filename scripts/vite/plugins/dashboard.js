@@ -1,12 +1,14 @@
 import fs from "fs-extra";
 import { globSync } from "glob";
 import { resolve } from "node:path";
+import { getProjectPaths } from "../../shared/paths.js";
 
 // Build the template list for the dashboard
 export function getTemplates(rootDir) {
+  const paths = getProjectPaths(rootDir);
   return globSync("src/emails/templates/*/index.html").map((file) => {
     const name = file.split("/").slice(-2, -1)[0];
-    const dataPath = resolve(rootDir, "src/emails/templates", name, "data.json");
+    const dataPath = paths.templateData(name);
     const data = fs.existsSync(dataPath) ? fs.readJsonSync(dataPath) : {};
     return {
       name,
@@ -19,6 +21,7 @@ export function getTemplates(rootDir) {
 export const dashboardPlugin = (rootDir) => ({
   name: "vite-dashboard-context",
   configureServer(server) {
+    const paths = getProjectPaths(rootDir);
     server.middlewares.use((req, res, next) => {
       // API endpoint: GET /api/template-sizes
       if (req.url?.startsWith("/api/template-sizes")) {
@@ -26,7 +29,7 @@ export const dashboardPlugin = (rootDir) => ({
         const sizes = {};
 
         for (const { name } of templates) {
-          const distPath = resolve(rootDir, "dist", `${name}.html`);
+          const distPath = resolve(paths.distDir, `${name}.html`);
           if (fs.existsSync(distPath)) {
             const stats = fs.statSync(distPath);
             sizes[name] = {
@@ -45,6 +48,7 @@ export const dashboardPlugin = (rootDir) => ({
       next();
     });
   },
+
   transformIndexHtml: {
     order: "pre",
     handler(html, ctx) {

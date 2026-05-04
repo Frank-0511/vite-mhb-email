@@ -1,10 +1,11 @@
 import fs from "fs-extra";
-import { relative, resolve, sep } from "node:path";
 import { compileTemplate } from "../services/maizzle-compiler.js";
 import { createPreviewCacheManager, createPreviewDataHash } from "../services/preview-cache.js";
+import { isValidTemplateName, isPathInside } from "../../shared/path-safety.js";
+import { getProjectPaths } from "../../shared/paths.js";
+import { sendText, readJsonBody, getRequestUrl } from "./http.js";
 
 let cacheManager;
-const TEMPLATE_NAME_PATTERN = /^[a-z0-9-]+$/;
 
 /**
  * Encuentra la llave de cierre correspondiente a una llave de apertura.
@@ -88,30 +89,10 @@ function applyPreviewTheme(html, theme) {
 }
 
 /**
- * Verifica que un nombre de template sea seguro y usable en rutas.
- *
- * @param {string} templateName
- * @returns {boolean}
- */
-function isValidTemplateName(templateName) {
-  return TEMPLATE_NAME_PATTERN.test(templateName);
-}
-
-/**
- * Verifica que `candidatePath` quede contenido dentro de `basePath`.
- *
- * @param {string} basePath
- * @param {string} candidatePath
- * @returns {boolean}
- */
-function isPathInside(basePath, candidatePath) {
-  const relPath = relative(basePath, candidatePath);
-  return relPath !== "" && !relPath.startsWith(`..${sep}`) && relPath !== "..";
-}
-
-/**
  * Maneja la ruta /api/render para POST
  * Con cache en .cache/preview/<template>/rendered.html
+ * @param {import("vite").ViteDevServer} server
+ * @param {string} rootDir
  */
 export function setupRenderApi(server, rootDir) {
   // Inicializar cache manager solo una vez
@@ -119,71 +100,62 @@ export function setupRenderApi(server, rootDir) {
     cacheManager = createPreviewCacheManager(rootDir);
   }
 
-  server.middlewares.use((req, res, next) => {
+  const paths = getProjectPaths(rootDir);
+
+  server.middlewares.use(async (req, res, next) => {
     if (!req.url?.startsWith("/api/render")) {
       return next();
     }
 
-    const url = new URL(req.url, `http://${req.headers.host}`);
+    const url = getRequestUrl(req);
     const templateName = url.searchParams.get("template");
     const theme = url.searchParams.get("theme") === "dark" ? "dark" : "light";
 
     if (req.method === "POST" && templateName) {
-      let body = "";
-      req.on("data", (chunk) => {
-        body += chunk.toString();
-      });
-      req.on("end", async () => {
-        try {
-          if (!isValidTemplateName(templateName)) {
-            res.statusCode = 400;
-            return res.end("Invalid template name");
-          }
-
-          const templatesRoot = resolve(rootDir, "src/emails/templates");
-          const filePath = resolve(templatesRoot, templateName, "index.html");
-          if (!isPathInside(templatesRoot, filePath)) {
-            res.statusCode = 400;
-            return res.end("Invalid template path");
-          }
-
-          let data;
-          try {
-            data = JSON.parse(body);
-          } catch {
-            res.statusCode = 400;
-            return res.end("Invalid JSON body");
-          }
-          const dataHash = createPreviewDataHash(data);
-          if (!fs.existsSync(filePath)) {
-            res.statusCode = 404;
-            return res.end("Template not found");
-          }
-
-          let finalHtml;
-
-          // Verificar si hay cache válida para fuentes + datos + tema
-          if (cacheManager.isCacheValid(templateName, { theme, dataHash })) {
-            finalHtml = await cacheManager.readFromCache(templateName);
-            console.log(`[maizzle] Using cached render for ${templateName} (${theme})`);
-          } else {
-            // Compilar template
-            const compiledHtml = await compileTemplate(filePath, data, rootDir);
-            finalHtml = applyPreviewTheme(compiledHtml, theme);
-            // Guardar en cache
-            await cacheManager.saveToCache(templateName, finalHtml, { theme, dataHash });
-            console.log(`[maizzle] Compiled and cached ${templateName} (${theme})`);
-          }
-
-          res.setHeader("Content-Type", "text/html");
-          res.end(finalHtml);
-        } catch (err) {
-          const message = err instanceof Error ? err.message : String(err);
-          console.error("[maizzle] API Render Error:", message);
-          res.statusCode = 500;
-          res.end("Internal server error");
+      try {
+        if (!isValidTemplateName(templateName)) {
+          return sendText(res, 400, "Invalid template name");
         }
-      });
+
+        const filePath = paths.templateHtml(templateName);
+        if (!isPathInside(paths.templatesRoot, filePath)) {
+          return sendText(res, 400, "Invalid template path");
+        }
+
+        let data;
+        try {
+          data = await readJsonBody(req);
+        } catch {
+          return sendText(res, 400, "Invalid JSON body");
+        }
+
+        const dataHash = createPreviewDataHash(data);
+        if (!fs.existsSync(filePath)) {
+          return sendText(res, 404, "Template not found");
+        }
+
+        let finalHtml;
+
+        // Verificar si hay cache válida para fuentes + datos + tema
+        if (cacheManager.isCacheValid(templateName, { theme, dataHash })) {
+          finalHtml = await cacheManager.readFromCache(templateName);
+          console.log(`[maizzle] Using cached render for ${templateName} (${theme})`);
+        } else {
+          // Compilar template
+          const compiledHtml = await compileTemplate(filePath, data, rootDir);
+          finalHtml = applyPreviewTheme(compiledHtml, theme);
+          // Guardar en cache
+          await cacheManager.saveToCache(templateName, finalHtml, { theme, dataHash });
+          console.log(`[maizzle] Compiled and cached ${templateName} (${theme})`);
+        }
+
+        res.setHeader("Content-Type", "text/html");
+        res.end(finalHtml);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        console.error("[maizzle] API Render Error:", message);
+        sendText(res, 500, "Internal server error");
+      }
       return;
     }
 

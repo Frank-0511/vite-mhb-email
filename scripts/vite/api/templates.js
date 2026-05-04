@@ -1,25 +1,19 @@
 import fs from "fs-extra";
-import { relative, resolve, sep } from "node:path";
 import { compileTemplate } from "../services/maizzle-compiler.js";
+import { isPathInside } from "../../shared/path-safety.js";
+import { getProjectPaths } from "../../shared/paths.js";
+import { sendText } from "./http.js";
 
 const TEMPLATE_ROUTE_PATTERN = /^\/templates\/([a-z0-9-]+)\/index\.html$/;
 
 /**
- * Verifica que una ruta candidata permanezca dentro de la ruta base.
- *
- * @param {string} basePath
- * @param {string} candidatePath
- * @returns {boolean}
- */
-function isPathInside(basePath, candidatePath) {
-  const relPath = relative(basePath, candidatePath);
-  return relPath !== "" && !relPath.startsWith(`..${sep}`) && relPath !== "..";
-}
-
-/**
  * Maneja las rutas de templates normales (ej. /templates/welcome/index.html)
+ * @param {import("vite").ViteDevServer} server
+ * @param {string} rootDir
  */
 export function setupTemplateApi(server, rootDir) {
+  const paths = getProjectPaths(rootDir);
+
   server.middlewares.use(async (req, res, next) => {
     const reqPath = req.url?.split("?")[0] || "";
     const routeMatch = reqPath.match(TEMPLATE_ROUTE_PATTERN);
@@ -28,19 +22,16 @@ export function setupTemplateApi(server, rootDir) {
     }
 
     const templateName = routeMatch[1];
-    const templatesRoot = resolve(rootDir, "src/emails/templates");
-    const filePath = resolve(templatesRoot, templateName, "index.html");
+    const filePath = paths.templateHtml(templateName);
 
-    if (!isPathInside(templatesRoot, filePath)) {
-      res.statusCode = 400;
-      return res.end("Invalid template path");
+    if (!isPathInside(paths.templatesRoot, filePath)) {
+      return sendText(res, 400, "Invalid template path");
     }
 
     if (!fs.existsSync(filePath)) return next();
 
     try {
-      const templateDir = filePath.replace("/index.html", "");
-      const dataPath = resolve(templateDir, "data.json");
+      const dataPath = paths.templateData(templateName);
       const data = fs.existsSync(dataPath) ? fs.readJsonSync(dataPath) : {};
 
       const finalHtml = await compileTemplate(filePath, data, rootDir);

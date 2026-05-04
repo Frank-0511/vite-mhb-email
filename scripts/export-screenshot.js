@@ -6,7 +6,7 @@
  * Genera PNG automáticamente usando wkhtmltoimage, puppeteer, o PDF + ImageMagick.
  *
  * Uso:
- *   yarn export-screenshot nombre-template
+ *   bun run export-screenshot nombre-template
  */
 
 import fs from "fs-extra";
@@ -22,7 +22,7 @@ if (!templateName) {
   console.error(
     paint(c.red + c.bold, "❌ Error:") +
       paint(c.dim, " Especifica el nombre del template.\n") +
-      paint(c.cyan, "   Uso: yarn export-screenshot nombre-template\n"),
+      paint(c.cyan, "   Uso: bun run export-screenshot nombre-template\n"),
   );
   process.exit(1);
 }
@@ -33,7 +33,7 @@ if (!fs.existsSync(htmlPath)) {
   console.error(
     paint(c.red + c.bold, "❌ Error:") +
       paint(c.dim, ` El template "${templateName}" no existe en dist.\n`) +
-      paint(c.cyan, "   Asegúrate de hacer 'yarn build' primero.\n"),
+      paint(c.cyan, "   Asegúrate de hacer 'bun run build' primero.\n"),
   );
   process.exit(1);
 }

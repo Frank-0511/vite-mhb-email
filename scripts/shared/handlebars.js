@@ -5,7 +5,7 @@
 
 import Handlebars from "handlebars";
 import fs from "node:fs";
-import path from "node:path";
+import { getProjectPaths } from "./paths.js";
 
 /**
  * Carga el data.json correspondiente a un template.
@@ -15,7 +15,8 @@ import path from "node:path";
 export function getTemplateData(templateName) {
   try {
     const baseName = templateName.replace(".html", "");
-    const dataPath = path.resolve(process.cwd(), "src/emails/templates", baseName, "data.json");
+    const paths = getProjectPaths(process.cwd());
+    const dataPath = paths.templateData(baseName);
     const content = fs.readFileSync(dataPath, "utf-8");
     return JSON.parse(content);
   } catch {
