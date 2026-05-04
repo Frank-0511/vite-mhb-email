@@ -4,7 +4,8 @@
  */
 
 import { spawn } from "node:child_process";
-import { c, paint, prompt } from "../utils.js";
+import { c, paint } from "../shared/console.js";
+import { prompt } from "../shared/prompts.js";
 
 /**
  * Si `dist/` está vacío, pregunta al usuario si quiere buildear ahora.

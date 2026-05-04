@@ -7,7 +7,8 @@ import { buildIfNeeded } from "../build/build-helper.js";
 import { sendToInbox } from "../mail/send-inbox.js";
 import { sendToMailtester } from "../mail/send-mailtester.js";
 import { sendTemplate } from "../mail/send-mailtrap.js";
-import { c, getBuiltTemplates, paint } from "../utils.js";
+import { getBuiltTemplates } from "../shared/built-templates.js";
+import { c, paint } from "../shared/console.js";
 import { askSelectTemplate, askTemplateName, run } from "./helpers.js";
 import { clearScreen } from "./ui.js";
 

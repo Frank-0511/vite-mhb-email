@@ -4,7 +4,7 @@
  */
 
 import fs from "fs-extra";
-import { c, paint } from "../utils.js";
+import { c, paint } from "../shared/console.js";
 import { compileHtmlWithData } from "./compilers.js";
 import {
   cleanupTempFile,

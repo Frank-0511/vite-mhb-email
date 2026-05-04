@@ -1,9 +1,9 @@
-import { setupCacheApi } from "./api-cache.js";
-import { setupComponentsApi } from "./api-components.js";
-import { setupDataApi } from "./api-data.js";
-import { setupRenderApi } from "./api-render.js";
-import { setupTemplateApi } from "./api-template.js";
-import { compileTemplate } from "./compile.js";
+import { compileTemplate } from "../services/maizzle-compiler.js";
+import { setupCacheApi } from "./cache.js";
+import { setupComponentsApi } from "./components.js";
+import { setupDataApi } from "./data.js";
+import { setupRenderApi } from "./render.js";
+import { setupTemplateApi } from "./templates.js";
 
 // Exportamos compileTemplate por si otro script lo necesita
 export { compileTemplate };

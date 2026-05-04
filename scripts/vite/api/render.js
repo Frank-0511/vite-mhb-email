@@ -1,7 +1,7 @@
 import fs from "fs-extra";
 import { resolve } from "node:path";
-import { compileTemplate } from "./compile.js";
-import { createPreviewCacheManager, createPreviewDataHash } from "./preview-cache-manager.js";
+import { compileTemplate } from "../services/maizzle-compiler.js";
+import { createPreviewCacheManager, createPreviewDataHash } from "../services/preview-cache.js";
 
 let cacheManager;
 

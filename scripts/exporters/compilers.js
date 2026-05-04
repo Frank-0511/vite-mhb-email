@@ -4,7 +4,7 @@
 
 import fs from "fs-extra";
 import Handlebars from "handlebars";
-import { c, paint } from "../utils.js";
+import { c, paint } from "../shared/console.js";
 
 /**
  * Compila el HTML con Handlebars usando datos locales.
