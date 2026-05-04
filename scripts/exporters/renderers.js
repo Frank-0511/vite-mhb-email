@@ -5,7 +5,7 @@
 import fs from "fs-extra";
 import { exec } from "node:child_process";
 import { promisify } from "node:util";
-import { c, paint } from "../utils.js";
+import { c, paint } from "../shared/console.js";
 
 const execAsync = promisify(exec);
 

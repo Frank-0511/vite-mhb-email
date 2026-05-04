@@ -12,17 +12,11 @@
  */
 
 import { buildIfNeeded } from "../build/build-helper.js";
-import {
-  applyHandlebars,
-  c,
-  getBuiltTemplates,
-  getTemplateData,
-  loadEnv,
-  paint,
-  pickFromList,
-  prompt,
-  readBuiltTemplate,
-} from "../utils.js";
+import { getBuiltTemplates, readBuiltTemplate } from "../shared/built-templates.js";
+import { c, paint } from "../shared/console.js";
+import { loadEnv } from "../shared/env.js";
+import { applyHandlebars, getTemplateData } from "../shared/handlebars.js";
+import { pickFromList, prompt } from "../shared/prompts.js";
 
 // ─── Envío a Mailtrap ─────────────────────────────────────────────────────────
 

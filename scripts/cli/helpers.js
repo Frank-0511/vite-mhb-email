@@ -6,7 +6,7 @@
 import { spawn } from "child_process";
 import fs from "fs-extra";
 import path from "node:path";
-import { c, paint } from "../utils.js";
+import { c, paint } from "../shared/console.js";
 
 /**
  * Ejecuta un comando del sistema con stdio heredado.

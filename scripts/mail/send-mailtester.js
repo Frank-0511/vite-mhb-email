@@ -9,18 +9,12 @@
  */
 
 import { buildIfNeeded } from "../build/build-helper.js";
+import { getBuiltTemplates, readBuiltTemplate } from "../shared/built-templates.js";
+import { c, paint } from "../shared/console.js";
+import { loadEnv } from "../shared/env.js";
+import { applyHandlebars, getTemplateData } from "../shared/handlebars.js";
+import { pickFromList, prompt } from "../shared/prompts.js";
 import { sendViaGmail } from "./gmail-transport.js";
-import {
-  applyHandlebars,
-  c,
-  getBuiltTemplates,
-  getTemplateData,
-  loadEnv,
-  paint,
-  pickFromList,
-  prompt,
-  readBuiltTemplate,
-} from "../utils.js";
 
 // ─── Flujo principal (exportado para el CLI) ──────────────────────────────────
 

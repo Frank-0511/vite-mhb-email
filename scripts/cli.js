@@ -12,7 +12,7 @@
 import { main } from "./cli/index.js";
 
 main().catch(async (err) => {
-  const { c, paint } = await import("./utils.js");
+  const { c, paint } = await import("./shared/console.js");
   console.error(paint(c.red, `\n  ❌ Error inesperado: ${err.message}\n`));
   process.exit(1);
 });

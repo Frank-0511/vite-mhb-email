@@ -1,6 +1,6 @@
 import fs from "fs-extra";
 import { resolve } from "node:path";
-import { compileTemplate } from "./compile.js";
+import { compileTemplate } from "../services/maizzle-compiler.js";
 
 /**
  * Maneja las rutas de templates normales (ej. /templates/welcome/index.html)

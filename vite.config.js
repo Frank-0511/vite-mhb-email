@@ -1,8 +1,8 @@
 import { resolve } from "node:path";
 import { defineConfig } from "vite";
-import { dashboardPlugin } from "./scripts/vite-plugins/dashboard.js";
-import { maizzlePlugin } from "./scripts/vite-plugins/maizzle.js";
-import { createPageResolverPlugin } from "./scripts/vite-plugins/page-resolver.js";
+import { dashboardPlugin } from "./scripts/vite/plugins/dashboard.js";
+import { maizzlePlugin } from "./scripts/vite/plugins/maizzle.js";
+import { createPageResolverPlugin } from "./scripts/vite/plugins/page-resolver.js";
 
 const rootDir = __dirname;
 
