@@ -147,7 +147,13 @@ export function setupRenderApi(server, rootDir) {
             return res.end("Invalid template path");
           }
 
-          const data = JSON.parse(body);
+          let data;
+          try {
+            data = JSON.parse(body);
+          } catch {
+            res.statusCode = 400;
+            return res.end("Invalid JSON body");
+          }
           const dataHash = createPreviewDataHash(data);
           if (!fs.existsSync(filePath)) {
             res.statusCode = 404;
@@ -172,9 +178,10 @@ export function setupRenderApi(server, rootDir) {
           res.setHeader("Content-Type", "text/html");
           res.end(finalHtml);
         } catch (err) {
-          console.error("[maizzle] API Render Error:", err.message);
+          const message = err instanceof Error ? err.message : String(err);
+          console.error("[maizzle] API Render Error:", message);
           res.statusCode = 500;
-          res.end(err.message);
+          res.end("Internal server error");
         }
       });
       return;

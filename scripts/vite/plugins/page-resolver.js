@@ -76,10 +76,10 @@ export function createPageResolverPlugin() {
           return next();
         }
 
-        // 301-redirect legacy .html URLs to their clean equivalents.
+        // 302-redirect legacy .html URLs to their clean equivalents in dev.
         if (legacyRedirects.has(pathname)) {
           const cleanPath = legacyRedirects.get(pathname);
-          res.writeHead(301, { Location: cleanPath + query });
+          res.writeHead(302, { Location: cleanPath + query });
           return res.end();
         }
 

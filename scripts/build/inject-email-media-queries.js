@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import fs from "fs";
+import { pathToFileURL } from "node:url";
 import path from "path";
 
 const buildDir = path.resolve(process.cwd(), "dist");
@@ -88,7 +89,7 @@ function main() {
 }
 
 // Ejecutar si se llama directamente
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   main();
 }
 

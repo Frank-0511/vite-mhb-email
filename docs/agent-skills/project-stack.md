@@ -17,8 +17,10 @@ No generes lockfiles de npm, yarn o pnpm.
 ## Vite
 
 - Vite provee el servidor de desarrollo y el dashboard de preview.
-- La raiz de Vite es `src`.
-- Los plugins propios viven en `scripts/vite-plugins/`.
+- La raiz de Vite es `src/web`.
+- Los plugins propios viven en `scripts/vite/plugins/`.
+- Las APIs internas viven en `scripts/vite/api/`.
+- Los servicios compartidos de preview viven en `scripts/vite/services/`.
 - Las APIs internas de desarrollo deben implementarse como middlewares de Vite.
 - No agregues servidores paralelos para resolver endpoints internos.
 
@@ -27,8 +29,8 @@ No generes lockfiles de npm, yarn o pnpm.
 - Maizzle es el compilador final de emails.
 - El output de produccion debe pasar por `bun run build`.
 - No uses `maizzle build` como solucion final.
-- Los layouts viven en `src/layouts/`.
-- Los partials viven en `src/partials/`.
+- Los layouts viven en `src/emails/layouts/`.
+- Los partials viven en `src/emails/partials/`.
 - El output final se aplana a `dist/<template>.html` segun
   `maizzle.config.js`.
 
@@ -49,24 +51,27 @@ Reglas:
 
 ## CSS
 
-- `src/css/tailwind.css` es para preview.
-- `src/css/tailwind.email.css` es para email final.
+- `src/web/shared/styles/tailwind.css` es para preview.
+- `src/emails/styles/tailwind.email.css` es para email final.
 - El intercambio entre CSS de preview y email pertenece al pipeline de build.
 - No cambies ese intercambio sin revisar `scripts/build/build.js` y
   `scripts/generators/css-switcher.js`.
 
 ## Rutas Clave
 
-- Dashboard principal: `src/index.html`.
-- Preview/editor: `src/preview.html`.
-- JS del dashboard: `src/js/`.
-- Templates: `src/templates/<template>/index.html`.
-- Datos de preview: `src/templates/<template>/data.json`.
-- Layouts: `src/layouts/`.
-- Partials: `src/partials/`.
+- Dashboard principal: `src/web/features/home/index.html`.
+- Libreria de componentes: `src/web/features/library/components-library.html`.
+- Preview/editor: `src/web/features/preview/preview.html`.
+- JS del dashboard: `src/web/features/` y `src/web/shared/`.
+- Templates: `src/emails/templates/<template>/index.html`.
+- Datos de preview: `src/emails/templates/<template>/data.json`.
+- Layouts: `src/emails/layouts/`.
+- Partials: `src/emails/partials/`.
 - Build: `scripts/build/build.js`.
 - CLI: `scripts/cli.js` y `scripts/cli/`.
-- Plugins Vite: `scripts/vite-plugins/`.
+- APIs Vite: `scripts/vite/api/`.
+- Plugins Vite: `scripts/vite/plugins/`.
+- Servicios Vite: `scripts/vite/services/`.
 - Validacion de email: `scripts/build/validate-email-html.js`.
 
 ## Pipeline Esperado

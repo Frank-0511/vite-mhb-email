@@ -12,7 +12,7 @@ templates HTML de email basado en Bun, Vite, Maizzle y Handlebars.
 
 Todo cambio debe preservar el flujo principal:
 
-1. editar templates en `src/templates/*`;
+1. editar templates en `src/emails/templates/*`;
 2. previsualizar con Vite;
 3. renderizar datos de preview con Handlebars;
 4. compilar con Maizzle mediante el pipeline del proyecto;
@@ -23,13 +23,14 @@ Todo cambio debe preservar el flujo principal:
 
 Antes de modificar archivos, lee la skill aplicable:
 
-| Tarea                                                          | Skill obligatoria                                                     |
-| -------------------------------------------------------------- | --------------------------------------------------------------------- |
-| Build, Vite, Maizzle, Handlebars, Bun, CLI o rutas clave       | [project-stack.md](/docs/agent-skills/project-stack.md)               |
-| JSDoc, ESLint, errores, seguridad o dependencias               | [quality-gates.md](/docs/agent-skills/quality-gates.md)               |
-| Refactors, archivos grandes, JS embebido en HTML o type safety | [refactor-type-safety.md](/docs/agent-skills/refactor-type-safety.md) |
-| Templates, layouts, partials, CSS de email o validadores       | [email-compatibility.md](/docs/agent-skills/email-compatibility.md)   |
-| Verificacion, comandos permitidos, commits o git               | [workflow-git.md](/docs/agent-skills/workflow-git.md)                 |
+| Tarea                                                          | Skill obligatoria                                                       |
+| -------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| Build, Vite, Maizzle, Handlebars, Bun, CLI o rutas clave       | [project-stack.md](/docs/agent-skills/project-stack.md)                 |
+| JSDoc, ESLint, errores, seguridad o dependencias               | [quality-gates.md](/docs/agent-skills/quality-gates.md)                 |
+| Refactors, archivos grandes, JS embebido en HTML o type safety | [refactor-type-safety.md](/docs/agent-skills/refactor-type-safety.md)   |
+| Templates, layouts, partials, CSS de email o validadores       | [email-compatibility.md](/docs/agent-skills/email-compatibility.md)     |
+| Dashboard web, preview, libreria de componentes o APIs Vite UI | [web-preview-dashboard.md](/docs/agent-skills/web-preview-dashboard.md) |
+| Verificacion, comandos permitidos, commits o git               | [workflow-git.md](/docs/agent-skills/workflow-git.md)                   |
 
 Si una tarea cruza dominios, lee todas las skills aplicables. No copies todo el
 contenido a contexto si no hace falta; carga solo lo necesario para ejecutar con
@@ -40,9 +41,9 @@ seguridad.
 - Usa Bun. No uses `npm`, `npx`, `yarn` ni `pnpm` salvo autorizacion explicita.
 - No ejecutes `maizzle build` como solucion final; usa `bun run build`.
 - Mantiene intactas las variables ESP con `{{ }}` en el output final.
-- Todo JS nuevo o modificado en `scripts/`, `src/js/` y
-  `scripts/vite-plugins/` debe tener JSDoc suficiente.
-- ESLint debe cubrir el codigo JS tocado, incluyendo `src/js/`.
+- Todo JS nuevo o modificado en `scripts/`, `src/web/` y `scripts/vite/`
+  debe tener JSDoc suficiente.
+- ESLint debe cubrir el codigo JS tocado, incluyendo `src/web/`.
 - No migres todo a TypeScript de golpe sin aprobacion explicita.
 - No ocultes errores. Los scripts, APIs internas y build steps deben fallar de
   forma explicita y accionable.
@@ -61,6 +62,7 @@ bun run validate-email
 bun run cli
 bun run format
 bun run format:check
+bun run agents:sync
 ```
 
 ## Definicion de Terminado
