@@ -11,12 +11,10 @@
  *   MAILTRAP_TO_NAME    — nombre destinatario por defecto (opcional)
  */
 
-import { buildIfNeeded } from "../build/build-helper.js";
-import { getBuiltTemplates, readBuiltTemplate } from "../shared/built-templates.js";
 import { c, paint } from "../shared/console.js";
 import { loadEnv } from "../shared/env.js";
-import { applyHandlebars, getTemplateData } from "../shared/handlebars.js";
-import { pickFromList, prompt } from "../shared/prompts.js";
+import { prompt } from "../shared/prompts.js";
+import { selectBuiltTemplateWithData } from "./template-selection.js";
 
 // ─── Envío a Mailtrap ─────────────────────────────────────────────────────────
 
@@ -76,25 +74,10 @@ export async function sendTemplate(rl) {
 
   console.log(paint(c.magenta + c.bold, "\n  📨 Enviar template a Mailtrap\n"));
 
-  // 1. Listar templates — ofrecer build si dist/ está vacío
-  let templates = getBuiltTemplates();
-  if (templates.length === 0) {
-    const built = await buildIfNeeded(rl);
-    if (!built) return;
-    templates = getBuiltTemplates();
-    if (templates.length === 0) {
-      console.log(paint(c.red, "\n  ❌ El build no generó templates en dist/.\n"));
-      return;
-    }
-  }
-
-  console.log(paint(c.bold, "  Templates disponibles:\n"));
-  const chosen = await pickFromList(rl, templates);
-  let html = readBuiltTemplate(chosen);
-
-  // Aplicar datos Handlebars desde data.json
-  const data = getTemplateData(chosen);
-  html = applyHandlebars(html, data);
+  // 1. Listar templates y aplicar datos
+  const selection = await selectBuiltTemplateWithData(rl);
+  if (!selection) return;
+  const { chosen, html } = selection;
 
   // 2. Datos del envío
   console.log();

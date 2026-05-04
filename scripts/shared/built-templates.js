@@ -5,13 +5,15 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { getProjectPaths } from "./paths.js";
 
 /**
  * Devuelve los archivos `.html` disponibles en `dist/`, ordenados.
  * @returns {string[]}
  */
 export function getBuiltTemplates() {
-  const distDir = path.resolve(process.cwd(), "dist");
+  const paths = getProjectPaths(process.cwd());
+  const distDir = paths.distDir;
   if (!fs.existsSync(distDir)) return [];
   return fs
     .readdirSync(distDir)
@@ -25,5 +27,6 @@ export function getBuiltTemplates() {
  * @returns {string}
  */
 export function readBuiltTemplate(filename) {
-  return fs.readFileSync(path.resolve(process.cwd(), "dist", filename), "utf-8");
+  const paths = getProjectPaths(process.cwd());
+  return fs.readFileSync(path.resolve(paths.distDir, filename), "utf-8");
 }

@@ -9,7 +9,7 @@ import { prompt } from "../shared/prompts.js";
 
 /**
  * Si `dist/` está vacío, pregunta al usuario si quiere buildear ahora.
- * Ejecuta `yarn build` si confirma.
+ * Ejecuta `bun run build` si confirma.
  *
  * @param {import('readline').Interface} rl
  * @returns {Promise<boolean>} `true` si se buildeó exitosamente (o ya había templates), `false` si el usuario canceló o el build falló
@@ -26,7 +26,7 @@ export async function buildIfNeeded(rl) {
   console.log(paint(c.yellow + c.bold, "\n  📦 Buildeando para producción…\n"));
 
   const code = await new Promise((resolve) => {
-    const child = spawn("yarn", ["build"], { stdio: "inherit", shell: true });
+    const child = spawn("bun", ["run", "build"], { stdio: "inherit", shell: true });
     child.on("close", (c) => resolve(c ?? 0));
   });
 
