@@ -51,6 +51,24 @@
       "attr-lowercase": true,
       "spec-char-escape": false, // Para que no chille con tus tags [[ ]]
     },
+    "files.exclude": {
+      "**/.git": true,
+      "**/.svn": true,
+      "**/.hg": true,
+      "**/.DS_Store": true,
+      "**/Thumbs.db": true,
+      "**/node_modules": true,
+      "**/.next": true,
+      "**/.swc": true,
+      "**/.yarn": true,
+      "**/.stylelintcache": true,
+      "**/tsconfig.tsbuildinfo": true,
+      ".agent": true,
+      ".codex": true,
+      ".agents": true,
+      ".github": true
+    },
+    "explorerExclude.backup": {},
   },
   "extensions": {
     "recommendations": [

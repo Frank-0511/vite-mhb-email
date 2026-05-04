@@ -4,34 +4,7 @@ previewText: "Ya podés acceder a tu cuenta con tus credenciales."
 titleTemplate: "Cuenta Creada"
 ---
 
-<style>
-  .icon-light {
-    display: block !important;
-  }
-  .icon-dark {
-    display: none !important;
-  }
-
-  /* Para clientes de correo que respetan prefers-color-scheme (SOLO si no tiene clase dark) */
-  @media (prefers-color-scheme: dark) {
-    html:not(.dark) .icon-light {
-      display: none !important;
-    }
-    html:not(.dark) .icon-dark {
-      display: block !important;
-    }
-  }
-
-  /* Para desarrollo local con clase .dark en el html */
-  html.dark .icon-light {
-    display: none !important;
-  }
-  html.dark .icon-dark {
-    display: block !important;
-  }
-</style>
-
-<x-main-dark>
+<x-main theme="dark">
   <!-- Ícono / Ilustración -->
   <p class="text-center text-5xl m-0 mb-4">
     <img
@@ -109,4 +82,4 @@ titleTemplate: "Cuenta Creada"
     inmediato.
   </p>
   <p class="text-base text-zinc-300">Un saludo,<br /><strong>El equipo de Mi Empresa</strong></p>
-</x-main-dark>
+</x-main>
