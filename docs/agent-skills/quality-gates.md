@@ -5,8 +5,8 @@ dependencias, seguridad o APIs internas.
 
 ## JSDoc Obligatorio
 
-Todo codigo nuevo o modificado en `scripts/`, `src/js/` y
-`scripts/vite-plugins/` debe tener JSDoc suficiente para entender contratos,
+Todo codigo nuevo o modificado en `scripts/`, `src/web/` y `scripts/vite/`
+debe tener JSDoc suficiente para entender contratos,
 entradas, salidas y errores.
 
 JSDoc es obligatorio en:
@@ -44,7 +44,7 @@ tipos importados. Evita `any`; si es inevitable, explica la razon.
 ESLint debe cubrir:
 
 - `scripts/**/*.js`;
-- `src/js/**/*.js`;
+- `src/web/**/*.js`;
 - `vite.config.js`;
 - `maizzle.config.js`;
 - cualquier archivo JS nuevo.
@@ -60,7 +60,7 @@ Reglas esperadas:
 - `require-await`: warning o error segun contexto;
 - compatibilidad con Prettier.
 
-No agregues codigo nuevo en `src/js/` si no queda cubierto por `bun run lint`.
+No agregues codigo nuevo en `src/web/` si no queda cubierto por `bun run lint`.
 No desactives reglas inline salvo razon tecnica local documentada.
 
 ## Manejo de Errores

@@ -7,8 +7,8 @@
  * Genera dist/<templateName>.html sin afectar los otros templates
  */
 import { execSync } from "child_process";
-import { rm, writeFile, readFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
+import { readFile, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { restorePreviewCss, switchToEmailCss } from "../generators/css-switcher.js";
 import { injectEmailMediaQueries } from "./inject-email-media-queries.js";
@@ -25,37 +25,43 @@ if (!templateName) {
 }
 
 /**
- * Crear config temporal de Maizzle con solo un template
+ * Crear config temporal de Maizzle con solo un template.
+ *
+ * @param {string} configBackupPath Ruta absoluta del backup a escribir.
+ * @returns {Promise<void>} Resolves cuando el config temporal queda escrito.
  */
-async function createTemporaryMaizzleConfig() {
+async function createTemporaryMaizzleConfig(configBackupPath) {
   const configPath = resolve(rootDir, "maizzle.config.js");
-  const configBackupPath = resolve(rootDir, "maizzle.config.js.selective-bak");
 
-  try {
-    // Leer el config original
-    const originalConfig = await readFile(configPath, "utf-8");
+  // Leer el config original
+  const originalConfig = await readFile(configPath, "utf-8");
 
-    // Guardar backup
-    await writeFile(configBackupPath, originalConfig);
+  // Guardar backup
+  await writeFile(configBackupPath, originalConfig);
 
-    // Crear config temporal con solo el template solicitado
-    const tempConfig = originalConfig.replace(
-      'content: ["src/emails/templates/**/*.html"]',
-      `content: ["src/emails/templates/${templateName}/index.html"]`,
+  // Crear config temporal con solo el template solicitado
+  const contentPattern = /content:\s*\[\s*(["'])src\/emails\/templates\/\*\*\/\*\.html\1\s*\]/;
+  let didReplace = false;
+  const tempConfig = originalConfig.replace(contentPattern, (_match, quote) => {
+    didReplace = true;
+    return `content: [${quote}src/emails/templates/${templateName}/index.html${quote}]`;
+  });
+
+  if (!didReplace) {
+    throw new Error(
+      'Maizzle config glob not found. Expected content: ["src/emails/templates/**/*.html"].',
     );
-
-    await writeFile(configPath, tempConfig);
-    console.log(`✅ Created temporary Maizzle config for ${templateName}`);
-
-    return configBackupPath;
-  } catch (err) {
-    console.error("❌ Error creating temporary Maizzle config:", err.message);
-    process.exit(1);
   }
+
+  await writeFile(configPath, tempConfig);
+  console.log(`✅ Created temporary Maizzle config for ${templateName}`);
 }
 
 /**
- * Restaurar config original de Maizzle
+ * Restaurar config original de Maizzle.
+ *
+ * @param {string} backupPath Ruta absoluta del backup a restaurar.
+ * @returns {Promise<void>} Resolves cuando el config original queda restaurado.
  */
 async function restoreMaizzleConfig(backupPath) {
   try {
@@ -70,7 +76,9 @@ async function restoreMaizzleConfig(backupPath) {
 }
 
 /**
- * Limpiar el directorio dist
+ * Limpiar el directorio dist.
+ *
+ * @returns {Promise<void>} Resolves cuando dist queda eliminado.
  */
 async function cleanDist() {
   const distDir = resolve(rootDir, "dist");
@@ -97,8 +105,13 @@ function validateTemplate() {
   console.log(`✅ Found template: ${templateName}`);
 }
 
+/**
+ * Build selective de un template preservando el pipeline principal.
+ *
+ * @returns {Promise<void>} Resolves cuando el build finaliza o falla con exit code.
+ */
 async function buildSelective() {
-  let configBackupPath = null;
+  const configBackupPath = resolve(rootDir, "maizzle.config.js.selective-bak");
 
   try {
     // Validar que el template existe
@@ -111,21 +124,15 @@ async function buildSelective() {
     await switchToEmailCss();
 
     // Crear config temporal de Maizzle
-    configBackupPath = await createTemporaryMaizzleConfig();
+    await createTemporaryMaizzleConfig(configBackupPath);
 
     // Ejecutar build de Maizzle solo para este template
     console.log(`\n📦 Building ${templateName} with Maizzle...\n`);
     execSync("maizzle build", { stdio: "inherit" });
 
-    // Restaurar config original de Maizzle
-    await restoreMaizzleConfig(configBackupPath);
-
     // Inyectar media queries para dark mode
     console.log("\n🎨 Injecting dark mode media queries...\n");
     injectEmailMediaQueries();
-
-    // Restaurar CSS de preview
-    await restorePreviewCss();
 
     // Validar compatibilidad
     console.log("\n🔍 Validating email HTML compatibility...\n");
@@ -134,13 +141,14 @@ async function buildSelective() {
     console.log(`✅ Selective build completed for ${templateName}!\n`);
     console.log(`📄 Output: dist/${templateName}.html\n`);
   } catch (err) {
-    // Intentar restaurar en caso de error
-    if (configBackupPath) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("\n❌ Selective build failed:", message);
+    process.exitCode = 1;
+  } finally {
+    if (existsSync(configBackupPath)) {
       await restoreMaizzleConfig(configBackupPath);
     }
     await restorePreviewCss();
-    console.error("\n❌ Selective build failed:", err.message);
-    process.exit(1);
   }
 }
 

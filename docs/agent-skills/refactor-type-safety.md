@@ -33,8 +33,8 @@ FOUC o aplicar una clase inicial antes de cargar CSS.
 Reglas:
 
 - La logica de UI, fetch, editor, localStorage y manipulacion de iframe debe
-  vivir en `src/js/`.
-- `src/preview.html` debe tender a estructura y carga de assets.
+  vivir en `src/web/features/` o `src/web/shared/`.
+- Los HTML de `src/web/features/*` deben tender a estructura y carga de assets.
 - Al extraer JS, conserva orden de inicializacion.
 - Documenta dependencias del DOM.
 - Usa helpers para queries DOM obligatorias.
@@ -68,7 +68,8 @@ JSON, query params, filesystem o requests debe validarse en runtime.
 
 ## Frontend Modular
 
-- Mantiene JS modular en `src/js/modules/`.
+- Mantiene JS modular por feature en `src/web/features/<feature>/`.
+- Usa `src/web/shared/` solo para utilidades compartidas reales.
 - Cada modulo debe exponer una API pequena y explicita.
 - No mezcles rendering, estado, networking y persistencia en la misma funcion.
 - LocalStorage debe usar claves constantes y version si el valor evoluciona.
