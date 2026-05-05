@@ -71,12 +71,12 @@ export function printHelp() {
 ${paint(c.cyan + c.bold, "  vite-mhb-email CLI")}
 
   ${bold("Uso:")}
-    yarn cli          Abre el menú interactivo
-    yarn cli --help   Muestra esta ayuda
+    bun run cli       Abre el menú interactivo
+    bun run cli --help Muestra esta ayuda
 
   ${bold("Opciones del menú:")}
-    ${paint(c.green, "[1]")}  ⚡  Levantar servidor de desarrollo  (yarn dev)
-    ${paint(c.yellow, "[2]")}  📦  Buildear para producción          (yarn build)
+    ${paint(c.green, "[1]")}  ⚡  Levantar servidor de desarrollo  (bun run dev)
+    ${paint(c.yellow, "[2]")}  📦  Buildear para producción          (bun run build)
     ${paint(c.magenta, "[3]")}  ✨  Crear nuevo template
     ${paint(c.blue, "[4]")}  📨  Enviar template a Mailtrap        (requiere MAILTRAP_*)
     ${paint(c.cyan, "[5]")}  🧪  Testear con Mail-Tester (Gmail)   (requiere GMAIL_*)

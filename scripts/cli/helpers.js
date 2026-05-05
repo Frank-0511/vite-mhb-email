@@ -46,7 +46,7 @@ export function askSelectTemplate(rl) {
     console.log(
       paint(c.red + c.bold, "  ❌ Error:") +
         paint(c.dim, " No existe la carpeta dist/.\n") +
-        paint(c.cyan, "     Primero ejecutá 'yarn build'.\n"),
+        paint(c.cyan, "     Primero ejecutá 'bun run build'.\n"),
     );
     return Promise.resolve(null);
   }

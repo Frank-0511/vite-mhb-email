@@ -13,7 +13,7 @@ import path from "node:path";
 const name = process.argv[2];
 
 if (!name) {
-  console.error("❌ Por favor, indica el nombre del template: yarn g:email nombre-del-correo");
+  console.error("❌ Por favor, indica el nombre del template: bun run g:email nombre-del-correo");
   process.exit(1);
 }
 

@@ -49,6 +49,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prepare": "husky",
+    "g:email": "bun scripts/generators/generate-email.js",
     "agents:sync": "bun scripts/ai/sync-agents.js"
   },
   "lint-staged": {

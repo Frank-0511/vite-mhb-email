@@ -5,7 +5,7 @@
  * de compatibilidad con Outlook, Gmail, Apple Mail, Yahoo, etc.
  *
  * Uso:
- *   yarn validate-email          # Valida todos los templates en dist/
+ *   bun run validate-email       # Valida todos los templates en dist/
  *   node scripts/build/validate-email-html.js   # Ídem
  *
  * También se importa desde build.js para ejecutarse como paso post-build.
@@ -198,7 +198,11 @@ const rules = [
 
       // Propiedades CSS problemáticas y sus clientes afectados
       const unsupportedProps = [
-        { prop: "display:\\s*flex", name: "display: flex", clients: "Outlook (todas las versiones)" },
+        {
+          prop: "display:\\s*flex",
+          name: "display: flex",
+          clients: "Outlook (todas las versiones)",
+        },
         { prop: "display:\\s*grid", name: "display: grid", clients: "Outlook, Gmail (parcial)" },
         {
           prop: "(?<!\\-)position\\s*:\\s*(?:absolute|fixed|sticky)",
@@ -301,7 +305,8 @@ const rules = [
           {
             ruleId: "meta-charset",
             severity: Severity.WARNING,
-            message: "Falta <meta charset=\"utf-8\"> → caracteres especiales (ñ, acentos, emojis) pueden corromperse",
+            message:
+              'Falta <meta charset="utf-8"> → caracteres especiales (ñ, acentos, emojis) pueden corromperse',
             hint: 'Agregar <meta charset="utf-8"> en el <head>',
           },
         ];
@@ -388,7 +393,7 @@ const rules = [
   {
     id: "color-scheme-meta",
     severity: Severity.INFO,
-    description: "Verificar <meta name=\"color-scheme\"> si hay dark mode",
+    description: 'Verificar <meta name="color-scheme"> si hay dark mode',
     check(html) {
       const hasDarkStyles =
         /prefers-color-scheme\s*:\s*dark/i.test(html) || /\.dark[-_]/i.test(html);
@@ -400,7 +405,7 @@ const rules = [
             ruleId: "color-scheme-meta",
             severity: Severity.INFO,
             message:
-              "Se detectó dark mode CSS pero falta <meta name=\"color-scheme\"> → Apple Mail puede no activar dark mode",
+              'Se detectó dark mode CSS pero falta <meta name="color-scheme"> → Apple Mail puede no activar dark mode',
             hint: 'Agregar <meta name="color-scheme" content="light dark"> en el <head>',
           },
         ];
@@ -427,8 +432,7 @@ const rules = [
           {
             ruleId: "unsubscribe-link",
             severity: Severity.WARNING,
-            message:
-              "No se encontró link de cancelar suscripción → requerido por CAN-SPAM y GDPR",
+            message: "No se encontró link de cancelar suscripción → requerido por CAN-SPAM y GDPR",
             hint: 'Agregar un link de unsubscribe en el footer (ej: <a href="{{ unsubscribe_url }}">Cancelar suscripción</a>)',
           },
         ];
@@ -632,12 +636,7 @@ function printSummary(results) {
   const totalWarnings = totalIssues.filter((i) => i.severity === Severity.WARNING).length;
   const totalInfos = totalIssues.filter((i) => i.severity === Severity.INFO).length;
 
-  console.log(
-    paint(
-      colors.bold + colors.white,
-      `\n══════════════════════════════════════════`,
-    ),
-  );
+  console.log(paint(colors.bold + colors.white, `\n══════════════════════════════════════════`));
   console.log(
     paint(
       colors.bold + colors.white,

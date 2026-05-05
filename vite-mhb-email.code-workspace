@@ -28,21 +28,10 @@
       "src/css/tailwind.web.css": "**",
     },
     "tailwindCSS.experimental.classRegex": [
-      [
-        "class=\"([^\"]*)\"",
-        "([a-zA-Z0-9\\-:]+)"
-      ],
-      [
-        "<x-[^>]*class=\"([^\"]*)\"",
-        "([a-zA-Z0-9\\-:]+)"
-      ], // Para detectar clases dentro de tus tags <x-main>
+      ["class=\"([^\"]*)\"", "([a-zA-Z0-9\\-:]+)"],
+      ["<x-[^>]*class=\"([^\"]*)\"", "([a-zA-Z0-9\\-:]+)"], // Para detectar clases dentro de tus tags <x-main>
     ],
-    "tailwindCSS.files.exclude": [
-      "**/.git/**",
-      "**/node_modules/**",
-      "**/dist/**",
-      "**/.yarn/**"
-    ],
+    "tailwindCSS.files.exclude": ["**/.git/**", "**/node_modules/**", "**/dist/**", "**/.yarn/**"],
     /* --- HTMLHint (Sintaxis Email) --- */
     "htmlhint.options": {
       "doctype-first": false,
@@ -67,7 +56,7 @@
       ".codex": true,
       ".agents": true,
       ".github": true,
-      ".claude": true
+      ".claude": true,
     },
     "explorerExclude.backup": {},
   },
