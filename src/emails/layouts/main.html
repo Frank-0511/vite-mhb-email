@@ -2,6 +2,7 @@
   module.exports = {
     theme: props.theme || "auto",
     isDarkOnly: props.theme === "dark",
+    pageUrl: props["page-url"] || "https://www.miempresa.com",
   };
 </script>
 
@@ -91,9 +92,10 @@
           <tr>
             <td class="bg-slate-950 px-8 py-6 text-center rounded-t-lg">
               <a
-                href="[[ page.logoUrl || '#' ]]"
+                href="[[ pageUrl ]]"
                 class="!text-white no-underline"
                 style="display: inline-block"
+                target="_blank"
               >
                 <table cellpadding="0" cellspacing="0" role="none" style="display: inline-table">
                   <tr>
@@ -156,9 +158,10 @@
           <tr>
             <td class="bg-slate-800 dark:bg-slate-950 px-8 py-6 text-center rounded-t-lg">
               <a
-                href="[[ page.logoUrl || '#' ]]"
+                href="[[ pageUrl ]]"
                 class="!text-white no-underline"
                 style="display: inline-block"
+                target="_blank"
               >
                 <table cellpadding="0" cellspacing="0" role="none" style="display: inline-table">
                   <tr>
