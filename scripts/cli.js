@@ -5,8 +5,8 @@
  * @fileoverview Entry point del CLI interactivo para vite-mhb-email.
  *
  * Uso:
- *   yarn cli          — Abre el menú interactivo
- *   yarn cli --help   — Muestra la ayuda y sale
+ *   bun run cli       — Abre el menú interactivo
+ *   bun run cli --help — Muestra la ayuda y sale
  */
 
 import { main } from "./cli/index.js";
