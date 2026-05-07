@@ -11,6 +11,11 @@ export default defineConfig({
   server: {
     open: true,
     middlewareMode: false,
+    watch: {
+      // Prevent the selective build from triggering HMR/full-reload when it
+      // writes to dist/ or .cache/. The preview uses /api/render, not dist/.
+      ignored: ["**/dist/**", "**/.cache/**"],
+    },
   },
   plugins: [maizzlePlugin(rootDir), dashboardPlugin(rootDir), createPageResolverPlugin()],
   build: {

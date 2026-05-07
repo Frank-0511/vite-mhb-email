@@ -15,6 +15,7 @@ import { queryRequired, querySafe } from "../../shared/utils/dom-helpers.js";
 import { initLucideIcons } from "../../shared/utils/lucide-setup.js";
 import "../../shared/utils/theme-toggle-component.js"; // Web Component auto-registers
 
+import { initCopyHtmlModal } from "./copy-html-modal.js";
 import { initializeEditor } from "./editor.js";
 import { createIframeManager } from "./iframe-manager.js";
 import { createRenderAPI } from "./render-api.js";
@@ -171,6 +172,9 @@ async function initializePreview() {
       widthIndicator: viewportWidthIndicator,
     });
   }
+
+  // Initialize Copy HTML modal
+  initCopyHtmlModal({ templateName });
 }
 
 // Initialize when DOM is ready
