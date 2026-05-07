@@ -4,24 +4,20 @@ import Handlebars from "handlebars";
 import { resolve } from "node:path";
 
 /**
- * Compila una plantilla HTML con Maizzle y Handlebars
- * @param {string} filePath - Ruta al archivo HTML
- * @param {object} data - Datos para la plantilla
- * @param {string} rootDir - Directorio raíz del proyecto
- * @param {boolean} isPreview - Si es preview (usa tailwind.css) o build (usa tailwind.email.css)
- * @returns {Promise<string>} HTML compilado
+ * Compila una plantilla HTML con Maizzle y Handlebars.
+ *
+ * Usado en preview (Vite): renderiza el template con datos de preview.
+ * El CSS de email lo gestiona cada template vía
+ * `@import "src/emails/styles/tailwind.email.css"` y
+ * `@config "tailwind.email.config.js"` — no se necesita intercambio de configs.
+ *
+ * @param {string} filePath - Ruta al archivo HTML del template.
+ * @param {object} data - Datos para la plantilla (Handlebars).
+ * @param {string} rootDir - Directorio raíz del proyecto.
+ * @returns {Promise<string>} HTML compilado.
  */
-export async function compileTemplate(filePath, data, rootDir, isPreview = true) {
-  let html = fs.readFileSync(filePath, "utf8");
-
-  // En preview (Vite): asegurar que se usa tailwind.config.js (darkMode: "class")
-  // En build (Maizzle): reemplazar con tailwind.email.config.js (darkMode: "media")
-  if (!isPreview) {
-    html = html.replace(
-      /@import "src\/css\/tailwind\.css"/g,
-      '@import "src/css/tailwind.email.css"',
-    );
-  }
+export async function compileTemplate(filePath, data, rootDir) {
+  const html = fs.readFileSync(filePath, "utf8");
 
   const { html: maizzleHtml } = await render(html, {
     useTransformers: false,

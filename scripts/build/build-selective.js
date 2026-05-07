@@ -4,13 +4,14 @@
  * Uso: bun run build-selective <templateName>
  * Ejemplo: bun run build-selective user-created
  *
- * Genera dist/<templateName>.html sin afectar los otros templates
+ * Genera dist/<templateName>.html sin afectar los otros templates.
+ * No muta tailwind.config.js; el CSS de email lo gestiona
+ * `src/emails/styles/tailwind.email.css` vía `@config "tailwind.email.config.js"`.
  */
 import { execSync } from "child_process";
 import { existsSync } from "node:fs";
 import { readFile, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
-import { restorePreviewCss, switchToEmailCss } from "../generators/css-switcher.js";
 import { injectEmailMediaQueries } from "./inject-email-media-queries.js";
 import { validateEmailHtml } from "./validate-email-html.js";
 
@@ -76,25 +77,7 @@ async function restoreMaizzleConfig(backupPath) {
 }
 
 /**
- * Limpiar el directorio dist.
- *
- * @returns {Promise<void>} Resolves cuando dist queda eliminado.
- */
-async function cleanDist() {
-  const distDir = resolve(rootDir, "dist");
-  if (existsSync(distDir)) {
-    try {
-      await rm(distDir, { recursive: true });
-      console.log("✅ Cleaned dist directory");
-    } catch (err) {
-      console.error("❌ Error cleaning dist:", err.message);
-      process.exit(1);
-    }
-  }
-}
-
-/**
- * Verificar que el template existe
+ * Verificar que el template existe.
  */
 function validateTemplate() {
   const templatePath = resolve(rootDir, `src/emails/templates/${templateName}`);
@@ -116,12 +99,6 @@ async function buildSelective() {
   try {
     // Validar que el template existe
     validateTemplate();
-
-    // Limpiar dist
-    await cleanDist();
-
-    // Cambiar a CSS de email
-    await switchToEmailCss();
 
     // Crear config temporal de Maizzle
     await createTemporaryMaizzleConfig(configBackupPath);
@@ -148,7 +125,6 @@ async function buildSelective() {
     if (existsSync(configBackupPath)) {
       await restoreMaizzleConfig(configBackupPath);
     }
-    await restorePreviewCss();
   }
 }
 

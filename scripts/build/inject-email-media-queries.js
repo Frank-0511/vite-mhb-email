@@ -93,4 +93,24 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   main();
 }
 
+/**
+ * Inyecta media queries de dark mode en un string HTML (en memoria).
+ * Equivalente a `injectEmailMediaQueries()` pero sin tocar el sistema de archivos.
+ *
+ * @param {string} html Contenido HTML al que inyectar el media query.
+ * @returns {string} HTML con el media query inyectado antes de `</style>`.
+ */
+export function injectEmailMediaQueriesIntoHtml(html) {
+  const mediaQuery =
+    "@media (prefers-color-scheme:dark){.icon-light{display:none!important}.icon-dark{display:block!important}}";
+
+  const styleCloseTag = html.indexOf("</style>");
+  if (styleCloseTag === -1) {
+    console.warn("[inject-media-queries] No <style> tag found in HTML; skipping injection.");
+    return html;
+  }
+
+  return html.slice(0, styleCloseTag) + mediaQuery + html.slice(styleCloseTag);
+}
+
 export { injectEmailMediaQueries };
