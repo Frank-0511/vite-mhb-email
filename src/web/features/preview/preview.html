@@ -59,6 +59,162 @@
         --jse-panel-background: #1e293b; /* slate-800 */
         --jse-main-border: none;
       }
+
+      /* ── Copy HTML Dialog ─────────────────────────────────────────── */
+      #dialog-copy-html {
+        border: none;
+        border-radius: 12px;
+        padding: 0;
+        width: 400px;
+        max-width: calc(100vw - 32px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+        background: #ffffff;
+        color: #1e293b;
+      }
+      html.dark #dialog-copy-html {
+        background: #1e293b;
+        color: #e2e8f0;
+      }
+      #dialog-copy-html::backdrop {
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(2px);
+      }
+      .copy-html-dialog-inner {
+        padding: 28px 28px 24px;
+      }
+      .copy-html-dialog-title {
+        font-size: 1rem;
+        font-weight: 700;
+        margin: 0 0 6px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .copy-html-dialog-desc {
+        font-size: 0.8125rem;
+        color: #64748b;
+        margin: 0 0 20px;
+      }
+      html.dark .copy-html-dialog-desc {
+        color: #94a3b8;
+      }
+      .copy-html-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .btn-build-copy {
+        width: 100%;
+        padding: 11px 16px;
+        background: #0ea5e9;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: background 0.15s;
+      }
+      .btn-build-copy:hover:not(:disabled) {
+        background: #0284c7;
+      }
+      .btn-build-copy:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+      .btn-copy-existing {
+        width: 100%;
+        padding: 9px 16px;
+        background: transparent;
+        color: #475569;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition:
+          background 0.15s,
+          color 0.15s;
+      }
+      html.dark .btn-copy-existing {
+        color: #94a3b8;
+        border-color: #334155;
+      }
+      .btn-copy-existing:hover:not(:disabled) {
+        background: #f1f5f9;
+        color: #1e293b;
+      }
+      html.dark .btn-copy-existing:hover:not(:disabled) {
+        background: #334155;
+        color: #e2e8f0;
+      }
+      .btn-copy-existing:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .copy-html-divider {
+        border: none;
+        border-top: 1px solid #e2e8f0;
+        margin: 16px 0 14px;
+      }
+      html.dark .copy-html-divider {
+        border-color: #334155;
+      }
+      .btn-copy-cancel {
+        background: none;
+        border: none;
+        color: #94a3b8;
+        font-size: 0.8125rem;
+        cursor: pointer;
+        padding: 0;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+      .btn-copy-cancel:hover {
+        color: #64748b;
+      }
+      .copy-html-status {
+        margin-top: 14px;
+        font-size: 0.8125rem;
+        border-radius: 6px;
+        padding: 8px 12px;
+        line-height: 1.4;
+      }
+      .copy-html-status.hidden {
+        display: none;
+      }
+      .copy-html-status.loading {
+        background: #f0f9ff;
+        color: #0369a1;
+      }
+      html.dark .copy-html-status.loading {
+        background: #0c2842;
+        color: #7dd3fc;
+      }
+      .copy-html-status.success {
+        background: #f0fdf4;
+        color: #15803d;
+      }
+      html.dark .copy-html-status.success {
+        background: #052e16;
+        color: #86efac;
+      }
+      .copy-html-status.error {
+        background: #fef2f2;
+        color: #b91c1c;
+      }
+      html.dark .copy-html-status.error {
+        background: #2d0a0a;
+        color: #fca5a5;
+      }
     </style>
     <script>
       // Prevent FOUC by applying app theme immediately
@@ -207,9 +363,21 @@
             </div>
           </div>
         </div>
-        <span id="sync-status" class="text-green-600 font-medium text-sm flex items-center gap-1">
-          <span class="w-2 h-2 rounded-full bg-green-500"></span> Sincronizado
-        </span>
+        <div class="flex items-center gap-3">
+          <span id="sync-status" class="text-green-600 font-medium text-sm flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-green-500"></span> Sincronizado
+          </span>
+          <!-- Copiar HTML -->
+          <button
+            id="btn-copy-html"
+            type="button"
+            class="p-1 px-2 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-semibold flex items-center gap-1 transition-colors border border-slate-200 dark:border-slate-700"
+            title="Copiar HTML final"
+          >
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+            Copiar HTML
+          </button>
+        </div>
       </div>
 
       <!-- Preview area -->
@@ -233,6 +401,45 @@
         Ancho actual: <span id="viewport-width-indicator" class="font-semibold">600px</span>
       </div>
     </div>
+
+    <!-- Copy HTML Dialog -->
+    <dialog id="dialog-copy-html" aria-labelledby="copy-html-dialog-title">
+      <div class="copy-html-dialog-inner">
+        <p id="copy-html-dialog-title" class="copy-html-dialog-title">
+          <i data-lucide="copy" style="width: 18px; height: 18px; flex-shrink: 0"></i>
+          Copiar HTML final
+        </p>
+        <p class="copy-html-dialog-desc">
+          Elige cómo obtener el HTML de producción de este template.
+        </p>
+
+        <div class="copy-html-actions">
+          <!-- Acción principal -->
+          <button id="btn-build-and-copy" type="button" class="btn-build-copy">
+            <i data-lucide="zap" style="width: 15px; height: 15px"></i>
+            Buildear y copiar
+          </button>
+
+          <!-- Acción secundaria -->
+          <button id="btn-copy-existing" type="button" class="btn-copy-existing">
+            <i data-lucide="file-output" style="width: 14px; height: 14px"></i>
+            Copiar HTML existente
+          </button>
+        </div>
+
+        <!-- Estado: loading / success / error -->
+        <div
+          id="copy-html-status"
+          class="copy-html-status hidden"
+          role="status"
+          aria-live="polite"
+        ></div>
+
+        <hr class="copy-html-divider" />
+
+        <button id="btn-copy-cancel" type="button" class="btn-copy-cancel">Cancelar</button>
+      </div>
+    </dialog>
 
     <!-- Preview App Entry Point -->
     <script type="module" src="/features/preview/main.js"></script>

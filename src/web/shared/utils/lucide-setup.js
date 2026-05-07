@@ -8,9 +8,11 @@ import {
   BookOpen,
   CheckCircle,
   Clock,
+  Copy,
   createIcons,
   Dna,
   Eye,
+  FileOutput,
   FileText,
   List,
   Moon,
@@ -18,6 +20,7 @@ import {
   Rocket,
   Save,
   Sun,
+  Zap,
 } from "lucide";
 
 /**
@@ -29,8 +32,10 @@ const AVAILABLE_ICONS = {
   BookOpen,
   CheckCircle,
   Clock,
+  Copy,
   Dna,
   Eye,
+  FileOutput,
   FileText,
   List,
   Moon,
@@ -38,6 +43,7 @@ const AVAILABLE_ICONS = {
   Rocket,
   Save,
   Sun,
+  Zap,
 };
 
 /**

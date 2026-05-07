@@ -1,6 +1,7 @@
 import { compileTemplate } from "../services/maizzle-compiler.js";
 import { setupCacheApi } from "./cache.js";
 import { setupComponentsApi } from "./components.js";
+import { setupCopyHtmlApi } from "./copy-html.js";
 import { setupDataApi } from "./data.js";
 import { setupRenderApi } from "./render.js";
 import { setupTemplateApi } from "./templates.js";
@@ -30,5 +31,6 @@ export const maizzlePlugin = (rootDir) => ({
     setupComponentsApi(server, rootDir);
     setupTemplateApi(server, rootDir);
     setupCacheApi(server, rootDir);
+    setupCopyHtmlApi(server, rootDir);
   },
 });

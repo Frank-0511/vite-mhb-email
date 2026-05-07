@@ -51,11 +51,13 @@ Reglas:
 
 ## CSS
 
-- `src/web/shared/styles/tailwind.css` es para preview.
-- `src/emails/styles/tailwind.email.css` es para email final.
-- El intercambio entre CSS de preview y email pertenece al pipeline de build.
-- No cambies ese intercambio sin revisar `scripts/build/build.js` y
-  `scripts/generators/css-switcher.js`.
+- `src/web/shared/styles/tailwind.css` es para preview (usa `tailwind.config.js`,
+  `darkMode: "class"`).
+- `src/emails/styles/tailwind.email.css` es para email final (usa
+  `tailwind.email.config.js`, `darkMode: "media"`).
+- Cada template/layout importa su CSS directamente; no existe intercambio de
+  configs en el pipeline de build.
+- No uses `scripts/generators/css-switcher.js`; ese módulo está obsoleto.
 
 ## Rutas Clave
 
