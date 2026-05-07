@@ -108,13 +108,13 @@ El preview ahora permite alternar rápidamente entre desktop, mobile y un ancho 
 
 ---
 
-### 6. Copiar HTML al clipboard desde el dashboard
+### 6. Copiar HTML al clipboard desde el dashboard ✅
 
 **Categoría:** Herramienta de email
 
-Para usar el template en SendGrid/Mailchimp, el usuario tiene que abrir `dist/welcome.html`, copiar el contenido, y pegarlo. No hay acceso directo desde la UI.
+Permite al usuario copiar el HTML compilado directamente desde la UI del preview sin tener que navegar a los archivos.
 
-**Propuesta:**
+**Implementación:**
 
 - Botón "📋 Copiar HTML" en la página de preview (junto a "Guardar")
 - Copia el HTML compilado (con Handlebars aplicado) al clipboard
@@ -123,9 +123,11 @@ Para usar el template en SendGrid/Mailchimp, el usuario tiene que abrir `dist/we
 
 ---
 
-### 7. Watch mode en el build
+### 7. Watch mode en el build ❌ Descartado
 
 **Categoría:** Experiencia de codificación
+
+**Estado:** Descartado por ahora. El flujo de build bajo demanda para copiar HTML cubre la necesidad principal sin añadir complejidad de watchers.
 
 El build actual es one-shot. Si estás iterando sobre el output de producción (revisando el HTML final con CSS inline), hay que correr `bun run build` manualmente cada vez.
 
@@ -138,9 +140,11 @@ El build actual es one-shot. Si estás iterando sobre el output de producción (
 
 ---
 
-### 8. Soporte multi-ESP (no solo SendGrid)
+### 8. Soporte multi-ESP (no solo SendGrid) ❌ Descartado
 
 **Categoría:** Herramienta de email
+
+**Estado:** Descartado por ahora. El enfoque actual del proyecto se mantiene en un solo ESP para reducir complejidad y superficie de mantenimiento.
 
 Los delimitadores `{{ }}` están hardcodeados para SendGrid. Otros ESPs usan sintaxis distinta:
 
@@ -158,9 +162,11 @@ Los delimitadores `{{ }}` están hardcodeados para SendGrid. Otros ESPs usan sin
 
 ## 🟡 Importancia MEDIA
 
-### 9. Historial de versiones de templates
+### 9. Historial de versiones de templates ❌ Descartado
 
 **Categoría:** Herramienta de email
+
+**Estado:** Descartado por ahora. No es prioridad frente a mejoras directas del pipeline y del preview/build productivo.
 
 No hay manera de ver versiones anteriores de un template. Si alguien edita el `data.json` desde la UI y guarda, el estado anterior se pierde.
 
@@ -172,9 +178,11 @@ No hay manera de ver versiones anteriores de un template. Si alguien edita el `d
 
 ---
 
-### 10. Preview de texto plano (plain text fallback)
+### 10. Preview de texto plano (plain text fallback) ❌ Descartado
 
 **Categoría:** Herramienta de email
+
+**Estado:** Descartado por ahora. No hay necesidad operativa inmediata y agrega una rama extra de mantenimiento en UI y envío.
 
 Los emails profesionales siempre incluyen una versión plain text como fallback. Actualmente no hay generación ni preview de esto.
 
@@ -371,34 +379,34 @@ Actualmente hay: `maizzle.config.js`, `tailwind.config.js`, `tailwind.email.conf
 
 ## Resumen por prioridad
 
-| Prioridad  | #   | Mejora                                 | Categoría    |
-| ---------- | --- | -------------------------------------- | ------------ |
-| 🔴 Crítica | 1   | Testing automatizado                   | Codificación |
-| 🔴 Crítica | 2   | Validación compatibilidad email ✅     | Email        |
-| 🔴 Crítica | 3   | Librería de componentes reutilizables  | Email        |
-| 🟠 Alta    | 4   | Presets para el generador de templates | Email        |
-| 🟠 Alta    | 5   | Vista responsive (mobile preview) ✅   | Email        |
-| 🟠 Alta    | 6   | Copiar HTML al clipboard               | Email        |
-| 🟠 Alta    | 7   | Watch mode en build                    | Codificación |
-| 🟠 Alta    | 8   | Soporte multi-ESP                      | Email        |
-| 🟡 Media   | 9   | Historial de versiones                 | Email        |
-| 🟡 Media   | 10  | Preview plain text                     | Email        |
-| 🟡 Media   | 11  | Accessibility checker                  | Email        |
-| 🟡 Media   | 12  | Exportación multi-formato              | Email        |
-| 🟡 Media   | 13  | Brand tokens globales                  | Email        |
-| 🟡 Media   | 14  | Inline source viewer                   | Codificación |
-| 🟡 Media   | 15  | HMR granular                           | Codificación |
-| 🟡 Media   | 16  | CI/CD Pipeline                         | Codificación |
-| 🟡 Media   | 17  | TypeScript gradual                     | Codificación |
-| 🟢 Baja    | 18  | Dashboard analytics                    | Email        |
-| 🟢 Baja    | 19  | Drag & drop ordering                   | Email        |
-| 🟢 Baja    | 20  | Template tags/categories               | Email        |
-| 🟢 Baja    | 21  | i18n (multi-idioma)                    | Email        |
-| 🟢 Baja    | 22  | Custom Handlebars helpers              | Email        |
-| 🟢 Baja    | 23  | Isolated component testing             | Codificación |
-| 🟢 Baja    | 24  | Plugin architecture                    | Codificación |
-| 🟢 Baja    | 25  | Config unificado                       | Codificación |
+| Prioridad  | #   | Mejora                                 | Status        | Categoría    |
+| ---------- | --- | -------------------------------------- | ------------- | ------------ |
+| 🔴 Crítica | 1   | Testing automatizado                   | 🟠 Parcial    | Codificación |
+| 🔴 Crítica | 2   | Validación compatibilidad email ✅     | ✅ Listo      | Email        |
+| 🔴 Crítica | 3   | Librería de componentes reutilizables  | 🟠 Parcial    | Email        |
+| 🟠 Alta    | 4   | Presets para el generador de templates | ⚪ Pendiente  | Email        |
+| 🟠 Alta    | 5   | Vista responsive (mobile preview) ✅   | ✅ Listo      | Email        |
+| 🟠 Alta    | 6   | Copiar HTML al clipboard ✅            | ✅ Listo      | Email        |
+| 🟠 Alta    | 7   | Watch mode en build                    | ❌ Descartado | Codificación |
+| 🟠 Alta    | 8   | Soporte multi-ESP                      | ❌ Descartado | Email        |
+| 🟡 Media   | 9   | Historial de versiones                 | ❌ Descartado | Email        |
+| 🟡 Media   | 10  | Preview plain text                     | ❌ Descartado | Email        |
+| 🟡 Media   | 11  | Accessibility checker                  | ⚪ Pendiente  | Email        |
+| 🟡 Media   | 12  | Exportación multi-formato              | 🟠 Parcial    | Email        |
+| 🟡 Media   | 13  | Brand tokens globales                  | ⚪ Pendiente  | Email        |
+| 🟡 Media   | 14  | Inline source viewer                   | ⚪ Pendiente  | Codificación |
+| 🟡 Media   | 15  | HMR granular                           | ⚪ Pendiente  | Codificación |
+| 🟡 Media   | 16  | CI/CD Pipeline                         | ⚪ Pendiente  | Codificación |
+| 🟡 Media   | 17  | TypeScript gradual                     | 🟠 Parcial    | Codificación |
+| 🟢 Baja    | 18  | Dashboard analytics                    | ⚪ Pendiente  | Email        |
+| 🟢 Baja    | 19  | Drag & drop ordering                   | ⚪ Pendiente  | Email        |
+| 🟢 Baja    | 20  | Template tags/categories               | ⚪ Pendiente  | Email        |
+| 🟢 Baja    | 21  | i18n (multi-idioma)                    | ⚪ Pendiente  | Email        |
+| 🟢 Baja    | 22  | Custom Handlebars helpers              | ⚪ Pendiente  | Email        |
+| 🟢 Baja    | 23  | Isolated component testing             | ⚪ Pendiente  | Codificación |
+| 🟢 Baja    | 24  | Plugin architecture                    | ⚪ Pendiente  | Codificación |
+| 🟢 Baja    | 25  | Config unificado                       | ⚪ Pendiente  | Codificación |
 
 ---
 
-> [!TIP] > **Recomendación de roadmap:** Empezar con **#1 (Testing)** + **#3 (Componentes)** en paralelo. Testing te da la red de seguridad para todo lo demás, y los componentes son lo que más valor visible agrega a la herramienta. Después **#6 (Copy HTML)** son quick wins de alto impacto.
+> [!TIP] > **Recomendación de roadmap:** Empezar con **#1 (Testing)** + **#3 (Componentes)** en paralelo. Testing te da la red de seguridad para todo lo demás, y los componentes son lo que más valor visible agrega a la herramienta. **#6 (Copy HTML)** ya está completado ✅. Próximas prioridades: **#4 (Presets)** y **#7 (Watch mode)** son quick wins de alto impacto.
