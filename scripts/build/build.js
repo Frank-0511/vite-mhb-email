@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import { execSync } from "child_process";
 import { checkHtmlSize } from "./check-html-size.js";
-import { injectEmailMediaQueries } from "./inject-email-media-queries.js";
 import { validateEmailHtml } from "./validate-email-html.js";
 
 function build() {
@@ -9,10 +8,6 @@ function build() {
     // Ejecutar el build de Maizzle
     console.log("\n📦 Building with Maizzle...\n");
     execSync("maizzle build", { stdio: "inherit" });
-
-    // Inyectar media queries para dark mode en emails
-    console.log("\n🎨 Injecting dark mode media queries...\n");
-    injectEmailMediaQueries();
 
     // Chequear tamaño de archivos HTML
     checkHtmlSize();

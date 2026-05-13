@@ -3,6 +3,7 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: "media",
+  important: true,
   content: [
     "./src/emails/templates/**/*.html",
     "./src/emails/layouts/**/*.html",
