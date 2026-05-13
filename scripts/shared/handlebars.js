@@ -29,7 +29,7 @@ export function getTemplateData(templateName) {
  * Procesa variables Handlebars en el HTML usando un objeto de datos.
  * Requiere la librería `handlebars`.
  * @param {string} html - HTML con variables Handlebars
- * @param {Object} data - Datos para reemplazar
+ * @param {Record<string, unknown>} data - Datos para reemplazar
  * @returns {string} HTML procesado
  */
 export function applyHandlebars(html, data) {
@@ -40,4 +40,27 @@ export function applyHandlebars(html, data) {
     // Si hay error, devolver el HTML sin procesar
     return html;
   }
+}
+
+/**
+ * Reemplaza placeholders legacy de SendGrid (`-variable-`) usando datos de preview.
+ *
+ * Esta transformación es para previews locales y flujos que aplican datos de prueba;
+ * el build final debe preservar estos placeholders para SendGrid Legacy.
+ *
+ * @param {string} html - HTML renderizado que puede contener placeholders legacy.
+ * @param {Record<string, unknown>} data - Datos de preview disponibles para reemplazo.
+ * @returns {string} HTML con placeholders legacy reemplazados cuando exista la llave.
+ */
+export function applyLegacySendGridSubstitutions(html, data) {
+  if (!data || typeof data !== "object") return html;
+
+  return html.replace(/-([A-Za-z0-9_]+)-/g, (match, key) => {
+    if (!Object.hasOwn(data, key)) return match;
+
+    const value = data[key];
+    if (value === null || value === undefined || typeof value === "object") return match;
+
+    return Handlebars.escapeExpression(String(value));
+  });
 }

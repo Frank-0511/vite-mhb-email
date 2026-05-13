@@ -1,5 +1,6 @@
 import { globSync } from "glob";
 import { rm } from "node:fs/promises";
+import { getEmailComponentFolders } from "./scripts/shared/component-folders.js";
 
 export default {
   build: {
@@ -13,7 +14,7 @@ export default {
 
   // Tell Maizzle where to find layout components (x-main, etc.)
   components: {
-    folders: ["src/emails/layouts", "src/emails/partials"],
+    folders: getEmailComponentFolders(process.cwd()),
     tagPrefix: "x-",
   },
 

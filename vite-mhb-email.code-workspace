@@ -25,13 +25,25 @@
     },
     "tailwindCSS.emmetCompletions": true,
     "tailwindCSS.experimental.configFile": {
-      "src/css/tailwind.web.css": "**",
+      "./tailwind.config.js": "./src/web/**/*.{html,js,ts,jsx,tsx}",
+      "./tailwind.email.config.js": "./src/emails/**/*.html"
     },
     "tailwindCSS.experimental.classRegex": [
-      ["class=\"([^\"]*)\"", "([a-zA-Z0-9\\-:]+)"],
-      ["<x-[^>]*class=\"([^\"]*)\"", "([a-zA-Z0-9\\-:]+)"], // Para detectar clases dentro de tus tags <x-main>
+      [
+        "class=\"([^\"]*)\"",
+        "([a-zA-Z0-9\\-:]+)"
+      ],
+      [
+        "<x-[^>]*class=\"([^\"]*)\"",
+        "([a-zA-Z0-9\\-:]+)"
+      ] // Para detectar clases dentro de tus tags <x-main>
     ],
-    "tailwindCSS.files.exclude": ["**/.git/**", "**/node_modules/**", "**/dist/**", "**/.yarn/**"],
+    "tailwindCSS.files.exclude": [
+      "**/.git/**",
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/.yarn/**"
+    ],
     /* --- HTMLHint (Sintaxis Email) --- */
     "htmlhint.options": {
       "doctype-first": false,
@@ -59,6 +71,7 @@
       ".claude": true,
     },
     "explorerExclude.backup": {},
+    "remote.autoForwardPortsFallback": 0,
   },
   "extensions": {
     "recommendations": [
