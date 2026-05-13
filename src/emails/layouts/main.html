@@ -52,6 +52,15 @@
           display: none !important;
         }
 
+        @media (prefers-color-scheme: dark) {
+          .icon-light {
+            display: none !important;
+          }
+          .icon-dark {
+            display: block !important;
+          }
+        }
+
         /* Para desarrollo local con clase .dark en el html (SIEMPRE tiene prioridad) */
         html.dark .icon-light {
           display: none !important;

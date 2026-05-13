@@ -19,7 +19,10 @@ export default {
   },
 
   css: {
-    inline: true, // No inlinear para preservar media queries correctamente
+    // Inline hibrido: estilos base en `style=""`, media queries preservadas en <style>.
+    inline: {
+      removeInlinedSelectors: false,
+    },
     purge: true,
   },
 
