@@ -56,6 +56,18 @@ export function createRenderAPI(config) {
   }
 
   /**
+   * Invalida la cache del template antes de forzar un render fresco.
+   *
+   * @param {string} templateName
+   * @returns {Promise<void>}
+   */
+  async function invalidateTemplateCache(templateName) {
+    await fetchText(`/api/cache/invalidate?template=${templateName}`, {
+      method: "POST",
+    });
+  }
+
+  /**
    * Create a debounced render function
    * Useful for live preview updates as user types
    *
@@ -82,6 +94,7 @@ export function createRenderAPI(config) {
 
   return {
     render,
+    invalidateTemplateCache,
     createDebouncedRender,
   };
 }

@@ -20,9 +20,6 @@ class PreviewCacheManager {
   constructor(rootDir) {
     this.rootDir = rootDir;
     this.cacheDir = resolve(rootDir, ".cache", "preview");
-    this.sourcesMaxTimestampCache = 0;
-    this.sourcesMaxTimestampCheckedAt = 0;
-    this.sourcesMaxTimestampTtlMs = 250;
   }
 
   /**
@@ -40,14 +37,6 @@ class PreviewCacheManager {
    * @returns {number}
    */
   getSourcesMaxTimestamp() {
-    const now = Date.now();
-    if (
-      this.sourcesMaxTimestampCheckedAt &&
-      now - this.sourcesMaxTimestampCheckedAt < this.sourcesMaxTimestampTtlMs
-    ) {
-      return this.sourcesMaxTimestampCache;
-    }
-
     const sourcePatterns = [
       "src/emails/templates",
       "src/emails/layouts",
@@ -87,8 +76,6 @@ class PreviewCacheManager {
       }
     }
 
-    this.sourcesMaxTimestampCache = maxTime;
-    this.sourcesMaxTimestampCheckedAt = now;
     return maxTime;
   }
 
