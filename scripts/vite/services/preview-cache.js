@@ -119,8 +119,9 @@ class PreviewCacheManager {
         return false;
       }
 
-      // Cache válida si fue creada después que cualquier fuente
-      return cacheData.timestamp && cacheStat.mtimeMs >= sourcesMaxTime;
+      // Cache válida solo si es estrictamente más nueva que las fuentes.
+      // Evita falsos positivos cuando el FS redondea mtime y quedan "empatados".
+      return cacheData.timestamp && cacheStat.mtimeMs > sourcesMaxTime;
     } catch {
       return false;
     }

@@ -93,6 +93,7 @@ function setupEmailSourceWatcher(server, rootDir) {
   }
 
   server.watcher.on("add", scheduleNotify);
+  server.watcher.on("change", scheduleNotify);
   server.watcher.on("unlink", scheduleNotify);
 }
 

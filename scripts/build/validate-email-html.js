@@ -115,6 +115,38 @@ function extractStyleContent(html) {
   return styleBlocks.join("\n");
 }
 
+/**
+ * Detecta si un template está marcado como transaccional en su frontmatter.
+ * Asume output en `dist/<template>.html` y fuente en `src/emails/templates/<template>/index.html`.
+ *
+ * @param {string} compiledFilePath Ruta absoluta del HTML compilado en dist.
+ * @returns {boolean}
+ */
+function isTransactionalTemplate(compiledFilePath) {
+  const templateName = compiledFilePath
+    .split("/")
+    .pop()
+    ?.replace(/\.html$/i, "");
+  if (!templateName) return false;
+
+  const sourceTemplatePath = resolve(
+    process.cwd(),
+    "src",
+    "emails",
+    "templates",
+    templateName,
+    "index.html",
+  );
+
+  if (!fs.existsSync(sourceTemplatePath)) return false;
+
+  const sourceContent = fs.readFileSync(sourceTemplatePath, "utf-8");
+  const frontmatterMatch = sourceContent.match(/^---\n([\s\S]*?)\n---/);
+  if (!frontmatterMatch) return false;
+
+  return /\bemailType\s*:\s*["']?transactional["']?/i.test(frontmatterMatch[1]);
+}
+
 // ─── Reglas de validación ─────────────────────────────────────────────────────
 
 /** @type {Rule[]} */
@@ -419,7 +451,11 @@ const rules = [
     id: "unsubscribe-link",
     severity: Severity.WARNING,
     description: "El email debe contener un link de cancelar suscripción",
-    check(html) {
+    check(html, filePath) {
+      if (isTransactionalTemplate(filePath)) {
+        return [];
+      }
+
       const lowerHtml = html.toLowerCase();
       const hasUnsub =
         lowerHtml.includes("unsubscribe") ||
