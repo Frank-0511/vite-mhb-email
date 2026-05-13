@@ -2,6 +2,7 @@ import { render } from "@maizzle/framework";
 import fs from "fs-extra";
 import Handlebars from "handlebars";
 import { resolve } from "node:path";
+import { getEmailComponentFolders } from "../../shared/component-folders.js";
 
 /**
  * Busca un componente recursivamente en un directorio
@@ -195,9 +196,10 @@ async function renderComponent(rootDir, componentName, variant, props) {
 
   // Procesar con Maizzle
   const { html: maizzleHtml } = await render(fullHtml, {
-    useTransformers: false,
+    // Mantener consistencia con el pipeline final de email en previews de componentes.
+    useTransformers: true,
     components: {
-      folders: [resolve(rootDir, "src/emails/layouts"), resolve(rootDir, "src/emails/partials")],
+      folders: getEmailComponentFolders(rootDir),
       tagPrefix: "x-",
     },
     expressions: {

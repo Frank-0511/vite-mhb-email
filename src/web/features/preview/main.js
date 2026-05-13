@@ -12,6 +12,7 @@
  */
 
 import { queryRequired, querySafe } from "../../shared/utils/dom-helpers.js";
+import { fetchJSON } from "../../shared/utils/http-helpers.js";
 import { initLucideIcons } from "../../shared/utils/lucide-setup.js";
 import "../../shared/utils/theme-toggle-component.js"; // Web Component auto-registers
 
@@ -23,6 +24,51 @@ import { setupResetButton, setupSaveButton } from "./save-reset.js";
 import "./styles.css";
 import { setupTemplateThemeToggle } from "./theme-manager.js";
 import { initViewportControls } from "./viewport-controls.js";
+
+/**
+ * Paths that affect all templates and should refresh the active preview.
+ * @type {string[]}
+ */
+const SHARED_EMAIL_SOURCE_PREFIXES = [
+  "src/emails/layouts/",
+  "src/emails/partials/",
+  "src/emails/styles/",
+];
+
+/**
+ * Determines whether a changed file should refresh the current template preview.
+ *
+ * @param {string | undefined} changedFile
+ * @param {string} templateName
+ * @returns {boolean}
+ */
+function shouldRefreshCurrentTemplate(changedFile, templateName) {
+  if (!changedFile || typeof changedFile !== "string") return true;
+
+  const currentTemplatePrefix = `src/emails/templates/${templateName}/`;
+  if (changedFile.startsWith(currentTemplatePrefix)) return true;
+
+  if (
+    changedFile === "maizzle.config.js" ||
+    changedFile === "tailwind.email.config.js" ||
+    SHARED_EMAIL_SOURCE_PREFIXES.some((prefix) => changedFile.startsWith(prefix))
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
+/**
+ * Determines whether the changed file is the current template data source.
+ *
+ * @param {string | undefined} changedFile
+ * @param {string} templateName
+ * @returns {boolean}
+ */
+function isCurrentTemplateDataFile(changedFile, templateName) {
+  return changedFile === `src/emails/templates/${templateName}/data.json`;
+}
 
 /**
  * Initialize sync status UI
@@ -108,6 +154,36 @@ async function initializePreview() {
       currentContent.json !== undefined ? currentContent.json : JSON.parse(currentContent.text);
 
     await renderAPI.render(templateName, data);
+  }
+
+  if (import.meta.hot) {
+    import.meta.hot.on("email-source-changed", ({ file } = {}) => {
+      if (!shouldRefreshCurrentTemplate(file, templateName)) return;
+
+      if (isCurrentTemplateDataFile(file, templateName)) {
+        fetchJSON(`/api/data?template=${templateName}`)
+          .then((latestData) => {
+            editorAPI.setInitialData(latestData);
+            editorAPI.updateContent(latestData);
+            return renderAPI.render(templateName, latestData);
+          })
+          .catch((error) => {
+            console.error("Auto data reload error:", error);
+          });
+        return;
+      }
+
+      renderAPI
+        .invalidateTemplateCache(templateName)
+        .catch((error) => {
+          console.error("Cache invalidation error:", error);
+        })
+        .finally(() => {
+          renderCurrentTemplate().catch((error) => {
+            console.error("Auto render error:", error);
+          });
+        });
+    });
   }
 
   // Render inicial usando el mismo endpoint que los cambios live.
