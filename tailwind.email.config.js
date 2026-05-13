@@ -2,7 +2,7 @@
 
 /** @type {import('tailwindcss').Config} */
 export default {
-  darkMode: "media", // Genera @media (prefers-color-scheme: dark) para compatibilidad total con clientes de email
+  darkMode: "media",
   content: [
     "./src/emails/templates/**/*.html",
     "./src/emails/layouts/**/*.html",
@@ -17,6 +17,7 @@ export default {
         },
         neutral: {
           800: "#2A2A2A",
+          900: "#121212",
         },
         secondary: {
           200: "#99E1FF",
