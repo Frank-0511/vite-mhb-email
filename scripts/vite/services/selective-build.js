@@ -28,7 +28,6 @@ import * as maizzleFramework from "@maizzle/framework";
 import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
-import { injectEmailMediaQueriesIntoHtml } from "../../build/inject-email-media-queries.js";
 import { isValidTemplateName } from "../../shared/path-safety.js";
 import { getProjectPaths } from "../../shared/paths.js";
 
@@ -138,11 +137,7 @@ export async function runSelectiveBuild(rootDir, templateName) {
       };
     }
 
-    let html = await readFile(cachedHtmlPath, "utf-8");
-
-    // Inyectar media queries de dark mode en el HTML (en memoria)
-    console.log("[selective-build] Injecting dark mode media queries...");
-    html = injectEmailMediaQueriesIntoHtml(html);
+    const html = await readFile(cachedHtmlPath, "utf-8");
 
     // Persistir en dist/<template>.html (sin que Vite lo observe en dev)
     const distPath = resolve(rootDir, "dist", `${templateName}.html`);

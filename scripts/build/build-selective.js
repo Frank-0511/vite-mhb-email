@@ -12,7 +12,6 @@ import { execSync } from "child_process";
 import { existsSync } from "node:fs";
 import { readFile, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
-import { injectEmailMediaQueries } from "./inject-email-media-queries.js";
 import { validateEmailHtml } from "./validate-email-html.js";
 
 const rootDir = process.cwd();
@@ -106,10 +105,6 @@ async function buildSelective() {
     // Ejecutar build de Maizzle solo para este template
     console.log(`\n📦 Building ${templateName} with Maizzle...\n`);
     execSync("maizzle build", { stdio: "inherit" });
-
-    // Inyectar media queries para dark mode
-    console.log("\n🎨 Injecting dark mode media queries...\n");
-    injectEmailMediaQueries();
 
     // Validar compatibilidad
     console.log("\n🔍 Validating email HTML compatibility...\n");
