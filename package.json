@@ -43,7 +43,7 @@
     "cli": "bun scripts/cli.js",
     "lint": "bun run lint:html && bun run lint:js && bun run lint:md && bun run lint:json",
     "lint:html": "htmlhint \"src/emails/templates/**/*.html\"",
-    "lint:js": "eslint scripts/ src/web/ vite.config.js",
+    "lint:js": "eslint scripts/ src/web/ vite.config.js maizzle.config.js",
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\" \"#analysis_results.md\"",
     "lint:json": "bun scripts/build/validate-json.js",
     "format": "prettier --write .",

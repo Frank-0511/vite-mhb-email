@@ -10,7 +10,7 @@ export default [
 
   // Entorno Node.js — define process, console, __dirname, etc.
   {
-    files: ["scripts/**/*.js", "vite.config.js"],
+    files: ["scripts/**/*.js", "vite.config.js", "maizzle.config.js"],
     languageOptions: {
       globals: {
         ...globals.node,

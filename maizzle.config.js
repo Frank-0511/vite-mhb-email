@@ -19,7 +19,7 @@ export default {
   },
 
   css: {
-    inline: false, // No inlinear para preservar media queries correctamente
+    inline: true, // No inlinear para preservar media queries correctamente
     purge: true,
   },
 
