@@ -6,7 +6,11 @@
 import { buildIfNeeded } from "../build/build-helper.js";
 import { getBuiltTemplates, readBuiltTemplate } from "../shared/built-templates.js";
 import { c, paint } from "../shared/console.js";
-import { applyHandlebars, getTemplateData } from "../shared/handlebars.js";
+import {
+  applyHandlebars,
+  applyLegacySendGridSubstitutions,
+  getTemplateData,
+} from "../shared/handlebars.js";
 import { pickFromList } from "../shared/prompts.js";
 
 /**
@@ -31,9 +35,12 @@ export async function selectBuiltTemplateWithData(rl) {
   const chosen = await pickFromList(rl, templates);
   let html = readBuiltTemplate(chosen);
 
-  // Aplicar datos Handlebars desde data.json
+  // Aplicar datos de preview sobre ambos formatos:
+  // - Handlebars local.
+  // - Placeholders legacy SendGrid: -variable-
   const data = getTemplateData(chosen);
   html = applyHandlebars(html, data);
+  html = applyLegacySendGridSubstitutions(html, data);
 
   return { chosen, html };
 }
