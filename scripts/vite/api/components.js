@@ -106,6 +106,8 @@ function getComponentSchema(rootDir, componentName) {
  * Renderiza un componente con una variante específica y props
  */
 async function renderComponent(rootDir, componentName, variant, props) {
+  const normalizedProps = props && typeof props === "object" ? props : {};
+
   let componentDir = resolve(rootDir, "src/emails/partials", componentName);
 
   if (!fs.existsSync(componentDir)) {
@@ -161,6 +163,28 @@ async function renderComponent(rootDir, componentName, variant, props) {
 
   componentHtml = componentHtml.replace(/<else>\s*/gi, "{{else}}");
 
+  // Convertir loops de Maizzle (<each loop="item in items">) a Handlebars.
+  // Esto permite previsualizar componentes que iteran arrays pasados como props.
+  componentHtml = componentHtml.replace(
+    /<each\s+loop="([A-Za-z_$][\w$]*)\s+in\s+([^"]+)"\s*>/gi,
+    (_match, itemVar, collectionExpr) => {
+      const collection = String(collectionExpr || "").trim();
+      if (!collection) return _match;
+      return `{{#each ${collection} as |${itemVar}|}}`;
+    },
+  );
+  componentHtml = componentHtml.replace(/<\/each>/gi, "{{/each}}");
+
+  // Algunos partials están pensados para ser insertados dentro de un <table>
+  // y por eso comienzan con <tr> (o <td>). En el preview los montamos dentro
+  // de un layout propio; si insertamos un <tr> suelto dentro de un <td>, el
+  // browser repara el HTML y el resultado suele verse desalineado.
+  const trimmedComponentHtml = componentHtml.trimStart();
+  const isTableFragment = /^<(tr|td|tbody|thead|tfoot)\b/i.test(trimmedComponentHtml);
+  const componentHtmlForLayout = isTableFragment
+    ? `<table class="w-full" cellpadding="0" cellspacing="0" role="none"><tbody>${componentHtml}</tbody></table>`
+    : componentHtml;
+
   // Crear documento HTML completo con el componente en el layout
   const fullHtml = `<!doctype html>
 <html lang="es">
@@ -186,7 +210,7 @@ async function renderComponent(rootDir, componentName, variant, props) {
       <!-- CONTENT (component) -->
       <tr>
         <td class="bg-white dark:bg-zinc-800 px-8 py-10 dark:text-zinc-100">
-          ${componentHtml}
+          ${componentHtmlForLayout}
         </td>
       </tr>
     </table>
@@ -212,13 +236,54 @@ async function renderComponent(rootDir, componentName, variant, props) {
   const cleanHtml = maizzleHtml.replace(/\[\[([^\]]+)\]\]/g, "{{$1}}");
 
   // Preparar datos para Handlebars
+  const defaultRows = [
+    { label: "Monto", value: "$10.000" },
+    { label: "Fecha", value: "25/05/2026" },
+  ];
+
+  /**
+   * Normaliza rows para previews:
+   * - array: se usa tal cual
+   * - string: intenta JSON.parse (útil cuando viene desde un textarea)
+   * - otro: usa default
+   * @param {unknown} rowsInput
+   * @returns {Array<Record<string, unknown>>}
+   */
+  function normalizeRows(rowsInput) {
+    if (Array.isArray(rowsInput)) return rowsInput;
+    if (typeof rowsInput === "string") {
+      try {
+        const parsed = JSON.parse(rowsInput);
+        if (Array.isArray(parsed)) return parsed;
+      } catch {
+        // Ignorar JSON inválido, se usa default
+      }
+    }
+    return defaultRows;
+  }
+
   const handlebarsData = {
-    title: props.title || "Bienvenido a Mi Empresa",
-    subtitle: props.subtitle || "Descubre todo lo que podemos hacer por ti",
-    buttonText: props.buttonText || props["button-text"] || "Explorar ahora",
-    buttonUrl: props.buttonUrl || props["button-url"] || "https://ejemplo.com",
-    showButton: props.showButton !== false && props["show-button"] !== "false",
-    ...props,
+    ...normalizedProps,
+    // Defaults reutilizables (hero)
+    title: normalizedProps.title || "Bienvenido a Mi Empresa",
+    subtitle: normalizedProps.subtitle || "Descubre todo lo que podemos hacer por ti",
+    buttonText: normalizedProps.buttonText || normalizedProps["button-text"] || "Explorar ahora",
+    buttonUrl: normalizedProps.buttonUrl || normalizedProps["button-url"] || "https://ejemplo.com",
+    showButton: normalizedProps.showButton !== false && normalizedProps["show-button"] !== "false",
+
+    // Props comunes en otros componentes
+    callCenterNumber:
+      normalizedProps.callCenterNumber ||
+      normalizedProps["call-center-number"] ||
+      "+56 2 1234 5678",
+    noReplayEmail:
+      normalizedProps.noReplayEmail ||
+      normalizedProps.noReplyEmail ||
+      normalizedProps["no-reply-email"] ||
+      "no-reply@ejemplo.com",
+
+    // Loops/arrays
+    rows: normalizeRows(normalizedProps.rows),
   };
 
   // Compilar y renderizar con Handlebars
