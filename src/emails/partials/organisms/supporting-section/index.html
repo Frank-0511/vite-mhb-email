@@ -1,0 +1,81 @@
+<script props>
+  module.exports = {
+    callCenterNumber: props["call-center-number"],
+    noReplayEmail: props["no-reply-email"],
+  };
+</script>
+
+<tr>
+  <td align="center">
+    <table>
+      <tr>
+        <td align="center">
+          <table>
+            <tr>
+              <td
+                class="border border-secondary-500 border-solid rounded-lg px-4 py-3 text-center text-main-200 text-xs"
+                align="center"
+              >
+                <img
+                  src="https://images.tenpo.cl/email-templates/images/message-icon.png"
+                  width="16"
+                  height="16"
+                  style="vertical-align: text-top; display: inline-block"
+                  alt="Message icon"
+                  class="pr-2"
+                />
+                <strong>Si no fuiste tu,</strong> comunicate con nuestro
+                <a
+                  class="text-secondary-200 underline"
+                  href="tel:[[callCenterNumber]]"
+                  target="_blank"
+                >
+                  Contact Center al [[callCenterNumber]]
+                </a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td class="pt-4">
+          <table>
+            <tr>
+              <td class="font-bold pb-4" colspan="2">Comprometidos con tu seguridad</td>
+            </tr>
+            <tr>
+              <td class="pb-4 w-4">
+                <img
+                  class="pr-2 align-middle inline-block"
+                  src="https://images.tenpo.cl/email-templates/images/icon-arrow-blue.png"
+                  height="16"
+                  width="16"
+                  alt="Arrow icon"
+                />
+              </td>
+              <td class="pb-4 text-xxs">
+                Verifica que siempre el remitente de los correos sea
+                <strong>[[noReplayEmail]]</strong>
+              </td>
+            </tr>
+            <tr>
+              <td class="w-4">
+                <img
+                  class="pr-2 align-top inline-block"
+                  src="https://images.tenpo.cl/email-templates/images/icon-arrow-blue.png"
+                  height="16"
+                  width="16"
+                  alt="Arrow icon"
+                />
+              </td>
+              <td class="text-xxs">
+                Nunca te enviaremos correos electrónicos, SMS o llamaremos
+                <strong>solicitando tus datos personales ni claves.</strong>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </td>
+</tr>

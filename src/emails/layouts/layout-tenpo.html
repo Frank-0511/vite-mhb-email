@@ -1,0 +1,174 @@
+<script props>
+  module.exports = {
+    logoFooter: props["logo-footer"],
+    tenantId: props["tenant-id"],
+  };
+</script>
+
+<!doctype html>
+<html lang="es" xmlns:v="urn:schemas-microsoft-com:vml">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="supported-color-schemes" content="dark" />
+    <style>
+      @import "src/emails/styles/tailwind.email.css";
+    </style>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+      /* Consistent font family for email compatibility */
+      body,
+      table,
+      td,
+      p,
+      a,
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-family:
+          Open Sans,
+          Helvetica,
+          Arial,
+          sans-serif;
+      }
+    </style>
+  </head>
+
+  <body class="m-0 p-0 bg-neutral-900">
+    <div class="px-6">
+      <table
+        class="bg-neutral-900 w-full max-w-screen-sm mx-auto"
+        cellpadding="0"
+        cellspacing="0"
+        role="none"
+      >
+        <!-- HEADER -->
+        <tr>
+          <td class="px-8 py-4 text-center rounded-t-lg">
+            <table cellpadding="0" cellspacing="0" role="none" style="display: inline-table">
+              <tr>
+                <td style="vertical-align: middle; padding-right: 8px">
+                  <img
+                    src="https://tenpoimagesstorage2.blob.core.windows.net/email-templates/images/tenpo-logo-2x.png"
+                    alt="Tenpo logo"
+                    width="112"
+                    height="40"
+                    padding="24px 0 16px"
+                  />
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- CONTENT (slot) -->
+        <tr>
+          <td class="px-8 py-10 text-main-50 text-sm">
+            <yield />
+          </td>
+        </tr>
+
+        <!-- FOOTER -->
+        <tr>
+          <td class="px-8 pt-6 pb-8 text-center rounded-b-lg">
+            <table width="100%" cellpadding="0" cellspacing="0" role="none">
+              <!-- Footer header -->
+              <tr>
+                <td
+                  class="w-20"
+                  valign="middle"
+                  style="vertical-align: middle; line-height: 0; font-size: 0"
+                >
+                  <img
+                    src="[[logoFooter]]"
+                    alt="Tenpo logo"
+                    height="28"
+                    width="auto"
+                    style="display: block"
+                  />
+                </td>
+                <td align="right" valign="middle" style="text-align: right; vertical-align: middle">
+                  <table cellpadding="0" cellspacing="0" role="none" align="right">
+                    <tr>
+                      <td>
+                        <a
+                          href="https://www.instagram.com/tenpo.cl/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <img
+                            src="https://images.tenpo.cl/mailing/instagram-icon-white.png"
+                            alt="Instagram icon"
+                            width="16"
+                            height="16"
+                            style="display: block"
+                          />
+                        </a>
+                      </td>
+                      <td>
+                        <a
+                          href="https://www.facebook.com/tenpocl/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <img
+                            src="https://images.tenpo.cl/mailing/facebook-icon-white.png"
+                            alt="Facebook icon"
+                            width="16"
+                            height="16"
+                            style="display: block; margin: 0 8px"
+                          />
+                        </a>
+                      </td>
+                      <td>
+                        <a
+                          href="https://www.youtube.com/channel/UCIME71_G_FoiRPx8jARO_IA?view_as=subscriber"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <img
+                            src="https://images.tenpo.cl/mailing/youtube-icon-white.png"
+                            alt="YouTube icon"
+                            width="16"
+                            height="16"
+                            style="display: block"
+                          />
+                        </a>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <!-- Footer body -->
+              <tr>
+                <td colspan="2" class="text-xxs text-main-200 pt-6">
+                  <p>
+                    Infórmese sobre las entidades autorizadas para emitir Tarjetas de Pago en el
+                    país, quienes se encuentran inscritas en los Registro de Emisores de Tarjetas
+                    que lleva la CMF, en
+                    <a
+                      class="underline text-secondary-200"
+                      href="https://www.cmfchile.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      www.cmfchile.com
+                    </a>
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>
