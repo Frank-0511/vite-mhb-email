@@ -1,0 +1,27 @@
+{
+  "name": "Supporting Section",
+  "description": "Bloque de soporte/seguridad con Contact Center y recomendaciones.",
+  "component": "src/emails/partials/organisms/supporting-section",
+  "icon": "package",
+  "variants": [
+    {
+      "id": "index",
+      "name": "Default",
+      "description": "Usa index.html"
+    }
+  ],
+  "props": {
+    "callCenterNumber": {
+      "type": "string",
+      "default": "+56 2 1234 5678",
+      "label": "Número Contact Center",
+      "required": true
+    },
+    "noReplayEmail": {
+      "type": "string",
+      "default": "no-reply@ejemplo.com",
+      "label": "Email remitente (no-reply)",
+      "required": true
+    }
+  }
+}

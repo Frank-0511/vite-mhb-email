@@ -1,0 +1,20 @@
+{
+  "name": "Key Value Card",
+  "description": "Card con filas label/value (útil para resúmenes como monto, fecha, estado, etc.)",
+  "component": "src/emails/partials/molecules/key-value-card",
+  "icon": "list",
+  "variants": [
+    {
+      "id": "index",
+      "name": "Default",
+      "description": "Usa index.html"
+    }
+  ],
+  "props": {
+    "rows": {
+      "type": "textarea",
+      "label": "Rows (JSON)",
+      "default": "[\n  {\"label\": \"Monto\", \"value\": \"$10.000\"},\n  {\"label\": \"Fecha\", \"value\": \"25/05/2026\"}\n]"
+    }
+  }
+}

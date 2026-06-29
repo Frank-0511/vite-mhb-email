@@ -1,0 +1,25 @@
+<script props>
+  module.exports = {
+    rows: Array.isArray(props.rows) ? props.rows : [],
+  };
+</script>
+
+<tr>
+  <td class="bg-neutral-800 p-10 rounded-lg">
+    <table class="w-full">
+      <each loop="row in rows">
+        <tr>
+          <td class="pb-4" valign="middle" style="vertical-align: middle">[[row.label]]</td>
+          <td
+            class="pb-4"
+            align="right"
+            valign="middle"
+            style="text-align: right; vertical-align: middle"
+          >
+            [[row.value]]
+          </td>
+        </tr>
+      </each>
+    </table>
+  </td>
+</tr>
