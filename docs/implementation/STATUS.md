@@ -5,7 +5,7 @@
 - Proyecto: EmailForge Toolkit
 - Fase actual: Fase 0 — Estabilización mínima publicable
 - Tarea actual: Ninguna
-- Estado: F0-T2 completada
+- Estado: F0-T1 y F0-T2 verificadas y completadas
 - Próxima tarea: F0-T3
 - Última actualización: 2026-06-29
 
@@ -74,12 +74,14 @@ Ninguna. F0-T2 completada.
 
 ## Validaciones
 
-| Comando                  | Estado    | Resultado                                               |
-| ------------------------ | --------- | ------------------------------------------------------- |
-| `bun run test`           | ✅ Pasa   | 13 pass, 0 fail; 3 archivos; código de salida 0         |
-| `bun run lint:js`        | ✅ Pasa   | Sin errores ni advertencias                             |
-| `bun run validate-email` | ✅ Pasa   | 3 archivos, 0 errores, 0 warnings                       |
-| `bun run build`          | Pendiente | Requiere Maizzle instalado; no ejecutado en esta sesión |
+| Comando                  | Estado | Resultado                                                      |
+| ------------------------ | ------ | -------------------------------------------------------------- |
+| `bun run test`           | Verde  | 13 pass, 0 fail; 3 archivos; código 0                          |
+| `bun run lint`           | Verde  | html/js/md/json sin errores                                    |
+| `bun run validate-email` | Verde  | 3 archivos, 0 errores, 0 warnings                              |
+| `bun run build`          | Verde  | lint + Maizzle + validate; 3 templates; código 0               |
+| gate ERROR -> exit 1     | Verde  | display:flex -> errors=1 -> process.exit(1) -> codigo 1        |
+| gate WARNING -> exit 0   | Verde  | unsubscribe-link -> errors=0, warnings=1 -> sin exit -> code 0 |
 
 Resultado completo de `bun run test`:
 
@@ -127,8 +129,7 @@ Esto es equivalente y más liviano.
 
 ## Problemas conocidos
 
-- `bun run build` no fue ejecutado porque requiere `maizzle build` (binario del
-  ecosistema Maizzle). La validación del gate se hizo vía tests unitarios.
+Ninguno. `bun run build` ejecutado y verificado en revisión (2026-06-29).
 
 ## Cambios sin commit
 
