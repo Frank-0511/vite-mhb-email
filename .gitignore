@@ -25,3 +25,4 @@ screenshots/
 
 # Preview cache (temporary hydrated renders for editor)
 .cache/preview/
+AI_WORKFLOW.md

@@ -76,3 +76,15 @@ Un cambio esta terminado solo si:
 5. ejecuta la verificacion adecuada;
 6. no introduce artefactos no solicitados;
 7. resume archivos cambiados, comandos ejecutados y riesgos residuales.
+
+## Roadmap de implementación
+
+Para tareas identificadas como `F0-T1`, `F1-T2` o similares, es obligatorio
+leer:
+
+1. `docs/implementation/PLAN.md`
+2. `docs/implementation/STATUS.md`
+3. `docs/implementation/STATUS_GUIDE.md`
+
+Implementa únicamente la tarea solicitada y actualiza `STATUS.md` siguiendo su
+guía.

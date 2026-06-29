@@ -698,17 +698,29 @@ function printSummary(results) {
 // ─── Función principal exportable ─────────────────────────────────────────────
 
 /**
- * Valida todos los archivos HTML en dist/ y muestra el reporte.
- * @returns {boolean} `true` si hay errores o warnings
+ * @typedef {Object} ValidationSummary
+ * @property {number} errors   - Número de issues con severidad ERROR.
+ * @property {number} warnings - Número de issues con severidad WARNING.
+ * @property {number} infos    - Número de issues con severidad INFO.
  */
-export function validateEmailHtml() {
-  const rootDir = process.cwd();
-  const distDir = resolve(rootDir, "dist");
+
+/**
+ * Valida todos los archivos HTML en dist/ y muestra el reporte.
+ *
+ * Retorna conteos por severidad para que el consumidor (build.js) pueda
+ * decidir si interrumpir el proceso. Solo ERROR es bloqueante por defecto.
+ *
+ * @param {string} [distDirOverride] - Directorio `dist` a usar.
+ *   Por defecto: `${process.cwd()}/dist`. Úsalo en tests para aislar el contexto.
+ * @returns {ValidationSummary} Conteos de issues por severidad.
+ */
+export function validateEmailHtml(distDirOverride) {
+  const distDir = distDirOverride ?? resolve(process.cwd(), "dist");
   const htmlFiles = globSync("**/*.html", { cwd: distDir });
 
   if (htmlFiles.length === 0) {
     console.log("\n⚠️  No HTML files found in dist/\n");
-    return false;
+    return { errors: 0, warnings: 0, infos: 0 };
   }
 
   console.log(paint(colors.cyan + colors.bold, "🔍 Validando compatibilidad email...\n"));
@@ -721,10 +733,12 @@ export function validateEmailHtml() {
 
   printSummary(results);
 
-  const hasIssues = results.some((r) =>
-    r.issues.some((i) => i.severity === Severity.ERROR || i.severity === Severity.WARNING),
-  );
-  return hasIssues;
+  const allIssues = results.flatMap((r) => r.issues);
+  return {
+    errors: allIssues.filter((i) => i.severity === Severity.ERROR).length,
+    warnings: allIssues.filter((i) => i.severity === Severity.WARNING).length,
+    infos: allIssues.filter((i) => i.severity === Severity.INFO).length,
+  };
 }
 
 // ─── Ejecución directa ───────────────────────────────────────────────────────
