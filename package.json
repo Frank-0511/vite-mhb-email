@@ -36,6 +36,8 @@
   },
   "scripts": {
     "dev": "vite",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
     "build": "bun run lint && bun scripts/build/build.js",
     "build-selective": "bun scripts/build/build-selective.js",
     "check-size": "bun scripts/build/check-html-size.js",
