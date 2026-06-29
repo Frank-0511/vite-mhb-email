@@ -1,0 +1,6 @@
+# Configuracion del runner de tests de Bun.
+# Referencia: https://bun.sh/docs/runtime/bunfig
+
+[test]
+# Excluye explicitamente dist/ (node_modules ya lo excluye Bun por defecto).
+pathIgnorePatterns = ["dist/**"]
