@@ -68,7 +68,7 @@
       ".codex": true,
       ".agents": true,
       ".github": true,
-      ".claude": true,
+      ".claude": true
     },
     "explorerExclude.backup": {},
     "remote.autoForwardPortsFallback": 0,

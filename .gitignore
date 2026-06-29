@@ -25,4 +25,20 @@ screenshots/
 
 # Preview cache (temporary hydrated renders for editor)
 .cache/preview/
+
+# AI workflow documentation (regenerable)
 AI_WORKFLOW.md
+
+# AI Assistants and Agents (recreados por bun run agents:sync)
+.claude/
+.opencode/
+.cursor/
+.agent/
+.agents/
+.codex/
+.github/skills
+AGENTS.md
+CLAUDE.md
+
+# Build output (reproducible via bun run build)
+dist/
