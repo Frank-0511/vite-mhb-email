@@ -23,8 +23,8 @@ node_modules
 screenshots/
 .temp-screenshots/
 
-# Preview cache (temporary hydrated renders for editor)
-.cache/preview/
+# Local cache (copy-html renders, preview hydration — never commit)
+.cache/
 
 # AI workflow documentation (regenerable)
 AI_WORKFLOW.md
