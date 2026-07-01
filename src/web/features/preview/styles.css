@@ -1,4 +1,5 @@
 /* Preview Feature Styles */
+
 /* Extracted from src/preview.html */
 
 body {
@@ -13,7 +14,7 @@ body {
   width: 35%;
   display: flex;
   flex-direction: column;
-  background: #ffffff;
+  background: #fff;
   border-right: 1px solid #e2e8f0;
 }
 
@@ -39,7 +40,7 @@ body {
 .jse-theme-default {
   --jse-theme-color: #0ea5e9; /* sky-500 */
   --jse-theme-color-highlight: #0284c7; /* sky-600 */
-  --jse-background-color: #ffffff;
+  --jse-background-color: #fff;
   --jse-panel-background: #f8fafc; /* slate-50 */
   --jse-main-border: none;
 }

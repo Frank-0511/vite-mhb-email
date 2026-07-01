@@ -44,11 +44,12 @@
     "check-size": "bun scripts/build/check-html-size.js",
     "validate-email": "bun scripts/build/validate-email-html.js",
     "cli": "bun scripts/cli.js",
-    "lint": "bun run lint:html && bun run lint:js && bun run lint:md && bun run lint:json",
+    "lint": "bun run lint:html && bun run lint:js && bun run lint:md && bun run lint:json && bun run lint:css",
     "lint:html": "htmlhint \"src/emails/templates/**/*.html\"",
     "lint:js": "eslint scripts/ src/web/ vite.config.js maizzle.config.js",
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\" \"#analysis_results.md\"",
     "lint:json": "bun scripts/build/validate-json.js",
+    "lint:css": "stylelint \"src/**/*.css\"",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prepare": "husky",
@@ -76,7 +77,11 @@
       "bun scripts/build/validate-json.js",
       "prettier --write"
     ],
-    "*.{json,css}": [
+    "*.json": [
+      "prettier --write"
+    ],
+    "src/**/*.css": [
+      "stylelint --fix",
       "prettier --write"
     ],
     "*.md": [
@@ -103,6 +108,8 @@
     "postcss": "8.5.12",
     "prettier": "3.8.3",
     "puppeteer-core": "24.42.0",
+    "stylelint": "^17.14.0",
+    "stylelint-config-standard": "^40.0.0",
     "tailwindcss": "3.4.19",
     "typescript": "6.0.3",
     "vite": "8.0.10"
