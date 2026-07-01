@@ -4,7 +4,7 @@
 
 - Proyecto: EmailForge Toolkit
 - Fase actual: Fase 0 — Estabilización mínima publicable
-- Tarea actual: F0-T4 — Workflow de CI (GitHub Actions)
+- Tarea actual: F0-T5 — Limpieza de referencias a clone/challenge y artefactos
 - Estado: Pendiente
 - Última actualización: 2026-06-30
 
@@ -37,22 +37,33 @@ Completada el 2026-06-30.
 - Añadido script `"typecheck": "tsc --noEmit"` en `package.json`.
 - `bun run typecheck` pasa en verde; criterios de aceptación cumplidos.
 
+### F0-T4 — Workflow de CI (GitHub Actions) ✅
+
+Completada el 2026-06-30.
+
+- Creado `.github/workflows/ci.yml` con job único `ci` (secuencial).
+- Se activa en `push` y `pull_request` sobre cualquier rama.
+- Pasos: checkout → `oven-sh/setup-bun@v2` (bun 1.2.2) → caché Bun por
+  `bun.lockb` → `bun install --frozen-lockfile` → lint → typecheck → test →
+  build.
+- Sin dependencias nuevas en `package.json` ni `bunfig.toml`.
+
 ## Tarea actual
 
-### F0-T4 — Workflow de CI (GitHub Actions)
+### F0-T5 — Limpieza de referencias a clone/challenge y artefactos
 
 - Estado: Pendiente.
-- Dependencias: F0-T1, F0-T2 y F0-T3 completadas.
-- Próxima acción: implementar únicamente F0-T4 según `PLAN.md`.
+- Dependencias: ninguna (según PLAN.md).
+- Próxima acción: implementar únicamente F0-T5 según `PLAN.md`.
 
 ## Validaciones
 
 | Comando             | Estado | Resultado resumido                                 |
 | ------------------- | ------ | -------------------------------------------------- |
-| `bun run test`      | Verde  | 13 tests aprobados el 2026-06-30                   |
-| `bun run lint`      | Verde  | Sin errores el 2026-06-30                          |
-| `bun run build`     | Verde  | 3 templates, 0 errores el 2026-06-30               |
+| `bun run lint`      | Verde  | 0 errores (2026-06-30)                             |
 | `bun run typecheck` | Verde  | 0 errores; alcance: scripts/shared + scripts/build |
+| `bun run test`      | Verde  | 13 tests aprobados (2026-06-30)                    |
+| `bun run build`     | Verde  | 3 templates, 0 errores (2026-06-30)                |
 
 ## Decisiones persistentes
 
@@ -67,6 +78,11 @@ Completada el 2026-06-30.
 - `dist/` permanece excluido del descubrimiento de tests.
 - Los errores de compatibilidad bloquean el build; las advertencias no.
 - `validateEmailHtml()` admite `distDirOverride` para aislar tests.
+- El CI usa un único job secuencial (`lint → typecheck → test → build`); si
+  algún paso falla, los siguientes no se ejecutan (comportamiento por defecto
+  de GitHub Actions).
+- La caché de Bun usa `bun.lockb` como clave para invalidar ante cambios de
+  dependencias.
 
 ## Desviaciones
 
@@ -77,13 +93,20 @@ Completada el 2026-06-30.
 - F0-T3 requirió instalar `@types/node` (además de `typescript`) para resolver
   `process`, `console` y módulos `node:*`; no era una dependencia bloqueante
   conocida, pero es correcta y mínima.
+- F0-T4: el CI no incluye pasos de deployment ni release (fuera de alcance
+  según PLAN.md; se posterga a F3/F0-T6 manual).
+- F0-T4: la verificación de estado verde en GitHub Actions requiere un push
+  real al repositorio remoto; no es ejecutable en local.
 
 ## Bloqueos
 
-- F0-T4 no tiene bloqueos conocidos; sus tres dependencias están completadas.
+- Ninguno.
 
 ## Handoff
 
-- F0-T3 marcada como `Completada` tras revisión satisfactoria.
-- Siguiente tarea: F0-T4 — Workflow de CI (GitHub Actions).
-- Worktree con cambios pendientes (sin commit).
+- F0-T4 marcada como `Completada` tras revisión satisfactoria de criterios de
+  aceptación, diff, lint, typecheck, tests y build.
+- Siguiente tarea: F0-T5 — Limpieza de referencias a clone/challenge y
+  artefactos (no iniciar sin aprobación explícita).
+- Worktree con cambios pendientes (sin commit): `.github/workflows/ci.yml`
+  (nuevo) y `docs/implementation/STATUS.md` (modificado).
