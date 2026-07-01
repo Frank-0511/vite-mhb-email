@@ -4,10 +4,9 @@
 
 - Proyecto: EmailForge Toolkit
 - Fase actual: Fase 0 — Estabilización mínima publicable
-- Tarea actual: Ninguna
-- Estado: F0-T1 y F0-T2 verificadas y completadas
-- Próxima tarea: F0-T3
-- Última actualización: 2026-06-29
+- Tarea actual: F0-T3 — Typecheck con JSDoc + `tsconfig` (`checkJs`)
+- Estado: En revisión
+- Última actualización: 2026-06-30
 
 ## Tareas completadas
 
@@ -15,142 +14,74 @@
 
 Completada el 2026-06-29.
 
-Criterios de aceptación satisfechos:
-
-- [x] `bun run test` descubre y ejecuta al menos un test.
-- [x] El test existente de viewport pasa (2/2 pass).
-- [x] Existe una prueba en `scripts/shared/` (paths.test.js, 4 tests).
-- [x] No se recolectan tests de `node_modules/` (excluido por defecto por Bun).
-- [x] No se recolectan tests de `dist/` (excluido explícitamente en bunfig.toml).
-- [x] La ejecución termina con código 0.
-- [x] `bun run test:watch` está configurado (existía en package.json).
-
-Archivos creados:
-
-- `bunfig.toml` — Configura `pathIgnorePatterns = ["dist/**"]`.
-- `scripts/shared/paths.test.js` — Smoke test de `getProjectPaths` (4 tests).
-
----
+- `bun run test` descubre tests en `scripts/` y `src/web/`.
+- `dist/` queda excluido mediante `bunfig.toml`.
+- Se añadió un smoke test para `getProjectPaths`.
 
 ### F0-T2 — Gate de validación de compatibilidad en build ✅
 
 Completada el 2026-06-29.
 
-Criterios de aceptación satisfechos:
-
-- [x] `validateEmailHtml()` retorna `{ errors, warnings, infos }` en lugar de boolean.
-- [x] `build.js` llama `process.exit(1)` si `errors > 0`.
-- [x] WARNINGs no bloquean el build (solo se imprime un aviso).
-- [x] HTML con ERROR inyectado → build sale con código ≠ 0.
-- [x] HTML sin errores → build sale con código 0.
-- [x] Tests unitarios del validador pasan (7 tests en 1 archivo nuevo).
-- [x] `bun run validate-email` sigue funcionando sobre `dist/` actual (0 errores).
-- [x] `bun run lint:js` pasa sin advertencias.
-
-Archivos modificados:
-
-- `scripts/build/validate-email-html.js` —
-  - `validateEmailHtml()` ahora retorna `ValidationSummary { errors, warnings, infos }`.
-  - Acepta parámetro opcional `distDirOverride` para aislar en tests.
-  - JSDoc actualizado con `@typedef ValidationSummary` y `@returns`.
-- `scripts/build/build.js` —
-  - Añade `@fileoverview` con la descripción del pipeline.
-  - Destructura `{ errors, warnings }` del retorno de `validateEmailHtml()`.
-  - `process.exit(1)` si `errors > 0` con mensaje accionable.
-  - Aviso no bloqueante si hay warnings.
-
-Archivos creados:
-
-- `scripts/build/validate-email-html.test.js` — 7 tests unitarios que verifican:
-  - Estructura del retorno (claves y tipos).
-  - HTML limpio → `errors: 0`.
-  - HTML sin `<!doctype html>` → `errors >= 1`.
-  - HTML con `display: flex` → `errors >= 1`.
-  - Lógica del gate (errors > 0 ↔ build debe fallar).
+- El validador devuelve conteos por severidad.
+- Los errores bloquean el build; las advertencias no lo bloquean.
+- El comportamiento quedó cubierto por tests unitarios.
 
 ## Tarea actual
 
-Ninguna. F0-T2 completada.
+### F0-T3 — Typecheck con JSDoc + `tsconfig` (`checkJs`)
+
+- Estado: En revisión.
+- Cambios realizados:
+  1. Instalado `typescript@6.0.3` y `@types/node@26.0.1` como devDependencies.
+  2. Creado `tsconfig.json` con `allowJs`, `checkJs`, `noEmit`, `module: nodenext`,
+     `types: ["node"]`, `skipLibCheck: true`, `include` acotado a
+     `scripts/shared/**` y `scripts/build/**` (excluye `*.test.js`).
+  3. Añadido script `"typecheck": "tsc --noEmit"` en `package.json`.
+  4. `bun run typecheck` pasa en verde sin errores (R3 mitigado).
 
 ## Validaciones
 
-| Comando                  | Estado | Resultado                                                      |
-| ------------------------ | ------ | -------------------------------------------------------------- |
-| `bun run test`           | Verde  | 13 pass, 0 fail; 3 archivos; código 0                          |
-| `bun run lint`           | Verde  | html/js/md/json sin errores                                    |
-| `bun run validate-email` | Verde  | 3 archivos, 0 errores, 0 warnings                              |
-| `bun run build`          | Verde  | lint + Maizzle + validate; 3 templates; código 0               |
-| gate ERROR -> exit 1     | Verde  | display:flex -> errors=1 -> process.exit(1) -> codigo 1        |
-| gate WARNING -> exit 0   | Verde  | unsubscribe-link -> errors=0, warnings=1 -> sin exit -> code 0 |
+| Comando                  | Estado | Resultado resumido                                 |
+| ------------------------ | ------ | -------------------------------------------------- |
+| `bun run test`           | Verde  | 13 tests aprobados el 2026-06-30                   |
+| `bun run lint`           | Verde  | Sin errores el 2026-06-30                          |
+| `bun run validate-email` | Verde  | 3 archivos sin issues el 2026-06-29                |
+| `bun run build`          | Verde  | 3 templates compilados el 2026-06-29               |
+| `bun run typecheck`      | Verde  | 0 errores; alcance: scripts/shared + scripts/build |
 
-Resultado completo de `bun run test`:
+## Decisiones persistentes
 
-```text
-bun test v1.3.13 (bf2e2cec)
+- El proyecto mantiene JavaScript ESM con JSDoc; no se hará una migración global
+  a TypeScript.
+- El typecheck inicial se limita a `scripts/shared/**` y `scripts/build/**`;
+  se ampliará en F2-T1.
+- `typescript@6.0.3` y `@types/node@26.0.1` son devDependencies; `skipLibCheck: true`
+  evita ruido de tipos en dependencias de terceros.
+- `tsconfig.json` excluye `*.test.js` (evaluados por `bun test`) y `dist/`.
+- `dist/` permanece excluido del descubrimiento de tests.
+- Los errores de compatibilidad bloquean el build; las advertencias no.
+- `validateEmailHtml()` admite `distDirOverride` para aislar tests.
 
-scripts/build/validate-email-html.test.js:
-(pass) validateEmailHtml — estructura del retorno > retorna un objeto con las claves errors, warnings e infos
-(pass) validateEmailHtml — estructura del retorno > retorna { errors:0, warnings:0, infos:0 } cuando no hay archivos HTML
-(pass) validateEmailHtml — HTML sin errores > HTML limpio retorna errors: 0
-(pass) validateEmailHtml — HTML con ERROR (doctype faltante) > HTML sin <!doctype html> produce al menos 1 error
-(pass) validateEmailHtml — HTML con ERROR (doctype faltante) > HTML con display:flex produce al menos 1 error
-(pass) lógica del gate de build > errors > 0 implica que el build debe fallar
-(pass) lógica del gate de build > errors === 0 implica que el build puede continuar
+## Desviaciones
 
-scripts/shared/paths.test.js: (4 pass)
-src/web/features/preview/viewport-controls.test.js: (2 pass)
+- F0-T2 validó el predicado del gate mediante tests unitarios en lugar de un
+  test de integración que ejecute el proceso completo.
+- El flag `--allow-warnings` previsto en F0-T2 no se implementó porque las
+  advertencias ya son no bloqueantes por defecto.
+- F0-T3 requirió instalar `@types/node` (además de `typescript`) para resolver
+  `process`, `console` y módulos `node:*`; no era una dependencia bloqueante
+  conocida, pero es correcta y mínima.
 
- 13 pass
- 0 fail
- 25 expect() calls
-Ran 13 tests across 3 files. [103.00ms]
-```
+## Bloqueos
 
-## Decisiones tomadas
+- F0-T3 no tiene bloqueos conocidos.
+- F0-T4 debe permanecer pendiente hasta que F0-T3 sea revisada y marcada como
+  `Completada`.
 
-1. **Parámetro `distDirOverride` opcional** en `validateEmailHtml()` para aislar tests
-   sin cambiar el CWD ni usar mocks pesados. Sólo se usa en tests; en producción no
-   se pasa y se usa `process.cwd()/dist` como antes.
+## Handoff
 
-2. **No se implementó flag `--allow-warnings` en CLI** ya que el comportamiento
-   por defecto (WARNING no bloquea) ya cubre el caso documentado. El flag está
-   reservado para futuras integraciones de CI según el plan.
-
-3. **`check-html-size.js` no tiene gate** per plan ("revisar si también debe ser gate").
-   Se revisó: la función retorna un booleano `hasWarnings` que `build.js` ya ignoraba.
-   Se decidió no añadirle gate en F0-T2 (fuera de alcance explícito del plan).
-
-## Desviaciones respecto al plan
-
-Ninguna material. El plan decía "test de que `build.js` propaga el código de salida" —
-se implementó como "lógica del gate" (verifica que errors > 0 es el predicado correcto)
-en lugar de un test de integración del proceso completo (que requeriría spawn de proceso).
-Esto es equivalente y más liviano.
-
-## Problemas conocidos
-
-Ninguno. `bun run build` ejecutado y verificado en revisión (2026-06-29).
-
-## Cambios sin commit
-
-| Archivo                                     | Tipo               |
-| ------------------------------------------- | ------------------ |
-| `bunfig.toml`                               | Nuevo (F0-T1)      |
-| `scripts/shared/paths.test.js`              | Nuevo (F0-T1)      |
-| `scripts/build/validate-email-html.js`      | Modificado (F0-T2) |
-| `scripts/build/build.js`                    | Modificado (F0-T2) |
-| `scripts/build/validate-email-html.test.js` | Nuevo (F0-T2)      |
-
-No se ha hecho commit. Pendiente de autorización del usuario.
-
-## Próxima tarea
-
-### F0-T3 — Typecheck con JSDoc + `tsconfig` (`checkJs`)
-
-No comenzar hasta autorización explícita del usuario.
-
-## Instrucciones de actualización
-
-Al finalizar F0-T3, el agente debe actualizar este archivo siguiendo el mismo
-patrón: mover F0-T3 a completadas, registrar resultados reales, actualizar
-validaciones y cambios sin commit.
+- F0-T3 queda en `En revisión`. Revisar criterios de aceptación, diff y validaciones.
+- Si la revisión es exitosa, marcar F0-T3 como `Completada` y proceder con F0-T4.
+- Archivos cambiados: `tsconfig.json` (nuevo), `package.json` (script `typecheck`,
+  devDeps `typescript` y `@types/node`), `docs/implementation/STATUS.md`.
+- Worktree con cambios pendientes (sin commit).

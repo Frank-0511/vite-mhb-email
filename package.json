@@ -38,6 +38,7 @@
     "dev": "vite",
     "test": "bun test",
     "test:watch": "bun test --watch",
+    "typecheck": "tsc --noEmit",
     "build": "bun run lint && bun scripts/build/build.js",
     "build-selective": "bun scripts/build/build-selective.js",
     "check-size": "bun scripts/build/check-html-size.js",
@@ -86,6 +87,7 @@
   "devDependencies": {
     "@eslint/js": "10.0.1",
     "@maizzle/framework": "5.5.0",
+    "@types/node": "26.0.1",
     "autoprefixer": "10.5.0",
     "eslint": "10.2.1",
     "eslint-config-prettier": "10.1.8",
@@ -102,6 +104,7 @@
     "prettier": "3.8.3",
     "puppeteer-core": "24.42.0",
     "tailwindcss": "3.4.19",
+    "typescript": "6.0.3",
     "vite": "8.0.10"
   },
   "dependencies": {

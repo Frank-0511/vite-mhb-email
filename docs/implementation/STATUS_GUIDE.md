@@ -2,7 +2,7 @@
 
 ## Propósito
 
-`IMPLEMENTATION_STATUS.md` es un resumen persistente para transferir el trabajo
+`STATUS.md` es un resumen persistente para transferir el trabajo
 entre agentes. No es un reporte detallado de ejecución ni reemplaza a Git.
 
 ## Estructura obligatoria
