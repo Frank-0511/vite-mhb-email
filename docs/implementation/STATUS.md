@@ -4,7 +4,7 @@
 
 - Proyecto: EmailForge Toolkit
 - Fase actual: Fase 0 — Estabilización mínima publicable
-- Tarea actual: F0-T5 — Limpieza de referencias a clone/challenge y artefactos
+- Tarea actual: F0-T6 — README, capturas, CHANGELOG y Release v1.1.0
 - Estado: Pendiente
 - Última actualización: 2026-06-30
 
@@ -48,22 +48,36 @@ Completada el 2026-06-30.
   build.
 - Sin dependencias nuevas en `package.json` ni `bunfig.toml`.
 
+### F0-T5 — Limpieza de referencias a clone/challenge y artefactos ✅
+
+Completada el 2026-06-30.
+
+- `layout-tenpo.html` renombrado a `layout-alt.html`; contenido completamente
+  genericado (logo, RRSS y texto legal reemplazados por variables `{{ }}` y
+  `[[logoFooter]]`).
+- URLs hardcodeadas de `images.tenpo.cl` en `supporting-section/index.html`
+  reemplazadas por `{{ support_icon_url }}` y `{{ support_arrow_icon_url }}`.
+- `package.json` `lint:md`: eliminado glob obsoleto `#analysis_results.md`.
+- `dist/` confirmado en `.gitignore` (R7 resuelto).
+- `grep -ri "tenpo|challenge|curso|clone" src docs README.md` sin coincidencias
+  relevantes; lint, build, typecheck, test y format:check en verde.
+
 ## Tarea actual
 
-### F0-T5 — Limpieza de referencias a clone/challenge y artefactos
+### F0-T6 — README, capturas, CHANGELOG y Release v1.1.0
 
 - Estado: Pendiente.
-- Dependencias: ninguna (según PLAN.md).
-- Próxima acción: implementar únicamente F0-T5 según `PLAN.md`.
+- Dependencias: F0-T1..T5 (todas completadas).
 
 ## Validaciones
 
-| Comando             | Estado | Resultado resumido                                 |
-| ------------------- | ------ | -------------------------------------------------- |
-| `bun run lint`      | Verde  | 0 errores (2026-06-30)                             |
-| `bun run typecheck` | Verde  | 0 errores; alcance: scripts/shared + scripts/build |
-| `bun run test`      | Verde  | 13 tests aprobados (2026-06-30)                    |
-| `bun run build`     | Verde  | 3 templates, 0 errores (2026-06-30)                |
+| Comando                | Estado | Resultado resumido                                 |
+| ---------------------- | ------ | -------------------------------------------------- |
+| `bun run lint`         | Verde  | 0 errores (2026-06-30)                             |
+| `bun run typecheck`    | Verde  | 0 errores; alcance: scripts/shared + scripts/build |
+| `bun run test`         | Verde  | 13 tests aprobados (2026-06-30)                    |
+| `bun run build`        | Verde  | 3 templates, 0 errores (2026-06-30)                |
+| `bun run format:check` | Verde  | formato correcto en todos los archivos             |
 
 ## Decisiones persistentes
 
@@ -81,8 +95,8 @@ Completada el 2026-06-30.
 - El CI usa un único job secuencial (`lint → typecheck → test → build`); si
   algún paso falla, los siguientes no se ejecutan (comportamiento por defecto
   de GitHub Actions).
-- La caché de Bun usa `bun.lockb` como clave para invalidar ante cambios de
-  dependencias.
+- La caché de Bun usa `bun.lock` (texto) como clave para invalidar ante
+  cambios de dependencias.
 
 ## Desviaciones
 
@@ -97,6 +111,12 @@ Completada el 2026-06-30.
   según PLAN.md; se posterga a F3/F0-T6 manual).
 - F0-T4: la verificación de estado verde en GitHub Actions requiere un push
   real al repositorio remoto; no es ejecutable en local.
+- F0-T5: `layout-tenpo.html` no era referenciado por ningún template ni
+  script en producción; el renombrado a `layout-alt.html` no requirió
+  actualizar imports externos.
+- F0-T5: las URLs hardcodeadas de `images.tenpo.cl` en `supporting-section`
+  se reemplazaron por variables ESP `{{ }}` en lugar de eliminar el partial,
+  ya que el partial tiene valor estructural para futuros templates.
 
 ## Bloqueos
 
@@ -104,9 +124,8 @@ Completada el 2026-06-30.
 
 ## Handoff
 
-- F0-T4 marcada como `Completada` tras revisión satisfactoria de criterios de
-  aceptación, diff, lint, typecheck, tests y build.
-- Siguiente tarea: F0-T5 — Limpieza de referencias a clone/challenge y
-  artefactos (no iniciar sin aprobación explícita).
-- Worktree con cambios pendientes (sin commit): `.github/workflows/ci.yml`
-  (nuevo) y `docs/implementation/STATUS.md` (modificado).
+- F0-T5 marcada como `Completada` tras revisión de criterios de aceptación,
+  validaciones y desviaciones.
+- Siguiente tarea: F0-T6 — README, capturas, CHANGELOG y Release v1.1.0
+  (no iniciar sin aprobación explícita).
+- Worktree con cambios pendientes (sin commit).
