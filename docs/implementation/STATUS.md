@@ -4,8 +4,8 @@
 
 - Proyecto: EmailForge Toolkit
 - Fase actual: Fase 0 — Estabilización mínima publicable
-- Tarea actual: F0-T3 — Typecheck con JSDoc + `tsconfig` (`checkJs`)
-- Estado: En revisión
+- Tarea actual: F0-T4 — Workflow de CI (GitHub Actions)
+- Estado: Pendiente
 - Última actualización: 2026-06-30
 
 ## Tareas completadas
@@ -26,28 +26,33 @@ Completada el 2026-06-29.
 - Los errores bloquean el build; las advertencias no lo bloquean.
 - El comportamiento quedó cubierto por tests unitarios.
 
+### F0-T3 — Typecheck con JSDoc + `tsconfig` (`checkJs`) ✅
+
+Completada el 2026-06-30.
+
+- Instalado `typescript@6.0.3` y `@types/node@26.0.1` como devDependencies.
+- Creado `tsconfig.json` con `allowJs`, `checkJs`, `noEmit`, `module: nodenext`,
+  `types: ["node"]`, `skipLibCheck: true`, alcance acotado a
+  `scripts/shared/**` y `scripts/build/**` (excluye `*.test.js`).
+- Añadido script `"typecheck": "tsc --noEmit"` en `package.json`.
+- `bun run typecheck` pasa en verde; criterios de aceptación cumplidos.
+
 ## Tarea actual
 
-### F0-T3 — Typecheck con JSDoc + `tsconfig` (`checkJs`)
+### F0-T4 — Workflow de CI (GitHub Actions)
 
-- Estado: En revisión.
-- Cambios realizados:
-  1. Instalado `typescript@6.0.3` y `@types/node@26.0.1` como devDependencies.
-  2. Creado `tsconfig.json` con `allowJs`, `checkJs`, `noEmit`, `module: nodenext`,
-     `types: ["node"]`, `skipLibCheck: true`, `include` acotado a
-     `scripts/shared/**` y `scripts/build/**` (excluye `*.test.js`).
-  3. Añadido script `"typecheck": "tsc --noEmit"` en `package.json`.
-  4. `bun run typecheck` pasa en verde sin errores (R3 mitigado).
+- Estado: Pendiente.
+- Dependencias: F0-T1, F0-T2 y F0-T3 completadas.
+- Próxima acción: implementar únicamente F0-T4 según `PLAN.md`.
 
 ## Validaciones
 
-| Comando                  | Estado | Resultado resumido                                 |
-| ------------------------ | ------ | -------------------------------------------------- |
-| `bun run test`           | Verde  | 13 tests aprobados el 2026-06-30                   |
-| `bun run lint`           | Verde  | Sin errores el 2026-06-30                          |
-| `bun run validate-email` | Verde  | 3 archivos sin issues el 2026-06-29                |
-| `bun run build`          | Verde  | 3 templates compilados el 2026-06-29               |
-| `bun run typecheck`      | Verde  | 0 errores; alcance: scripts/shared + scripts/build |
+| Comando             | Estado | Resultado resumido                                 |
+| ------------------- | ------ | -------------------------------------------------- |
+| `bun run test`      | Verde  | 13 tests aprobados el 2026-06-30                   |
+| `bun run lint`      | Verde  | Sin errores el 2026-06-30                          |
+| `bun run build`     | Verde  | 3 templates, 0 errores el 2026-06-30               |
+| `bun run typecheck` | Verde  | 0 errores; alcance: scripts/shared + scripts/build |
 
 ## Decisiones persistentes
 
@@ -55,8 +60,9 @@ Completada el 2026-06-29.
   a TypeScript.
 - El typecheck inicial se limita a `scripts/shared/**` y `scripts/build/**`;
   se ampliará en F2-T1.
-- `typescript@6.0.3` y `@types/node@26.0.1` son devDependencies; `skipLibCheck: true`
-  evita ruido de tipos en dependencias de terceros.
+- `typescript@6.0.3` y `@types/node@26.0.1` son devDependencies (versiones
+  exactas, sin `^`); `skipLibCheck: true` evita ruido de tipos en dependencias
+  de terceros.
 - `tsconfig.json` excluye `*.test.js` (evaluados por `bun test`) y `dist/`.
 - `dist/` permanece excluido del descubrimiento de tests.
 - Los errores de compatibilidad bloquean el build; las advertencias no.
@@ -74,14 +80,10 @@ Completada el 2026-06-29.
 
 ## Bloqueos
 
-- F0-T3 no tiene bloqueos conocidos.
-- F0-T4 debe permanecer pendiente hasta que F0-T3 sea revisada y marcada como
-  `Completada`.
+- F0-T4 no tiene bloqueos conocidos; sus tres dependencias están completadas.
 
 ## Handoff
 
-- F0-T3 queda en `En revisión`. Revisar criterios de aceptación, diff y validaciones.
-- Si la revisión es exitosa, marcar F0-T3 como `Completada` y proceder con F0-T4.
-- Archivos cambiados: `tsconfig.json` (nuevo), `package.json` (script `typecheck`,
-  devDeps `typescript` y `@types/node`), `docs/implementation/STATUS.md`.
+- F0-T3 marcada como `Completada` tras revisión satisfactoria.
+- Siguiente tarea: F0-T4 — Workflow de CI (GitHub Actions).
 - Worktree con cambios pendientes (sin commit).
