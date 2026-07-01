@@ -214,14 +214,39 @@ Clasificación de cada elemento del brief.
   **Release v1.1.0**. Pequeño y publicable. → **Checkpoint 0**.
 - **Fase 1 — Completar el flujo de producto.**
   Validación de variables, errores de compilación en UI, descarga de HTML, las 4
-  plantillas profesionales, docs de compatibilidad y de componentes. →
-  **Checkpoint 1**.
+  plantillas profesionales, docs de compatibilidad y de componentes →
+  **Release v1.2.0**. → **Checkpoint 1**.
 - **Fase 2 — Contratos tipados + cobertura de pruebas.**
   Typedefs centrales + `checkJs` endurecido; unit + integración (build/export);
-  tiempos documentados. → **Checkpoint 2**.
+  tiempos documentados → **Release v1.3.0**. → **Checkpoint 2**.
 - **Fase 3 — Posterior / opcional.**
   Demo estática pre-renderizada + deploy; más componentes; (opcional, fuera de
   MVP) empaquetado npm.
+
+### Política de ramas y versiones
+
+- Cada tarea del roadmap debe comenzar desde `master` actualizado en una rama
+  nueva con el nombre `feature/<codigo-de-tarea>` en minúsculas, por ejemplo
+  `feature/f0-t5`.
+- Una rama contiene únicamente los cambios de su tarea. Tras implementación,
+  validación y revisión independiente, se integra directamente en `master`; no
+  se mantienen ramas intermedias por fase.
+- Las tareas individuales no incrementan la versión del proyecto. Los commits,
+  PRs y `STATUS.md` proporcionan la trazabilidad entre releases.
+- La última tarea de cada fase incluye el incremento minor de SemVer, la
+  actualización del changelog y la creación del tag y GitHub Release:
+
+  | Fase | Última tarea | Versión |
+  | ---- | ------------ | ------- |
+  | 0    | F0-T6        | v1.1.0  |
+  | 1    | F1-T9        | v1.2.0  |
+  | 2    | F2-T6        | v1.3.0  |
+
+- La versión de la Fase 3 se define cuando se apruebe su alcance opcional. Las
+  correcciones sobre una release ya publicada incrementan el patch, por ejemplo
+  `v1.1.0` → `v1.1.1`.
+- Los cambios ya integrados directamente en `master` se conservan; esta política
+  aplica a las tareas pendientes y no autoriza reescribir el historial.
 
 ---
 
@@ -331,14 +356,15 @@ Clasificación de cada elemento del brief.
 - **Archivos:** `README.md` (badge CI, sección problema/solución, capturas
   embebidas, comandos `test`/`typecheck`), `screenshots/` (capturas reales del
   dashboard y de un email renderizado en desktop/móvil), nuevo `CHANGELOG.md`,
-  metadata de GitHub (description/topics).
+  `package.json` (versión `1.1.0`) y metadata de GitHub (description/topics).
 - **Pasos:** generar capturas (dashboard, preview desktop, preview móvil, email);
   insertarlas; documentar problema/solución/arquitectura; añadir badge de CI;
-  redactar `CHANGELOG.md` (Keep a Changelog) v1.1.0; crear tag/Release `v1.1.0`.
+  actualizar la versión a `1.1.0`; redactar `CHANGELOG.md` (Keep a Changelog)
+  v1.1.0; crear tag/Release `v1.1.0`.
 - **Dependencias:** F0-T1..T5 (para que README refleje CI/tests reales).
 - **Aceptación:** README incluye capturas y badge verde; `CHANGELOG.md` lista
-  v1.1.0; existe GitHub Release `v1.1.0`; `bun install && bun run dev` desde clon
-  limpio funciona.
+  v1.1.0; `package.json`, tag y GitHub Release coinciden en `v1.1.0`;
+  `bun install && bun run dev` desde clon limpio funciona.
 - **Pruebas:** smoke manual de clon limpio (instalación, dev, build).
 - **Validación:** `bun install --frozen-lockfile && bun run build`.
 - **Riesgos:** capturas desactualizadas (regenerar al cierre de cada fase).
@@ -493,30 +519,33 @@ Clasificación de cada elemento del brief.
 - **Riesgos:** referencias colgantes (R8).
 - **Fuera de alcance:** rediseñar el listado del dashboard.
 
-#### F1-T9 — Documentación: tabla de compatibilidad de clientes + guía de componentes
+#### F1-T9 — Documentación y Release v1.2.0 (gate de fase)
 
 - **Objetivo:** añadir tabla de compatibilidad de clientes de correo y guía para
-  crear componentes reutilizables.
+  crear componentes reutilizables; publicar el cierre de la fase como v1.2.0.
 - **Justificación:** brief (documentación): tabla de compatibilidad + guía de
-  componentes.
+  componentes; política de versionado por fase.
 - **Archivos:** `README.md` y/o `docs/` (nueva `docs/email-clients.md`,
-  `docs/components-guide.md`); apoyarse en `docs/agent-skills/email-compatibility.md`
-  y en los `schema.json` existentes.
+  `docs/components-guide.md`), `CHANGELOG.md` y `package.json`; apoyarse en
+  `docs/agent-skills/email-compatibility.md` y en los `schema.json` existentes.
 - **Pasos:** redactar tabla (Outlook/Gmail/Apple Mail/Yahoo × features soportadas
   alineadas a las reglas del validador); guía paso a paso de un componente con
-  `index.html` + `schema.json`.
+  `index.html` + `schema.json`; actualizar la versión y changelog a `1.2.0`;
+  crear tag y GitHub Release `v1.2.0`.
 - **Dependencias:** plantillas finales (F1-T5..T8) para ejemplos reales.
 - **Aceptación:** `markdownlint` verde; la guía permite crear un componente nuevo
-  siguiendo solo la doc.
+  siguiendo solo la doc; `package.json`, changelog, tag y GitHub Release
+  coinciden en `v1.2.0`.
 - **Pruebas:** `bun run lint:md`.
-- **Validación:** `bun run lint:md`.
+- **Validación:** `bun run format:check`, `bun run lint` y `bun run build`.
 - **Riesgos:** bajo.
 - **Fuera de alcance:** matriz de compatibilidad basada en pruebas reales en cada
   cliente (manual, posterior).
 
 > **🚦 Checkpoint 1 — Revisión humana.** 4 plantillas profesionales compilan y
 > pasan gates; errores de compilación visibles en UI; descarga y validación de
-> variables funcionando; docs de compatibilidad/componentes. Regenerar capturas.
+> variables funcionando; docs de compatibilidad/componentes; Release v1.2.0.
+> Regenerar capturas.
 
 ---
 
@@ -607,24 +636,29 @@ Clasificación de cada elemento del brief.
   la capa de compilación HTML, no el render PNG.
 - **Fuera de alcance:** test del binario de screenshot.
 
-#### F2-T6 — Documentar tiempos de arranque y compilación
+#### F2-T6 — Documentar rendimiento y Release v1.3.0 (gate de fase)
 
-- **Objetivo:** medir y documentar tiempos de `dev` startup y `build`.
+- **Objetivo:** medir y documentar tiempos de `dev` startup y `build`; publicar
+  el cierre de la fase como v1.3.0.
 - **Justificación:** brief "mantener tiempos de arranque y compilación
-  documentados".
-- **Archivos:** README/`docs/performance.md`; opcional script de medición.
+  documentados" y política de versionado por fase.
+- **Archivos:** README/`docs/performance.md`, `CHANGELOG.md`, `package.json`;
+  opcional script de medición.
 - **Pasos:** medir cold start de `dev` y `build` (n corridas), tabular,
-  documentar entorno (Bun/Node/SO).
+  documentar entorno (Bun/Node/SO); actualizar versión y changelog a `1.3.0`;
+  crear tag y GitHub Release `v1.3.0`.
 - **Dependencias:** plantillas finales.
-- **Aceptación:** tabla de tiempos reproducible en el README/docs.
+- **Aceptación:** tabla de tiempos reproducible en el README/docs;
+  `package.json`, changelog, tag y GitHub Release coinciden en `v1.3.0`.
 - **Pruebas:** N/A.
-- **Validación:** `bun run build` cronometrado.
+- **Validación:** `bun run format:check`, suite CI completa y `bun run build`
+  cronometrado.
 - **Riesgos:** variabilidad de máquina (documentar entorno).
 - **Fuera de alcance:** budget/regresión de performance en CI.
 
 > **🚦 Checkpoint 2 — Revisión humana.** Suite unit+integración verde en CI,
-> typecheck ampliado, tiempos documentados. El proyecto cumple la "Definición
-> global de terminado" salvo demo desplegada.
+> typecheck ampliado, tiempos documentados y Release v1.3.0. El proyecto cumple
+> la "Definición global de terminado" salvo demo desplegada.
 
 ---
 
@@ -722,8 +756,10 @@ Clasificación de cada elemento del brief.
   `engines` documenta Node `>=20` / Bun `>=1.0`.
 - **CI/CD:** GitHub Actions valida cada cambio (no despliega). Release manual con
   changelog hasta automatizar.
-- **Versionado:** SemVer; changelog estilo _Keep a Changelog_; el alcance de
-  estabilización (Fase 0) se publica como `v1.1.0`.
+- **Versionado:** SemVer y changelog estilo _Keep a Changelog_. No se incrementa
+  versión por tarea: la última tarea de cada fase publica la minor correspondiente
+  (`v1.1.0`, `v1.2.0`, `v1.3.0`). Las correcciones de releases publicadas
+  incrementan patch.
 - **Demo (posterior, F3-T1):** previews estáticos pre-renderizados en GitHub
   Pages/Netlify (read-only), porque `/api/render` requiere runtime.
 - **Política de `dist/`:** decidir en F0-T5 (recomendado: no commitear artefactos
