@@ -47,6 +47,8 @@ seguridad.
 - No migres todo a TypeScript de golpe sin aprobacion explicita.
 - No ocultes errores. Los scripts, APIs internas y build steps deben fallar de
   forma explicita y accionable.
+- Al terminar cada tarea, aplica Prettier solo a los archivos modificados por
+  esa tarea y confirma el formato con `bun run format:check`.
 - No reviertas cambios que no hiciste. Respeta el working tree existente.
 - No escribas fuera del workspace sin autorizacion explicita.
 - No imprimas secretos ni generes archivos con credenciales.
@@ -73,9 +75,10 @@ Un cambio esta terminado solo si:
 2. mantiene compatibilidad del pipeline de email;
 3. agrega JSDoc en contratos nuevos o modificados;
 4. maneja errores relevantes;
-5. ejecuta la verificacion adecuada;
-6. no introduce artefactos no solicitados;
-7. resume archivos cambiados, comandos ejecutados y riesgos residuales.
+5. aplica Prettier a los archivos modificados;
+6. ejecuta `bun run format:check` y la verificacion adecuada;
+7. no introduce artefactos no solicitados;
+8. resume archivos cambiados, comandos ejecutados y riesgos residuales.
 
 ## Roadmap de implementación
 
