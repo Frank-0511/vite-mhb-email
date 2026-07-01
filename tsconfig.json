@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    /* ── Modo JS con JSDoc ── */
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true,
+
+    /* ── Resolución de módulos ESM (Node.js) ── */
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+
+    /* ── Target ── */
+    "target": "es2022",
+
+    /* ── Rigor ── */
+    "strict": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+
+    /* ── Interop ── */
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+
+    /* ── Tipos Node.js ── */
+    "types": ["node"],
+
+    /* ── Suprimir errores en .d.ts de dependencias ── */
+    "skipLibCheck": true,
+
+    /* ── Lib ── */
+    "lib": ["es2022"]
+  },
+
+  /*
+   * ALCANCE INICIAL (F0-T3):
+   *   Solo scripts/shared/** y scripts/build/**.
+   *   Se amplía carpeta a carpeta en F2-T1 (D2, R3).
+   */
+  "include": ["scripts/shared/**/*.js", "scripts/build/**/*.js"],
+
+  /*
+   * Excluir node_modules y dist siempre.
+   * Los tests también se excluyen del typecheck de producción
+   * (bun test los evalúa por separado).
+   */
+  "exclude": ["node_modules", "dist", "**/*.test.js"]
+}
