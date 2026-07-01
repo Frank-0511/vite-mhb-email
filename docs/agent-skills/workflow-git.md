@@ -25,8 +25,18 @@ Reglas:
 - Si una verificacion falla, investiga la causa.
 - No relajes reglas para obtener una salida verde.
 
+## Formato
+
+Antes de las validaciones finales de cada tarea:
+
+1. ejecuta Prettier unicamente sobre los archivos modificados por la tarea;
+2. no reformatees archivos ajenos para evitar cambios fuera de alcance;
+3. ejecuta `bun run format:check`;
+4. si el check falla, corrige los archivos de la tarea y vuelve a ejecutarlo.
+
 ## Verificacion Minima
 
+- Todos los cambios: `bun run format:check`.
 - Docs: `bun run lint:md` o `bun run lint` si es barato.
 - JS: `bun run lint`.
 - Templates/layouts/CSS email: `bun run build` y `bun run validate-email`.
