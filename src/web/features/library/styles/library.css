@@ -1,4 +1,5 @@
 /* Library Component - Additional Custom Styles */
+
 /* Styles that are imported after tailwind.css to extend with custom CSS */
 
 /* Reset and base styles */
@@ -105,6 +106,7 @@ body {
 
 .component-item-icon {
   @apply w-5 h-5 inline-block align-middle text-slate-600 dark:text-slate-300;
+
   margin-right: 0.5rem;
 }
 
@@ -131,6 +133,7 @@ body {
 
 .component-group-header-icon {
   @apply w-5 h-5 text-slate-700 dark:text-amber-300;
+
   margin-right: 0.5rem;
 }
 
@@ -179,6 +182,7 @@ body {
 /* Dot that slides inside the toggle */
 .toggle-switch-input::before {
   content: "";
+
   @apply absolute w-5 h-5 bg-white rounded-full top-0.5 left-0.5
     transition-all duration-300 shadow-sm;
 }

@@ -1,4 +1,5 @@
 /* Home (Dashboard) Feature Styles */
+
 /* Extracted from src/index.html */
 
 .preview-wrapper {
@@ -23,13 +24,13 @@
 
 /* Template cards enhancement */
 #template-list a {
-  --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px -1px rgb(0 0 0 / 10%);
 }
 
 #template-list a:hover {
-  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 10%), 0 4px 6px -4px rgb(0 0 0 / 10%);
 }
 
 .dark #template-list a:hover {
-  --tw-shadow: 0 10px 15px -3px rgb(15 23 42 / 0.3);
+  --tw-shadow: 0 10px 15px -3px rgb(15 23 42 / 30%);
 }
