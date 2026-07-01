@@ -58,6 +58,20 @@ No declares un cambio terminado sin indicar que verificacion ejecutaste.
 
 ## Git
 
+### Ramas del roadmap
+
+- Antes de modificar una tarea `F0-T1`, `F1-T2` o equivalente, actualiza
+  `master` y crea `feature/<codigo-de-tarea>` en minúsculas.
+- Mantén una sola tarea por rama y abre su PR directamente contra `master`.
+- No crees ramas intermedias por fase.
+- Integra la rama solo después de la revisión independiente y las validaciones
+  requeridas.
+- No incrementes la versión por tarea; la última tarea de cada fase gestiona la
+  versión, changelog, tag y release definidos en `PLAN.md`.
+- No reescribas el historial por tareas antiguas que ya estén en `master`.
+
+### Commits
+
 Usa Conventional Commits estrictos:
 
 ```text
