@@ -26,7 +26,7 @@
     "tailwindCSS.emmetCompletions": true,
     "tailwindCSS.experimental.configFile": {
       "./tailwind.config.js": "./src/web/**/*.{html,js,ts,jsx,tsx}",
-      "./tailwind.email.config.js": "./src/emails/**/*.html"
+      "./tailwind.email.config.js": "./src/emails/**/*.html",
     },
     "tailwindCSS.experimental.classRegex": [
       [
@@ -36,7 +36,7 @@
       [
         "<x-[^>]*class=\"([^\"]*)\"",
         "([a-zA-Z0-9\\-:]+)"
-      ] // Para detectar clases dentro de tus tags <x-main>
+      ], // Para detectar clases dentro de tus tags <x-main>
     ],
     "tailwindCSS.files.exclude": [
       "**/.git/**",
@@ -53,24 +53,19 @@
       "spec-char-escape": false, // Para que no chille con tus tags [[ ]]
     },
     "files.exclude": {
-      "**/.git": true,
-      "**/.svn": true,
-      "**/.hg": true,
-      "**/.DS_Store": true,
-      "**/Thumbs.db": true,
-      "**/node_modules": true,
-      "**/.next": true,
-      "**/.swc": true,
-      "**/.yarn": true,
-      "**/.stylelintcache": true,
-      "**/tsconfig.tsbuildinfo": true,
-      ".agent": true,
-      ".codex": true,
-      ".agents": true,
-      ".github": true,
-      ".claude": true
+      "**/.agent/**": true,
+      "**/.agents/**": true,
+      "**/.cache/**": true,
+      "**/.claude/**": true,
+      "**/.git/**": true,
+      "**/.husky/**": true,
+      "**/.vscode/**": true,
+      "**/.codex/**": true,
+      "**/.github/**": true,
+      "**/dist/**": false,
+      "**/node_modules/**": true,
+      "**/screenshots/**": false,
     },
-    "explorerExclude.backup": {},
     "remote.autoForwardPortsFallback": 0,
   },
   "extensions": {
@@ -78,6 +73,7 @@
       "bradlc.vscode-tailwindcss",
       "htmlhint.vscode-htmlhint",
       "irongeek.vscode-caniemail",
+      "peterschmalfeldt.explorer-exclude",
       "vincaslt.highlight-matching-tag",
       "esbenp.prettier-vscode",
       "formulahendry.auto-close-tag",
