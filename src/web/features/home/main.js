@@ -1,5 +1,5 @@
 /**
- * @file Home page (Email Factory Dashboard) entry point
+ * @file Home page (EmailForge Toolkit) entry point
  * Handles template listing and grid initialization for index.html
  */
 
