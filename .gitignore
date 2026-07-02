@@ -19,8 +19,7 @@ node_modules
 #!.yarn/cache
 .pnp.*
 
-# Screenshots y archivos temporales
-screenshots/
+# Archivos temporales de screenshots exportados (generados, no commiteados)
 .temp-screenshots/
 
 # Local cache (copy-html renders, preview hydration — never commit)

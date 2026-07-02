@@ -5,8 +5,8 @@
 - Proyecto: EmailForge Toolkit
 - Fase actual: Fase 0 — Estabilización mínima publicable
 - Tarea actual: F0-T6 — README, capturas, CHANGELOG y Release v1.1.0
-- Estado: Pendiente
-- Última actualización: 2026-06-30
+- Estado: En progreso
+- Última actualización: 2026-07-01
 
 ## Tareas completadas
 
@@ -66,7 +66,7 @@ Completada el 2026-06-30.
 
 ### F0-T6 — README, capturas, CHANGELOG y Release v1.1.0
 
-- Estado: Pendiente.
+- Estado: En progreso.
 - Dependencias: F0-T1..T5 (todas completadas).
 
 ## Validaciones
