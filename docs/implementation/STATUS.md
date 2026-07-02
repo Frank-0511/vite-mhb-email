@@ -136,10 +136,11 @@ Completada el 2026-07-01.
 - F0-T5: las URLs hardcodeadas de `images.tenpo.cl` en `supporting-section`
   se reemplazaron por variables ESP `{{ }}` en lugar de eliminar el partial,
   ya que el partial tiene valor estructural para futuros templates.
-- F0-T6: el browser subagent no pudo conectarse al dev server local (CDP no
-  disponible en el entorno); se usaron `wkhtmltoimage` (disponible en el
-  sistema) para las capturas del email compilado y `generate_image` para la
-  captura representativa del dashboard.
+- F0-T6: las capturas del email compilado se generaron con `wkhtmltoimage`
+  sobre el HTML real de `dist/`. `dashboard.png` se regeneró como captura real
+  (Vite dev server + Chrome headless vía `puppeteer-core`, apuntando al
+  ejecutable de Chrome de Windows) tras confirmar que el subagente de
+  navegador inicial no pudo conectar por CDP dentro de WSL.
 - F0-T6: el GitHub Release requiere push a origin + creación manual/API desde
   GitHub; el tag `v1.1.0` está creado localmente y disponible para push.
 
