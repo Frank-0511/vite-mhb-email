@@ -1,12 +1,33 @@
-# vite-mhb-email
+# EmailForge Toolkit
 
-Sistema de desarrollo, preview, validacion y exportacion de templates HTML de email.
-Integra **Bun**, **Vite**, **Maizzle** y **Handlebars** para editar emails con
-preview local, compilar HTML compatible con clientes de email y generar archivos
-finales planos en `dist/<template>.html`.
+[![CI](https://github.com/Frank-0511/vite-mhb-email/actions/workflows/ci.yml/badge.svg)](https://github.com/Frank-0511/vite-mhb-email/actions/workflows/ci.yml)
 
-El proyecto esta pensado para templates que luego se suben a SendGrid, Mailtrap u
-otro ESP que use variables `{{ }}`.
+Sistema de desarrollo, preview, validacion y exportacion de templates HTML de
+email. Integra **Bun**, **Vite**, **Maizzle** y **Handlebars** para editar
+emails con preview local, compilar HTML compatible con clientes de email y
+generar archivos finales planos en `dist/<template>.html`.
+
+---
+
+## El problema
+
+Crear emails HTML compatibles con Gmail, Outlook y Apple Mail es tedioso: el
+CSS debe estar inline, las imagenes requieren atributos de dimension, las
+variables del ESP deben quedar intactas en el output y verificar el resultado en
+distintos viewports requiere cambiar archivos a mano.
+
+## La solucion
+
+EmailForge Toolkit te da un entorno de desarrollo local completo para emails:
+
+- **Preview en vivo** con datos de muestra renderizados por Handlebars.
+- **Compilacion con Maizzle** que aplana el CSS y preserva las variables ESP.
+- **Validacion de compatibilidad** con gate que bloquea el build ante errores
+  reales (CSS no soportado, imagenes sin dimensiones, etc.).
+- **Libreria de componentes** con schema editable desde la UI.
+- **CLI interactivo** para crear templates, enviar a Mailtrap y exportar PNG.
+
+---
 
 ## Stack
 
@@ -18,23 +39,87 @@ otro ESP que use variables `{{ }}`.
 | [Handlebars](https://handlebarsjs.com)  | Datos de preview sin consumir variables del ESP       |
 | [Tailwind CSS](https://tailwindcss.com) | CSS de preview y CSS especializado para email         |
 
-## Flujo Principal
+---
 
-1. Editar templates en `src/emails/templates/<template>/`.
-2. Previsualizar con Vite desde el dashboard.
-3. Renderizar datos locales de preview con Handlebars.
-4. Compilar con Maizzle mediante `bun run build`.
-5. Inyectar ajustes de email y validar compatibilidad.
-6. Obtener HTML final plano en `dist/<template>.html`.
+## Arquitectura
+
+```text
+src/
+├── emails/
+│   ├── layouts/        # Layouts base de email (main.html, layout-alt.html)
+│   ├── partials/       # Componentes reutilizables con schema.json
+│   │   └── organisms/
+│   │       ├── hero/
+│   │       ├── key-value-card/
+│   │       └── supporting-section/
+│   ├── styles/         # CSS especializado para email (Tailwind email config)
+│   └── templates/      # Templates de producto (index.html + data.json)
+│       ├── welcome/
+│       ├── example/
+│       └── user-created/
+└── web/                # Dashboard Vite (preview + libreria de componentes)
+    ├── features/
+    │   ├── home/       # Lista de templates
+    │   ├── preview/    # Editor + iframe + viewport controls
+    │   └── library/    # Libreria de componentes con form-renderer
+    └── shared/
+
+scripts/
+├── build/              # Pipeline: build.js, validate-email-html.js, check-html-size.js
+├── cli/                # CLI de 8 acciones (modular)
+├── exporters/          # Export PNG (wkhtmltoimage → puppeteer fallback)
+├── generators/         # Generador de templates (g:email)
+├── shared/             # Utilidades: handlebars, paths, env, path-safety
+└── vite/
+    ├── api/            # Endpoints Vite: /api/render, /api/copy-html, etc.
+    ├── plugins/        # Plugins Vite custom
+    └── services/       # maizzle-compiler.js con cache por template+theme+dataHash
+```
+
+El pipeline principal es:
+
+```text
+[editar template] → [bun run dev] → [preview Handlebars] → [bun run build]
+      → [Maizzle inline CSS] → [flatten dist/<t>.html] → [validar compatibilidad]
+```
+
+---
+
+## Capturas
+
+### Dashboard — lista de templates
+
+![Dashboard de templates](screenshots/dashboard.png)
+
+### Preview de email — escritorio
+
+![Preview desktop del email Welcome](screenshots/email-welcome-desktop.png)
+
+### Preview de email — movil (375 px)
+
+![Preview mobile del email Welcome](screenshots/email-welcome-mobile.png)
+
+---
+
+## Instalacion
+
+```bash
+git clone https://github.com/Frank-0511/vite-mhb-email.git
+cd vite-mhb-email
+bun install
+```
+
+> Requiere **Node.js >= 20** y **Bun >= 1.0.0**.
+
+---
 
 ## Desarrollo
 
 ```bash
-bun install
 bun run dev
 ```
 
-Vite abre el dashboard local. Desde ahi puedes:
+Vite abre el dashboard local en `http://localhost:5173`. Desde ahi puedes:
 
 - ver todos los templates disponibles;
 - abrir el preview/editor de cada email;
@@ -49,14 +134,16 @@ Vite abre el dashboard local. Desde ahi puedes:
 | `/preview` | Preview/editor de templates              |
 | `/library` | Libreria de componentes HTML para emails |
 
+---
+
 ## Build de Produccion
 
 ```bash
 bun run build
 ```
 
-El comando oficial ejecuta lint y luego el pipeline del proyecto. No uses
-`maizzle build` como comando final directo.
+El comando ejecuta lint y luego el pipeline del proyecto. No uses `maizzle build`
+como comando final directo.
 
 El build hace lo siguiente:
 
@@ -65,11 +152,13 @@ El build hace lo siguiente:
 - conserva las variables ESP `{{ variable }}`;
 - inyecta media queries necesarias para email;
 - aplana la salida a `dist/<template>.html`;
-- valida tamano y compatibilidad del HTML generado.
+- valida tamano y compatibilidad del HTML generado;
+- **falla con exit code 1 si hay errores de compatibilidad** (CSS no soportado,
+  imagenes sin dimensiones, etc.); los warnings no bloquean.
+
+---
 
 ## Delimitadores
-
-El proyecto usa dos sistemas de variables:
 
 | Sintaxis              | Uso                                             |
 | --------------------- | ----------------------------------------------- |
@@ -77,54 +166,10 @@ El proyecto usa dos sistemas de variables:
 | `{{ variable }}`      | Variables del ESP, renderizadas solo en preview |
 
 Durante el preview, Handlebars usa `data.json` para mostrar valores de ejemplo.
-Durante el build final, las variables `{{ }}` quedan intactas para que el ESP las
-resuelva al enviar el email.
+Durante el build final, las variables `{{ }}` quedan intactas para que el ESP
+las resuelva al enviar el email.
 
-## Estructura
-
-```text
-src/
-├── emails/
-│   ├── layouts/
-│   │   └── main.html
-│   ├── partials/
-│   │   └── organisms/
-│   │       └── hero/
-│   │           ├── hero-v1.html
-│   │           ├── hero-v2.html
-│   │           ├── index.html
-│   │           └── schema.json
-│   ├── styles/
-│   │   └── tailwind.email.css
-│   └── templates/
-│       ├── welcome/
-│       │   ├── index.html
-│       │   └── data.json
-│       └── user-created/
-│           ├── index.html
-│           └── data.json
-└── web/
-    ├── index.html
-    ├── features/
-    │   ├── home/
-    │   ├── library/
-    │   └── preview/
-    └── shared/
-        ├── styles/
-        └── utils/
-
-scripts/
-├── build/
-├── cli/
-├── exporters/
-├── generators/
-├── mail/
-├── shared/
-└── vite/
-    ├── api/
-    ├── plugins/
-    └── services/
-```
+---
 
 ## Anatomia de un Template
 
@@ -152,14 +197,21 @@ Cada template debe tener datos de preview:
 }
 ```
 
-## Component Library
+---
 
-La libreria vive en `src/web/features/library/` y consume componentes de email
-desde `src/emails/partials/`.
+## Componentes
 
-Los componentes pueden incluir un `schema.json` para describir campos editables
-en la UI de la libreria. El preview renderiza el HTML del componente sin cambiar
-el pipeline final de Maizzle.
+Los componentes viven en `src/emails/partials/` y pueden incluir un `schema.json`
+para describir campos editables en la UI de la libreria.
+
+```bash
+# Crear un nuevo template
+bun run g:email <nombre>
+```
+
+El generador crea `src/emails/templates/<nombre>/{index.html,data.json}`.
+
+---
 
 ## CLI
 
@@ -167,8 +219,6 @@ el pipeline final de Maizzle.
 bun run cli
 bun run cli --help
 ```
-
-Opciones principales:
 
 | Opcion | Accion                                               |
 | ------ | ---------------------------------------------------- |
@@ -182,24 +232,19 @@ Opciones principales:
 | `8`    | Validar compatibilidad email                         |
 | `0`    | Salir                                                |
 
-### Exportar PNG
+---
+
+## Validacion y Calidad
 
 ```bash
-bun run export-screenshot nombre-template
-```
-
-Genera `screenshots/nombre-template.png` a partir del HTML compilado y los datos
-de preview.
-
-## Validacion
-
-```bash
-bun run lint
+bun run lint          # HTML + JS + Markdown + JSON + CSS
 bun run validate-email
+bun run typecheck     # JSDoc + checkJs (scripts/shared + scripts/build)
+bun run test          # bun test (*.test.js)
 bun run format:check
 ```
 
-Reglas principales de compatibilidad email:
+### Reglas de compatibilidad email
 
 | Severidad | Regla                   | Valida                                    |
 | --------- | ----------------------- | ----------------------------------------- |
@@ -214,9 +259,11 @@ Reglas principales de compatibilidad email:
 | Info      | `color-scheme-meta`     | Metadata de color scheme                  |
 | Info      | `nested-tables-depth`   | Profundidad de tablas anidadas            |
 
-## Variables de Entorno
+Los errores bloquean el build. Los warnings son informativos.
 
-Copia `.env.example` a `.env` y completa solo lo que necesites:
+---
+
+## Variables de Entorno
 
 ```bash
 cp .env.example .env
@@ -248,34 +295,38 @@ TEST_OUTLOOK_TO=
 TEST_APPLE_TO=
 ```
 
-## Comandos Oficiales
+---
+
+## Scripts de Referencia
 
 ```bash
-bun install
-bun run dev
-bun run build
-bun run lint
-bun run validate-email
-bun run cli
-bun run format
-bun run format:check
+bun install              # Instalar dependencias
+bun run dev              # Servidor de desarrollo
+bun run build            # Build de produccion (lint + Maizzle + validacion)
+bun run test             # Suite de tests (bun:test)
+bun run test:watch       # Tests en modo watch
+bun run typecheck        # Verificacion de tipos JSDoc
+bun run lint             # Lint completo (HTML / JS / Markdown / JSON / CSS)
+bun run validate-email   # Solo el validador de compatibilidad email
+bun run cli              # Interfaz CLI interactiva
+bun run format           # Aplicar Prettier
+bun run format:check     # Verificar formato Prettier
+bun run build-selective  # Build de templates especificos
+bun run check-size       # Verificar tamano del HTML generado
+bun run agents:sync      # Sincronizar skills de agentes
 ```
 
-Scripts adicionales utiles:
-
-```bash
-bun run build-selective
-bun run check-size
-bun run agents:sync
-```
+---
 
 ## Requisitos
 
 - Node.js >= 20
 - Bun >= 1.0.0
 
+---
+
 ## Notas para Agentes
 
-Las reglas operativas viven en `AGENTS.md` y en las skills repo-locales de
+Las reglas operativas viven en `docs/AGENTS.md` y en las skills repo-locales de
 `docs/agent-skills/`. Antes de modificar build, Vite, Maizzle, Handlebars,
 templates, CLI, validadores o scripts, lee la skill correspondiente.

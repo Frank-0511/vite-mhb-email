@@ -1,6 +1,6 @@
 {
   "name": "vite-mhb-email",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Email template development toolkit integrating Maizzle, Handlebars and Vite",
   "keywords": [
     "email",
