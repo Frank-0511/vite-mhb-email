@@ -38,6 +38,3 @@ AI_WORKFLOW.md
 .github/skills
 AGENTS.md
 CLAUDE.md
-
-# Build output (reproducible via bun run build)
-dist/
