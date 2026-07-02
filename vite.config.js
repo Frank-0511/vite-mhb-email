@@ -1,6 +1,7 @@
 import { resolve } from "node:path";
 import { defineConfig } from "vite";
 import { dashboardPlugin } from "./scripts/vite/plugins/dashboard.js";
+import { lucideInlinePlugin } from "./scripts/vite/plugins/lucide-inline.js";
 import { maizzlePlugin } from "./scripts/vite/plugins/maizzle.js";
 import { createPageResolverPlugin } from "./scripts/vite/plugins/page-resolver.js";
 
@@ -17,7 +18,12 @@ export default defineConfig({
       ignored: ["**/dist/**", "**/.cache/**"],
     },
   },
-  plugins: [maizzlePlugin(rootDir), dashboardPlugin(rootDir), createPageResolverPlugin()],
+  plugins: [
+    maizzlePlugin(rootDir),
+    lucideInlinePlugin(),
+    dashboardPlugin(rootDir),
+    createPageResolverPlugin(),
+  ],
   build: {
     outDir: "../../dist",
     emptyOutDir: true,

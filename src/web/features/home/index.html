@@ -65,7 +65,16 @@
           <i data-lucide="book-open" class="w-4 h-4"></i>
           <span>Components</span>
         </a>
-        <theme-toggle></theme-toggle>
+        <theme-toggle>
+          <button
+            type="button"
+            aria-label="Toggle theme"
+            class="w-9 h-9 flex items-center justify-center rounded-md border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-700"
+          >
+            <i data-lucide="sun" class="w-5 h-5 text-slate-600 dark:hidden"></i>
+            <i data-lucide="moon" class="w-5 h-5 text-amber-400 hidden dark:block"></i>
+          </button>
+        </theme-toggle>
       </div>
     </header>
 
