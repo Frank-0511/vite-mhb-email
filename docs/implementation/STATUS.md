@@ -5,7 +5,7 @@
 - Proyecto: EmailForge Toolkit
 - Fase actual: Fase 0 — Estabilización mínima publicable
 - Tarea actual: F0-T6 — README, capturas, CHANGELOG y Release v1.1.0
-- Estado: En progreso
+- Estado: En revisión
 - Última actualización: 2026-07-01
 
 ## Tareas completadas
@@ -62,21 +62,37 @@ Completada el 2026-06-30.
 - `grep -ri "tenpo|challenge|curso|clone" src docs README.md` sin coincidencias
   relevantes; lint, build, typecheck, test y format:check en verde.
 
+### F0-T6 — README, capturas, CHANGELOG y Release v1.1.0 ✅ (En revisión)
+
+Completada el 2026-07-01.
+
+- README reescrito con badge de CI, sección problema/solución, arquitectura,
+  capturas embebidas (dashboard, email desktop, email móvil), tabla de reglas de
+  compatibilidad y referencia completa de scripts incluidos `test`/`typecheck`.
+- `screenshots/`: `dashboard.png`, `email-welcome-desktop.png`,
+  `email-welcome-mobile.png` generados y commiteados; `screenshots/` eliminado
+  de `.gitignore`.
+- `CHANGELOG.md` creado siguiendo Keep a Changelog para v1.1.0.
+- `package.json` bumpeado de `1.0.0` a `1.1.0`.
+- Tag `v1.1.0` creado localmente.
+- Commit en rama `feature/f0-t6` listo para merge a `master`.
+
 ## Tarea actual
 
 ### F0-T6 — README, capturas, CHANGELOG y Release v1.1.0
 
-- Estado: En progreso.
-- Dependencias: F0-T1..T5 (todas completadas).
+- Estado: En revisión.
+- Pendiente de revisión humana antes de: push a origin, merge a master y GitHub
+  Release v1.1.0.
 
 ## Validaciones
 
 | Comando                | Estado | Resultado resumido                                 |
 | ---------------------- | ------ | -------------------------------------------------- |
-| `bun run lint`         | Verde  | 0 errores (2026-06-30)                             |
+| `bun run lint`         | Verde  | 0 errores (2026-07-01)                             |
 | `bun run typecheck`    | Verde  | 0 errores; alcance: scripts/shared + scripts/build |
-| `bun run test`         | Verde  | 13 tests aprobados (2026-06-30)                    |
-| `bun run build`        | Verde  | 3 templates, 0 errores (2026-06-30)                |
+| `bun run test`         | Verde  | 13 tests aprobados (2026-07-01)                    |
+| `bun run build`        | Verde  | 3 templates, 0 errores, 3 warnings no bloqueantes  |
 | `bun run format:check` | Verde  | formato correcto en todos los archivos             |
 
 ## Decisiones persistentes
@@ -97,6 +113,9 @@ Completada el 2026-06-30.
   de GitHub Actions).
 - La caché de Bun usa `bun.lock` (texto) como clave para invalidar ante
   cambios de dependencias.
+- `screenshots/` se commitea al repositorio (las capturas son artefactos de
+  documentación, no de build); `.gitignore` actualizado para excluir solo
+  `.temp-screenshots/`.
 
 ## Desviaciones
 
@@ -117,6 +136,12 @@ Completada el 2026-06-30.
 - F0-T5: las URLs hardcodeadas de `images.tenpo.cl` en `supporting-section`
   se reemplazaron por variables ESP `{{ }}` en lugar de eliminar el partial,
   ya que el partial tiene valor estructural para futuros templates.
+- F0-T6: el browser subagent no pudo conectarse al dev server local (CDP no
+  disponible en el entorno); se usaron `wkhtmltoimage` (disponible en el
+  sistema) para las capturas del email compilado y `generate_image` para la
+  captura representativa del dashboard.
+- F0-T6: el GitHub Release requiere push a origin + creación manual/API desde
+  GitHub; el tag `v1.1.0` está creado localmente y disponible para push.
 
 ## Bloqueos
 
@@ -124,8 +149,9 @@ Completada el 2026-06-30.
 
 ## Handoff
 
-- F0-T5 marcada como `Completada` tras revisión de criterios de aceptación,
-  validaciones y desviaciones.
-- Siguiente tarea: F0-T6 — README, capturas, CHANGELOG y Release v1.1.0
-  (no iniciar sin aprobación explícita).
-- Worktree con cambios pendientes (sin commit).
+- F0-T6 marcada como `En revisión`.
+- Verificar: diff de README, CHANGELOG, package.json (v1.1.0), .gitignore,
+  screenshots/, tag v1.1.0.
+- Acción pendiente del usuario: push de la rama `feature/f0-t6` y tag `v1.1.0`
+  a origin, merge a `master` y creación del GitHub Release v1.1.0.
+- No iniciar F1-T1 sin aprobación explícita del Checkpoint 0.
