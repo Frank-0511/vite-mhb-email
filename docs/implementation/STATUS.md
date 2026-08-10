@@ -3,9 +3,9 @@
 ## Resumen
 
 - Proyecto: EmailForge Toolkit
-- Fase actual: Fase 0 — Estabilización mínima publicable
-- Tarea actual: F0-T6 — README, capturas, CHANGELOG y Release v1.1.0
-- Estado: En revisión
+- Fase actual: Fase 1 — Completar el flujo de producto (pendiente de inicio)
+- Tarea actual: F1-T1 — Validador de variables faltantes (`{{ var }}` vs `data.json`)
+- Estado: Pendiente
 - Última actualización: 2026-08-10
 
 ## Tareas completadas
@@ -63,9 +63,9 @@ Completada el 2026-06-30.
 - `grep -ri "tenpo|challenge|curso|clone" src docs README.md` sin coincidencias
   relevantes; lint, build, typecheck, test y format:check en verde.
 
-### F0-T6 — README, capturas, CHANGELOG y Release v1.1.0 ✅ (En revisión)
+### F0-T6 — README, capturas, CHANGELOG y Release v1.1.0 ✅
 
-Implementación completada el 2026-07-01; integrada en `master` el 2026-08-10.
+Completada el 2026-08-10 tras revisión independiente y merge del PR #6.
 
 - README reescrito con badge de CI, sección problema/solución, arquitectura,
   capturas embebidas (dashboard, email desktop, email móvil), tabla de reglas de
@@ -85,11 +85,12 @@ Implementación completada el 2026-07-01; integrada en `master` el 2026-08-10.
 
 ## Tarea actual
 
-### F0-T6 — README, capturas, CHANGELOG y Release v1.1.0
+### F1-T1 — Validador de variables faltantes (`{{ var }}` vs `data.json`)
 
-- Estado: En revisión.
-- Pendiente de revisión humana del Release publicado y de aprobación del
-  Checkpoint 0.
+- Estado: Pendiente.
+- Dependencias verificadas: F0-T1 y F0-T2 completadas.
+- No iniciada. Debe reportar variables de template ausentes en `data.json` y
+  sobrantes antes de exportar, sin consumir variables ESP intencionales.
 
 ## Validaciones
 
@@ -159,12 +160,8 @@ Implementación completada el 2026-07-01; integrada en `master` el 2026-08-10.
 
 ## Handoff
 
-- F0-T6 marcada como `En revisión`.
-- Verificado: cambios de F0-T6 integrados en `master`, checks locales en verde,
-  CI exitoso del commit `0d52a094a7332093396d53ec6696bffd58f2d15c`, tag remoto
-  `v1.1.0` y GitHub Release publicado.
-- Pendiente de integrar: commit documental de trazabilidad; las notas
-  corregidas del Release y la metadata remota (description/topics) ya fueron
-  publicadas y verificadas.
-- Acción pendiente del usuario: revisar el Release y aprobar o rechazar el
-  Checkpoint 0. No iniciar F1-T1 sin esa aprobación explícita.
+- F0-T6 completada: el Release, metadata y trazabilidad fueron revisados y el
+  PR #6 se integró en `master` el 2026-08-10.
+- Siguiente tarea a iniciar cuando se autorice: F1-T1 — Validador de variables
+  faltantes (`{{ var }}` vs `data.json`).
+- No se inició trabajo de F1-T1 en este cierre.
