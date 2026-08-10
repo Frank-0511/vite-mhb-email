@@ -1,12 +1,5 @@
 import { createHash } from "node:crypto";
-import {
-  lstat,
-  readFile,
-  readdir,
-  readlink,
-  realpath,
-  stat,
-} from "node:fs/promises";
+import { lstat, readFile, readdir, readlink, realpath, stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -33,11 +26,7 @@ function validateRelativePath(value, field) {
   }
 
   const normalized = path.normalize(value);
-  if (
-    path.isAbsolute(value) ||
-    normalized === ".." ||
-    normalized.startsWith(`..${path.sep}`)
-  ) {
+  if (path.isAbsolute(value) || normalized === ".." || normalized.startsWith(`..${path.sep}`)) {
     throw new Error(`${field} debe permanecer dentro del repositorio: ${value}`);
   }
 
@@ -68,7 +57,15 @@ export async function inspectPath(targetPath) {
   try {
     const canonical = await realpath(resolved);
     const canonicalState = await stat(canonical);
-    return { kind: "symlink", path: targetPath, current, link, resolved, canonical, canonicalState };
+    return {
+      kind: "symlink",
+      path: targetPath,
+      current,
+      link,
+      resolved,
+      canonical,
+      canonicalState,
+    };
   } catch (error) {
     if (error?.code === "ENOENT") {
       return { kind: "broken-symlink", path: targetPath, current, link, resolved };
@@ -83,7 +80,9 @@ export async function loadConfig() {
     raw = await readFile(configPath, "utf8");
   } catch (error) {
     if (error?.code === "ENOENT") {
-      throw new Error(`No existe el manifiesto ${path.relative(projectRoot, configPath)}.`);
+      throw new Error(`No existe el manifiesto ${path.relative(projectRoot, configPath)}.`, {
+        cause: error,
+      });
     }
     throw error;
   }
@@ -92,7 +91,9 @@ export async function loadConfig() {
   try {
     config = JSON.parse(raw);
   } catch (error) {
-    throw new Error(`El manifiesto no contiene JSON válido: ${error.message}`);
+    throw new Error(`El manifiesto no contiene JSON válido: ${error.message}`, {
+      cause: error,
+    });
   }
 
   if (config.version !== 1) {
@@ -166,9 +167,7 @@ export async function loadConfig() {
       (pattern) => pattern.replace(/\/$/, "") === target.targetRelative,
     );
     if (!ignored) {
-      throw new Error(
-        `El target ${target.targetRelative} debe estar declarado en gitignore.`,
-      );
+      throw new Error(`El target ${target.targetRelative} debe estar declarado en gitignore.`);
     }
   }
 
@@ -278,7 +277,11 @@ export async function classifyTarget(target, source) {
       inspection,
     };
   }
-  if (target.mode === "copy" && inspection.kind === "file" && (await isManagedCopy(target.target))) {
+  if (
+    target.mode === "copy" &&
+    inspection.kind === "file" &&
+    (await isManagedCopy(target.target))
+  ) {
     return { kind: "managed-copy", inspection };
   }
   return { kind: inspection.kind === "invalid" ? "invalid" : "manual", inspection, source };

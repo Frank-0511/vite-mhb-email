@@ -36,7 +36,9 @@ async function checkTarget(target) {
   if (current.kind === "manual") return `${target.targetRelative} no es un target administrado`;
   if (current.kind === "invalid") return `${target.targetRelative} tiene un tipo no soportado`;
   if (current.kind === "managed-symlink") {
-    return target.mode === "symlink" ? null : `${target.targetRelative} no coincide con el modo copy`;
+    return target.mode === "symlink"
+      ? null
+      : `${target.targetRelative} no coincide con el modo copy`;
   }
   if (target.mode !== "copy") return `${target.targetRelative} no coincide con el modo symlink`;
 

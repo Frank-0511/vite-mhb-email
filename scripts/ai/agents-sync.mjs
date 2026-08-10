@@ -66,9 +66,8 @@ export async function buildSyncPlan() {
 
     await validateTargetParent(target);
     const expected = target.mode === "copy" ? await expectedCopy(target) : null;
-    const current = targetState.kind === "managed-copy"
-      ? await readFile(target.target, "utf8")
-      : null;
+    const current =
+      targetState.kind === "managed-copy" ? await readFile(target.target, "utf8") : null;
     entries.push({
       target,
       expected,
@@ -97,14 +96,21 @@ async function applyEntry(entry) {
   await mkdir(path.dirname(entry.target.target), { recursive: true });
   if (entry.target.mode === "copy") {
     await writeFile(entry.target.target, entry.expected, "utf8");
-    console.log(`${entry.target.targetRelative}: ${entry.action === "create" ? "copia creada" : "copia actualizada"}`);
+    console.log(
+      `${entry.target.targetRelative}: ${entry.action === "create" ? "copia creada" : "copia actualizada"}`,
+    );
     return;
   }
 
   const relativeSource = path.relative(path.dirname(entry.target.target), entry.target.source);
   const source = await classifySource(entry.target);
-  const linkType = source.kind === "directory" ? (process.platform === "win32" ? "junction" : "dir") : "file";
-  await symlink(linkType === "junction" ? entry.target.source : relativeSource, entry.target.target, linkType);
+  const linkType =
+    source.kind === "directory" ? (process.platform === "win32" ? "junction" : "dir") : "file";
+  await symlink(
+    linkType === "junction" ? entry.target.source : relativeSource,
+    entry.target.target,
+    linkType,
+  );
   console.log(`${entry.target.targetRelative}: enlace creado`);
 }
 
