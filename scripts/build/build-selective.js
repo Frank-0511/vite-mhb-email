@@ -13,12 +13,15 @@ import { existsSync } from "node:fs";
 import { readFile, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { validateEmailHtml } from "./validate-email-html.js";
+import { assertValidTemplateName } from "../shared/path-safety.js";
 
 const rootDir = process.cwd();
 const templateName = process.argv[2];
 
-if (!templateName) {
-  console.error("❌ Template name is required");
+try {
+  assertValidTemplateName(templateName);
+} catch {
+  console.error("❌ Template name must use only lowercase letters, numbers, and hyphens");
   console.error("Usage: bun run build-selective <templateName>");
   console.error("Example: bun run build-selective user-created");
   process.exit(1);

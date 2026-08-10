@@ -2,10 +2,10 @@
 
 ## Resumen
 
-- ID activo: ninguno
-- Estado: `Pendiente`
-- Implementador: no asignado
-- Revisor o autoridad de cierre: pendiente de asignación por tarea
+- ID activo: MHB-01
+- Estado: `En revisión`
+- Implementador: Codex (perfil seguridad/CLI)
+- Revisor o autoridad de cierre: revisor de seguridad independiente
 - Última actualización: 2026-08-10
 - Contrato estable: `docs/implementation/PLAN.md`
 
@@ -15,19 +15,26 @@ en `En revisión`; otra autoridad decide `Completada`.
 
 ## Últimas entregas
 
-- Sin entregas registradas en esta fuente de estado.
+- MHB-01 entregado a revisión: guard, alias Bun y exportación PNG portable con Puppeteer.
 
 ## Validaciones
 
-| Fecha | ID  | Control | Resultado    | Nota                        |
-| ----- | --- | ------- | ------------ | --------------------------- |
-| —     | —   | —       | No ejecutado | Registrar al trabajar un ID |
+| Fecha      | ID     | Control                          | Resultado | Nota                                                                             |
+| ---------- | ------ | -------------------------------- | --------- | -------------------------------------------------------------------------------- |
+| 2026-08-10 | MHB-01 | Inventario de rutas              | Verde     | Tres rutas localizadas; implementación pendiente.                                |
+| 2026-08-10 | MHB-01 | Tabla y no escritura             | Verde     | 17 casos focalizados; traversal no crea ni muta rutas.                           |
+| 2026-08-10 | MHB-01 | Lint, typecheck, formato y suite | Verde     | `bun run lint`, `bun run typecheck`, `bun run format:check` y 30 pruebas.        |
+| 2026-08-10 | MHB-01 | CLI manual válida                | Verde     | El generador confirmó `welcome` existente sin escribir.                          |
+| 2026-08-10 | MHB-01 | Alias Bun de CLI                 | Verde     | `generate:email` y `export:screenshot` reenvían argumentos y rechazan traversal. |
+| 2026-08-10 | MHB-01 | Build y compatibilidad           | Verde     | Cuatro templates compilados; 0 errores y 4 warnings de links no bloqueantes.     |
+| 2026-08-10 | MHB-01 | Exportación PNG portable         | Verde     | Puppeteer descargado por Bun exportó `welcome2.png` (25.39 KB).                  |
+| 2026-08-10 | MHB-01 | Formato global                   | Fallido   | Solo falla `welcome2/index.html`, archivo de usuario fuera del ID.               |
 
 ## Ejecuciones delegadas
 
-| Ámbito | Modelo/esfuerzo reales | Estado | Propiedad | Handoff |
-| ------ | ---------------------- | ------ | --------- | ------- |
-| —      | —                      | —      | —         | —       |
+| Ámbito | Modelo/esfuerzo reales | Estado      | Propiedad                                             | Handoff                                        |
+| ------ | ---------------------- | ----------- | ----------------------------------------------------- | ---------------------------------------------- |
+| MHB-01 | gpt-5.6-terra / alto   | En revisión | Guard, generador, exportador, build selectivo y tests | Revisión de seguridad independiente pendiente. |
 
 ## Revisión de cierre
 
@@ -39,18 +46,20 @@ en `En revisión`; otra autoridad decide `Completada`.
 
 ## Decisiones técnicas locales
 
-- Ninguna registrada.
+- El patrón permitido se conserva; el guard rechaza valores no string antes de construir rutas.
+- Puppeteer reemplaza binarios globales para que `bun install` prepare el navegador de exportación.
 
 ## Desviaciones
 
-- Ninguna registrada.
+- Los tres warnings `href="#"` existentes corresponden a MHB-21 y no bloquean MHB-01.
+- La portabilidad del exportador fue ampliada por autorización explícita del usuario.
 
 ## Bloqueos
 
-- Ninguno registrado.
+- Formato global pendiente hasta que se decida cómo tratar `src/emails/templates/welcome2/index.html`.
 
 ## Handoff
 
-- Rama y commit: pendiente del próximo ID.
-- Working tree: verificar antes de cada tarea.
-- Próxima acción: seleccionar un ID cuyas dependencias estén satisfechas.
+- Rama y commit: `feature/mhb-01`, sin commit todavía.
+- Working tree: cambios del ID y `bun.lock`; `welcome2` y `bun.lockb` quedan fuera del commit.
+- Próxima acción: formatear o excluir por decisión el template de usuario; después, revisión independiente.

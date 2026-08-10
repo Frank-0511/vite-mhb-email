@@ -67,7 +67,7 @@ src/
 scripts/
 ├── build/              # Pipeline: build.js, validate-email-html.js, check-html-size.js
 ├── cli/                # CLI de 8 acciones (modular)
-├── exporters/          # Export PNG (wkhtmltoimage → puppeteer fallback)
+├── exporters/          # Export PNG con el navegador incluido de Puppeteer
 ├── generators/         # Generador de templates (g:email)
 ├── shared/             # Utilidades: handlebars, paths, env, path-safety
 └── vite/
@@ -110,6 +110,10 @@ bun install
 ```
 
 > Requiere **Node.js >= 20** y **Bun >= 1.0.0**.
+
+La exportación PNG usa Puppeteer. `bun install` descarga un navegador compatible
+para el proyecto; no necesitas instalar `wkhtmltoimage`, Chrome ni ImageMagick
+de forma global. La primera instalación requiere conexión y espacio adicional.
 
 ---
 
