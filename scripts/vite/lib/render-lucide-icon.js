@@ -59,7 +59,11 @@ function mergeClasses(...classGroups) {
 }
 
 function escapeAttr(value) {
-  return String(value).replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
 function renderNode([tag, attrs, children]) {
