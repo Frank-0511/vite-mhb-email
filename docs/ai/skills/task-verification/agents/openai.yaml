@@ -1,0 +1,4 @@
+interface:
+  display_name: "Verificacion de tareas"
+  short_description: "Verifica cambios y prepara evidencia"
+  default_prompt: "Usa $task-verification para revisar controles, evidencia, ramas o cierres de una tarea."

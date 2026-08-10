@@ -1,0 +1,4 @@
+interface:
+  display_name: "Calidad y seguridad"
+  short_description: "Aplica controles de calidad y seguridad"
+  default_prompt: "Usa $email-quality-gates al modificar scripts, APIs, frontend, CLI o validadores de EmailForge Toolkit."
