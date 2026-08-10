@@ -197,7 +197,7 @@ Clasificación de cada elemento del brief.
 | R4  | El gate de validación (D3) podría romper el build por reglas WARNING ya presentes en plantillas actuales                      | Medio                                                                 | Solo ERROR bloquea; correr validador sobre `dist/` actual antes de activar y corregir errores previos    |
 | R5  | Husky/lint-staged + CI duplican trabajo o difieren de versiones                                                               | Bajo                                                                  | CI usa los mismos scripts `package.json`; no se cambian hooks salvo añadir `test` opcional               |
 | R6  | El validador de variables (D4) puede dar falsos positivos con helpers Handlebars (`{{#each}}`, `{{else}}`)                    | Medio                                                                 | Lista de tokens reservados + parseo que ignore bloques/helpers; cubrir con tests                         |
-| R7  | `dist/` está en el árbol de trabajo (no en `.gitignore`) y puede ensuciar diffs/CI                                            | Bajo-medio                                                            | Confirmar política de `dist/` (ignorar vs commitear) en F0-T5                                            |
+| R7  | `dist/` está en el árbol de trabajo (no en `.gitignore`) y puede ensuciar diffs/CI                                            | Bajo-medio                                                            | Versionar intencionalmente el HTML generado y revisarlo junto con los cambios de templates               |
 | R8  | Rutas WSL/Windows mixtas (`//wsl.localhost/...`) y `path.split("/")` en validador/maizzle.config                              | Bajo                                                                  | Mantener separador POSIX como hoy; no introducir rutas Windows en scripts                                |
 | R9  | Render API expone `cause` de errores Maizzle → posible fuga de rutas absolutas en la demo futura                              | Bajo                                                                  | Sanitizar paths en el payload de error (F1-T2)                                                           |
 
@@ -762,8 +762,8 @@ Clasificación de cada elemento del brief.
   incrementan patch.
 - **Demo (posterior, F3-T1):** previews estáticos pre-renderizados en GitHub
   Pages/Netlify (read-only), porque `/api/render` requiere runtime.
-- **Política de `dist/`:** decidir en F0-T5 (recomendado: no commitear artefactos
-  de build; mantener `dist/` reproducible vía `bun run build`).
+- **Política de `dist/`:** se versiona intencionalmente el HTML generado. No se
+  ignora `dist/`; `bun run build` permite regenerarlo de forma reproducible.
 
 ---
 
@@ -803,6 +803,5 @@ Las dos decisiones materiales fueron resueltas con el usuario:
 
 **No quedan preguntas bloqueantes.** Decisiones menores adoptadas como
 suposiciones razonables y documentadas (D1–D9, S1–S3); cualquiera puede
-revisarse en su checkpoint sin alterar la ruta crítica al primer hito. Punto
-abierto no bloqueante a confirmar en F0-T5: **política de `dist/` en el repo**
-(commitear vs ignorar) — recomendación: ignorar.
+revisarse en su checkpoint sin alterar la ruta crítica al primer hito. La
+política de `dist/` quedó resuelta en F0-T5: se versiona el HTML generado.

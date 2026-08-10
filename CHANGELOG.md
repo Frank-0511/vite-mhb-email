@@ -48,7 +48,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- `dist/` confirmed in `.gitignore`; build artefacts are never committed.
+- `dist/` is intentionally versioned as generated email output and is not
+  included in `.gitignore`.
 - Build no longer silently ignores compatibility validation errors.
 
 [Unreleased]: https://github.com/Frank-0511/vite-mhb-email/compare/v1.1.0...HEAD
