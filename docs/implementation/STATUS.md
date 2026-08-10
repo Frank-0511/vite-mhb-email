@@ -26,9 +26,8 @@ en `En revisión`; otra autoridad decide `Completada`.
 | 2026-08-10 | MHB-01 | Lint, typecheck, formato y suite | Verde     | `bun run lint`, `bun run typecheck`, `bun run format:check` y 30 pruebas.        |
 | 2026-08-10 | MHB-01 | CLI manual válida                | Verde     | El generador confirmó `welcome` existente sin escribir.                          |
 | 2026-08-10 | MHB-01 | Alias Bun de CLI                 | Verde     | `generate:email` y `export:screenshot` reenvían argumentos y rechazan traversal. |
-| 2026-08-10 | MHB-01 | Build y compatibilidad           | Verde     | Cuatro templates compilados; 0 errores y 4 warnings de links no bloqueantes.     |
-| 2026-08-10 | MHB-01 | Exportación PNG portable         | Verde     | Puppeteer descargado por Bun exportó `welcome2.png` (25.39 KB).                  |
-| 2026-08-10 | MHB-01 | Formato global                   | Fallido   | Solo falla `welcome2/index.html`, archivo de usuario fuera del ID.               |
+| 2026-08-10 | MHB-01 | Build y compatibilidad           | Verde     | Templates compilados; 0 errores y warnings de links no bloqueantes.              |
+| 2026-08-10 | MHB-01 | Exportación PNG portable         | Verde     | Puppeteer descargado por Bun completó una exportación PNG de prueba.             |
 
 ## Ejecuciones delegadas
 
@@ -56,10 +55,10 @@ en `En revisión`; otra autoridad decide `Completada`.
 
 ## Bloqueos
 
-- Ninguno para MHB-01; el formato pendiente pertenece a `welcome2`, archivo de usuario fuera del ID.
+- Ninguno registrado.
 
 ## Handoff
 
 - Rama y commit: `feature/mhb-01`, `9446206`.
-- Working tree: cambios del ID y `bun.lock`; `welcome2` y `bun.lockb` quedan fuera del commit.
+- Working tree: limpio tras el cierre de MHB-01.
 - Próxima acción: seleccionar el siguiente ID cuyas dependencias estén satisfechas.
