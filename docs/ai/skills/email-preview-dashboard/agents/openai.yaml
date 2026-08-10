@@ -1,0 +1,4 @@
+interface:
+  display_name: "Preview y dashboard"
+  short_description: "Mantiene la UI y APIs de preview"
+  default_prompt: "Usa $email-preview-dashboard para modificar el dashboard, preview o APIs internas de EmailForge Toolkit."

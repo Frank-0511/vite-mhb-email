@@ -1,807 +1,668 @@
-# Plan técnico de implementación — EmailForge Toolkit (`vite-mhb-email`)
-
-## Context
-
-`vite-mhb-email` es una herramienta de desarrollo de emails HTML que ya integra
-Bun + Vite + Maizzle + Handlebars + Tailwind, con dashboard, preview en vivo,
-biblioteca de componentes, CLI de 8 acciones, validador de compatibilidad y
-pipeline de build a `dist/<template>.html`. El brief de producto (EmailForge
-Toolkit) **no pide reescribir nada**: pide estabilizar y terminar lo existente,
-con foco en compilación/exportación, validación de variables, preview
-responsivo, biblioteca de componentes, CLI, compatibilidad con clientes, DX de
-instalación, pruebas/CI y calidad del README. El objetivo de este plan es llevar
-el repo desde "boilerplate maduro sin red de seguridad" hasta "producto de
-portafolio publicable", empezando por un **primer hito pequeño y publicable**
-(Release + README + capturas), sin demo desplegada todavía y manteniéndose como
-template clonable (decisiones confirmadas con el usuario).
-
-**Restricciones duras (del brief):** no reemplazar Bun, Vite, Maizzle,
-Handlebars ni Tailwind salvo incompatibilidad demostrable; conservar patrones
-útiles existentes; nada de tareas tipo "crear dashboard" o "mejorar
-arquitectura"; separar claramente MVP, mejoras posteriores y opcional.
-
----
-
-## 1. Resumen del estado actual
-
-### Stack real (verificado en `package.json`)
-
-| Pieza       | Versión                                                | Notas                                                                |
-| ----------- | ------------------------------------------------------ | -------------------------------------------------------------------- |
-| Bun         | 1.2.2 (`packageManager`)                               | runtime + package manager; lockfile `bun.lockb`                      |
-| Vite        | 8.0.10                                                 | dev server del dashboard/preview/library                             |
-| Maizzle     | `@maizzle/framework` 5.5.0 (+ pkg `maizzle` 1.1.0 CLI) | build de email                                                       |
-| Handlebars  | 4.7.9                                                  | datos de preview (no consume `{{ }}` del ESP)                        |
-| Tailwind    | 3.4.19                                                 | dos configs: `tailwind.config.js` (web) y `tailwind.email.config.js` |
-| ESLint      | 10.2.1 (flat config)                                   | + `eslint-config-prettier`                                           |
-| Prettier    | 3.8.3                                                  |                                                                      |
-| Lint extra  | htmlhint 1.9.2, markdownlint-cli2 0.22.1               |                                                                      |
-| Husky       | 9.1.7 + lint-staged 16.4.0                             | pre-commit / pre-push                                                |
-| Node engine | `>=20`                                                 |                                                                      |
-
-- **Lenguaje:** JavaScript ESM con JSDoc. **No hay TypeScript ni `tsconfig.json`**
-  (`// @ts-check` solo aparece en `eslint.config.js`). No hay typecheck.
-
-### Estructura (resumen)
-
-- `src/emails/` — `layouts/` (`main.html`, `layout-tenpo.html`), `partials/`
-  (atomic-ish: `molecules/`, `organisms/` con `index.html` + `schema.json`),
-  `styles/tailwind.email.css`, `templates/` (`example`, `user-created`,
-  `welcome`, cada uno con `index.html` + `data.json`).
-- `src/web/` — app del dashboard: `features/{home,library,preview}` + `shared/`.
-  El preview tiene `viewport-controls.js` (**selector desktop/mobile/custom ya
-  implementado**), `editor.js`, `iframe-manager.js`, `theme-manager.js`,
-  `copy-html-modal.js`, `render-api.js`, `save-reset.js`.
-- `scripts/` — `build/`, `cli/` (modular: `index/actions/ui/helpers`),
-  `exporters/` (compilers/renderers/file-manager), `generators/`, `mail/`,
-  `shared/` (handlebars, paths, env, path-safety…), `vite/` (`plugins/`, `api/`,
-  `services/maizzle-compiler.js`).
-- `docs/` — `AGENTS.md` + `agent-skills/` (stack, quality-gates,
-  email-compatibility, web-preview-dashboard, refactor-type-safety, workflow-git).
-
-### Scripts existentes
-
-`dev`, `build` (`lint` + `scripts/build/build.js`), `build-selective`,
-`check-size`, `validate-email`, `cli`, `lint` (html/js/md/json), `format`,
-`format:check`, `prepare` (husky), `g:email`, `agents:sync`.
-**No existe script `test` ni `typecheck`.**
-
-### Funcionalidades que YA existen y se conservan
-
-- Dashboard + preview en vivo con compilación on-the-fly vía `/api/render`
-  (`scripts/vite/api/render.js` → `services/maizzle-compiler.js`) y caché de
-  preview por `template+theme+dataHash`.
-- **Selector de viewport responsivo** (desktop/mobile/custom) con su test.
-- Dark/light theme en preview (transforma `prefers-color-scheme` sin tocar fuentes).
-- Biblioteca de componentes con `schema.json` por componente y form-renderer.
-- Validador de compatibilidad email con 12 reglas nombradas y severidades
-  (`scripts/build/validate-email-html.js`).
-- Pipeline de build: Maizzle → flatten a `dist/<t>.html` → `check-html-size` →
-  validate. Conserva `{{ }}` del ESP (config `expressions.missingLocal`).
-- CLI de 8 acciones (dev, build, crear template, Mailtrap, Mail-Tester, inbox
-  real, export PNG, validar) con aviso de `.env` faltante y `--help`.
-- Exportación PNG (`scripts/exporters/`) con fallbacks wkhtmltoimage → puppeteer.
-- Copy-HTML modal + selective build API.
-- `path-safety.js` (validación de nombres de template y path traversal) — patrón
-  útil a conservar.
-
----
-
-## 2. Diferencias respecto al objetivo
-
-Clasificación de cada elemento del brief.
-
-### Ya implementado
-
-- Base de stack completa (Bun, Vite, Maizzle, Handlebars, Tailwind).
-- Dashboard + preview; biblioteca de componentes; CLI; exportación.
-- **Selector de viewport escritorio/móvil** (ya existe; no rehacer).
-- Separar compilación / validación / preview / exportación (arquitectura ya
-  separada — conservar).
-- Verificar enlaces, imágenes y HTML inválido (reglas en el validador).
-- Toggle de tema claro/oscuro.
-
-### Implementado parcialmente
-
-- **Flujo elegir→editar→preview→exportar:** existe pero la "descarga del HTML
-  final y sus recursos" se cubre solo con copy-to-clipboard; falta botón de
-  descarga.
-- **Cambiar entre HTML renderizado y código fuente:** hay editor de datos +
-  iframe; el toggle "render vs source" debe verificarse/completarse.
-- **Mostrar errores de compilación con ubicación y causa:** `/api/render`
-  devuelve `500 "Internal server error"` genérico — no expone causa/ubicación a
-  la UI.
-- **Validar variables faltantes antes de exportar:** Maizzle deja `{{ var }}`
-  intacto y `missingLocal` no valida nada; no hay cruce `{{var}}` vs `data.json`.
-- **Pruebas:** existe `viewport-controls.test.js` (`bun:test`) pero **sin runner
-  conectado** (no hay script `test`, no entra en lint ni CI).
-- **Documentación:** README sólido pero faltan tabla de compatibilidad de
-  clientes embebida, guía de creación de componentes y capturas embebidas.
-- **Ejemplos reales:** solo `welcome` es profesional; `example` es scaffold
-  (`title: "{{title}}"`), `user-created` es genérico.
-
-### Pendiente
-
-- Tres plantillas profesionales: **recuperación de contraseña, recibo,
-  newsletter** (welcome ya existe → 4 en total).
-- **Contratos tipados** para plantillas, componentes y datos (typedefs central).
-- **Typecheck** (no hay tsconfig/checkJs ejecutable en CI).
-- **CI** (lint, typecheck, tests, build): `.github/` solo tiene
-  `copilot-instructions.md` y un `skills/` vacío. **No hay workflows.**
-- Pruebas de integración (build pipeline, export/render).
-- Tiempos de arranque/compilación documentados.
-- Release versionada + changelog.
-
-### Debe reconsiderarse
-
-- **Referencias a clone/challenge:** `src/emails/layouts/layout-tenpo.html` y la
-  referencia "tenpo" en `partials/organisms/supporting-section/index.html`
-  violan la regla de publicación ("repositorio sin referencias a cursos,
-  challenges o clones"). Renombrar/genericar.
-- **`analysis_results.md` en la raíz** (artefacto de análisis, lint-ignored):
-  mover a `docs/` o eliminar.
-- **`example` / `user-created`:** decidir si se reemplazan por las 4 plantillas
-  profesionales o se conservan como fixtures de prueba (recomendado: mover a
-  fixtures de test, no como plantillas "de producto").
-- **Demo desplegada:** el preview depende de `/api/render` (servidor). Confirmado
-  diferir a fase posterior con previews estáticos pre-renderizados.
-- **`private: true` / npm:** confirmado mantener como **template clonable**, no
-  publicar a npm (empaquetado npm queda fuera de alcance).
-
-### Contradicciones repo ↔ Markdown (señaladas)
-
-- El brief dice "Dashboard y vista previa" como base conservada y pide "demo
-  pública del dashboard". Técnicamente el dashboard **no es estático**: el
-  preview requiere runtime Node/Bun para `/api/render`. → resuelto difiriendo la
-  demo y planificando previews estáticos.
-- El brief pide "paquete o CLI instalable de forma reproducible"; el repo es
-  `private: true`. → resuelto como template clonable + lockfile (reproducible vía
-  clon limpio), sin publicar.
-- El brief lista "validación y exportación de emails" como ya conservada, pero la
-  validación **no bloquea** el build (ver Riesgos R1) y no valida variables.
-
----
-
-## 3. Decisiones técnicas
-
-| ID  | Decisión                           | Elección                                                                                                                                                   | Justificación                                                                                                                                                              |
-| --- | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| D1  | Runner de tests                    | **`bun test`** (built-in)                                                                                                                                  | El único test existente ya usa `bun:test`; el proyecto es Bun-first; cero dependencias nuevas. Se descarta Vitest (lo sugería `analysis_results.md`) para no añadir stack. |
-| D2  | Contratos tipados                  | **JSDoc + `tsconfig.json` con `checkJs`/`allowJs`** + devDep `typescript` solo para `tsc --noEmit`                                                         | Cumple "contratos tipados" y "typecheck en CI" sin migrar a `.ts`. Respeta "no reescribir" y "estabilizar lo que existe". El repo ya está lleno de JSDoc.                  |
-| D3  | Gate de validación en build        | El validador de compatibilidad **falla el build con severidad ERROR**; WARNING/INFO no bloquean (configurable)                                             | Hoy `build.js` ignora el retorno del validador (R1). "El HTML exportado funciona en los clientes documentados" exige gate real.                                            |
-| D4  | Validación de variables faltantes  | Validador propio que cruza placeholders `{{ var }}` del template contra claves de `data.json` y reporta faltantes/sobrantes; severidad WARNING por defecto | Cumple "las variables faltantes se reportan antes de exportar" sin acoplarse a un ESP concreto.                                                                            |
-| D5  | CI                                 | **GitHub Actions** con Bun (`oven-sh/setup-bun`), jobs: lint → typecheck → test → build                                                                    | Único proveedor ya implícito (repo en GitHub). Reproduce los comandos locales.                                                                                             |
-| D6  | Distribución                       | **Template clonable** (git + `bun install`), se mantiene `private: true`                                                                                   | Decisión del usuario.                                                                                                                                                      |
-| D7  | Demo                               | **Diferida**; primer hito = GitHub Release + README + capturas                                                                                             | Decisión del usuario; mantiene el primer hito pequeño.                                                                                                                     |
-| D8  | Plantillas de producto vs fixtures | 4 plantillas profesionales (`welcome`, `password-reset`, `receipt`, `newsletter`); `example`/`user-created` → fixtures de test o eliminadas                | Brief: "ejemplos reales: bienvenida, recuperación de contraseña, recibo y newsletter".                                                                                     |
-| D9  | Errores de compilación en UI       | `/api/render` devuelve JSON estructurado `{ error, cause, location }` con HTTP 422; el preview lo renderiza                                                | Brief: "mostrar errores de compilación con ubicación y causa".                                                                                                             |
-
-**Suposiciones no bloqueantes documentadas:**
-
-- (S1) El `emailType: transactional` del frontmatter (ya usado por la regla
-  `unsubscribe-link`) se reutiliza para clasificar `password-reset` y `receipt`.
-- (S2) Las plantillas usan los componentes existentes (`x-hero`,
-  `key-value-card`, `supporting-section`) antes de crear nuevos.
-- (S3) `markdownlint` seguirá ignorando artefactos largos; al mover
-  `analysis_results.md` se actualiza el glob de `lint:md`.
-
----
-
-## 4. Riesgos
-
-| ID  | Riesgo                                                                                                                        | Impacto                                                               | Mitigación                                                                                               |
-| --- | ----------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| R1  | `build.js` ejecuta `validateEmailHtml()` pero **descarta el retorno** → el build "pasa" aunque haya errores de compatibilidad | Alto: contradice criterio "el HTML funciona en clientes documentados" | F0-T2 introduce el gate (D3) con tests de regresión                                                      |
-| R2  | Conectar `bun test` puede recolectar `node_modules` o archivos no-test                                                        | Medio                                                                 | Definir patrón/dir de tests y excluir `node_modules` (F0-T1)                                             |
-| R3  | Activar `checkJs` global puede arrojar cientos de errores de tipo preexistentes y frenar CI                                   | Medio-alto                                                            | Empezar con `checkJs` acotado por `include` y `// @ts-nocheck` puntual; endurecer por carpeta en F2 (D2) |
-| R4  | El gate de validación (D3) podría romper el build por reglas WARNING ya presentes en plantillas actuales                      | Medio                                                                 | Solo ERROR bloquea; correr validador sobre `dist/` actual antes de activar y corregir errores previos    |
-| R5  | Husky/lint-staged + CI duplican trabajo o difieren de versiones                                                               | Bajo                                                                  | CI usa los mismos scripts `package.json`; no se cambian hooks salvo añadir `test` opcional               |
-| R6  | El validador de variables (D4) puede dar falsos positivos con helpers Handlebars (`{{#each}}`, `{{else}}`)                    | Medio                                                                 | Lista de tokens reservados + parseo que ignore bloques/helpers; cubrir con tests                         |
-| R7  | `dist/` está en el árbol de trabajo (no en `.gitignore`) y puede ensuciar diffs/CI                                            | Bajo-medio                                                            | Versionar intencionalmente el HTML generado y revisarlo junto con los cambios de templates               |
-| R8  | Rutas WSL/Windows mixtas (`//wsl.localhost/...`) y `path.split("/")` en validador/maizzle.config                              | Bajo                                                                  | Mantener separador POSIX como hoy; no introducir rutas Windows en scripts                                |
-| R9  | Render API expone `cause` de errores Maizzle → posible fuga de rutas absolutas en la demo futura                              | Bajo                                                                  | Sanitizar paths en el payload de error (F1-T2)                                                           |
-
----
-
-## 5. Fases
-
-> Cada fase deja el proyecto **funcionando y verificable** (`bun install` →
-> `bun run dev` / `bun run build` siguen verdes). Checkpoints de revisión humana
-> entre fases.
-
-- **Fase 0 — Estabilización mínima publicable (MVP del primer hito).**
-  Red de seguridad + gates + CI + limpieza de referencias + README/capturas →
-  **Release v1.1.0**. Pequeño y publicable. → **Checkpoint 0**.
-- **Fase 1 — Completar el flujo de producto.**
-  Validación de variables, errores de compilación en UI, descarga de HTML, las 4
-  plantillas profesionales, docs de compatibilidad y de componentes →
-  **Release v1.2.0**. → **Checkpoint 1**.
-- **Fase 2 — Contratos tipados + cobertura de pruebas.**
-  Typedefs centrales + `checkJs` endurecido; unit + integración (build/export);
-  tiempos documentados → **Release v1.3.0**. → **Checkpoint 2**.
-- **Fase 3 — Posterior / opcional.**
-  Demo estática pre-renderizada + deploy; más componentes; (opcional, fuera de
-  MVP) empaquetado npm.
-
-### Política de ramas y versiones
-
-- Cada tarea del roadmap debe comenzar desde `master` actualizado en una rama
-  nueva con el nombre `feature/<codigo-de-tarea>` en minúsculas, por ejemplo
-  `feature/f0-t5`.
-- Una rama contiene únicamente los cambios de su tarea. Tras implementación,
-  validación y revisión independiente, se integra directamente en `master`; no
-  se mantienen ramas intermedias por fase.
-- Las tareas individuales no incrementan la versión del proyecto. Los commits,
-  PRs y `STATUS.md` proporcionan la trazabilidad entre releases.
-- La última tarea de cada fase incluye el incremento minor de SemVer, la
-  actualización del changelog y la creación del tag y GitHub Release:
-
-  | Fase | Última tarea | Versión |
-  | ---- | ------------ | ------- |
-  | 0    | F0-T6        | v1.1.0  |
-  | 1    | F1-T9        | v1.2.0  |
-  | 2    | F2-T6        | v1.3.0  |
-
-- La versión de la Fase 3 se define cuando se apruebe su alcance opcional. Las
-  correcciones sobre una release ya publicada incrementan el patch, por ejemplo
-  `v1.1.0` → `v1.1.1`.
-- Los cambios ya integrados directamente en `master` se conservan; esta política
-  aplica a las tareas pendientes y no autoriza reescribir el historial.
-
----
-
-## 6. Tareas detalladas
-
-> Formato por tarea: Objetivo · Justificación · Archivos · Pasos · Dependencias ·
-> Aceptación · Pruebas · Validación · Riesgos · Fuera de alcance.
-> Cada tarea cabe en una sesión de implementación.
-
-### FASE 0 — Estabilización mínima publicable
-
-#### F0-T1 — Conectar runner de tests (`bun test`)
-
-- **Objetivo:** que `bun run test` ejecute los tests existentes y futuros.
-- **Justificación:** hay un test huérfano; sin runner no hay red de seguridad ni CI.
-- **Archivos:** `package.json` (script `test`, `test:watch`); posible
-  `bunfig.toml` para acotar el patrón de tests; `src/web/features/preview/viewport-controls.test.js`.
-- **Pasos:** añadir `"test": "bun test"`; configurar inclusión de `**/*.test.js`
-  excluyendo `node_modules`/`dist`; verificar que el test de viewport pasa.
-- **Dependencias:** ninguna.
-- **Aceptación:** `bun run test` descubre y ejecuta ≥1 test y termina en verde;
-  no recolecta `node_modules`.
-- **Pruebas:** el test existente debe pasar; añadir un test trivial de humo en
-  `scripts/shared/` para confirmar descubrimiento fuera de `src/web`.
-- **Validación:** `bun run test`.
-- **Riesgos:** R2.
-- **Fuera de alcance:** escribir la suite completa (F2).
-
-#### F0-T2 — Gate de validación de compatibilidad en build
-
-- **Objetivo:** que `bun run build` **falle** si hay issues de severidad ERROR.
-- **Justificación:** R1; criterio "el HTML funciona en clientes documentados".
-- **Archivos:** `scripts/build/build.js`, `scripts/build/validate-email-html.js`
-  (exponer conteo por severidad), `scripts/build/check-html-size.js` (revisar si
-  también debe ser gate).
-- **Pasos:** refactorizar `validateEmailHtml()` para devolver
-  `{ errors, warnings, infos }`; en `build.js`, `process.exit(1)` si `errors>0`;
-  flag `--allow-warnings` (default) para no romper por WARNING; mensaje claro.
-- **Dependencias:** ninguna (idealmente antes de CI F0-T4).
-- **Aceptación:** con un ERROR inyectado el build sale con código ≠0; sin errores
-  sale 0; WARNINGs no rompen por defecto.
-- **Pruebas:** test unitario de `validateEmailHtml` sobre HTML fixture con/sin
-  ERROR (verifica conteos); test de que `build.js` propaga el código de salida.
-- **Validación:** `bun run build` sobre plantillas actuales (corregir ERRORs
-  previos primero — R4).
-- **Riesgos:** R4.
-- **Fuera de alcance:** nuevas reglas de validación (D4 está en F1-T1).
-
-#### F0-T3 — Typecheck con JSDoc + `tsconfig` (`checkJs`)
-
-- **Objetivo:** `bun run typecheck` valida tipos vía JSDoc sin migrar a TS.
-- **Justificación:** D2; brief pide "contratos tipados" y CI con typecheck.
-- **Archivos:** nuevo `tsconfig.json`; `package.json` (devDep `typescript`,
-  script `"typecheck": "tsc --noEmit"`); ajustes JSDoc puntuales.
-- **Pasos:** `tsconfig` con `allowJs`, `checkJs`, `noEmit`, `module: nodenext`,
-  `include` **acotado** inicialmente a `scripts/shared/**` y `scripts/build/**`
-  (R3); resolver errores reales o `// @ts-nocheck` temporal documentado.
-- **Dependencias:** ninguna.
-- **Aceptación:** `bun run typecheck` pasa en verde sobre el `include` definido.
-- **Pruebas:** N/A (el typecheck es la prueba); CI lo ejecuta.
-- **Validación:** `bun run typecheck`.
-- **Riesgos:** R3.
-- **Fuera de alcance:** cobertura de tipos de todo el repo (se endurece en F2-T1).
-
-#### F0-T4 — Workflow de CI (GitHub Actions)
-
-- **Objetivo:** CI con lint + typecheck + test + build en cada push/PR.
-- **Justificación:** brief y regla de publicación exigen CI.
-- **Archivos:** nuevo `.github/workflows/ci.yml`.
-- **Pasos:** `oven-sh/setup-bun@v2` con `bun-version: 1.2.2`; `bun install
---frozen-lockfile`; pasos `bun run lint`, `bun run typecheck`, `bun run test`,
-  `bun run build`; cache de Bun.
-- **Dependencias:** F0-T1, F0-T2, F0-T3.
-- **Aceptación:** el workflow corre verde en un PR de prueba; falla si cualquier
-  paso falla.
-- **Pruebas:** PR de validación; (opcional) `act` local.
-- **Validación:** estado verde en GitHub Actions.
-- **Riesgos:** R5.
-- **Fuera de alcance:** deploy/release automatizado (F3 / manual en F0-T6).
-
-#### F0-T5 — Limpieza de referencias a clone/challenge y artefactos
-
-- **Objetivo:** eliminar referencias "tenpo"/clones y artefactos sueltos.
-- **Justificación:** regla de publicación: "sin referencias a cursos, challenges
-  o clones".
-- **Archivos:** `src/emails/layouts/layout-tenpo.html` (renombrar a genérico,
-  p.ej. `layout-alt.html` o eliminar si no se usa salvo en supporting-section),
-  `src/emails/partials/organisms/supporting-section/index.html` (quitar mención),
-  `analysis_results.md` (mover a `docs/internal/` o eliminar), `package.json`
-  `lint:md` glob, `.gitignore` (decidir `dist/` — R7), grep de otras menciones.
-- **Pasos:** localizar usos (`grep -ri tenpo`), renombrar/genericar, actualizar
-  imports/refs, correr lint/build para confirmar que nada se rompe.
-- **Dependencias:** ninguna.
-- **Aceptación:** `grep -ri "tenpo\|challenge\|curso\|clone" src docs README.md`
-  sin coincidencias relevantes; `bun run build` verde.
-- **Pruebas:** build + validate tras el rename.
-- **Validación:** `bun run lint && bun run build`.
-- **Riesgos:** R7, R8.
-- **Fuera de alcance:** rediseñar el layout (solo renombrar/genericar).
-
-#### F0-T6 — README, capturas, CHANGELOG y Release v1.1.0 (gate del hito)
-
-- **Objetivo:** primer hito publicable: README pulido + capturas reales +
-  changelog + GitHub Release.
-- **Justificación:** D7; regla de publicación (README con problema/solución/
-  arquitectura/ejecución + capturas + CI badge).
-- **Archivos:** `README.md` (badge CI, sección problema/solución, capturas
-  embebidas, comandos `test`/`typecheck`), `screenshots/` (capturas reales del
-  dashboard y de un email renderizado en desktop/móvil), nuevo `CHANGELOG.md`,
-  `package.json` (versión `1.1.0`) y metadata de GitHub (description/topics).
-- **Pasos:** generar capturas (dashboard, preview desktop, preview móvil, email);
-  insertarlas; documentar problema/solución/arquitectura; añadir badge de CI;
-  actualizar la versión a `1.1.0`; redactar `CHANGELOG.md` (Keep a Changelog)
-  v1.1.0; crear tag/Release `v1.1.0`.
-- **Dependencias:** F0-T1..T5 (para que README refleje CI/tests reales).
-- **Aceptación:** README incluye capturas y badge verde; `CHANGELOG.md` lista
-  v1.1.0; `package.json`, tag y GitHub Release coinciden en `v1.1.0`;
-  `bun install && bun run dev` desde clon limpio funciona.
-- **Pruebas:** smoke manual de clon limpio (instalación, dev, build).
-- **Validación:** `bun install --frozen-lockfile && bun run build`.
-- **Riesgos:** capturas desactualizadas (regenerar al cierre de cada fase).
-- **Fuera de alcance:** demo desplegada (F3).
-
-> **🚦 Checkpoint 0 — Revisión humana.** Verificar Release v1.1.0, CI verde,
-> README con capturas, build con gate. No avanzar a Fase 1 sin aprobación.
-
----
-
-### FASE 1 — Completar el flujo de producto
-
-#### F1-T1 — Validador de variables faltantes (`{{ var }}` vs `data.json`)
-
-- **Objetivo:** reportar variables del template no presentes en `data.json` (y
-  viceversa) antes de exportar.
-- **Justificación:** D4; criterio "las variables faltantes se reportan antes de
-  exportar".
-- **Archivos:** nuevo `scripts/build/validate-variables.js`; integración en
-  `scripts/build/build.js` y en el preview (`scripts/vite/api/render.js`);
-  reutilizar `scripts/shared/handlebars.js` y `paths.js`.
-- **Pasos:** extraer tokens `{{ ... }}` del `index.html` ignorando helpers/bloques
-  Handlebars y delimitadores Maizzle `[[ ]]`; cruzar contra claves de
-  `data.json`; emitir issues (faltantes WARNING, sobrantes INFO); exponer función
-  reutilizable.
-- **Dependencias:** F0-T1 (tests), F0-T2 (patrón de severidades/gate).
-- **Aceptación:** template con `{{ foo }}` sin `foo` en `data.json` produce un
-  WARNING accionable (archivo, variable, sugerencia).
-- **Pruebas:** unit con fixtures (faltante, sobrante, helper `{{#each}}`,
-  `{{ esp_var }}` intencional) — cubre R6.
-- **Validación:** `bun run validate-email` (o nuevo `validate-variables`) +
-  `bun run test`.
-- **Riesgos:** R6.
-- **Fuera de alcance:** autocompletar/migrar datos.
-
-#### F1-T2 — Errores de compilación con causa y ubicación en la UI
-
-- **Objetivo:** que el preview muestre causa + ubicación cuando Maizzle falla.
-- **Justificación:** D9; brief "mostrar errores de compilación con ubicación y
-  causa".
-- **Archivos:** `scripts/vite/api/render.js` (responder 422 JSON
-  `{ error, cause, location }` sanitizado), `src/web/features/preview/render-api.js`
-  y `iframe-manager.js`/`main.js` (renderizar el estado de error).
-- **Pasos:** capturar el error de `compileTemplate`, extraer mensaje/línea si
-  Maizzle/Handlebars la provee, sanitizar rutas absolutas (R9), responder JSON;
-  en el cliente, mostrar panel de error en vez de iframe en blanco.
-- **Dependencias:** ninguna (idealmente tras F0).
-- **Aceptación:** un template con sintaxis inválida muestra en el dashboard el
-  mensaje y, si está disponible, la ubicación; sin exponer rutas absolutas.
-- **Pruebas:** test del handler (mock de `compileTemplate` que lanza) verificando
-  status 422 y forma del payload.
-- **Validación:** `bun run dev` + provocar error manual; `bun run test`.
-- **Riesgos:** R9.
-- **Fuera de alcance:** editor con subrayado de errores inline.
-
-#### F1-T3 — Botón "Descargar HTML final" en el preview
-
-- **Objetivo:** descargar el HTML compilado del template desde el dashboard.
-- **Justificación:** brief "incluir una opción para descargar el HTML final".
-- **Archivos:** `src/web/features/preview/` (botón + handler, junto a
-  `copy-html-modal.js`); reutilizar `scripts/vite/api/copy-html.js` /
-  `render.js`.
-- **Pasos:** añadir botón "Descargar" que pida el HTML renderizado (misma fuente
-  que copy-html) y dispare descarga `Blob` como `<template>.html`.
-- **Dependencias:** patrón de copy-html existente.
-- **Aceptación:** el botón descarga un `.html` válido equivalente al copiado.
-- **Pruebas:** unit de la utilidad que arma el `Blob`/nombre (si se extrae
-  helper); resto manual.
-- **Validación:** `bun run dev` + descargar y abrir el archivo.
-- **Riesgos:** bajo.
-- **Fuera de alcance:** empaquetar recursos/imágenes en zip (mejora posterior).
-
-#### F1-T4 — Toggle "render vs código fuente" (verificar/completar)
-
-- **Objetivo:** alternar entre HTML renderizado y código fuente en el preview.
-- **Justificación:** brief "permitir cambiar entre HTML renderizado y código
-  fuente".
-- **Archivos:** `src/web/features/preview/{iframe-manager,editor,main}.js`,
-  `preview.html`, `styles.css`.
-- **Pasos:** auditar si ya existe; si no, añadir toggle que muestre el HTML como
-  texto (escapado) reusando la respuesta de `/api/render`.
-- **Dependencias:** F1-T2 (misma fuente de HTML).
-- **Aceptación:** el usuario alterna vista renderizada/código sin recompilar de
-  más; estado persistente durante la sesión.
-- **Pruebas:** unit de la función de estado del toggle (estilo
-  `viewport-controls.test.js`).
-- **Validación:** `bun run dev`.
-- **Riesgos:** bajo.
-- **Fuera de alcance:** resaltado de sintaxis.
-
-#### F1-T5 — Plantilla `password-reset` (transaccional)
-
-- **Objetivo:** plantilla profesional de recuperación de contraseña.
-- **Justificación:** brief: ejemplos reales incluyen recuperación de contraseña.
-- **Archivos:** nuevo `src/emails/templates/password-reset/{index.html,data.json}`;
-  reutilizar `x-main`, componentes existentes (S2).
-- **Pasos:** `bun run g:email password-reset`; redactar contenido (CTA con
-  `{{ reset_url }}`, expiración, aviso de seguridad); `emailType: transactional`
-  (S1); `data.json` completo.
-- **Dependencias:** F1-T1 (debe pasar validación de variables), F0-T2 (gate).
-- **Aceptación:** compila a `dist/password-reset.html`; `validate-email` sin
-  ERRORs; `validate-variables` sin faltantes; se ve bien en desktop/móvil.
-- **Pruebas:** incluida en el integration test de build (F2-T4).
-- **Validación:** `bun run build`.
-- **Riesgos:** R4.
-- **Fuera de alcance:** branding específico de cliente.
-
-#### F1-T6 — Plantilla `receipt` (transaccional)
-
-- **Objetivo:** plantilla profesional de recibo/orden.
-- **Justificación:** brief: ejemplos reales incluyen recibo.
-- **Archivos:** nuevo `src/emails/templates/receipt/{index.html,data.json}`;
-  reutilizar `key-value-card` para líneas de detalle.
-- **Pasos:** generar template; tabla de ítems + totales con `{{ }}`;
-  `emailType: transactional`; `data.json` con ítems de ejemplo.
-- **Dependencias:** F1-T1, F0-T2.
-- **Aceptación:** igual que F1-T5 para `dist/receipt.html`.
-- **Pruebas:** integration build (F2-T4).
-- **Validación:** `bun run build`.
-- **Riesgos:** tablas anidadas (regla `nested-tables-depth`).
-- **Fuera de alcance:** cálculo dinámico de totales.
-
-#### F1-T7 — Plantilla `newsletter` (marketing, con unsubscribe)
-
-- **Objetivo:** plantilla profesional de newsletter.
-- **Justificación:** brief: ejemplos reales incluyen newsletter.
-- **Archivos:** nuevo `src/emails/templates/newsletter/{index.html,data.json}`.
-- **Pasos:** generar; secciones de contenido + `x-hero`; **link de
-  unsubscribe** obligatorio (no transaccional → regla `unsubscribe-link`).
-- **Dependencias:** F1-T1, F0-T2.
-- **Aceptación:** `dist/newsletter.html` sin ERRORs y con unsubscribe; sin
-  WARNING de unsubscribe.
-- **Pruebas:** integration build (F2-T4).
-- **Validación:** `bun run build`.
-- **Riesgos:** R4.
-- **Fuera de alcance:** sistema de bloques de contenido configurable.
-
-#### F1-T8 — Reconsiderar `example` / `user-created`
-
-- **Objetivo:** dejar exactamente las 4 plantillas de producto; reubicar el resto.
-- **Justificación:** D8; evitar plantillas placeholder en el "producto".
-- **Archivos:** `src/emails/templates/example/`, `.../user-created/`; posible
-  `test/fixtures/`.
-- **Pasos:** mover `example` (y/o `user-created`) a fixtures de test o
-  eliminarlos; actualizar referencias (dashboard lista por carpeta), CLI y docs.
-- **Dependencias:** F1-T5..T7 (no quedarse sin plantillas), F2-T4 (si pasan a
-  fixtures).
-- **Aceptación:** el dashboard muestra solo las 4 plantillas de producto; build
-  verde; tests verdes.
-- **Pruebas:** ajustar tests que referencien esas plantillas.
-- **Validación:** `bun run build && bun run test`.
-- **Riesgos:** referencias colgantes (R8).
-- **Fuera de alcance:** rediseñar el listado del dashboard.
-
-#### F1-T9 — Documentación y Release v1.2.0 (gate de fase)
-
-- **Objetivo:** añadir tabla de compatibilidad de clientes de correo y guía para
-  crear componentes reutilizables; publicar el cierre de la fase como v1.2.0.
-- **Justificación:** brief (documentación): tabla de compatibilidad + guía de
-  componentes; política de versionado por fase.
-- **Archivos:** `README.md` y/o `docs/` (nueva `docs/email-clients.md`,
-  `docs/components-guide.md`), `CHANGELOG.md` y `package.json`; apoyarse en
-  `docs/agent-skills/email-compatibility.md` y en los `schema.json` existentes.
-- **Pasos:** redactar tabla (Outlook/Gmail/Apple Mail/Yahoo × features soportadas
-  alineadas a las reglas del validador); guía paso a paso de un componente con
-  `index.html` + `schema.json`; actualizar la versión y changelog a `1.2.0`;
-  crear tag y GitHub Release `v1.2.0`.
-- **Dependencias:** plantillas finales (F1-T5..T8) para ejemplos reales.
-- **Aceptación:** `markdownlint` verde; la guía permite crear un componente nuevo
-  siguiendo solo la doc; `package.json`, changelog, tag y GitHub Release
-  coinciden en `v1.2.0`.
-- **Pruebas:** `bun run lint:md`.
-- **Validación:** `bun run format:check`, `bun run lint` y `bun run build`.
-- **Riesgos:** bajo.
-- **Fuera de alcance:** matriz de compatibilidad basada en pruebas reales en cada
-  cliente (manual, posterior).
-
-> **🚦 Checkpoint 1 — Revisión humana.** 4 plantillas profesionales compilan y
-> pasan gates; errores de compilación visibles en UI; descarga y validación de
-> variables funcionando; docs de compatibilidad/componentes; Release v1.2.0.
-> Regenerar capturas.
-
----
-
-### FASE 2 — Contratos tipados + cobertura de pruebas
-
-#### F2-T1 — Contratos tipados centrales + `checkJs` endurecido
-
-- **Objetivo:** typedefs para frontmatter de template, `schema.json` de
-  componente y `data.json`; ampliar `checkJs` a más carpetas.
-- **Justificación:** D2; brief "contratos tipados para plantillas, componentes y
-  datos".
-- **Archivos:** nuevo `scripts/types.js` (o `types.d.ts`) con `@typedef`s
-  (`TemplateFrontmatter`, `ComponentSchema`, `TemplateData`, `Issue`, `Rule` —
-  estos dos ya existen en el validador, centralizarlos); `tsconfig.json` (ampliar
-  `include`); anotaciones JSDoc en `scripts/vite/`, `scripts/exporters/`.
-- **Pasos:** definir typedefs; importarlos vía JSDoc; ampliar `include`
-  carpeta-por-carpeta resolviendo errores; quitar `@ts-nocheck` temporales.
-- **Dependencias:** F0-T3.
-- **Aceptación:** `bun run typecheck` verde con `include` ampliado a `scripts/**`.
-- **Pruebas:** typecheck en CI.
-- **Validación:** `bun run typecheck`.
-- **Riesgos:** R3.
-- **Fuera de alcance:** migración a `.ts`.
-
-#### F2-T2 — Tests unitarios de helpers
-
-- **Objetivo:** cubrir helpers críticos.
-- **Justificación:** brief "pruebas unitarias para helpers y compilación".
-- **Archivos:** tests junto a `scripts/shared/handlebars.js`, `paths.js`,
-  `path-safety.js`, `env.js`, `scripts/build/{validate-json,check-html-size}.js`.
-- **Pasos:** tests `bun:test` por helper (casos felices + borde, incl.
-  path-traversal en `path-safety`).
-- **Dependencias:** F0-T1.
-- **Aceptación:** cobertura de las funciones puras listadas; suite verde.
-- **Pruebas:** son las pruebas.
-- **Validación:** `bun run test`.
-- **Riesgos:** bajo.
-- **Fuera de alcance:** mocking de red (mail).
-
-#### F2-T3 — Tests unitarios de las reglas del validador
-
-- **Objetivo:** cubrir las 12 reglas de `validate-email-html.js` y el validador
-  de variables (F1-T1).
-- **Justificación:** el validador es central para "compatibilidad" y "variables
-  faltantes".
-- **Archivos:** test nuevo para `validate-email-html.js` y `validate-variables.js`
-  con fixtures HTML.
-- **Pasos:** por regla, fixture que dispara y fixture que no; afirmar severidad y
-  mensaje.
-- **Dependencias:** F0-T2, F1-T1.
-- **Aceptación:** cada regla tiene ≥1 caso positivo y ≥1 negativo verdes.
-- **Pruebas:** son las pruebas.
-- **Validación:** `bun run test`.
-- **Riesgos:** R6.
-- **Fuera de alcance:** nuevas reglas.
-
-#### F2-T4 — Test de integración del build pipeline
-
-- **Objetivo:** validar build extremo a extremo en un dir temporal.
-- **Justificación:** brief "pruebas de integración para generación y
-  exportación".
-- **Archivos:** test que ejecuta el build sobre fixtures y asevera salida.
-- **Pasos:** compilar plantillas fixture; afirmar `dist/<t>.html` plano, `{{ }}`
-  preservadas, `[[ ]]` resueltas, `<!doctype>` presente, sin `<script>`; afirmar
-  que el gate (F0-T2) falla con fixture defectuoso.
-- **Dependencias:** F0-T2, F1-T5..T8.
-- **Aceptación:** test verde; detecta regresión si se rompe flatten o se filtran
-  variables.
-- **Pruebas:** es la prueba.
-- **Validación:** `bun run test`.
-- **Riesgos:** lentitud → marcar como suite de integración separada si hace falta.
-- **Fuera de alcance:** snapshot pixel del email.
-
-#### F2-T5 — Test de integración de render/export
-
-- **Objetivo:** cubrir `/api/render` (compilación + tema + caché) y el
-  compilador de export.
-- **Justificación:** generación y exportación son criterios del brief.
-- **Archivos:** test para `scripts/vite/api/render.js` (o `maizzle-compiler` +
-  `preview-cache`) y `scripts/exporters/compilers.js`.
-- **Pasos:** invocar compilación con datos; afirmar HTML, aplicación de tema y
-  hit/miss de caché; para export, afirmar HTML con datos Handlebars aplicados.
-- **Dependencias:** F1-T2.
-- **Aceptación:** suite verde; caché valida por `theme+dataHash`.
-- **Pruebas:** es la prueba.
-- **Validación:** `bun run test`.
-- **Riesgos:** dependencias de binarios (puppeteer/wkhtmltoimage) → testear solo
-  la capa de compilación HTML, no el render PNG.
-- **Fuera de alcance:** test del binario de screenshot.
-
-#### F2-T6 — Documentar rendimiento y Release v1.3.0 (gate de fase)
-
-- **Objetivo:** medir y documentar tiempos de `dev` startup y `build`; publicar
-  el cierre de la fase como v1.3.0.
-- **Justificación:** brief "mantener tiempos de arranque y compilación
-  documentados" y política de versionado por fase.
-- **Archivos:** README/`docs/performance.md`, `CHANGELOG.md`, `package.json`;
-  opcional script de medición.
-- **Pasos:** medir cold start de `dev` y `build` (n corridas), tabular,
-  documentar entorno (Bun/Node/SO); actualizar versión y changelog a `1.3.0`;
-  crear tag y GitHub Release `v1.3.0`.
-- **Dependencias:** plantillas finales.
-- **Aceptación:** tabla de tiempos reproducible en el README/docs;
-  `package.json`, changelog, tag y GitHub Release coinciden en `v1.3.0`.
-- **Pruebas:** N/A.
-- **Validación:** `bun run format:check`, suite CI completa y `bun run build`
-  cronometrado.
-- **Riesgos:** variabilidad de máquina (documentar entorno).
-- **Fuera de alcance:** budget/regresión de performance en CI.
-
-> **🚦 Checkpoint 2 — Revisión humana.** Suite unit+integración verde en CI,
-> typecheck ampliado, tiempos documentados y Release v1.3.0. El proyecto cumple
-> la "Definición global de terminado" salvo demo desplegada.
-
----
-
-### FASE 3 — Posterior / opcional
-
-#### F3-T1 — Demo estática pre-renderizada + deploy _(mejora posterior)_
-
-- **Objetivo:** demo pública del dashboard sin runtime de servidor.
-- **Justificación:** regla de publicación pide demo desplegada; `/api/render` no
-  es estático.
-- **Archivos:** script de pre-render (compila cada template a HTML estático en
-  build), `src/web/features/preview/render-api.js` (fallback a HTML estático en
-  modo demo), workflow de deploy (GitHub Pages/Netlify).
-- **Pasos:** en `vite build`, generar HTML por template; servir esos artefactos en
-  vez de `/api/render` cuando no hay servidor; deploy.
-- **Dependencias:** Fase 1 y 2 completas.
-- **Aceptación:** demo navegable muestra ≥4 casos; sin editor en vivo (read-only).
-- **Pruebas:** smoke del build estático.
-- **Validación:** `bun run build` + abrir artefacto.
-- **Riesgos:** divergencia preview-en-vivo vs estático.
-- **Fuera de alcance:** editor de datos en la demo pública.
-
-#### F3-T2 — Ampliar biblioteca de componentes _(opcional)_
-
-- **Objetivo:** más componentes con `schema.json` (footer, botón, lista, divider).
-- **Justificación:** "biblioteca de componentes" como diferenciador.
-- **Dependencias:** F1-T9 (guía).
-- **Aceptación:** cada componente nuevo aparece en `/library` con su form.
-- **Fuera de alcance:** drag-and-drop builder.
-
-#### F3-T3 — Empaquetado npm con `bin` _(fuera de alcance del MVP — D6)_
-
-- **Nota:** descartado por decisión (template clonable). Documentado solo como
-  evolución futura; no se implementa.
-
----
-
-## 7. Matriz de dependencias
-
-| Tarea       | Depende de          | Habilita                          |
-| ----------- | ------------------- | --------------------------------- |
-| F0-T1       | —                   | F0-T4, F1-T1, F2-T2/T3/T4/T5      |
-| F0-T2       | —                   | F0-T4, F1-T1, F1-T5..T7, F2-T3/T4 |
-| F0-T3       | —                   | F0-T4, F2-T1                      |
-| F0-T4       | F0-T1, F0-T2, F0-T3 | Checkpoint 0                      |
-| F0-T5       | —                   | F0-T6                             |
-| F0-T6       | F0-T1..T5           | **Release v1.1.0 / Checkpoint 0** |
-| F1-T1       | F0-T1, F0-T2        | F1-T5..T7, F2-T3                  |
-| F1-T2       | (F0)                | F1-T4, F2-T5                      |
-| F1-T3       | —                   | —                                 |
-| F1-T4       | F1-T2               | —                                 |
-| F1-T5/T6/T7 | F1-T1, F0-T2        | F1-T8, F2-T4                      |
-| F1-T8       | F1-T5..T7           | —                                 |
-| F1-T9       | F1-T5..T8           | F3-T2                             |
-| F2-T1       | F0-T3               | —                                 |
-| F2-T2       | F0-T1               | —                                 |
-| F2-T3       | F0-T2, F1-T1        | —                                 |
-| F2-T4       | F0-T2, F1-T5..T8    | —                                 |
-| F2-T5       | F1-T2               | —                                 |
-| F2-T6       | F1-T5..T8           | —                                 |
-| F3-T1       | Fase 1 + 2          | demo pública                      |
-
-**Ruta crítica al primer hito:** F0-T1 → F0-T2/T3 → F0-T4 → F0-T5 → F0-T6.
-
----
-
-## 8. Estrategia de pruebas
-
-- **Runner:** `bun test` (D1). Patrón `**/*.test.js`, excluye `node_modules`/
-  `dist`.
-- **Unitarias:** helpers puros (`handlebars`, `paths`, `path-safety`, `env`,
-  `validate-json`, `check-html-size`), reglas del validador de compatibilidad,
-  validador de variables, funciones de estado de UI (viewport/toggle).
-- **Integración:** build pipeline (Maizzle → flatten → gate), render/compile API
-  (tema + caché), export compiler (Handlebars). Se aíslan en dir temporal; se
-  evita depender de binarios de screenshot.
-- **Gates como prueba:** F0-T2 (build falla con ERROR) y F1-T1 (variables
-  faltantes) tienen tests de regresión.
-- **Typecheck:** `tsc --noEmit` vía JSDoc (D2) como prueba estática en CI.
-- **Lint:** `bun run lint` (html/js/md/json) se mantiene como hoy.
-- **Manual mínimo:** clon limpio (`bun install && bun run dev && bun run build`),
-  preview en desktop/móvil, descarga de HTML, provocar error de compilación.
-- **CI:** corre lint + typecheck + test + build en cada PR (F0-T4).
-- **Cobertura objetivo:** flujo crítico (compilación, validación, exportación)
-  cubierto antes del Checkpoint 2; no se fija % numérico estricto.
-
----
-
-## 9. Estrategia de despliegue
-
-- **Primer hito (D7):** **sin despliegue de demo.** Entrega = GitHub Release
-  `v1.1.0` (tag + notas), `CHANGELOG.md`, README con capturas y badge de CI.
-- **Reproducibilidad / distribución (D6):** template clonable —
-  `git clone && bun install --frozen-lockfile`. `bun.lockb` fija versiones;
-  `engines` documenta Node `>=20` / Bun `>=1.0`.
-- **CI/CD:** GitHub Actions valida cada cambio (no despliega). Release manual con
-  changelog hasta automatizar.
-- **Versionado:** SemVer y changelog estilo _Keep a Changelog_. No se incrementa
-  versión por tarea: la última tarea de cada fase publica la minor correspondiente
-  (`v1.1.0`, `v1.2.0`, `v1.3.0`). Las correcciones de releases publicadas
-  incrementan patch.
-- **Demo (posterior, F3-T1):** previews estáticos pre-renderizados en GitHub
-  Pages/Netlify (read-only), porque `/api/render` requiere runtime.
-- **Política de `dist/`:** se versiona intencionalmente el HTML generado. No se
-  ignora `dist/`; `bun run build` permite regenerarlo de forma reproducible.
-
----
-
-## 10. Definición global de terminado
-
-El proyecto se considera terminado (alineado con los criterios del brief y la
-regla de publicación) cuando:
-
-1. `bun install` desde un **clon limpio** + `bun run dev` + `bun run build`
-   funcionan sin pasos manuales.
-2. Existen **4 plantillas profesionales** (`welcome`, `password-reset`,
-   `receipt`, `newsletter`) que compilan a `dist/<t>.html`, preservan `{{ }}` y
-   pasan el validador sin ERRORs.
-3. Un **usuario nuevo genera un email** desde el dashboard sin tocar el motor.
-4. Las **variables faltantes se reportan** antes de exportar (F1-T1).
-5. Los **errores de compilación** se muestran con causa/ubicación en la UI
-   (F1-T2).
-6. El **HTML exportado** pasa el gate de compatibilidad (ERROR=0) (F0-T2/D3).
-7. **CI verde**: lint + typecheck + test + build (F0-T4).
-8. **Pruebas** del flujo crítico (unit + integración) verdes (Fase 2).
-9. **README** con problema/solución/arquitectura/ejecución, **capturas** desktop
-   y móvil, tabla de compatibilidad y guía de componentes (F0-T6, F1-T9).
-10. **Sin referencias** a cursos/challenges/clones; metadata de GitHub
-    actualizada (F0-T5/T6).
-11. **Release versionada** con changelog (F0-T6).
-12. _(Posterior)_ Demo desplegada con ≥4 casos (F3-T1) — fuera del primer hito.
-
----
-
-## 11. Preguntas bloqueantes
-
-Las dos decisiones materiales fueron resueltas con el usuario:
-
-- **Demo / hosting:** _sin demo en el primer hito_ (Release + README + capturas);
-  demo estática diferida a Fase 3.
-- **Distribución:** _template clonable_ (git + `bun install`), sin publicar a npm.
-
-**No quedan preguntas bloqueantes.** Decisiones menores adoptadas como
-suposiciones razonables y documentadas (D1–D9, S1–S3); cualquiera puede
-revisarse en su checkpoint sin alterar la ruta crítica al primer hito. La
-política de `dist/` quedó resuelta en F0-T5: se versiona el HTML generado.
+# Plan de implementación — EmailForge Toolkit
+
+Este es el contrato técnico completo del repositorio. Contiene todas las
+features MHB-01 a MHB-23, sus dependencias, criterios de aceptación, pruebas,
+riesgos y diseño de orquestación. `STATUS.md` registra solo la tarea que se
+está ejecutando; no reduce ni sustituye este plan.
+
+## Objetivo
+
+Convertir `vite-mhb-email` en **EmailForge Toolkit**, una herramienta local
+defendible de desarrollo de emails: creación y preview seguros, compilación
+reproducible de HTML y una demostración verificable de cuatro casos de email.
+La línea de partida es `master` en
+`ce708cf178dcbb426d9aaa2cb5b8d2bd3b0b825c`, no las declaraciones históricas
+del PLAN o STATUS originales.
+
+## Usuario, problema y narrativa
+
+- **Usuario:** desarrollador o diseñador que mantiene templates HTML para un
+  ESP y necesita iterar sin editar HTML final a mano.
+- **Problema:** el preview, la compilación y la exportación deben preservar
+  variables ESP, reducir errores de compatibilidad y evitar que una entrada de
+  CLI altere rutas o comandos fuera del template elegido.
+- **Narrativa de portafolio:** una herramienta de DX especializada que integra
+  Maizzle, Handlebars, Vite y validación de HTML email; demuestra decisiones de
+  seguridad, calidad de pipeline y UX de una herramienta interna. No afirmará
+  compatibilidad real con clientes hasta contar con evidencia manual trazable.
+
+## Alcance y exclusiones
+
+### Requerido
+
+- Eliminar los P1 de nombres de template y ejecución por shell; dejar pruebas
+  de regresión.
+- Rebasar la documentación operativa y la trazabilidad posterior a `v1.1.0`
+  sin reescribir el tag publicado.
+- Cubrir todas las rutas de código relevantes en CI y crear pruebas del flujo
+  crítico.
+- Completar el flujo de producto pendiente: variables, errores accionables,
+  descarga de HTML y cuatro templates de producto.
+- Producir evidencia de accesibilidad, rendimiento y compatibilidad para la
+  revisión final del producto.
+
+### Opcional
+
+- Demo pública estática, solo después de resolver la divergencia entre preview
+  local y artefactos pre-renderizados.
+- Ampliar la biblioteca de componentes después de documentar y estabilizar los
+  componentes existentes.
+
+### Fuera de alcance
+
+- Migración global a TypeScript, publicación a npm, editor drag-and-drop,
+  envío real de correos y reescritura del historial o del tag `v1.1.0`.
+
+## Backlog priorizado
+
+| ID     | Tipo                     | Feature o entregable                           | Problema o hallazgo                                                          | Prioridad | Dependencias                           | Criterios de aceptación                                                                                                                                                                     | Fase | Modelo sugerido | Esfuerzo sugerido |
+| ------ | ------------------------ | ---------------------------------------------- | ---------------------------------------------------------------------------- | --------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | --------------- | ----------------- |
+| MHB-01 | Habilitador técnico      | Guard central de nombres de template           | P1: generador, exportador y build selectivo no usan la validación existente. | Requerida | Entorno de ejecución disponible        | Las tres rutas usan una única validación; entradas inválidas no crean, leen ni escriben fuera de la ruta permitida; pruebas de borde verdes.                                                | A    | gpt-5.6-terra   | Alto              |
+| MHB-02 | Habilitador técnico      | Ejecución de procesos sin shell                | P1: el CLI reenvía nombre interactivo mediante `shell: true`.                | Requerida | MHB-01                                 | El CLI no usa shell con argumentos de usuario; `build-helper` también queda endurecido o justificado; comandos conservan sus códigos de salida.                                             | A    | gpt-5.6-terra   | Alto              |
+| MHB-03 | Definición de producto   | Línea base documental y política de release    | P1/P2: PLAN, STATUS, workflow y notas posteriores al tag discrepan.          | Requerida | Entorno de ejecución disponible        | PLAN/STATUS describen `ce708cf`, Bun 1.3.13, `bun.lock` y el CI real; se documenta cómo corregir/reconciliar la release sin mover `v1.1.0`.                                                 | A    | gpt-5.6-terra   | Medio             |
+| MHB-04 | Habilitador técnico      | CI completo por cambios relevantes             | P2: cambios de workflow, layouts y HTML web pueden omitir `verify`.          | Requerida | MHB-01, MHB-02                         | Cambios en `.github/workflows/**`, `src/emails/layouts/**` y HTML/JS relevante de `src/web/**` activan los jobs aplicables; CI incluye formato y la suite declarada sin saltos silenciosos. | A    | gpt-5.6-terra   | Alto              |
+| MHB-05 | Habilitador técnico      | Pruebas de seguridad de comandos               | P2: no hay regresiones de rutas, CLI ni restauración del build selectivo.    | Requerida | MHB-01, MHB-02, MHB-04                 | Pruebas cubren traversal, nombres inválidos, códigos de salida y restauración ante fallo; CI las ejecuta.                                                                                   | B    | gpt-5.6-terra   | Alto              |
+| MHB-06 | Feature                  | Validación de variables ESP                    | F1-T1 pendiente: no se reportan `{{ variable }}` faltantes o sobrantes.      | Requerida | MHB-05                                 | Reporta faltantes como warning y sobrantes como info sin falsos positivos; se integra en preview y antes de build/exportación.                                                              | B    | gpt-5.6-terra   | Alto              |
+| MHB-07 | Feature                  | Errores accionables en preview                 | F1-T2 pendiente: `/api/render` devuelve 500 genérico.                        | Requerida | MHB-05                                 | El preview muestra causa y ubicación cuando existan, con respuesta estructurada y sin rutas absolutas.                                                                                      | B    | gpt-5.6-terra   | Alto              |
+| MHB-08 | Feature                  | Descargar HTML final                           | F1-T3 pendiente: solo existe copiar HTML.                                    | Requerida | MHB-07                                 | El dashboard descarga `<template>.html` equivalente al HTML compilado; error y nombre son seguros.                                                                                          | B    | gpt-5.6-terra   | Medio             |
+| MHB-09 | Definición de producto   | Catálogo de templates de producto              | `example` y `user-created` son scaffolds visibles.                           | Requerida | MHB-06                                 | Se define el catálogo final de cuatro casos y qué fixtures salen del dashboard, sin referencias colgantes.                                                                                  | B    | gpt-5.6-terra   | Medio             |
+| MHB-10 | Feature                  | Template password-reset                        | Falta caso transaccional profesional.                                        | Requerida | MHB-06, MHB-09                         | Compila sin errores, preserva `{{ reset_url }}`, contiene aviso de seguridad y pasa validadores.                                                                                            | B    | gpt-5.6-terra   | Medio             |
+| MHB-11 | Feature                  | Template receipt                               | Falta caso transaccional de detalle.                                         | Requerida | MHB-06, MHB-09                         | Compila sin errores, presenta ítems/totales y pasa validadores de tablas y variables.                                                                                                       | B    | gpt-5.6-terra   | Medio             |
+| MHB-12 | Feature                  | Template newsletter                            | Falta caso de marketing profesional.                                         | Requerida | MHB-06, MHB-09                         | Compila sin errores y contiene un enlace de baja verificable por el validador.                                                                                                              | B    | gpt-5.6-terra   | Medio             |
+| MHB-13 | Habilitador técnico      | Cobertura de tipos y rendimiento               | Typecheck parcial y sin métricas reproducibles.                              | Requerida | MHB-19, MHB-20                         | `checkJs` cubre los scripts relevantes sin migración global; mediciones repetidas documentan Bun, Node, SO y método.                                                                        | C    | gpt-5.6-terra   | Alto              |
+| MHB-14 | Entregable de portafolio | Evidencia de uso y compatibilidad              | Sin revisión de teclado/lector ni pruebas en clientes reales.                | Requerida | MHB-07, MHB-08, MHB-10, MHB-11, MHB-12 | Checklist manual reproducible para teclado/lector y matriz con evidencia fechada de Gmail, Outlook y Apple Mail.                                                                            | C    | gpt-5.6-terra   | Alto              |
+| MHB-15 | Entregable de portafolio | Documentación, capturas y release posterior    | La narrativa y trazabilidad de release son parciales.                        | Requerida | MHB-03, MHB-13, MHB-14, MHB-18, MHB-22 | README, CHANGELOG, versión, tag y release posterior coinciden; capturas son actuales e incluye límites verificables, no reclamos no probados.                                               | C    | gpt-5.6-terra   | Medio             |
+| MHB-16 | Feature                  | Demo candidata pre-renderizada                 | No hay despliegue verificable y el preview requiere servidor.                | Opcional  | MHB-13, MHB-14, MHB-15                 | Se decide y prueba una demo solo lectura sin divergencia respecto al HTML compilado; el despliegue candidato se enlaza para verificación.                                                   | D    | gpt-5.6-terra   | Alto              |
+| MHB-17 | Feature                  | Alternar render y código fuente                | F1-T4 quedó omitida en la primera versión del plan.                          | Requerida | MHB-07                                 | El usuario alterna vista renderizada/código escapado sin recompilación redundante; el estado dura la sesión y tiene prueba de estado.                                                       | B    | gpt-5.6-terra   | Medio             |
+| MHB-18 | Entregable de portafolio | Guía de componentes y matriz documentada       | F1-T9 pedía una guía reproducible y documentación de compatibilidad.         | Requerida | MHB-10, MHB-11, MHB-12                 | Un usuario crea un componente con `index.html` y `schema.json` usando solo la guía; la matriz distingue validación estática de pruebas reales.                                              | B    | gpt-5.6-terra   | Medio             |
+| MHB-19 | Habilitador técnico      | Unit tests de helpers y reglas                 | F2-T2/T3 exigían cobertura granular, diluida en el plan anterior.            | Requerida | MHB-05, MHB-06                         | Helpers críticos tienen casos felices/borde; cada regla de compatibilidad tiene al menos un positivo y un negativo.                                                                         | C    | gpt-5.6-terra   | Alto              |
+| MHB-20 | Habilitador técnico      | Integración build, render, caché y exportación | F2-T4/T5 exigían comprobar el flujo extremo a extremo.                       | Requerida | MHB-07, MHB-10, MHB-11, MHB-12         | Tests temporales comprueban flatten, `{{ }}`, `[[ ]]`, gate, tema, `theme+dataHash` y exportación HTML sin depender de binarios PNG.                                                        | C    | gpt-5.6-terra   | Alto              |
+| MHB-21 | Definición de producto   | Resolver links placeholder                     | Tres outputs conservan `href="#"` como warnings.                             | Requerida | MHB-09, MHB-10, MHB-11, MHB-12         | Los cuatro templates de producto no generan warnings de links placeholder o documentan una excepción de fixture fuera del catálogo.                                                         | B    | gpt-5.6-terra   | Medio             |
+| MHB-22 | Entregable de portafolio | Licencia MIT verificable                       | `package.json` declara MIT, pero falta `LICENSE`.                            | Requerida | MHB-03                                 | Existe archivo de licencia coherente con metadata y autoría; README lo enlaza.                                                                                                              | A    | gpt-5.6-terra   | Bajo              |
+| MHB-23 | Feature                  | Ampliar biblioteca de componentes              | F3-T2 estaba mencionada sin ID ni cierre.                                    | Opcional  | MHB-18, MHB-20                         | Cada componente adicional es email-safe, tiene schema, aparece en `/library` y cuenta con validación/prueba aplicable.                                                                      | D    | gpt-5.6-terra   | Medio             |
+
+## Detalle ejecutable de las fases inmediatas
+
+### MHB-01 — Guard central de nombres
+
+- **Objetivo:** usar un único contrato runtime para nombres de template en
+  generador, exportador y build selectivo.
+- **Archivos previstos:** `scripts/shared/path-safety.js`, generador,
+  exportador, build selectivo y tests asociados.
+- **Aceptación:** nombres válidos conservan comportamiento; traversal,
+  separadores, absolutos, vacíos y metacaracteres fallan antes de tocar disco.
+- **Pruebas/validación:** unitarias de tabla y prueba temporal de no escritura;
+  lint, typecheck, test, formato y acción CLI afectada.
+- **Riesgo:** romper nombres históricos válidos; cualquier cambio del patrón se
+  escala al orquestador.
+- **Fuera de alcance:** renombrar templates existentes.
+- **Dependencias y precondiciones:** entorno de ejecución disponible; inventariar las tres rutas antes de cambiar el patrón.
+- **Pasos técnicos previstos:** extraer un guard runtime único, enrutar generador/exportador/build selectivo y añadir casos de borde aislados.
+- **Validación automática:** tabla unitaria, no-escritura temporal, lint, typecheck, test y formato.
+- **Validación manual:** ejecutar las acciones CLI afectadas con nombre válido e inválido.
+- **Evidencia requerida:** inventario de rutas, casos cubiertos y salida resumida sin rutas sensibles.
+- **Implementador:** perfil de seguridad/CLI, alto.
+- **Revisor independiente o autoridad de cierre:** revisor de seguridad distinto del implementador.
+- **Condición de escalamiento:** cualquier cambio del patrón permitido, filesystem o compatibilidad multiplataforma.
+
+### MHB-02 — Procesos sin shell
+
+- **Objetivo:** retirar shell de toda ruta que reciba o pueda reenviar entrada
+  de usuario y endurecer el helper literal restante.
+- **Archivos previstos:** `scripts/cli/helpers.js`, acciones CLI,
+  `scripts/build/build-helper.js` y tests.
+- **Aceptación:** argumentos viajan como array sin interpretación del shell;
+  señales/errores/códigos de salida se propagan; el helper literal queda sin
+  shell o con excepción documentada y revisada.
+- **Pruebas/validación:** proceso hijo controlado con espacios/metacaracteres,
+  acciones CLI y suite global aplicable.
+- **Riesgo:** diferencias Windows/WSL/macOS; escalar si exige comandos
+  específicos de plataforma.
+- **Fuera de alcance:** rediseñar la interfaz interactiva completa.
+- **Dependencias y precondiciones:** MHB-01 en revisión y matriz de invocaciones CLI/build conocida.
+- **Pasos técnicos previstos:** sustituir invocaciones con arrays de argumentos, endurecer o justificar helper literal y conservar propagación de errores.
+- **Validación automática:** proceso hijo controlado con espacios/metacaracteres, acciones CLI, lint, typecheck, test y formato.
+- **Validación manual:** comprobar códigos de salida y mensajes de una ejecución controlada.
+- **Evidencia requerida:** diff de procesos, resultados de casos y justificación de cualquier excepción literal.
+- **Implementador:** perfil de seguridad/CLI, alto.
+- **Revisor independiente o autoridad de cierre:** revisor de seguridad distinto del implementador.
+- **Condición de escalamiento:** diferencias Windows/WSL/macOS o un cambio de contrato CLI.
+
+### MHB-03 — Reconciliación documental y de release
+
+- **Objetivo:** convertir PLAN/STATUS actuales en fuentes fiables sin mover ni
+  reescribir `v1.1.0`.
+- **Archivos previstos:** documentación de implementación, README y CHANGELOG;
+  notas remotas solo con autorización explícita.
+- **Aceptación:** línea base, Bun, lockfile, CI, `dist`, capturas, HEAD y tag no
+  se contradicen; se registra qué contenido pertenece al tag y qué es posterior.
+- **Pruebas/validación:** diff `v1.1.0..HEAD`, revisión de tag/remote, enlaces,
+  lint Markdown y formato.
+- **Riesgo:** presentar como publicada información posterior al tag.
+- **Fuera de alcance:** reescribir tag, historial o publicar una release.
+- **Dependencias y precondiciones:** entorno de ejecución disponible; disponer de HEAD, tag y fuentes documentales verificables.
+- **Pasos técnicos previstos:** contrastar versiones, lockfile, CI, dist, capturas y tag; separar hechos del tag de cambios posteriores.
+- **Validación automática:** diff `v1.1.0..HEAD`, comprobación de enlaces/metadata, lint Markdown y formato.
+- **Validación manual:** revisar SHA, tag, workflow y narrativa de release.
+- **Evidencia requerida:** matriz de reconciliación y enlaces a fuentes comprobadas.
+- **Implementador:** perfil de documentación/release, medio.
+- **Revisor independiente o autoridad de cierre:** orquestador.
+- **Condición de escalamiento:** un tag, versión, release o decisión de autoría no sustentada.
+
+### MHB-04 — CI por rutas relevantes
+
+- **Objetivo:** que ningún cambio capaz de afectar el producto evite sus gates.
+- **Archivos previstos:** `.github/workflows/ci.yml` y tests/documentación de
+  la matriz de rutas si son necesarios.
+- **Aceptación:** workflow, layouts, templates, HTML/JS web, scripts,
+  configuración y dependencias disparan lint/verify adecuados; formato entra
+  en CI; jobs omitidos quedan justificados por datos.
+- **Pruebas/validación:** sintaxis, matriz ruta→job, suite local y runs remotos
+  de casos representativos antes de completar.
+- **Riesgo:** duplicar instalaciones o aumentar costo innecesario.
+- **Fuera de alcance:** deploy y publicación de release.
+- **Dependencias y precondiciones:** MHB-01 y MHB-02 en revisión; inventario de rutas y jobs actuales.
+- **Pasos técnicos previstos:** actualizar filtros/matriz, incluir formato y documentar cada omisión justificada.
+- **Validación automática:** sintaxis de workflow, matriz ruta→job y suite local completa.
+- **Validación manual:** confirmar runs remotos para cambios de workflow, layouts y HTML/JS web.
+- **Evidencia requerida:** URL de run, tabla ruta→job y resultados de controles.
+- **Implementador:** perfil CI, alto.
+- **Revisor independiente o autoridad de cierre:** revisor técnico distinto del implementador.
+- **Condición de escalamiento:** ampliar permisos, publicar artefactos o modificar release.
+
+### MHB-22 — Licencia verificable
+
+- **Objetivo:** materializar la licencia MIT declarada y alinear metadata.
+- **Archivos previstos:** `LICENSE`, README y metadata si discrepa.
+- **Aceptación:** texto y titular están sustentados por autoría; enlaces y
+  metadata coinciden.
+- **Pruebas/validación:** lint Markdown cuando aplique y revisión manual de
+  autoría/licencia por el orquestador.
+- **Riesgo:** introducir un titular o año no comprobados.
+- **Fuera de alcance:** asesoría legal o relicenciamiento.
+- **Dependencias y precondiciones:** MHB-03 en revisión y autoría/titular verificables.
+- **Pasos técnicos previstos:** añadir licencia, enlazar README y alinear metadata solo si existe discrepancia comprobada.
+- **Validación automática:** lint Markdown y comprobación de existencia/enlace/metadata.
+- **Validación manual:** revisión de titular, año y alcance por el orquestador.
+- **Evidencia requerida:** diff de LICENSE/README/metadata y fuente de autoría.
+- **Implementador:** perfil documentación, bajo.
+- **Revisor independiente o autoridad de cierre:** orquestador.
+- **Condición de escalamiento:** incertidumbre legal, de titularidad o de licencia.
+
+### MHB-05 — Pruebas de seguridad de comandos
+
+- **Objetivo observable:** convertir los controles de MHB-01/MHB-02/MHB-04 en regresiones automatizadas del flujo CLI y filesystem.
+- **Superficies autorizadas:** tests de scripts, helpers de build/CLI, fixtures temporales y configuración de suite/CI relacionada.
+- **Dependencias y precondiciones:** MHB-01, MHB-02 y MHB-04 revisados; no usar archivos de usuario como fixture.
+- **Pasos técnicos:** cubrir nombres válidos e inválidos, traversal, metacaracteres, códigos de salida y restauración tras fallo; conectar la suite al CI.
+- **Criterios de aceptación:** las rutas inseguras no leen ni escriben fuera del directorio permitido y los fallos no dejan artefactos parciales.
+- **Validación automática:** suite de regresión de comandos y filesystem, lint, typecheck, formato y CI.
+- **Validación manual:** revisar mensajes, códigos y recuperación de un fallo controlado.
+- **Evidencia requerida:** inventario de casos, resultados resumidos y diff de procesos/targets.
+- **Riesgos y reversión:** fixtures frágiles o dependientes de SO; aislar en temporales y revertir solo los tests/configuración del ID.
+- **Exclusiones específicas:** no rediseñar el CLI ni añadir soporte de shells.
+- **Implementador:** perfil técnico alto con propiedad exclusiva de tests y helpers afectados.
+- **Revisor independiente:** seguridad/CLI; no quien implementó la ruta.
+- **Condición de escalamiento:** una incompatibilidad multiplataforma o cambio del contrato de comandos.
+
+### MHB-06 — Validación de variables ESP
+
+- **Objetivo observable:** informar variables `{{ }}` faltantes como warning y sobrantes como info sin falsos positivos.
+- **Superficies autorizadas:** validadores de templates/datos, preview, build/exportación y tests/fixtures de variables.
+- **Dependencias y precondiciones:** MHB-05 cerrado en revisión; conservar delimitadores admitidos y ejemplos intencionales.
+- **Pasos técnicos:** definir comparación template/datos, clasificar severidad y exponer el resultado antes de preview y build/exportación.
+- **Criterios de aceptación:** faltantes y sobrantes se distinguen correctamente y no bloquean un caso válido por una variable ESP conocida.
+- **Validación automática:** fixtures faltante, sobrante, helper y variable intencional; lint, typecheck y suite aplicable.
+- **Validación manual:** provocar cada categoría desde preview y confirmar el aviso previo a exportar/build.
+- **Evidencia requerida:** payload/captura sin secretos y test del gate.
+- **Riesgos y reversión:** interpretar mal sintaxis de ESP; conservar fixtures positivos/negativos y revertir la regla aislada.
+- **Exclusiones específicas:** no prometer compatibilidad real con clientes de correo.
+- **Implementador:** perfil de compatibilidad de email, alto.
+- **Revisor independiente:** seguridad/compatibilidad.
+- **Condición de escalamiento:** cambiar semántica de delimitadores o severidades de producto.
+
+### MHB-07 — Errores accionables en preview
+
+- **Objetivo observable:** reemplazar el 500 genérico de `/api/render` por un error estructurado, seguro y útil.
+- **Superficies autorizadas:** handler API de render, cliente/dashboard de preview y pruebas de API/UI.
+- **Dependencias y precondiciones:** MHB-05; definir qué causa y ubicación son seguras de exponer.
+- **Pasos técnicos:** normalizar errores, devolver estado/payload adecuados, sanitizar rutas y representarlos en la interfaz.
+- **Criterios de aceptación:** el preview muestra causa y ubicación cuando existen, sin rutas absolutas, stack traces ni secretos.
+- **Validación automática:** tests de handler 422/payload/sanitización y cliente de error.
+- **Validación manual:** provocar un error real y revisar desktop/móvil.
+- **Evidencia requerida:** captura segura, payload de prueba y resultados de tests.
+- **Riesgos y reversión:** filtrar detalles internos o romper clientes existentes; mantener un contrato de payload versionado en tests.
+- **Exclusiones específicas:** no rediseñar todo el dashboard ni cambiar rutas públicas sin aprobación.
+- **Implementador:** perfil UX/API, alto, con propiedad de la superficie preview.
+- **Revisor independiente:** revisor UX/API.
+- **Condición de escalamiento:** exponer rutas, cambiar payload público o requerir arquitectura nueva.
+
+### MHB-08 — Descargar HTML final
+
+- **Objetivo observable:** permitir descargar `<template>.html` equivalente al HTML compilado.
+- **Superficies autorizadas:** dashboard de preview, utilidad de descarga, render/exportación y pruebas de estado.
+- **Dependencias y precondiciones:** MHB-07; el nombre de template debe pasar el guard de MHB-01.
+- **Pasos técnicos:** reutilizar HTML compilado, sanitizar nombre, generar descarga y mostrar fallos recuperables.
+- **Criterios de aceptación:** el archivo descargado es equivalente al compilado y no acepta un nombre inseguro.
+- **Validación automática:** pruebas de utilidad de descarga, nombre y estado; suite UI aplicable.
+- **Validación manual:** descargar, abrir y comparar un template representativo.
+- **Evidencia requerida:** archivo comparado, captura y prueba de estado.
+- **Riesgos y reversión:** divergencia con build o inyección en nombre; reutilizar fuente compilada y revertir UI/utility juntas.
+- **Exclusiones específicas:** no añadir ZIP, persistencia ni envío a ESP.
+- **Implementador:** perfil UX/API, medio.
+- **Revisor independiente:** revisor UX/API.
+- **Condición de escalamiento:** exigir almacenamiento, autenticación o una API nueva.
+
+### MHB-09 — Catálogo de templates de producto
+
+- **Objetivo observable:** definir cuatro casos de producto y retirar scaffolds visibles del dashboard.
+- **Superficies autorizadas:** catálogo/listado, fixtures, templates visibles, rutas de preview y documentación relacionada.
+- **Dependencias y precondiciones:** MHB-06; inventariar referencias existentes antes de retirar un fixture.
+- **Pasos técnicos:** fijar catálogo, clasificar fixtures internos, actualizar navegación y eliminar referencias colgantes.
+- **Criterios de aceptación:** cuatro casos definidos son visibles y los scaffolds no aparecen como producto.
+- **Validación automática:** build, validadores y tests de catálogo/rutas aplicables.
+- **Validación manual:** recorrer dashboard y confirmar ausencia de enlaces rotos.
+- **Evidencia requerida:** tabla de catálogo, resultados por template y capturas actuales.
+- **Riesgos y reversión:** perder fixture útil o enlace interno; preservar fixtures de prueba fuera del catálogo.
+- **Exclusiones específicas:** no crear templates todavía ni cambiar identidad de marca.
+- **Implementador:** perfil de producto/email, medio.
+- **Revisor independiente:** revisor de email.
+- **Condición de escalamiento:** decisión de marca, contenido o retirada de material con autoría incierta.
+
+### MHB-10 — Template password-reset
+
+- **Objetivo observable:** añadir un email transaccional profesional de recuperación de contraseña.
+- **Superficies autorizadas:** template, layout/componentes y schema/datos asociados del catálogo.
+- **Dependencias y precondiciones:** MHB-06 y MHB-09; preservar `{{ reset_url }}`.
+- **Pasos técnicos:** crear contenido/layout email-safe, schema y validaciones, y registrar el template en catálogo.
+- **Criterios de aceptación:** compila sin errores, conserva `{{ reset_url }}`, incluye aviso de seguridad y pasa validadores.
+- **Validación automática:** build, validate-email, pruebas de variables/tablas y lint/format aplicables.
+- **Validación manual:** revisar desktop/móvil, enlace y contenido transaccional.
+- **Evidencia requerida:** output `dist/`, resultados de validación y capturas.
+- **Riesgos y reversión:** diseño incompatible o URL eliminada; mantener fixture y revertir template/schema juntos.
+- **Exclusiones específicas:** no integrar flujos reales de autenticación.
+- **Implementador:** perfil email, medio.
+- **Revisor independiente:** revisor de email/compatibilidad.
+- **Condición de escalamiento:** una regla de compatibilidad impida el diseño o haga falta decisión de marca.
+
+### MHB-11 — Template receipt
+
+- **Objetivo observable:** añadir un recibo transaccional con ítems y totales verificables.
+- **Superficies autorizadas:** template, tablas/layout, schema/datos y catálogo.
+- **Dependencias y precondiciones:** MHB-06 y MHB-09; definir fixture sin datos reales.
+- **Pasos técnicos:** modelar ítems/totales, crear markup email-safe y conectar variables al validador.
+- **Criterios de aceptación:** compila sin errores, presenta ítems/totales y pasa validadores de tablas y variables.
+- **Validación automática:** build, validadores, tests de schema/variables y lint aplicable.
+- **Validación manual:** revisar legibilidad de tabla en desktop/móvil.
+- **Evidencia requerida:** `dist/`, resultados por template y capturas.
+- **Riesgos y reversión:** tabla frágil en clientes; probar estructura mínima y revertir template/schema juntos.
+- **Exclusiones específicas:** no conectar pagos ni datos de pedidos reales.
+- **Implementador:** perfil email, medio.
+- **Revisor independiente:** revisor de email/compatibilidad.
+- **Condición de escalamiento:** una regla de cliente impida la tabla o surja decisión de contenido.
+
+### MHB-12 — Template newsletter
+
+- **Objetivo observable:** añadir un newsletter de marketing con baja verificable.
+- **Superficies autorizadas:** template, componentes/layout, schema/datos y catálogo.
+- **Dependencias y precondiciones:** MHB-06 y MHB-09; fijar variable/enlace de baja seguro.
+- **Pasos técnicos:** crear markup de marketing email-safe, contenido de ejemplo, schema y enlace de unsubscribe.
+- **Criterios de aceptación:** compila sin errores y contiene un enlace de baja verificable por el validador.
+- **Validación automática:** build, validate-email, prueba de enlace y reglas de variables.
+- **Validación manual:** revisar contenido, jerarquía y enlace en desktop/móvil.
+- **Evidencia requerida:** `dist/`, validaciones y capturas.
+- **Riesgos y reversión:** enlace placeholder o contenido no aprobado; mantener datos ficticios y revertir template/schema juntos.
+- **Exclusiones específicas:** no operar listas, consentimientos ni campañas reales.
+- **Implementador:** perfil email, medio.
+- **Revisor independiente:** revisor de email/compatibilidad.
+- **Condición de escalamiento:** surja requisito legal, de marca o de plataforma de mailing.
+
+### MHB-13 — Cobertura de tipos y rendimiento
+
+- **Objetivo observable:** ampliar `checkJs` de forma gradual y documentar mediciones repetibles.
+- **Superficies autorizadas:** configuración de typecheck, scripts relevantes, tests/medición y documentación técnica.
+- **Dependencias y precondiciones:** MHB-19 y MHB-20; conservar compatibilidad JavaScript sin migración global.
+- **Pasos técnicos:** seleccionar scripts de mayor riesgo, corregir tipos progresivamente y medir con Bun, Node, SO y método declarados.
+- **Criterios de aceptación:** checkJs cubre scripts relevantes sin migración global y las mediciones son repetibles y contextualizadas.
+- **Validación automática:** typecheck ampliado, suite y script de medición reproducible.
+- **Validación manual:** revisar entorno, repeticiones y variabilidad.
+- **Evidencia requerida:** tabla Bun/Node/SO, comandos, repeticiones y resultados.
+- **Riesgos y reversión:** scope creep a TypeScript o métricas engañosas; limitar archivos y conservar baseline.
+- **Exclusiones específicas:** no fijar budget CI ni migrar todo a TypeScript.
+- **Implementador:** perfil de tipos/rendimiento, alto.
+- **Revisor independiente:** revisor técnico.
+- **Condición de escalamiento:** exigir migración global, presupuesto CI o métricas de producción.
+
+### MHB-14 — Evidencia de uso y compatibilidad
+
+- **Objetivo observable:** producir checklist reproducible de accesibilidad y matriz fechada de clientes reales.
+- **Superficies autorizadas:** protocolo/checklist, capturas, matriz documental y templates de producto.
+- **Dependencias y precondiciones:** MHB-07, MHB-08, MHB-10, MHB-11 y MHB-12; disponer de los clientes/dispositivos declarados.
+- **Pasos técnicos:** definir criterios de teclado/lector, ejecutar protocolo en Gmail, Outlook y Apple Mail, y registrar límites.
+- **Criterios de aceptación:** cada prueba tiene fecha, cliente, criterio, resultado y evidencia; no se sustituyen clientes reales por un validador estático.
+- **Validación automática:** validadores disponibles y lint de matriz, sin presentarlos como prueba real.
+- **Validación manual:** teclado, lector y clientes de correo según protocolo.
+- **Evidencia requerida:** matriz por cliente/criterio, capturas sin secretos y limitaciones.
+- **Riesgos y reversión:** afirmar cobertura no realizada o filtrar datos; usar cuentas/fixtures seguros y marcar no verificado.
+- **Exclusiones específicas:** no certificar accesibilidad ni compatibilidad universal.
+- **Implementador:** perfil de evidencia/compatibilidad, alto.
+- **Revisor independiente:** orquestador o revisor con acceso a clientes.
+- **Condición de escalamiento:** falta acceso a cliente/dispositivo o aparecen datos sensibles.
+
+### MHB-15 — Documentación, capturas y release posterior
+
+- **Objetivo observable:** dejar README, CHANGELOG, versión, tag y release posterior coherentes y sustentados.
+- **Superficies autorizadas:** README, CHANGELOG, versión/package metadata, capturas, notas de release y documentación relacionada.
+- **Dependencias y precondiciones:** MHB-03, MHB-13, MHB-14, MHB-18 y MHB-22; decisión explícita antes de publicar o etiquetar.
+- **Pasos técnicos:** reconciliar narrativa/evidencia, actualizar versión y changelog del alcance real, preparar tag/release solo tras revisión.
+- **Criterios de aceptación:** documentación, versión, tag y release posterior coinciden; capturas son actuales y los límites no se presentan como hechos no probados.
+- **Validación automática:** lint Markdown, suite, build y comprobación de consistencia de versión.
+- **Validación manual:** revisar README, capturas, changelog, SHA/tag y notas antes de publicar.
+- **Evidencia requerida:** SHA, tag, URL de release, diff final y checklist de capturas.
+- **Riesgos y reversión:** publicar una afirmación adelantada; detener antes de acciones externas y revertir documentación local si corresponde.
+- **Exclusiones específicas:** no publicar automáticamente ni modificar `v1.1.0`.
+- **Implementador:** perfil documentación/release, medio.
+- **Revisor independiente:** orquestador.
+- **Condición de escalamiento:** cualquier publicación, tag, versión o evidencia no sustentada.
+
+### MHB-16 — Demo candidata pre-renderizada (opcional)
+
+- **Objetivo observable:** decidir y probar una demo solo lectura sin divergencia frente al HTML compilado.
+- **Superficies autorizadas:** build estático, configuración de demo/despliegue aprobada, rutas de navegación y documentación de evidencia.
+- **Dependencias y precondiciones:** MHB-13, MHB-14 y MHB-15; aprobación explícita de proveedor/credenciales si fueran necesarios.
+- **Pasos técnicos:** comparar output, configurar demo mínima, ejecutar smoke y registrar SHA desplegado.
+- **Criterios de aceptación:** demo candidata coincide con HTML compilado, funciona en desktop/móvil y se enlaza para verificación.
+- **Validación automática:** smoke de build estático, enlaces y checks aplicables.
+- **Validación manual:** navegar la demo solo lectura en desktop/móvil.
+- **Evidencia requerida:** URL candidata, SHA desplegado y checklist.
+- **Riesgos y reversión:** divergencia, coste o exposición de datos; no desplegar sin aprobación y retirar la configuración candidata de forma recuperable.
+- **Exclusiones específicas:** no publicar el caso como destacado ni añadir backend.
+- **Implementador:** perfil de deploy/preview, alto.
+- **Revisor independiente:** orquestador.
+- **Condición de escalamiento:** proveedor, credenciales, coste o publicación externa.
+
+### MHB-17 — Alternar render y código fuente
+
+- **Objetivo observable:** alternar render/código escapado en una sesión sin recompilación redundante.
+- **Superficies autorizadas:** dashboard de preview, estado de UI, render/cache y pruebas de estado.
+- **Dependencias y precondiciones:** MHB-07; preservar sanitización y HTML ya compilado.
+- **Pasos técnicos:** añadir control de vista, reutilizar resultado actual y asegurar persistencia de sesión sin nueva compilación.
+- **Criterios de aceptación:** usuario alterna ambas vistas, el código se escapa y el estado persiste durante la sesión.
+- **Validación automática:** prueba de estado, sanitización y no recompilación redundante.
+- **Validación manual:** alternar un template representativo y revisar legibilidad.
+- **Evidencia requerida:** captura y prueba de estado/rendimiento.
+- **Riesgos y reversión:** mostrar HTML ejecutable o invalidar caché; escapar contenido y revertir componente/estado juntos.
+- **Exclusiones específicas:** no crear editor de código ni persistencia entre sesiones.
+- **Implementador:** perfil UX/API, medio.
+- **Revisor independiente:** revisor UX/API.
+- **Condición de escalamiento:** cambie contrato de cache, payload público o seguridad de render.
+
+### MHB-18 — Guía de componentes y matriz documentada
+
+- **Objetivo observable:** permitir crear un componente con `index.html` y `schema.json` siguiendo solo la guía.
+- **Superficies autorizadas:** guía, snippets, matriz de compatibilidad y componente/fixture temporal de verificación.
+- **Dependencias y precondiciones:** MHB-10, MHB-11 y MHB-12; conservar distinción entre validación estática y pruebas reales.
+- **Pasos técnicos:** documentar estructura, schema, registro y validación; ejecutar el ejercicio desde cero y actualizar la matriz.
+- **Criterios de aceptación:** una persona crea un componente válido usando solo la guía y la matriz declara el nivel de evidencia.
+- **Validación automática:** lint documental, comprobación de snippets y build/validator del componente temporal.
+- **Validación manual:** seguir la guía sin conocimiento implícito y revisar el resultado.
+- **Evidencia requerida:** componente descartable, checklist y resultados de validación.
+- **Riesgos y reversión:** guía desactualizada o promesas excesivas; versionar ejemplos y revertir documentación sin afectar producto.
+- **Exclusiones específicas:** no convertir documentación estable en una skill ni crear un builder.
+- **Implementador:** perfil documentación/email, medio.
+- **Revisor independiente:** revisor que siga la guía desde cero.
+- **Condición de escalamiento:** la guía exija una skill nueva o revele una decisión de arquitectura.
+
+### MHB-19 — Unit tests de helpers y reglas
+
+- **Objetivo observable:** cubrir helpers críticos y cada regla de compatibilidad con positivos y negativos.
+- **Superficies autorizadas:** helpers, validadores, tests unitarios y fixtures aislados.
+- **Dependencias y precondiciones:** MHB-05 y MHB-06; identificar reglas y helpers críticos sin probar detalles internos irrelevantes.
+- **Pasos técnicos:** crear inventario regla/helper→casos, añadir felices/borde y positivos/negativos, y mantener fixtures mínimos.
+- **Criterios de aceptación:** cada helper/regla crítico tiene cobertura pertinente y los fallos explican la regla afectada.
+- **Validación automática:** suite unitaria, cobertura/inventario y lint/typecheck aplicables.
+- **Validación manual:** revisar que fixtures prueben comportamiento observable.
+- **Evidencia requerida:** inventario regla/helper→tests y resultados de suite.
+- **Riesgos y reversión:** tests acoplados a implementación; preferir contratos observables y revertir fixtures/tests aislados.
+- **Exclusiones específicas:** no imponer un porcentaje global de cobertura.
+- **Implementador:** perfil de pruebas, alto.
+- **Revisor independiente:** revisor técnico alto.
+- **Condición de escalamiento:** requerir binarios externos o cambios productivos para probar.
+
+### MHB-20 — Integración build, render, caché y exportación
+
+- **Objetivo observable:** comprobar el flujo extremo a extremo con temporales, sin depender de binarios PNG.
+- **Superficies autorizadas:** tests de integración, build/render, caché, exportación y fixtures temporales.
+- **Dependencias y precondiciones:** MHB-07, MHB-10, MHB-11 y MHB-12; mantener aislados datos/output de prueba.
+- **Pasos técnicos:** integrar flatten, `{{ }}`, `[[ ]]`, gate, tema, `theme+dataHash` y exportación HTML en escenarios transaccional y marketing.
+- **Criterios de aceptación:** los flujos producen output esperado, respetan cache y no dejan artefactos fuera de temporales.
+- **Validación automática:** integración temporal de build/render/caché/exportación y suite global.
+- **Validación manual:** revisar HTML final de un caso transaccional y uno marketing.
+- **Evidencia requerida:** resultados de flatten, delimitadores, gate, caché y exportación.
+- **Riesgos y reversión:** pruebas lentas/frágiles o dependencia de binarios; usar temporales y evitar PNG.
+- **Exclusiones específicas:** no reemplazar pruebas visuales reales ni construir infraestructura de snapshots pesada.
+- **Implementador:** perfil de pruebas/integración, alto.
+- **Revisor independiente:** revisor técnico alto.
+- **Condición de escalamiento:** tests requieran binarios externos o modifiquen comportamiento de producción.
+
+### MHB-21 — Resolver links placeholder
+
+- **Objetivo observable:** eliminar warnings `href="#"` de los cuatro templates de producto o aislar excepciones de fixture.
+- **Superficies autorizadas:** templates, datos/schema, validador de links y catálogo.
+- **Dependencias y precondiciones:** MHB-09, MHB-10, MHB-11 y MHB-12; distinguir fixture interno de template de producto.
+- **Pasos técnicos:** localizar placeholders, sustituir por URLs/variables seguras o retirar el contenido del catálogo visible.
+- **Criterios de aceptación:** los cuatro templates no generan warnings placeholder o existe excepción documentada fuera del catálogo.
+- **Validación automática:** build, validador de links y tests de catálogo.
+- **Validación manual:** revisar destinos y contenido representativo sin navegar enlaces sensibles.
+- **Evidencia requerida:** resultados por template y excepción documentada si aplica.
+- **Riesgos y reversión:** introducir URLs engañosas o romper fixtures; usar destinos demostrativos seguros y revertir datos/template juntos.
+- **Exclusiones específicas:** no integrar tracking ni enlaces de producción.
+- **Implementador:** perfil email/producto, medio.
+- **Revisor independiente:** revisor de email.
+- **Condición de escalamiento:** se requiera URL de marca, legal o de producción.
+
+### MHB-23 — Ampliar biblioteca de componentes (opcional)
+
+- **Objetivo observable:** añadir componentes email-safe con schema y presencia en `/library`.
+- **Superficies autorizadas:** partials/componentes, schemas, library, pruebas y documentación de componentes.
+- **Dependencias y precondiciones:** MHB-18 y MHB-20; cada componente debe tener un caso de uso aprobado.
+- **Pasos técnicos:** crear componente/schema, registrarlo, construirlo y cubrir su validación/prueba aplicable.
+- **Criterios de aceptación:** cada componente adicional es email-safe, tiene schema, aparece en `/library` y pasa controles.
+- **Validación automática:** build, schema, validadores y tests aplicables por componente.
+- **Validación manual:** abrir library, editar datos y revisar output.
+- **Evidencia requerida:** schema, captura, build verde y resultados de validación.
+- **Riesgos y reversión:** ampliar hacia un builder o duplicar componentes; mantener cada adición aislada y reversible.
+- **Exclusiones específicas:** no construir editor/builder de emails.
+- **Implementador:** perfil email/UI, medio.
+- **Revisor independiente:** revisor de email/UI.
+- **Condición de escalamiento:** el alcance se amplíe hacia un builder o requiera nueva arquitectura.
+
+## Fases
+
+### Fase A — Seguridad y trazabilidad
+
+- **Hallazgos que resuelve:** P1 de comandos; P1/P2 de PLAN, STATUS, CI y tag.
+- **IDs incluidos:** MHB-01, MHB-02, MHB-03, MHB-04, MHB-22.
+- **Entregables:** contrato único de nombres seguros, procesos sin shell para
+  entradas, documentación rebasada, licencia y CI que no omite rutas críticas.
+- **Riesgos:** cambiar CLI/build o workflow sin prueba de regresión; confundir
+  la documentación posterior al tag con el contenido de la release publicada.
+- **Criterio de salida:** controles locales y CI definidos en MHB-04 verdes;
+  ningún comando acepta un nombre inválido; la reconciliación no mueve el tag.
+
+### Fase B — Flujo de producto comprobable
+
+- **Hallazgos que resuelve:** validación de variables, errores de preview,
+  descarga y ejemplos de producto incompletos.
+- **IDs incluidos:** MHB-05 a MHB-12, MHB-17, MHB-18, MHB-21.
+- **Entregables:** pruebas de flujo crítico, preview con errores seguros,
+  descarga HTML, toggle render/código, documentación de componentes y cuatro
+  templates de producto sin links placeholder.
+- **Riesgos:** tratar warnings del validador como compatibilidad real o dejar
+  fixtures visibles como si fueran producto.
+- **Criterio de salida:** cuatro templates visibles compilan; tests de
+  build/render/CLI verdes; variables y errores se comportan como se documenta.
+
+### Fase C — Evidencia para la puerta de calidad
+
+- **Hallazgos que resuelve:** cobertura/tipos/rendimiento, accesibilidad,
+  clientes reales y narrativa/release.
+- **IDs incluidos:** MHB-13, MHB-14, MHB-15, MHB-19, MHB-20.
+- **Entregables:** mediciones reproducibles, matriz de pruebas manuales y una
+  release posterior plenamente trazable.
+- **Riesgos:** afirmar evidencia de clientes sin pruebas; incluir secretos en
+  capturas o documentación.
+- **Criterio de salida:** evidencia enlazable en `progress.md`; todos los
+  bloqueadores de auditoría resueltos o explícitamente reevaluados.
+
+### Fase D — Evolución opcional
+
+- **IDs incluidos:** MHB-16, MHB-23.
+- **Criterio de salida:** cada opcional aprobado cumple su propia aceptación;
+  una demo accesible es apta para verificación, pero no equivale a publicar el
+  caso como destacado.
+
+## Contrato obligatorio de cierre
+
+Cada elemento debe conservar en el contrato transferido: objetivo, archivos,
+pasos, dependencias, aceptación, pruebas automáticas, validación manual,
+riesgos, exclusiones y evidencia esperada. Una skill puede añadir controles,
+pero no sustituir esos campos ni rebajar su aceptación.
+
+### Estados y revisión independiente
+
+1. `Pendiente`: dependencias o autorización todavía no satisfechas.
+2. `En progreso`: implementador asignado y propiedad de archivos registrada.
+3. `En revisión`: implementación terminada; se registran diff, comandos,
+   resultados, desviaciones y riesgos. El implementador no puede marcarla
+   `Completada`.
+4. `Bloqueada`: un control obligatorio falla o falta evidencia; no se inicia la
+   tarea dependiente.
+5. `Completada`: un revisor independiente confirma aceptación, diff, pruebas,
+   lint, typecheck/build cuando correspondan y ausencia de cambios fuera de
+   alcance; el orquestador dicta el veredicto.
+
+### Matriz mínima de comprobación
+
+| IDs                    | Prueba automática mínima                                                    | Validación manual                                                       | Evidencia de cierre                                                |
+| ---------------------- | --------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| MHB-01/MHB-02          | Casos válidos, traversal, metacaracteres, códigos de salida y restauración. | Ejecutar acciones CLI afectadas sin shell.                              | Tests, diff de procesos y demostración de que no se escribe fuera. |
+| MHB-03/MHB-22          | Lint Markdown y comprobación de enlaces/metadata.                           | Comparar HEAD, tag, CHANGELOG, STATUS, workflow y licencia.             | Matriz de reconciliación y enlaces a evidencia.                    |
+| MHB-04                 | Validación de sintaxis y matriz de rutas; suite local completa.             | Confirmar CI remoto para cambios de workflow, layouts y HTML web.       | URL de run y tabla ruta→job.                                       |
+| MHB-05                 | Suite de regresión de comandos y filesystem.                                | Revisar mensajes y recuperación ante fallo.                             | Casos cubiertos y salida resumida.                                 |
+| MHB-06                 | Fixtures faltante, sobrante, helper y variable ESP intencional.             | Verificar aviso en preview y antes de exportar/build.                   | Captura/payload y test del gate.                                   |
+| MHB-07                 | Handler 422, payload, sanitización y cliente de error.                      | Provocar error real en preview.                                         | Captura sin rutas absolutas y tests.                               |
+| MHB-08/MHB-17          | Utilidades de descarga y estado del toggle.                                 | Descargar/abrir HTML; alternar sin recompilación redundante.            | Archivo comparado, captura y prueba de estado.                     |
+| MHB-09 a MHB-12/MHB-21 | Build y validadores sobre los cuatro templates.                             | Desktop/móvil y revisión de contenido/link/unsubscribe.                 | `dist/`, resultados por template y capturas actuales.              |
+| MHB-18                 | Lint de documentación y comprobación de snippets.                           | Crear un componente siguiendo solo la guía.                             | Componente de prueba descartable y checklist.                      |
+| MHB-19                 | Positivo/negativo por regla y casos felices/borde por helper crítico.       | Revisar que las fixtures no prueben implementación interna irrelevante. | Inventario regla/helper→tests.                                     |
+| MHB-20                 | Integración temporal de build, render, caché y exportación HTML.            | Revisar output final de un caso transaccional y uno marketing.          | Resultados de flatten, delimitadores, gate y caché.                |
+| MHB-13                 | Typecheck ampliado y medición repetida.                                     | Revisar entorno y variabilidad.                                         | Tabla con Bun/Node/SO, comando, repeticiones y resultados.         |
+| MHB-14                 | Validadores disponibles; no sustituyen pruebas reales.                      | Teclado/lector y Gmail/Outlook/Apple Mail con protocolo fechado.        | Matriz por cliente/criterio, capturas sin secretos y limitaciones. |
+| MHB-15                 | Lint, suite, build y consistencia de versión.                               | Revisar README, capturas, changelog y release antes de publicar.        | SHA, tag, URL de release y diff final.                             |
+| MHB-16                 | Smoke del build estático y enlaces.                                         | Navegar demo solo lectura en desktop/móvil.                             | URL candidata, SHA desplegado y checklist.                         |
+| MHB-23                 | Tests/validadores aplicables por componente.                                | Aparición y edición en `/library`.                                      | Schema, captura y build verde.                                     |
+
+### Gates globales
+
+- Todos los cambios: `bun run format:check` y `git diff --check`.
+- Markdown: `bun run lint:md`.
+- JavaScript/configuración: `bun run lint` y `bun run typecheck` según alcance.
+- Templates/layouts/CSS/build: `bun run build` y
+  `bun run validate-email`; ERROR bloquea, WARNING/INFO no se ocultan.
+- UI/API: pruebas automatizadas más `bun run dev` y recorrido manual.
+- Antes de cerrar una fase: instalación congelada, lint, typecheck, test,
+  build y formato verdes en la versión de Bun fijada por el proyecto.
+- Un control obligatorio `Fallido` o `No ejecutado` impide `Completada`, salvo
+  excepción explícita aprobada por el orquestador con riesgo y nueva acción.
+
+## Orden de ejecución
+
+1. Ejecutar la Fase A, MHB-01 a MHB-04/MHB-22; cada ítem pasa por
+   implementador, revisor y veredicto del orquestador.
+2. Revisar el cierre de Fase A antes de iniciar el flujo de producto.
+3. Ejecutar Fase B y luego Fase C. Solo entonces decidir si MHB-16 o MHB-23
+   aportan valor suficiente para abrir Fase D.
+4. Someter el producto a una revisión final independiente antes de declararlo
+   listo para presentarse como caso de portafolio.
+
+### Política de ramas y versiones conservada
+
+- Una tarea por rama `feature/<id-en-minusculas>` y PR directo a `master`; no
+  se mezclan tareas ni se incrementa versión por cada una.
+- El gate de Fase B conserva la intención de una minor `v1.2.0` y el de Fase C
+  la de `v1.3.0`, pero MHB-03 debe confirmar primero si el estado posterior a
+  `v1.1.0` exige una corrección `v1.1.1`. La decisión queda documentada antes
+  de editar versiones.
+- Tag, CHANGELOG, versión y release deben apuntar al mismo alcance. Ningún
+  subagente publica o mueve referencias sin aprobación del orquestador.
+- `dist/` permanece versionado por decisión del proyecto; capturas son
+  entregables documentales. `task-verification` debe resolver la contradicción
+  actual de `workflow-git.md` y evitar commits accidentales fuera de tarea.
+
+## Criterios para estar listo para portafolio
+
+- Los P1 de comandos y trazabilidad están cerrados con evidencia reproducible.
+- CI cubre las rutas relevantes; lint, typecheck, pruebas, build y formato
+  están verdes en la matriz declarada.
+- Cuatro templates de producto, preview seguro y descarga de HTML funcionan.
+- La vista de código, guía de componentes, licencia y links reales están
+  verificados.
+- Hay evidencia fechada de accesibilidad, rendimiento y clientes de correo.
+- La documentación, versión, tag y release posterior concuerdan; existe un
+  despliegue candidato o instrucciones reproducibles para demostrar el flujo.
+- MHB-16 solo puede seguir opcional si la puerta final acepta la demostración
+  local reproducible; si esa evidencia es insuficiente, pasa a requerida antes
+  de `Listo para portafolio`.
+- La verificación final aprueba el caso. Publicarlo en una superficie externa
+  del portafolio es una acción posterior y separada.
+
+## Impacto de nombre o combinación de repositorios
+
+No se cambia el repositorio ni se combina con otro caso. `EmailForge Toolkit`
+es el nombre de producto; `vite-mhb-email` conserva su slug, URL y paquete
+históricos. Toda release posterior debe usar ambos nombres de forma coherente.
+
+## Diseño de orquestación
+
+Las skills son contratos de procedimiento; los subagentes son ejecuciones
+temporales. Cada subagente recibe IDs, skills obligatorias, archivos exclusivos,
+controles y condición de escalamiento. Ninguna identidad se persiste como
+agente permanente.
+
+### Orquestación de la Fase A — Seguridad y trazabilidad
+
+| Línea                                | Skills obligatorias                          | Implementador y propiedad                                   | Revisor                               | Controles                                                           | Escalar cuando                                                    |
+| ------------------------------------ | -------------------------------------------- | ----------------------------------------------------------- | ------------------------------------- | ------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| MHB-01/MHB-02 rutas y procesos       | `email-quality-gates`, `email-project-stack` | Terra alto; scripts de generación, exportación, build y CLI | Terra alto distinto del implementador | Casos adversariales seguros, códigos de salida, lint/typecheck/test | Cambie contrato CLI, filesystem o compatibilidad multiplataforma. |
+| MHB-03/MHB-22 documentación/licencia | `task-verification`                          | Terra medio; PLAN, STATUS, CHANGELOG, README y LICENSE      | Orquestador                           | SHA/tag/workflow, lint Markdown y metadata                          | Requiera tag/release, versión o decisión legal no sustentada.     |
+| MHB-04 CI                            | `task-verification`, `email-project-stack`   | Terra alto; `.github/workflows/ci.yml`                      | Terra alto distinto del implementador | Ruta→job, suite local y CI remoto                                   | Amplíe permisos, publique artefactos o cambie release.            |
+
+### Fase B — Producto
+
+| Línea                            | Skills obligatorias                              | Implementador y propiedad                         | Revisor                             | Controles                                | Escalar cuando                                                       |
+| -------------------------------- | ------------------------------------------------ | ------------------------------------------------- | ----------------------------------- | ---------------------------------------- | -------------------------------------------------------------------- |
+| MHB-05/MHB-06 validadores        | `email-compatibility`, `email-quality-gates`     | Terra alto; validadores y tests asociados         | Revisor de seguridad/compatibilidad | Fixtures, preview, build/export y gate   | Cambie semántica ESP o severidades.                                  |
+| MHB-07/MHB-08/MHB-17 preview     | `email-preview-dashboard`, `email-quality-gates` | Terra alto; API/UI preview                        | Revisor UX/API                      | Tests más recorrido manual desktop/móvil | Exponga rutas, cambie payload público o requiera nueva arquitectura. |
+| MHB-09 a MHB-12/MHB-21 templates | `email-compatibility`, `email-project-stack`     | Terra medio; catálogo/templates y `dist` derivado | Revisor de email                    | Build, validate-email, visual y links    | Una regla impida el diseño o aparezcan decisiones de marca.          |
+| MHB-18 documentación             | `task-verification`, `email-compatibility`       | Terra medio; guía/matriz                          | Revisor que siga la guía desde cero | Lint y ejercicio de componente           | La guía requiera crear una skill adicional.                          |
+
+### Fase C — Calidad y evidencia
+
+| Línea                    | Skills obligatorias                               | Implementador y propiedad           | Revisor                  | Controles                                          | Escalar cuando                                                    |
+| ------------------------ | ------------------------------------------------- | ----------------------------------- | ------------------------ | -------------------------------------------------- | ----------------------------------------------------------------- |
+| MHB-19/MHB-20 pruebas    | `task-verification`, skills del dominio probado   | Terra alto; tests/fixtures          | Terra alto independiente | Inventario de cobertura e integración temporal     | Requiera binarios externos o cambios productivos para testear.    |
+| MHB-13 tipos/rendimiento | `email-refactor-type-safety`, `task-verification` | Terra alto; tipos/config/mediciones | Revisor técnico          | Typecheck y protocolo reproducible                 | Amplíe alcance a migración TypeScript o budget CI.                |
+| MHB-14 evidencia manual  | `email-compatibility`, `email-preview-dashboard`  | Terra alto; matriz/capturas         | Orquestador              | Protocolo fechado, clientes reales y accesibilidad | No haya acceso a cliente/dispositivo o aparezcan datos sensibles. |
+| MHB-15 release           | `task-verification`                               | Terra medio; docs/version/changelog | Orquestador              | Suite completa, tag y release coherentes           | Antes de cualquier publicación o cambio de versión.               |
+
+### Fase D — Opcionales
+
+| Línea              | Skills obligatorias                                                                                | Implementador y propiedad                   | Revisor             | Controles                                 | Escalar cuando                                          |
+| ------------------ | -------------------------------------------------------------------------------------------------- | ------------------------------------------- | ------------------- | ----------------------------------------- | ------------------------------------------------------- |
+| MHB-16 demo        | `email-project-stack`, `email-preview-dashboard`, skill de despliegue solo si se aprueba proveedor | Terra alto; build estático/config de deploy | Orquestador         | Smoke, URL, SHA y ausencia de divergencia | Requiera proveedor, credenciales o publicación externa. |
+| MHB-23 componentes | `email-compatibility`, `email-preview-dashboard`                                                   | Terra medio; partials/schemas/library       | Revisor de email/UI | Build, schema, library y visual           | Amplíe el alcance hacia un builder.                     |
+
+El orquestador conserva integración, decisiones transversales, cambios
+destructivos, versiones, releases y veredictos. Solo paraleliza líneas con
+archivos exclusivos y al menos dos ámbitos realmente independientes.

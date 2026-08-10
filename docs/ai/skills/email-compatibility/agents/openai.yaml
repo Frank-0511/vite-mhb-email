@@ -1,0 +1,4 @@
+interface:
+  display_name: "Compatibilidad de email"
+  short_description: "Protege la compatibilidad de HTML email"
+  default_prompt: "Usa $email-compatibility para modificar templates y validadores de email sin romper la salida ESP."

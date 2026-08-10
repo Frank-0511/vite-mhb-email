@@ -53,7 +53,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prepare": "husky",
-    "agents:sync": "bun scripts/ai/sync-agents.js"
+    "agents:sync": "node scripts/ai/agents-sync.mjs",
+    "agents:check": "node scripts/ai/agents-check.mjs"
   },
   "lint-staged": {
     "scripts/**/*.js": [

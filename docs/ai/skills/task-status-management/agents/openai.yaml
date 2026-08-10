@@ -1,0 +1,4 @@
+interface:
+  display_name: "Estado de implementacion"
+  short_description: "Actualiza estado y handoff de una tarea"
+  default_prompt: "Usa $task-status-management para actualizar el estado, validaciones o handoff de una tarea autorizada."

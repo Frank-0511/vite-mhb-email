@@ -1,0 +1,4 @@
+interface:
+  display_name: "Refactor y type safety"
+  short_description: "Guia refactors y tipado gradual seguro"
+  default_prompt: "Usa $email-refactor-type-safety para refactorizar modulos o ampliar type safety gradualmente."

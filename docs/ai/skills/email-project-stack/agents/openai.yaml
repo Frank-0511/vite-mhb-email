@@ -1,0 +1,4 @@
+interface:
+  display_name: "Stack de EmailForge"
+  short_description: "Orienta cambios en Bun, Vite y Maizzle"
+  default_prompt: "Usa $email-project-stack antes de cambiar el pipeline, la configuracion o rutas clave de EmailForge Toolkit."

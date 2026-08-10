@@ -25,16 +25,13 @@ node_modules
 # Local cache (copy-html renders, preview hydration — never commit)
 .cache/
 
-# AI workflow documentation (regenerable)
-AI_WORKFLOW.md
-
-# AI Assistants and Agents (recreados por bun run agents:sync)
-.claude/
-.opencode/
-.cursor/
-.agent/
-.agents/
-.codex/
-.github/skills
+# BEGIN agents:sync managed
 AGENTS.md
 CLAUDE.md
+.agent/skills
+.agents/skills
+.claude/skills
+.codex/skills
+.github/skills
+!docs/ai/AGENTS.md
+# END agents:sync managed
