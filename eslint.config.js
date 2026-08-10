@@ -18,6 +18,16 @@ export default [
     },
   },
 
+  // Scripts de sincronización de agentes — CLIs ESM con salida de diagnóstico.
+  {
+    files: ["scripts/ai/*.mjs"],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
+
   // Entorno Browser — define window, document, customElements, etc.
   {
     files: ["src/web/**/*.js"],
