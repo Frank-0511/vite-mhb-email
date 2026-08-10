@@ -2,10 +2,10 @@
 
 ## Resumen
 
-- ID activo: MHB-01
-- Estado: `En revisión`
+- ID activo: ninguno
+- Estado: `Completada` (MHB-01)
 - Implementador: Codex (perfil seguridad/CLI)
-- Revisor o autoridad de cierre: revisor de seguridad independiente
+- Revisor o autoridad de cierre: usuario (revisión manual independiente)
 - Última actualización: 2026-08-10
 - Contrato estable: `docs/implementation/PLAN.md`
 
@@ -15,7 +15,7 @@ en `En revisión`; otra autoridad decide `Completada`.
 
 ## Últimas entregas
 
-- MHB-01 entregado a revisión: guard, alias Bun y exportación PNG portable con Puppeteer.
+- MHB-01 completado: guard, alias Bun y exportación PNG portable con Puppeteer.
 
 ## Validaciones
 
@@ -32,17 +32,17 @@ en `En revisión`; otra autoridad decide `Completada`.
 
 ## Ejecuciones delegadas
 
-| Ámbito | Modelo/esfuerzo reales | Estado      | Propiedad                                             | Handoff                                        |
-| ------ | ---------------------- | ----------- | ----------------------------------------------------- | ---------------------------------------------- |
-| MHB-01 | gpt-5.6-terra / alto   | En revisión | Guard, generador, exportador, build selectivo y tests | Revisión de seguridad independiente pendiente. |
+| Ámbito | Modelo/esfuerzo reales | Estado     | Propiedad                                             | Handoff                                  |
+| ------ | ---------------------- | ---------- | ----------------------------------------------------- | ---------------------------------------- |
+| MHB-01 | gpt-5.6-terra / alto   | Completada | Guard, generador, exportador, build selectivo y tests | Usuario validó manualmente el resultado. |
 
 ## Revisión de cierre
 
-- Criterios de aceptación comprobados: —
-- Controles automáticos: —
-- Controles manuales: —
-- Evidencia revisada: —
-- Decisión del revisor: —
+- Criterios de aceptación comprobados: guard único, rutas seguras, aliases y exportación portátil.
+- Controles automáticos: lint, typecheck, build, validación email y 30 pruebas verdes.
+- Controles manuales: usuario confirmó el flujo correcto.
+- Evidencia revisada: commit `9446206` y PNG exportado de prueba.
+- Decisión del revisor: `Completada` por el usuario.
 
 ## Decisiones técnicas locales
 
@@ -56,10 +56,10 @@ en `En revisión`; otra autoridad decide `Completada`.
 
 ## Bloqueos
 
-- Formato global pendiente hasta que se decida cómo tratar `src/emails/templates/welcome2/index.html`.
+- Ninguno para MHB-01; el formato pendiente pertenece a `welcome2`, archivo de usuario fuera del ID.
 
 ## Handoff
 
-- Rama y commit: `feature/mhb-01`, sin commit todavía.
+- Rama y commit: `feature/mhb-01`, `9446206`.
 - Working tree: cambios del ID y `bun.lock`; `welcome2` y `bun.lockb` quedan fuera del commit.
-- Próxima acción: formatear o excluir por decisión el template de usuario; después, revisión independiente.
+- Próxima acción: seleccionar el siguiente ID cuyas dependencias estén satisfechas.
