@@ -12,7 +12,7 @@ import {
   ensureScreenshotDir,
   getOutputPaths,
 } from "./file-manager.js";
-import { convertPdfToPng, tryPuppeteer, tryWkhtmltoimage } from "./renderers.js";
+import { tryPuppeteer } from "./renderers.js";
 
 /**
  * Imprime mensaje de éxito.
@@ -41,47 +41,22 @@ export async function exportScreenshot(htmlFile, templateName, templateData) {
 
     // Preparar directorios y rutas
     await ensureScreenshotDir();
-    const { png: outputPath, pdf: pdfPath } = getOutputPaths(templateName);
+    const { png: outputPath } = getOutputPaths(templateName);
 
     // Compilar HTML con Handlebars usando datos locales
     console.log(paint(c.dim, "  Compilando template con datos…"));
     const compiledHtml = compileHtmlWithData(htmlFile, templateData);
     tempHtmlFile = await createTempHtmlFile(compiledHtml, templateName);
 
-    // Método 1: wkhtmltoimage (más rápido si existe)
-    if (await tryWkhtmltoimage(tempHtmlFile, outputPath)) {
+    // Puppeteer incluye una versión compatible de Chrome al instalar el proyecto.
+    if (await tryPuppeteer(tempHtmlFile, outputPath)) {
       await cleanupTempFile(tempHtmlFile);
       printSuccess(outputPath);
       return;
     }
 
-    // Método 2: puppeteer → PDF → PNG
-    if (await tryPuppeteer(tempHtmlFile, pdfPath)) {
-      console.log(paint(c.green, "  ✅ PDF generado"));
-
-      if (await convertPdfToPng(pdfPath, outputPath)) {
-        // Limpiar archivos temporales
-        await fs.remove(pdfPath);
-        await cleanupTempFile(tempHtmlFile);
-        printSuccess(outputPath);
-        return;
-      }
-    }
-
-    // Fallback: solo PDF
-    if (fs.existsSync(pdfPath)) {
-      console.log(
-        paint(c.yellow, "  ⚠️  PNG no disponible, pero se generó ") +
-          paint(c.cyan, `${templateName}.pdf`),
-      );
-      await cleanupTempFile(tempHtmlFile);
-      printSuccess(pdfPath);
-      return;
-    }
-
-    // Sin éxito: instrucciones
     throw new Error(
-      "No se pudo renderizar. Abre el HTML en el navegador y usa 'Guardar como' o 'Imprimir'.",
+      "Puppeteer no pudo iniciar el navegador incluido. Ejecuta bun install y revisa sus errores.",
     );
   } catch (error) {
     if (tempHtmlFile) await cleanupTempFile(tempHtmlFile);

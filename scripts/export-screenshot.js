@@ -13,15 +13,18 @@ import fs from "fs-extra";
 import path from "node:path";
 import { exportScreenshot } from "./exporters/index.js";
 import { c, paint } from "./shared/console.js";
+import { assertValidTemplateName } from "./shared/path-safety.js";
 
 const templateName = process.argv[2];
 
 // ─── Validaciones ────────────────────────────────────────────────────────────
 
-if (!templateName) {
+try {
+  assertValidTemplateName(templateName);
+} catch {
   console.error(
     paint(c.red + c.bold, "❌ Error:") +
-      paint(c.dim, " Especifica el nombre del template.\n") +
+      paint(c.dim, " El nombre del template debe usar solo minúsculas, números y guiones.\n") +
       paint(c.cyan, "   Uso: bun run export-screenshot nombre-template\n"),
   );
   process.exit(1);

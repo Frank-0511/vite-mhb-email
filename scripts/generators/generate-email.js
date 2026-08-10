@@ -5,6 +5,7 @@
 
 import fs from "fs-extra";
 import path from "node:path";
+import { assertValidTemplateName } from "../shared/path-safety.js";
 
 /**
  * Nombre del template recibido por argumento de línea de comandos.
@@ -12,8 +13,11 @@ import path from "node:path";
  */
 const name = process.argv[2];
 
-if (!name) {
-  console.error("❌ Por favor, indica el nombre del template: yarn g:email nombre-del-correo");
+try {
+  assertValidTemplateName(name);
+} catch {
+  console.error("❌ El nombre del template debe usar solo minúsculas, números y guiones.");
+  console.error("   Uso: bun scripts/generators/generate-email.js nombre-del-correo");
   process.exit(1);
 }
 

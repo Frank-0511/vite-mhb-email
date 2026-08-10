@@ -10,22 +10,23 @@ export const TEMPLATE_NAME_PATTERN = /^[a-z0-9-]+$/;
 /**
  * Valida nombres de template permitidos para evitar path traversal.
  *
- * @param {string} templateName
+ * @param {unknown} templateName
  * @returns {boolean}
  */
 export function isValidTemplateName(templateName) {
-  return TEMPLATE_NAME_PATTERN.test(templateName);
+  return typeof templateName === "string" && TEMPLATE_NAME_PATTERN.test(templateName);
 }
 
 /**
  * Lanza un error si el nombre del template es inválido.
  *
- * @param {string} templateName
+ * @param {unknown} templateName
+ * @returns {asserts templateName is string}
  * @throws {Error} Si el nombre no cumple el patrón.
  */
 export function assertValidTemplateName(templateName) {
   if (!isValidTemplateName(templateName)) {
-    throw new Error(`invalid template name for cache path: ${templateName}`);
+    throw new Error("invalid template name");
   }
 }
 
