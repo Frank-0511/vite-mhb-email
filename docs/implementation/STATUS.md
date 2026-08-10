@@ -6,7 +6,7 @@
 - Fase actual: Fase 0 — Estabilización mínima publicable
 - Tarea actual: F0-T6 — README, capturas, CHANGELOG y Release v1.1.0
 - Estado: En revisión
-- Última actualización: 2026-07-01
+- Última actualización: 2026-08-10
 
 ## Tareas completadas
 
@@ -58,7 +58,8 @@ Completada el 2026-06-30.
 - URLs hardcodeadas de `images.tenpo.cl` en `supporting-section/index.html`
   reemplazadas por `{{ support_icon_url }}` y `{{ support_arrow_icon_url }}`.
 - `package.json` `lint:md`: eliminado glob obsoleto `#analysis_results.md`.
-- `dist/` confirmado en `.gitignore` (R7 resuelto).
+- `dist/` se versiona intencionalmente como salida generada de los emails y no
+  se incluye en `.gitignore` (R7 resuelto).
 - `grep -ri "tenpo|challenge|curso|clone" src docs README.md` sin coincidencias
   relevantes; lint, build, typecheck, test y format:check en verde.
 
@@ -113,6 +114,8 @@ Completada el 2026-07-01.
   de GitHub Actions).
 - La caché de Bun usa `bun.lock` (texto) como clave para invalidar ante
   cambios de dependencias.
+- `dist/` se versiona intencionalmente para conservar el HTML final generado;
+  no se incluye en `.gitignore`.
 - `screenshots/` se commitea al repositorio (las capturas son artefactos de
   documentación, no de build); `.gitignore` actualizado para excluir solo
   `.temp-screenshots/`.
