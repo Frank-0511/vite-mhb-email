@@ -65,7 +65,7 @@ Completada el 2026-06-30.
 
 ### F0-T6 — README, capturas, CHANGELOG y Release v1.1.0 ✅ (En revisión)
 
-Completada el 2026-07-01.
+Implementación completada el 2026-07-01; integrada en `master` el 2026-08-10.
 
 - README reescrito con badge de CI, sección problema/solución, arquitectura,
   capturas embebidas (dashboard, email desktop, email móvil), tabla de reglas de
@@ -75,26 +75,31 @@ Completada el 2026-07-01.
   de `.gitignore`.
 - `CHANGELOG.md` creado siguiendo Keep a Changelog para v1.1.0.
 - `package.json` bumpeado de `1.0.0` a `1.1.0`.
-- Tag `v1.1.0` creado localmente.
-- Commit en rama `feature/f0-t6` listo para merge a `master`.
+- Cambios de `feature/f0-t6` integrados en `master` (HEAD
+  `0d52a094a7332093396d53ec6696bffd58f2d15c`).
+- Tag anotado `v1.1.0` publicado en `origin` sobre ese commit y GitHub Release
+  publicado: <https://github.com/Frank-0511/vite-mhb-email/releases/tag/v1.1.0>.
+- El CHANGELOG local y las notas remotas de v1.1.0 se reconciliaron con el
+  contenido completo del tag, incluyendo iconos inline, branding y HTML
+  generado.
 
 ## Tarea actual
 
 ### F0-T6 — README, capturas, CHANGELOG y Release v1.1.0
 
 - Estado: En revisión.
-- Pendiente de revisión humana antes de: push a origin, merge a master y GitHub
-  Release v1.1.0.
+- Pendiente de revisión humana del Release publicado y de aprobación del
+  Checkpoint 0.
 
 ## Validaciones
 
 | Comando                | Estado | Resultado resumido                                 |
 | ---------------------- | ------ | -------------------------------------------------- |
-| `bun run lint`         | Verde  | 0 errores (2026-07-01)                             |
+| `bun run lint`         | Verde  | 0 errores (2026-08-10)                             |
 | `bun run typecheck`    | Verde  | 0 errores; alcance: scripts/shared + scripts/build |
-| `bun run test`         | Verde  | 13 tests aprobados (2026-07-01)                    |
-| `bun run build`        | Verde  | 3 templates, 0 errores, 3 warnings no bloqueantes  |
-| `bun run format:check` | Verde  | formato correcto en todos los archivos             |
+| `bun run test`         | Verde  | 13 tests aprobados (2026-08-10)                    |
+| `bun run build`        | Verde  | CI en `master`: 3 templates, 0 errores, 3 warnings |
+| `bun run format:check` | Verde  | formato correcto (2026-08-10)                      |
 
 ## Decisiones persistentes
 
@@ -109,9 +114,8 @@ Completada el 2026-07-01.
 - `dist/` permanece excluido del descubrimiento de tests.
 - Los errores de compatibilidad bloquean el build; las advertencias no.
 - `validateEmailHtml()` admite `distDirOverride` para aislar tests.
-- El CI usa un único job secuencial (`lint → typecheck → test → build`); si
-  algún paso falla, los siguientes no se ejecutan (comportamiento por defecto
-  de GitHub Actions).
+- El CI detecta cambios por ruta y ejecuta jobs condicionales de lint; el job
+  `verify` ejecuta `typecheck → test → build` para cambios de código.
 - La caché de Bun usa `bun.lock` (texto) como clave para invalidar ante
   cambios de dependencias.
 - `dist/` se versiona intencionalmente para conservar el HTML final generado;
@@ -144,8 +148,10 @@ Completada el 2026-07-01.
   (Vite dev server + Chrome headless vía `puppeteer-core`, apuntando al
   ejecutable de Chrome de Windows) tras confirmar que el subagente de
   navegador inicial no pudo conectar por CDP dentro de WSL.
-- F0-T6: el GitHub Release requiere push a origin + creación manual/API desde
-  GitHub; el tag `v1.1.0` está creado localmente y disponible para push.
+- F0-T6: tag `v1.1.0` y GitHub Release publicados el 2026-08-10. El Release
+  conserva las notas de `CHANGELOG.md` y apunta al commit de `master`.
+- F0-T6: el tag público se conserva en `0d52a09`; la corrección posterior
+  documenta su alcance completo en lugar de reescribir la referencia publicada.
 
 ## Bloqueos
 
@@ -154,8 +160,11 @@ Completada el 2026-07-01.
 ## Handoff
 
 - F0-T6 marcada como `En revisión`.
-- Verificar: diff de README, CHANGELOG, package.json (v1.1.0), .gitignore,
-  screenshots/, tag v1.1.0.
-- Acción pendiente del usuario: push de la rama `feature/f0-t6` y tag `v1.1.0`
-  a origin, merge a `master` y creación del GitHub Release v1.1.0.
-- No iniciar F1-T1 sin aprobación explícita del Checkpoint 0.
+- Verificado: cambios de F0-T6 integrados en `master`, checks locales en verde,
+  CI exitoso del commit `0d52a094a7332093396d53ec6696bffd58f2d15c`, tag remoto
+  `v1.1.0` y GitHub Release publicado.
+- Pendiente de integrar: commit documental de trazabilidad; las notas
+  corregidas del Release y la metadata remota (description/topics) ya fueron
+  publicadas y verificadas.
+- Acción pendiente del usuario: revisar el Release y aprobar o rechazar el
+  Checkpoint 0. No iniciar F1-T1 sin esa aprobación explícita.

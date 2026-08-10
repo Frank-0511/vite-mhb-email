@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.1.0] - 2026-07-01
+## [1.1.0] - 2026-08-10
 
 ### Added
 
@@ -30,6 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `verify` job for `typecheck → test → build`; Bun cache keyed on `bun.lock`.
 - `screenshots/dashboard.png`, `screenshots/email-welcome-desktop.png`,
   `screenshots/email-welcome-mobile.png` — real screenshots embedded in README.
+- Renderizado de iconos Lucide como SVG inline en las vistas estáticas de Vite
+  mediante el plugin `lucide-inline`.
 
 ### Changed
 
@@ -45,12 +47,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   architecture diagram, CI badge, `test`/`typecheck` commands, and embedded
   screenshots.
 - `package.json` version bumped from `1.0.0` to `1.1.0`.
+- Interfaz web, layouts de email y artefactos versionados de `dist/` alineados
+  con la identidad de EmailForge Toolkit y con los iconos inline.
+- Capturas regeneradas para reflejar el dashboard y el email Welcome incluidos
+  en el tag publicado.
 
 ### Fixed
 
 - `dist/` is intentionally versioned as generated email output and is not
   included in `.gitignore`.
 - Build no longer silently ignores compatibility validation errors.
+- El renderizador de iconos escapa `&`, `<`, `>` y comillas en atributos antes
+  de generar el SVG inline.
 
 [Unreleased]: https://github.com/Frank-0511/vite-mhb-email/compare/v1.1.0...HEAD
 [1.1.0]: https://github.com/Frank-0511/vite-mhb-email/releases/tag/v1.1.0
