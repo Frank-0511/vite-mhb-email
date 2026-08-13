@@ -1,0 +1,3 @@
+tmp=$(mktemp)
+grep -viE '^(Co-authored-by:.*cursoragent@cursor\.com|Made-with:.*Cursor)' "$1" >"$tmp"
+mv "$tmp" "$1"
