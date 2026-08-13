@@ -15,9 +15,31 @@ import { c, paint } from "../shared/console.js";
  * @returns {Promise<number>} Código de salida
  */
 export function run(cmd, args = []) {
-  return new Promise((resolve) => {
-    const child = spawn(cmd, args, { stdio: "inherit", shell: true });
-    child.on("close", (code) => resolve(code ?? 0));
+  return new Promise((resolve, reject) => {
+    let settled = false;
+    const rejectOnce = (error) => {
+      if (!settled) {
+        settled = true;
+        reject(error);
+      }
+    };
+
+    const child = spawn(cmd, args, { stdio: "inherit" });
+    child.once("error", (error) => {
+      const message = error instanceof Error ? error.message : String(error);
+      rejectOnce(new Error(`No se pudo iniciar "${cmd}": ${message}`, { cause: error }));
+    });
+    child.once("close", (code, signal) => {
+      if (settled) return;
+      if (signal) {
+        rejectOnce(new Error(`"${cmd}" terminó por la señal ${signal}`));
+      } else if (code === null) {
+        rejectOnce(new Error(`"${cmd}" terminó sin código de salida`));
+      } else {
+        settled = true;
+        resolve(code);
+      }
+    });
   });
 }
 
