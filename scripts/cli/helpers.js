@@ -12,9 +12,10 @@ import { c, paint } from "../shared/console.js";
  * Ejecuta un comando del sistema con stdio heredado.
  * @param {string} cmd - Comando a ejecutar
  * @param {string[]} args - Argumentos del comando
+ * @param {typeof spawn} [spawnProcess=spawn] - Implementación de spawn.
  * @returns {Promise<number>} Código de salida
  */
-export function run(cmd, args = []) {
+export function run(cmd, args = [], spawnProcess = spawn) {
   return new Promise((resolve, reject) => {
     let settled = false;
     const rejectOnce = (error) => {
@@ -24,7 +25,7 @@ export function run(cmd, args = []) {
       }
     };
 
-    const child = spawn(cmd, args, { stdio: "inherit" });
+    const child = spawnProcess(cmd, args, { stdio: "inherit" });
     child.once("error", (error) => {
       const message = error instanceof Error ? error.message : String(error);
       rejectOnce(new Error(`No se pudo iniciar "${cmd}": ${message}`, { cause: error }));

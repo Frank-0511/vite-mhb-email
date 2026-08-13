@@ -2,7 +2,8 @@
 /** @fileoverview Regresiones para el build iniciado desde el CLI. */
 
 import { EventEmitter } from "node:events";
-import { afterEach, beforeEach, describe, expect, mock, test } from "bun:test";
+import { beforeEach, describe, expect, test } from "bun:test";
+import { buildIfNeeded } from "./build-helper.js";
 
 const spawnCalls = [];
 const children = [];
@@ -13,10 +14,6 @@ function spawnMock(...args) {
   children.push(child);
   return child;
 }
-
-mock.module("node:child_process", () => ({ spawn: spawnMock }));
-
-const { buildIfNeeded } = await import("./build-helper.js");
 
 function createReadline(answer) {
   return {
@@ -31,10 +28,6 @@ beforeEach(() => {
   children.length = 0;
 });
 
-afterEach(() => {
-  mock.restore();
-});
-
 describe("buildIfNeeded", () => {
   test("cancela sin iniciar un proceso", async () => {
     expect(await buildIfNeeded(createReadline("N"))).toBe(false);
@@ -42,7 +35,7 @@ describe("buildIfNeeded", () => {
   });
 
   test("inicia el build sin shell", async () => {
-    const result = buildIfNeeded(createReadline("s"));
+    const result = buildIfNeeded(createReadline("s"), spawnMock);
     await Promise.resolve();
 
     children[0].emit("close", 0, null);
@@ -52,7 +45,7 @@ describe("buildIfNeeded", () => {
   });
 
   test("devuelve false cuando el build falla", async () => {
-    const result = buildIfNeeded(createReadline("y"));
+    const result = buildIfNeeded(createReadline("y"), spawnMock);
     await Promise.resolve();
 
     children[0].emit("close", 7, null);
@@ -61,7 +54,7 @@ describe("buildIfNeeded", () => {
   });
 
   test("rechaza si el build no puede iniciar", async () => {
-    const result = buildIfNeeded(createReadline("S"));
+    const result = buildIfNeeded(createReadline("S"), spawnMock);
     await Promise.resolve();
 
     children[0].emit("error", new Error("ENOENT"));
@@ -70,7 +63,7 @@ describe("buildIfNeeded", () => {
   });
 
   test("rechaza si el build termina por señal", async () => {
-    const result = buildIfNeeded(createReadline("s"));
+    const result = buildIfNeeded(createReadline("s"), spawnMock);
     await Promise.resolve();
 
     children[0].emit("close", null, "SIGTERM");

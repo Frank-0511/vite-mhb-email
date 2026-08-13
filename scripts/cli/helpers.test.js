@@ -2,7 +2,8 @@
 /** @fileoverview Regresiones para la ejecución segura de procesos del CLI. */
 
 import { EventEmitter } from "node:events";
-import { afterEach, beforeEach, describe, expect, mock, test } from "bun:test";
+import { beforeEach, describe, expect, test } from "bun:test";
+import { run } from "./helpers.js";
 
 const spawnCalls = [];
 const children = [];
@@ -14,23 +15,15 @@ function spawnMock(...args) {
   return child;
 }
 
-mock.module("child_process", () => ({ spawn: spawnMock }));
-
-const { run } = await import("./helpers.js");
-
 beforeEach(() => {
   spawnCalls.length = 0;
   children.length = 0;
 });
 
-afterEach(() => {
-  mock.restore();
-});
-
 describe("run", () => {
   test("pasa los argumentos literalmente y sin shell", async () => {
     const args = ["scripts/generators/generate-email.js", "nombre con espacios; exit 47"];
-    const result = run("bun", args);
+    const result = run("bun", args, spawnMock);
 
     children[0].emit("close", 0, null);
 
@@ -39,7 +32,7 @@ describe("run", () => {
   });
 
   test("preserva un código de salida distinto de cero", async () => {
-    const result = run("bun", ["run", "build"]);
+    const result = run("bun", ["run", "build"], spawnMock);
 
     children[0].emit("close", 23, null);
 
@@ -47,7 +40,7 @@ describe("run", () => {
   });
 
   test("rechaza cuando el proceso no puede iniciar", async () => {
-    const result = run("missing-command", []);
+    const result = run("missing-command", [], spawnMock);
 
     children[0].emit("error", new Error("ENOENT"));
 
@@ -55,7 +48,7 @@ describe("run", () => {
   });
 
   test("rechaza cuando el proceso termina por señal", async () => {
-    const result = run("bun", ["run", "dev"]);
+    const result = run("bun", ["run", "dev"], spawnMock);
 
     children[0].emit("close", null, "SIGTERM");
 
@@ -63,7 +56,7 @@ describe("run", () => {
   });
 
   test("resuelve una sola vez si llegan error y close", async () => {
-    const result = run("bun", ["run", "build"]);
+    const result = run("bun", ["run", "build"], spawnMock);
 
     children[0].emit("close", 0, null);
     children[0].emit("error", new Error("late error"));
