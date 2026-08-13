@@ -25,9 +25,31 @@ export async function buildIfNeeded(rl) {
 
   console.log(paint(c.yellow + c.bold, "\n  📦 Buildeando para producción…\n"));
 
-  const code = await new Promise((resolve) => {
-    const child = spawn("bun", ["run", "build"], { stdio: "inherit", shell: true });
-    child.on("close", (c) => resolve(c ?? 0));
+  const code = await new Promise((resolve, reject) => {
+    let settled = false;
+    const rejectOnce = (error) => {
+      if (!settled) {
+        settled = true;
+        reject(error);
+      }
+    };
+
+    const child = spawn("bun", ["run", "build"], { stdio: "inherit" });
+    child.once("error", (error) => {
+      const message = error instanceof Error ? error.message : String(error);
+      rejectOnce(new Error(`No se pudo iniciar "bun run build": ${message}`, { cause: error }));
+    });
+    child.once("close", (code, signal) => {
+      if (settled) return;
+      if (signal) {
+        rejectOnce(new Error(`"bun run build" terminó por la señal ${signal}`));
+      } else if (code === null) {
+        rejectOnce(new Error('"bun run build" terminó sin código de salida'));
+      } else {
+        settled = true;
+        resolve(code);
+      }
+    });
   });
 
   if (code !== 0) {
