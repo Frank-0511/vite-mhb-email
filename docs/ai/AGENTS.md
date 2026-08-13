@@ -61,16 +61,19 @@ asignado.
 | Build                   | `bun run build`                 |
 | Validar email           | `bun run validate-email`        |
 | Formato                 | `bun run format:check`          |
+| Comprobar rama MHB      | `bun run check:task-branch`     |
 | Sincronizar adaptadores | `bun run agents:sync`           |
 | Comprobar adaptadores   | `bun run agents:check`          |
 
 ## Forma de trabajo
 
 1. Leer el contrato del ID y confirmar dependencias, aceptación y exclusiones.
-2. Registrar el ID `En progreso` en el estado sin activar otro.
-3. Implementar únicamente la superficie autorizada y ejecutar sus controles.
-4. Entregar el ID `En revisión` con resultados resumidos y riesgos residuales.
-5. Un revisor independiente confirma o rechaza el cierre; registrar el handoff
+2. Crear o cambiar a `feature/<id-en-minusculas>` y ejecutar
+   `bun run check:task-branch` antes de editar.
+3. Registrar el ID `En progreso` en el estado sin activar otro.
+4. Implementar únicamente la superficie autorizada y ejecutar sus controles.
+5. Entregar el ID `En revisión` con resultados resumidos y riesgos residuales.
+6. Un revisor independiente confirma o rechaza el cierre; registrar el handoff
    con rama, commit, evidencia, desviaciones y siguiente acción.
 
 ## Orquestación
