@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Después de v1.1.0
+
+- Añadidos alias de Bun para generar templates y exportar capturas sin depender
+  del menú interactivo.
+- La exportación PNG usa el navegador administrado por Puppeteer en lugar de
+  binarios globales, y la instalación documenta Node.js 20 y Bun 1.3.13 como
+  entorno reproducible.
+- Corregida la validación de nombres de template antes del acceso al filesystem
+  y la ejecución de procesos CLI/build sin reenviar entradas de usuario mediante
+  shell.
+
 ## [1.1.0] - 2026-08-10
 
 ### Added

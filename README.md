@@ -7,6 +7,13 @@ email. Integra **Bun**, **Vite**, **Maizzle** y **Handlebars** para editar
 emails con preview local, compilar HTML compatible con clientes de email y
 generar archivos finales planos en `dist/<template>.html`.
 
+## Estado de release
+
+El tag `v1.1.0` apunta al snapshot publicado el 2026-08-10. Este checkout puede
+contener trabajo posterior sin publicar; la trazabilidad entre el tag, la línea
+base y HEAD está en
+[la línea base de release](docs/implementation/RELEASE_BASELINE.md).
+
 ---
 
 ## El problema

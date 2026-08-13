@@ -14,7 +14,9 @@ description: Verificar tareas, ejecutar comandos permitidos, preparar ramas o co
 - Mantener build idempotente, restaurar mutaciones temporales y emitir errores
   accionables con código distinto de cero.
 - Para cada MHB usar una rama `feature/<id-en-minusculas>` y PR directo a
-  `master`. No mezclar tareas ni incrementar versión por tarea.
+  `master`. Antes de editar, ejecutar `bun run check:task-branch`; crear o
+  cambiar a la rama requerida si falla. El hook pre-commit aplica el mismo
+  guard. No mezclar tareas ni incrementar versión por tarea.
 - Antes de commit, revisar diff. No versionar logs o artefactos no solicitados,
   no reescribir historial ni revertir cambios ajenos.
 - Entregar el ID a `En revisión`; un revisor independiente confirma aceptación,

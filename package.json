@@ -57,6 +57,7 @@
     "lint:css": "stylelint \"src/**/*.css\"",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "check:task-branch": "bun scripts/ai/check-task-branch.mjs",
     "prepare": "husky",
     "agents:sync": "node scripts/ai/agents-sync.mjs",
     "agents:check": "node scripts/ai/agents-check.mjs"

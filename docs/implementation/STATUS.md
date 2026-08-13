@@ -2,10 +2,10 @@
 
 ## Resumen
 
-- ID activo: MHB-02
+- ID activo: MHB-03
 - Estado: `En revisión`
-- Implementador: GPT-5.6 Luna (perfil seguridad/CLI)
-- Revisor o autoridad de cierre: usuario (revisión manual independiente)
+- Implementador: GPT-5.6 Terra (documentación/release, esfuerzo medio)
+- Revisor o autoridad de cierre: usuario (orquestador)
 - Última actualización: 2026-08-13
 - Contrato estable: `docs/implementation/PLAN.md`
 
@@ -15,10 +15,8 @@ en `En revisión`; otra autoridad decide `Completada`.
 
 ## Últimas entregas
 
-- MHB-02 completado: procesos CLI/build sin shell, propagación de errores y
-  regresiones Bun para argumentos, códigos y señales.
-- MHB-02 ajuste CI: pruebas de procesos sin mocks globales de `child_process`;
-  cada helper permite inyectar el `spawn` bajo prueba.
+- MHB-02 cerrado: procesos CLI/build sin shell, propagación de errores y
+  regresiones Bun; cierre confirmado por el revisor.
 - MHB-01 completado: guard, alias Bun y exportación PNG portable con Puppeteer.
 
 ## Validaciones
@@ -38,23 +36,28 @@ en `En revisión`; otra autoridad decide `Completada`.
 | 2026-08-13 | MHB-02 | Lint, typecheck y formato        | Verde        | ESLint, TypeScript, HTMLHint, Markdownlint, JSON, Stylelint y Prettier locales.      |
 | 2026-08-13 | MHB-02 | Build manual vía CLI             | Verde        | Usuario confirmó build exitoso desde el menú del CLI.                                |
 | 2026-08-13 | MHB-02 | Smoke focalizado tras fallo CI   | Verde        | Node verificó códigos, argumentos y ejecución sin shell con `spawn` inyectado.       |
-| 2026-08-13 | MHB-02 | Bun suite tras ajuste CI         | No ejecutado | Bun no está disponible en este entorno; la PR debe repetir `bun run test`.           |
+| 2026-08-13 | MHB-02 | Bun suite tras ajuste CI         | Verde        | Usuario confirmó `bun run test` local en Bun 1.3.13.                                 |
+| 2026-08-13 | MHB-03 | Tag, línea base y artefactos     | Verde        | Tag, relación de ancestro, CI, lockfile, `dist` y capturas comprobados localmente.   |
+| 2026-08-13 | MHB-03 | Markdown, formato y diff         | Verde        | `lint:md`, `format:check` y `git diff --check` sin errores.                          |
+| 2026-08-13 | MHB-03 | Release remota                   | No ejecutado | `gh` no está disponible; el orquestador debe revisar la release antes de publicar.   |
+| 2026-08-13 | MHB-03 | Guard de rama                    | Verde        | Preflight, hook vía `sh` y 3 regresiones Bun verifican `feature/mhb-03`.             |
 
 ## Ejecuciones delegadas
 
-| Ámbito | Modelo/esfuerzo reales | Estado     | Propiedad                                             | Handoff                                  |
-| ------ | ---------------------- | ---------- | ----------------------------------------------------- | ---------------------------------------- |
-| MHB-01 | gpt-5.6-terra / alto   | Completada | Guard, generador, exportador, build selectivo y tests | Usuario validó manualmente el resultado. |
-| MHB-02 | GPT-5.6 Luna / alto    | Completada | Procesos CLI/build y regresiones Bun                  | Usuario validó suite, build y cierre.    |
+| Ámbito | Modelo/esfuerzo reales | Estado      | Propiedad                                             | Handoff                                  |
+| ------ | ---------------------- | ----------- | ----------------------------------------------------- | ---------------------------------------- |
+| MHB-01 | gpt-5.6-terra / alto   | Completada  | Guard, generador, exportador, build selectivo y tests | Usuario validó manualmente el resultado. |
+| MHB-02 | GPT-5.6 Luna / alto    | Completada  | Procesos CLI/build y regresiones Bun                  | Cierre formal 2026-08-13 por el revisor. |
+| MHB-03 | GPT-5.6 Terra / medio  | En revisión | Documentación de release y matriz de reconciliación   | Pendiente de revisión del orquestador.   |
 
-## Revisión de cierre
+## Revisión de cierre (MHB-02)
 
 - Criterios de aceptación comprobados: sin `shell` en rutas CLI/build helper,
   argumentos como array, propagación de códigos/errores/señales y regresiones Bun.
 - Controles automáticos: lint, typecheck, formato y 40 pruebas verdes.
-- Controles manuales: usuario confirmó build exitoso desde el CLI.
+- Controles manuales: usuario confirmó build y suite en Bun 1.3.13.
 - Evidencia revisada: commit `6ba9a23` en `feature/mhb-02`.
-- Decisión del revisor: `Completada` por el usuario.
+- Decisión del revisor: `Completada` (2026-08-13).
 
 ## Decisiones técnicas locales
 
@@ -70,6 +73,7 @@ en `En revisión`; otra autoridad decide `Completada`.
 
 - Los tres warnings `href="#"` existentes corresponden a MHB-21 y no bloquean MHB-02.
 - La portabilidad del exportador fue ampliada por autorización explícita del usuario (MHB-01).
+- El usuario autorizó añadir el guard de rama para evitar cambios MHB en `master`.
 
 ## Bloqueos
 
@@ -77,7 +81,11 @@ en `En revisión`; otra autoridad decide `Completada`.
 
 ## Handoff
 
-- Rama y commit: `feature/mhb-02`, ajuste CI pendiente de commit.
-- Working tree: cambios locales en helpers/tests y este estado.
-- Próxima acción: ejecutar `bun run test` en Bun 1.3.13 y que el revisor confirme
-  la PR; si queda verde, cerrar MHB-02.
+- MHB-02: `Completada`; rama `feature/mhb-02`, commit `6ba9a23`.
+- MHB-03: `En revisión`; matriz en `RELEASE_BASELINE.md`, CHANGELOG actualizado,
+  README enlazado y guard de rama autorizado; no se movieron tags, versión ni
+  notas remotas.
+- Riesgo residual: confirmar manualmente la release remota de `v1.1.0` antes de
+  decidir una corrección `v1.1.1` o una release posterior.
+- Próxima acción: el orquestador revisa la evidencia y decide `Completada` o la
+  corrección documental necesaria.
