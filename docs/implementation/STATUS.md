@@ -49,7 +49,7 @@ en `En revisión`; otra autoridad decide `Completada`.
   argumentos como array, propagación de códigos/errores/señales y regresiones Bun.
 - Controles automáticos: lint, typecheck, formato y 40 pruebas verdes.
 - Controles manuales: usuario confirmó build exitoso desde el CLI.
-- Evidencia revisada: commit `ef943af` en `feature/mhb-02`.
+- Evidencia revisada: commit `c7217a6` en `feature/mhb-02`.
 - Decisión del revisor: `Completada` por el usuario.
 
 ## Decisiones técnicas locales
@@ -71,7 +71,7 @@ en `En revisión`; otra autoridad decide `Completada`.
 
 ## Handoff
 
-- Rama y commit: `feature/mhb-02`, `ef943af`.
+- Rama y commit: `feature/mhb-02`, `c7217a6`.
 - Working tree: limpio tras el cierre de MHB-02.
 - Próxima acción: seleccionar el siguiente ID cuyas dependencias estén satisfechas
   (MHB-03 o MHB-04).
