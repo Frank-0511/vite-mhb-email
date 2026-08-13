@@ -2,8 +2,8 @@
 
 ## Resumen
 
-- ID activo: ninguno
-- Estado: `Completada` (MHB-02)
+- ID activo: MHB-02
+- Estado: `En revisión`
 - Implementador: GPT-5.6 Luna (perfil seguridad/CLI)
 - Revisor o autoridad de cierre: usuario (revisión manual independiente)
 - Última actualización: 2026-08-13
@@ -17,24 +17,28 @@ en `En revisión`; otra autoridad decide `Completada`.
 
 - MHB-02 completado: procesos CLI/build sin shell, propagación de errores y
   regresiones Bun para argumentos, códigos y señales.
+- MHB-02 ajuste CI: pruebas de procesos sin mocks globales de `child_process`;
+  cada helper permite inyectar el `spawn` bajo prueba.
 - MHB-01 completado: guard, alias Bun y exportación PNG portable con Puppeteer.
 
 ## Validaciones
 
-| Fecha      | ID     | Control                          | Resultado | Nota                                                                                 |
-| ---------- | ------ | -------------------------------- | --------- | ------------------------------------------------------------------------------------ |
-| 2026-08-10 | MHB-01 | Inventario de rutas              | Verde     | Tres rutas localizadas; implementación pendiente.                                    |
-| 2026-08-10 | MHB-01 | Tabla y no escritura             | Verde     | 17 casos focalizados; traversal no crea ni muta rutas.                               |
-| 2026-08-10 | MHB-01 | Lint, typecheck, formato y suite | Verde     | `bun run lint`, `bun run typecheck`, `bun run format:check` y 30 pruebas.            |
-| 2026-08-10 | MHB-01 | CLI manual válida                | Verde     | El generador confirmó `welcome` existente sin escribir.                              |
-| 2026-08-10 | MHB-01 | Alias Bun de CLI                 | Verde     | `generate:email` y `export:screenshot` reenvían argumentos y rechazan traversal.     |
-| 2026-08-10 | MHB-01 | Build y compatibilidad           | Verde     | Templates compilados; 0 errores y warnings de links no bloqueantes.                  |
-| 2026-08-10 | MHB-01 | Exportación PNG portable         | Verde     | Puppeteer descargado por Bun completó una exportación PNG de prueba.                 |
-| 2026-08-13 | MHB-02 | Inventario de procesos           | Verde     | Los dos `spawn` con `shell: true` fueron endurecidos; no quedan en CLI/build helper. |
-| 2026-08-13 | MHB-02 | Regresiones focalizadas          | Verde     | `bun test`: 40 pruebas verdes, incluidas 10 de procesos CLI/build helper.            |
-| 2026-08-13 | MHB-02 | Smoke de códigos y errores       | Verde     | Node confirmó propagación de código 7 y rechazo accionable ante `ENOENT`.            |
-| 2026-08-13 | MHB-02 | Lint, typecheck y formato        | Verde     | ESLint, TypeScript, HTMLHint, Markdownlint, JSON, Stylelint y Prettier locales.      |
-| 2026-08-13 | MHB-02 | Build manual vía CLI             | Verde     | Usuario confirmó build exitoso desde el menú del CLI.                                |
+| Fecha      | ID     | Control                          | Resultado    | Nota                                                                                 |
+| ---------- | ------ | -------------------------------- | ------------ | ------------------------------------------------------------------------------------ |
+| 2026-08-10 | MHB-01 | Inventario de rutas              | Verde        | Tres rutas localizadas; implementación pendiente.                                    |
+| 2026-08-10 | MHB-01 | Tabla y no escritura             | Verde        | 17 casos focalizados; traversal no crea ni muta rutas.                               |
+| 2026-08-10 | MHB-01 | Lint, typecheck, formato y suite | Verde        | `bun run lint`, `bun run typecheck`, `bun run format:check` y 30 pruebas.            |
+| 2026-08-10 | MHB-01 | CLI manual válida                | Verde        | El generador confirmó `welcome` existente sin escribir.                              |
+| 2026-08-10 | MHB-01 | Alias Bun de CLI                 | Verde        | `generate:email` y `export:screenshot` reenvían argumentos y rechazan traversal.     |
+| 2026-08-10 | MHB-01 | Build y compatibilidad           | Verde        | Templates compilados; 0 errores y warnings de links no bloqueantes.                  |
+| 2026-08-10 | MHB-01 | Exportación PNG portable         | Verde        | Puppeteer descargado por Bun completó una exportación PNG de prueba.                 |
+| 2026-08-13 | MHB-02 | Inventario de procesos           | Verde        | Los dos `spawn` con `shell: true` fueron endurecidos; no quedan en CLI/build helper. |
+| 2026-08-13 | MHB-02 | Regresiones focalizadas          | Verde        | `bun test`: 40 pruebas verdes, incluidas 10 de procesos CLI/build helper.            |
+| 2026-08-13 | MHB-02 | Smoke de códigos y errores       | Verde        | Node confirmó propagación de código 7 y rechazo accionable ante `ENOENT`.            |
+| 2026-08-13 | MHB-02 | Lint, typecheck y formato        | Verde        | ESLint, TypeScript, HTMLHint, Markdownlint, JSON, Stylelint y Prettier locales.      |
+| 2026-08-13 | MHB-02 | Build manual vía CLI             | Verde        | Usuario confirmó build exitoso desde el menú del CLI.                                |
+| 2026-08-13 | MHB-02 | Smoke focalizado tras fallo CI   | Verde        | Node verificó códigos, argumentos y ejecución sin shell con `spawn` inyectado.       |
+| 2026-08-13 | MHB-02 | Bun suite tras ajuste CI         | No ejecutado | Bun no está disponible en este entorno; la PR debe repetir `bun run test`.           |
 
 ## Ejecuciones delegadas
 
@@ -58,6 +62,8 @@ en `En revisión`; otra autoridad decide `Completada`.
 - Puppeteer reemplaza binarios globales para que `bun install` prepare el navegador de exportación.
 - `buildIfNeeded` requiere un tick async antes de emitir en tests porque `await prompt()`
   precede al `spawn`; los tests de `run()` no necesitan ese flush.
+- Los tests de procesos inyectan `spawn` para evitar interferencia entre mocks
+  globales de módulos cuando Bun ejecuta archivos en paralelo.
 - `execSync("maizzle build")` en build scripts quedó fuera de alcance de MHB-02.
 
 ## Desviaciones
@@ -71,7 +77,7 @@ en `En revisión`; otra autoridad decide `Completada`.
 
 ## Handoff
 
-- Rama y commit: `feature/mhb-02`, `6ba9a23`.
-- Working tree: limpio tras el cierre de MHB-02.
-- Próxima acción: seleccionar el siguiente ID cuyas dependencias estén satisfechas
-  (MHB-03 o MHB-04).
+- Rama y commit: `feature/mhb-02`, ajuste CI pendiente de commit.
+- Working tree: cambios locales en helpers/tests y este estado.
+- Próxima acción: ejecutar `bun run test` en Bun 1.3.13 y que el revisor confirme
+  la PR; si queda verde, cerrar MHB-02.

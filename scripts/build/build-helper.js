@@ -12,9 +12,10 @@ import { prompt } from "../shared/prompts.js";
  * Ejecuta `bun run build` si confirma.
  *
  * @param {import('readline').Interface} rl
+ * @param {typeof spawn} [spawnProcess=spawn] - Implementación de spawn.
  * @returns {Promise<boolean>} `true` si se buildeó exitosamente (o ya había templates), `false` si el usuario canceló o el build falló
  */
-export async function buildIfNeeded(rl) {
+export async function buildIfNeeded(rl, spawnProcess = spawn) {
   console.log(paint(c.yellow, "\n  ⚠️  No hay templates buildeados en dist/."));
   const answer = await prompt(rl, paint(c.yellow + c.bold, "¿Querés buildear ahora? (s/N)"), "N");
 
@@ -34,7 +35,7 @@ export async function buildIfNeeded(rl) {
       }
     };
 
-    const child = spawn("bun", ["run", "build"], { stdio: "inherit" });
+    const child = spawnProcess("bun", ["run", "build"], { stdio: "inherit" });
     child.once("error", (error) => {
       const message = error instanceof Error ? error.message : String(error);
       rejectOnce(new Error(`No se pudo iniciar "bun run build": ${message}`, { cause: error }));
