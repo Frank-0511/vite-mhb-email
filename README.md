@@ -103,13 +103,28 @@ El pipeline principal es:
 
 ## Instalacion
 
+### Requisitos locales
+
+- **Node.js 20** (ver `.nvmrc`). Con NVM: `nvm use` dentro del repo.
+- **Bun >= 1.0.0** (CI usa **1.3.13**, alineado con `packageManager` en
+  `package.json`). Instálalo standalone y deja `~/.bun/bin` en tu `PATH`:
+
+```bash
+curl -fsSL https://bun.sh/install | bash
+```
+
+No hace falta `.npmrc` ni otro archivo de versión en el repo: Bun se fija con
+`packageManager` + `bun.lock`; Node con `.nvmrc`. Tu `~/.zshrc` es configuración
+personal (NVM, PATH de Bun, etc.) y no va en el repositorio.
+
+### Setup del proyecto
+
 ```bash
 git clone https://github.com/Frank-0511/vite-mhb-email.git
 cd vite-mhb-email
+nvm use          # opcional si usas NVM y tienes Node 20 instalado
 bun install
 ```
-
-> Requiere **Node.js >= 20** y **Bun >= 1.0.0**.
 
 La exportación PNG usa Puppeteer. `bun install` descarga un navegador compatible
 para el proyecto; no necesitas instalar `wkhtmltoimage`, Chrome ni ImageMagick
@@ -324,8 +339,8 @@ bun run agents:sync      # Sincronizar skills de agentes
 
 ## Requisitos
 
-- Node.js >= 20
-- Bun >= 1.0.0
+- Node.js **20** (`.nvmrc`; mínimo declarado en `package.json`: >= 20)
+- Bun **>= 1.0.0** (recomendado: standalone; CI usa 1.3.13)
 
 ---
 
