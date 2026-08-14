@@ -112,7 +112,7 @@ El pipeline principal es:
 
 ### Requisitos locales
 
-- **Node.js 20** (ver `.nvmrc`). Con NVM: `nvm use` dentro del repo.
+- **Node.js 24** (ver `.nvmrc`). Con NVM: `nvm use` dentro del repo.
 - **Bun >= 1.0.0** (CI usa **1.3.13**, alineado con `packageManager` en
   `package.json`). Instálalo standalone y deja `~/.bun/bin` en tu `PATH`:
 
@@ -129,7 +129,7 @@ personal (NVM, PATH de Bun, etc.) y no va en el repositorio.
 ```bash
 git clone https://github.com/Frank-0511/vite-mhb-email.git
 cd vite-mhb-email
-nvm use          # opcional si usas NVM y tienes Node 20 instalado
+nvm use          # opcional si usas NVM y tienes Node 24 instalado
 bun install
 ```
 
@@ -346,7 +346,7 @@ bun run agents:sync      # Sincronizar skills de agentes
 
 ## Requisitos
 
-- Node.js **20** (`.nvmrc`; mínimo declarado en `package.json`: >= 20)
+- Node.js **24** (`.nvmrc`; mínimo declarado en `package.json`: >= 24)
 - Bun **>= 1.0.0** (recomendado: standalone; CI usa 1.3.13)
 
 ---
