@@ -2,10 +2,10 @@
 
 ## Resumen
 
-- ID activo: MHB-04
-- Estado: `En revisión`
-- Implementador: GPT-5.6 Luna (CI, esfuerzo medio)
-- Revisor o autoridad de cierre: revisor técnico independiente
+- ID activo: ninguno
+- Estado: —
+- Implementador: —
+- Revisor o autoridad de cierre: —
 - Última actualización: 2026-08-14
 - Contrato estable: `docs/implementation/PLAN.md`
 
@@ -21,15 +21,15 @@ en `En revisión`; otra autoridad decide `Completada`.
   `v1.1.0` confirmadas por el orquestador.
 - MHB-01 completado: guard, alias Bun y exportación PNG portable con Puppeteer.
 
-## MHB-04 en revisión
+## MHB-04 completado
 
 - Alcance: filtros de rutas, gate de formato y `verify` en
   `.github/workflows/ci.yml`; sin deploy, release, permisos ni artefactos.
-- Dependencias: MHB-01 y MHB-02 `Completada`; MHB-03 `Completada`.
-- Rama: `feature/mhb-04`.
+- Dependencias: MHB-01, MHB-02 y MHB-03 `Completada`.
+- Rama: `feature/mhb-04`, commit `cab72fd`.
 - Entrega: matriz ruta→job, gate de formato, lint HTML alineado, partial hero
   corregido y alineación de proyecto/acciones con Node 24.
-- Siguiente acción: revisión técnica independiente del alcance ampliado.
+- Cierre: 2026-08-14 por el orquestador tras CI remota verde.
 
 ## Validaciones
 
@@ -66,6 +66,7 @@ en `En revisión`; otra autoridad decide `Completada`.
 | MHB-01 | gpt-5.6-terra / alto   | Completada | Guard, generador, exportador, build selectivo y tests | Usuario validó manualmente el resultado.     |
 | MHB-02 | GPT-5.6 Luna / alto    | Completada | Procesos CLI/build y regresiones Bun                  | Cierre formal 2026-08-13 por el revisor.     |
 | MHB-03 | GPT-5.6 Terra / medio  | Completada | Documentación de release y matriz de reconciliación   | Cierre formal 2026-08-13 por el orquestador. |
+| MHB-04 | GPT-5.6 Luna / medio   | Completada | CI por rutas, formato, verify y Node 24               | Cierre formal 2026-08-14 por el orquestador. |
 
 ## Revisión de cierre (MHB-02)
 
@@ -86,6 +87,20 @@ en `En revisión`; otra autoridad decide `Completada`.
 - Evidencia revisada: `RELEASE_BASELINE.md`, `README.md` y release remota de
   `v1.1.0`.
 - Decisión del revisor: `Completada` (2026-08-13).
+
+## Revisión de cierre (MHB-04)
+
+- Criterios de aceptación comprobados: cambios en workflow, layouts, templates,
+  HTML/JS web, scripts, configuración y dependencias activan lint/verify
+  aplicables; formato entra en CI; jobs omitidos quedan justificados por la
+  matriz ruta→job.
+- Controles automáticos: sintaxis YAML, test declarativo de matriz (4/4),
+  `format:check`, lint JS/JSON, typecheck, 47 pruebas, HTMLHint y build local.
+- Control remoto: [CI 31814207687](https://github.com/Frank-0511/vite-mhb-email/actions/runs/31814207687)
+  verde en `8512fb2` con acciones Node 24, detect, formato, lints y verify.
+- Evidencia revisada: `.github/workflows/ci.yml`, `package.json`, README,
+  partial hero, test de matriz y run remoto.
+- Decisión del revisor: `Completada` (2026-08-14).
 
 ## Decisiones técnicas locales
 
@@ -109,22 +124,17 @@ en `En revisión`; otra autoridad decide `Completada`.
 
 ## Bloqueos
 
-- Ninguno para MHB-04; el warning de runtime Node.js 20 quedó resuelto.
+- Ninguno.
 
 ## Handoff
 
-- MHB-04: `En revisión`; rama `feature/mhb-04`; cambios en workflow, runtime
-  Node 24, `package.json`, README, test de matriz y este estado.
-- Evidencia local: HTMLHint, formato, lint JS/JSON, typecheck, suite (47), YAML,
-  build y diff verificados; `validate-email` terminó sin errores y con 3 warnings
-  conocidos.
-- Evidencia remota: [CI 31814207687](https://github.com/Frank-0511/vite-mhb-email/actions/runs/31814207687) verde en el commit `8512fb2`.
+- MHB-04: `Completada`; rama `feature/mhb-04`, commit `cab72fd`; PR pendiente de
+  merge a `master`.
 - MHB-02: `Completada`; rama `feature/mhb-02`, commit `6ba9a23`.
 - MHB-03: `Completada`; matriz en `RELEASE_BASELINE.md`, CHANGELOG actualizado,
   README enlazado y guard de rama autorizado; no se movieron tags, versión ni
   notas remotas.
-- Riesgo residual: el shell local usado para esta validación sigue en Node
-  20.20.2; `.nvmrc` y CI ya exigen/verifican Node 24. No se modificaron tags,
+- Riesgo residual: el shell local usado para validaciones puede seguir en Node
+  20.20.2; `.nvmrc` y CI exigen/verifican Node 24. No se modificaron tags,
   versión ni publicación.
-- Próxima acción: revisor técnico independiente confirma o rechaza MHB-04; no
-  marcar `Completada` mientras existan controles fallidos o no ejecutados.
+- Próxima acción: merge del PR de MHB-04; MHB-05 queda desbloqueado.
