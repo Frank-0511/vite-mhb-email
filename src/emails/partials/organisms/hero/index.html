@@ -9,13 +9,13 @@
 </script>
 
 <if condition="variant === 'v1'">
-  <x-hero-v1 showButton="[[showButton]]" />
+  <x-hero-v1 show-button="[[showButton]]" />
 </if>
 
 <elseif condition="variant === 'v2'">
-  <x-hero-v2 showButton="[[showButton]]" />
+  <x-hero-v2 show-button="[[showButton]]" />
 </elseif>
 
 <else>
-  <x-hero-v1 showButton="[[showButton]]" />
+  <x-hero-v1 show-button="[[showButton]]" />
 </else>

@@ -16,7 +16,8 @@ jobs:
       js: ${{ steps.filter.outputs.js }}
       json: ${{ steps.filter.outputs.json }}
       css: ${{ steps.filter.outputs.css }}
-      code: ${{ steps.filter.outputs.code }}
+      quality: ${{ steps.filter.outputs.quality }}
+      format: ${{ steps.filter.outputs.format }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,29 +31,45 @@ jobs:
               - "**/*.md"
             html:
               - "src/emails/templates/**/*.html"
+              - "src/emails/layouts/**/*.html"
+              - "src/emails/partials/**/*.html"
+              - "src/web/**/*.html"
             js:
               - "scripts/**/*.js"
+              - "scripts/**/*.mjs"
               - "src/web/**/*.js"
-              - "vite.config.js"
-              - "maizzle.config.js"
-            json:
-              - "src/emails/templates/*/data.json"
-            css:
-              - "src/**/*.css"
-            code:
-              - "scripts/**/*.js"
-              - "src/web/**/*.js"
-              - "src/emails/templates/**/*.html"
-              - "src/emails/templates/*/data.json"
-              - "src/**/*.css"
               - "vite.config.js"
               - "maizzle.config.js"
               - "tailwind.config.js"
               - "tailwind.email.config.js"
               - "postcss.config.js"
+              - "eslint.config.js"
+            json:
+              - "**/*.json"
+            css:
+              - "src/**/*.css"
+            quality:
+              - ".github/workflows/**"
+              - "scripts/**"
+              - "src/emails/**"
+              - "src/web/**"
+              - "vite.config.js"
+              - "maizzle.config.js"
+              - "tailwind.config.js"
+              - "tailwind.email.config.js"
+              - "postcss.config.js"
+              - "eslint.config.js"
               - "package.json"
               - "bun.lock"
+              - "bunfig.toml"
               - "tsconfig.json"
+              - ".htmlhintrc"
+              - ".stylelintrc.json"
+              - ".prettierrc.json"
+            format:
+              - "**/*.md"
+              - "**/*.html"
+              - "**/*.{js,mjs,json,css,yml,yaml}"
 
   lint-md:
     name: Lint · Markdown
@@ -149,10 +166,29 @@ jobs:
       - run: bun install --frozen-lockfile
       - run: bun run lint:css
 
+  format:
+    name: Format · Prettier
+    needs: changes
+    if: needs.changes.outputs.format == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.13"
+      - uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+      - run: bun install --frozen-lockfile
+      - run: bun run format:check
+
   verify:
     name: Typecheck · Test · Build
     needs: changes
-    if: needs.changes.outputs.code == 'true'
+    if: needs.changes.outputs.quality == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -171,4 +207,4 @@ jobs:
       - name: Test
         run: bun run test
       - name: Build
-        run: bun run scripts/build/build.js
+        run: bun run build
