@@ -27,9 +27,9 @@ en `En revisión`; otra autoridad decide `Completada`.
   `.github/workflows/ci.yml`; sin deploy, release, permisos ni artefactos.
 - Dependencias: MHB-01 y MHB-02 `Completada`; MHB-03 `Completada`.
 - Rama: `feature/mhb-04`.
-- Entrega: matriz ruta→job, test declarativo, lint HTML alineado y partial hero
-  corregido con autorización del usuario.
-- Siguiente acción: revisión técnica independiente y ejecución remota de CI.
+- Entrega: matriz ruta→job, gate de formato, lint HTML alineado, partial hero
+  corregido y alineación de proyecto/acciones con Node 24.
+- Siguiente acción: revisión técnica independiente del alcance ampliado.
 
 ## Validaciones
 
@@ -57,7 +57,7 @@ en `En revisión`; otra autoridad decide `Completada`.
 | 2026-08-14 | MHB-04 | Matriz y sintaxis CI             | Verde     | Test declarativo 4/4, YAML válido y `git diff --check` sin errores.                       |
 | 2026-08-14 | MHB-04 | Formato, tipos y pruebas         | Verde     | `format:check`, `lint:js`, `lint:json`, `typecheck` y 47 pruebas verdes.                  |
 | 2026-08-14 | MHB-04 | Lint/build completo              | Verde     | HTMLHint sin errores; build exitoso con 3 warnings `href="#"` conocidos y no bloqueantes. |
-| 2026-08-14 | MHB-04 | Validación remota                | Verde     | CI `31813222237`: detect, formato, Markdown, JavaScript, HTML, JSON y verify verdes.      |
+| 2026-08-14 | MHB-04 | Validación remota                | Verde     | CI `31814207687`: acciones Node 24, detect, formato, lints y verify verdes.               |
 
 ## Ejecuciones delegadas
 
@@ -104,24 +104,27 @@ en `En revisión`; otra autoridad decide `Completada`.
 - El usuario autorizó añadir el guard de rama para evitar cambios MHB en `master`.
 - MHB-04 amplía `lint:html` a layouts, partials y HTML web; por autorización del
   usuario, `showButton` se normalizó a `show-button` en el partial hero.
+- Por autorización del usuario, Node.js 24 queda como requisito local mínimo y
+  las acciones CI se actualizan a majors compatibles.
 
 ## Bloqueos
 
-- Ninguno para MHB-04; GitHub dejó una advertencia no bloqueante por acciones Node.js 20.
+- Ninguno para MHB-04; el warning de runtime Node.js 20 quedó resuelto.
 
 ## Handoff
 
-- MHB-04: `En revisión`; rama `feature/mhb-04`; cambios en workflow, `package.json`,
-  test de matriz y este estado.
+- MHB-04: `En revisión`; rama `feature/mhb-04`; cambios en workflow, runtime
+  Node 24, `package.json`, README, test de matriz y este estado.
 - Evidencia local: HTMLHint, formato, lint JS/JSON, typecheck, suite (47), YAML,
   build y diff verificados; `validate-email` terminó sin errores y con 3 warnings
   conocidos.
-- Evidencia remota: [CI 31813222237](https://github.com/Frank-0511/vite-mhb-email/actions/runs/31813222237) verde en el commit `10fc9ff`.
+- Evidencia remota: [CI 31814207687](https://github.com/Frank-0511/vite-mhb-email/actions/runs/31814207687) verde en el commit `8512fb2`.
 - MHB-02: `Completada`; rama `feature/mhb-02`, commit `6ba9a23`.
 - MHB-03: `Completada`; matriz en `RELEASE_BASELINE.md`, CHANGELOG actualizado,
   README enlazado y guard de rama autorizado; no se movieron tags, versión ni
   notas remotas.
-- Riesgo residual: advertencia de deprecación Node.js 20 en acciones de terceros;
-  no se modificaron tags, versión ni publicación.
+- Riesgo residual: el shell local usado para esta validación sigue en Node
+  20.20.2; `.nvmrc` y CI ya exigen/verifican Node 24. No se modificaron tags,
+  versión ni publicación.
 - Próxima acción: revisor técnico independiente confirma o rechaza MHB-04; no
   marcar `Completada` mientras existan controles fallidos o no ejecutados.
