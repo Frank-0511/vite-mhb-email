@@ -33,31 +33,31 @@ en `En revisión`; otra autoridad decide `Completada`.
 
 ## Validaciones
 
-| Fecha      | ID     | Control                          | Resultado    | Nota                                                                                      |
-| ---------- | ------ | -------------------------------- | ------------ | ----------------------------------------------------------------------------------------- |
-| 2026-08-10 | MHB-01 | Inventario de rutas              | Verde        | Tres rutas localizadas; implementación pendiente.                                         |
-| 2026-08-10 | MHB-01 | Tabla y no escritura             | Verde        | 17 casos focalizados; traversal no crea ni muta rutas.                                    |
-| 2026-08-10 | MHB-01 | Lint, typecheck, formato y suite | Verde        | `bun run lint`, `bun run typecheck`, `bun run format:check` y 30 pruebas.                 |
-| 2026-08-10 | MHB-01 | CLI manual válida                | Verde        | El generador confirmó `welcome` existente sin escribir.                                   |
-| 2026-08-10 | MHB-01 | Alias Bun de CLI                 | Verde        | `generate:email` y `export:screenshot` reenvían argumentos y rechazan traversal.          |
-| 2026-08-10 | MHB-01 | Build y compatibilidad           | Verde        | Templates compilados; 0 errores y warnings de links no bloqueantes.                       |
-| 2026-08-10 | MHB-01 | Exportación PNG portable         | Verde        | Puppeteer descargado por Bun completó una exportación PNG de prueba.                      |
-| 2026-08-13 | MHB-02 | Inventario de procesos           | Verde        | Los dos `spawn` con `shell: true` fueron endurecidos; no quedan en CLI/build helper.      |
-| 2026-08-13 | MHB-02 | Regresiones focalizadas          | Verde        | `bun test`: 40 pruebas verdes, incluidas 10 de procesos CLI/build helper.                 |
-| 2026-08-13 | MHB-02 | Smoke de códigos y errores       | Verde        | Node confirmó propagación de código 7 y rechazo accionable ante `ENOENT`.                 |
-| 2026-08-13 | MHB-02 | Lint, typecheck y formato        | Verde        | ESLint, TypeScript, HTMLHint, Markdownlint, JSON, Stylelint y Prettier locales.           |
-| 2026-08-13 | MHB-02 | Build manual vía CLI             | Verde        | Usuario confirmó build exitoso desde el menú del CLI.                                     |
-| 2026-08-13 | MHB-02 | Smoke focalizado tras fallo CI   | Verde        | Node verificó códigos, argumentos y ejecución sin shell con `spawn` inyectado.            |
-| 2026-08-13 | MHB-02 | Bun suite tras ajuste CI         | Verde        | Usuario confirmó `bun run test` local en Bun 1.3.13.                                      |
-| 2026-08-13 | MHB-03 | Tag, línea base y artefactos     | Verde        | Tag, relación de ancestro, CI, lockfile, `dist` y capturas comprobados localmente.        |
-| 2026-08-13 | MHB-03 | Markdown, formato y diff         | Verde        | `lint:md`, `format:check` y `git diff --check` sin errores.                               |
-| 2026-08-13 | MHB-03 | Release remota                   | Verde        | `v1.1.0` publicada, sin assets, no draft/prerelease; el tag apunta a `0d52a094`.          |
-| 2026-08-13 | MHB-03 | Guard de rama                    | Verde        | Preflight, hook vía `sh` y 3 regresiones Bun verifican `feature/mhb-03`.                  |
-| 2026-08-14 | MHB-04 | Rama y dependencias              | Verde        | `feature/mhb-04`, guard de tarea y dependencias MHB-01/MHB-02/MHB-03 confirmadas.         |
-| 2026-08-14 | MHB-04 | Matriz y sintaxis CI             | Verde        | Test declarativo 4/4, YAML válido y `git diff --check` sin errores.                       |
-| 2026-08-14 | MHB-04 | Formato, tipos y pruebas         | Verde        | `format:check`, `lint:js`, `lint:json`, `typecheck` y 47 pruebas verdes.                  |
-| 2026-08-14 | MHB-04 | Lint/build completo              | Verde        | HTMLHint sin errores; build exitoso con 3 warnings `href="#"` conocidos y no bloqueantes. |
-| 2026-08-14 | MHB-04 | Validación remota                | No ejecutado | GitHub API respondió `Forbidden`; no hay URLs de runs accesibles desde este entorno.      |
+| Fecha      | ID     | Control                          | Resultado | Nota                                                                                      |
+| ---------- | ------ | -------------------------------- | --------- | ----------------------------------------------------------------------------------------- |
+| 2026-08-10 | MHB-01 | Inventario de rutas              | Verde     | Tres rutas localizadas; implementación pendiente.                                         |
+| 2026-08-10 | MHB-01 | Tabla y no escritura             | Verde     | 17 casos focalizados; traversal no crea ni muta rutas.                                    |
+| 2026-08-10 | MHB-01 | Lint, typecheck, formato y suite | Verde     | `bun run lint`, `bun run typecheck`, `bun run format:check` y 30 pruebas.                 |
+| 2026-08-10 | MHB-01 | CLI manual válida                | Verde     | El generador confirmó `welcome` existente sin escribir.                                   |
+| 2026-08-10 | MHB-01 | Alias Bun de CLI                 | Verde     | `generate:email` y `export:screenshot` reenvían argumentos y rechazan traversal.          |
+| 2026-08-10 | MHB-01 | Build y compatibilidad           | Verde     | Templates compilados; 0 errores y warnings de links no bloqueantes.                       |
+| 2026-08-10 | MHB-01 | Exportación PNG portable         | Verde     | Puppeteer descargado por Bun completó una exportación PNG de prueba.                      |
+| 2026-08-13 | MHB-02 | Inventario de procesos           | Verde     | Los dos `spawn` con `shell: true` fueron endurecidos; no quedan en CLI/build helper.      |
+| 2026-08-13 | MHB-02 | Regresiones focalizadas          | Verde     | `bun test`: 40 pruebas verdes, incluidas 10 de procesos CLI/build helper.                 |
+| 2026-08-13 | MHB-02 | Smoke de códigos y errores       | Verde     | Node confirmó propagación de código 7 y rechazo accionable ante `ENOENT`.                 |
+| 2026-08-13 | MHB-02 | Lint, typecheck y formato        | Verde     | ESLint, TypeScript, HTMLHint, Markdownlint, JSON, Stylelint y Prettier locales.           |
+| 2026-08-13 | MHB-02 | Build manual vía CLI             | Verde     | Usuario confirmó build exitoso desde el menú del CLI.                                     |
+| 2026-08-13 | MHB-02 | Smoke focalizado tras fallo CI   | Verde     | Node verificó códigos, argumentos y ejecución sin shell con `spawn` inyectado.            |
+| 2026-08-13 | MHB-02 | Bun suite tras ajuste CI         | Verde     | Usuario confirmó `bun run test` local en Bun 1.3.13.                                      |
+| 2026-08-13 | MHB-03 | Tag, línea base y artefactos     | Verde     | Tag, relación de ancestro, CI, lockfile, `dist` y capturas comprobados localmente.        |
+| 2026-08-13 | MHB-03 | Markdown, formato y diff         | Verde     | `lint:md`, `format:check` y `git diff --check` sin errores.                               |
+| 2026-08-13 | MHB-03 | Release remota                   | Verde     | `v1.1.0` publicada, sin assets, no draft/prerelease; el tag apunta a `0d52a094`.          |
+| 2026-08-13 | MHB-03 | Guard de rama                    | Verde     | Preflight, hook vía `sh` y 3 regresiones Bun verifican `feature/mhb-03`.                  |
+| 2026-08-14 | MHB-04 | Rama y dependencias              | Verde     | `feature/mhb-04`, guard de tarea y dependencias MHB-01/MHB-02/MHB-03 confirmadas.         |
+| 2026-08-14 | MHB-04 | Matriz y sintaxis CI             | Verde     | Test declarativo 4/4, YAML válido y `git diff --check` sin errores.                       |
+| 2026-08-14 | MHB-04 | Formato, tipos y pruebas         | Verde     | `format:check`, `lint:js`, `lint:json`, `typecheck` y 47 pruebas verdes.                  |
+| 2026-08-14 | MHB-04 | Lint/build completo              | Verde     | HTMLHint sin errores; build exitoso con 3 warnings `href="#"` conocidos y no bloqueantes. |
+| 2026-08-14 | MHB-04 | Validación remota                | Verde     | CI `31813222237`: detect, formato, Markdown, JavaScript, HTML, JSON y verify verdes.      |
 
 ## Ejecuciones delegadas
 
@@ -107,7 +107,7 @@ en `En revisión`; otra autoridad decide `Completada`.
 
 ## Bloqueos
 
-- La evidencia remota permanece pendiente por respuesta `Forbidden` de GitHub.
+- Ninguno para MHB-04; GitHub dejó una advertencia no bloqueante por acciones Node.js 20.
 
 ## Handoff
 
@@ -116,12 +116,12 @@ en `En revisión`; otra autoridad decide `Completada`.
 - Evidencia local: HTMLHint, formato, lint JS/JSON, typecheck, suite (47), YAML,
   build y diff verificados; `validate-email` terminó sin errores y con 3 warnings
   conocidos.
-- Revisión requerida: ejecutar runs remotos para workflow, layout y HTML web.
+- Evidencia remota: [CI 31813222237](https://github.com/Frank-0511/vite-mhb-email/actions/runs/31813222237) verde en el commit `10fc9ff`.
 - MHB-02: `Completada`; rama `feature/mhb-02`, commit `6ba9a23`.
 - MHB-03: `Completada`; matriz en `RELEASE_BASELINE.md`, CHANGELOG actualizado,
   README enlazado y guard de rama autorizado; no se movieron tags, versión ni
   notas remotas.
-- Riesgo residual: evidencia remota pendiente; no se modificaron tags, versión
-  ni publicación.
+- Riesgo residual: advertencia de deprecación Node.js 20 en acciones de terceros;
+  no se modificaron tags, versión ni publicación.
 - Próxima acción: revisor técnico independiente confirma o rechaza MHB-04; no
   marcar `Completada` mientras existan controles fallidos o no ejecutados.
