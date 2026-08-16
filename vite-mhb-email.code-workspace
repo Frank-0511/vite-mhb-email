@@ -1,72 +1,108 @@
 {
+  // ================================================================
+  // CARPETA DEL WORKSPACE
+  // ================================================================
   "folders": [
     {
-      "path": ".",
+      "path": ".", // Abre la raíz del proyecto como carpeta del workspace.
     },
   ],
+  // ================================================================
+  // CONFIGURACIÓN ESPECÍFICA DE ESTE PROYECTO EN VS CODE
+  // Aquí solo viven ajustes necesarios para reconocer correctamente el
+  // código web, los templates de email y sus extensiones.
+  // ================================================================
   "settings": {
-    /* --- Editor & Formato --- */
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.linkedEditing": true,
-    "editor.quickSuggestions": {
-      "strings": "on",
-    },
-    "html.autoClosingTags": true,
+    // Bun es el gestor declarado para este repositorio. Este valor sobrescribe
+    // cualquier preferencia global de gestor de paquetes de VS Code.
+    "npm.packageManager": "bun",
+    // TypeScript insertará imports con comillas dobles en este proyecto.
+    // La preferencia global puede mantenerse distinta para otros proyectos.
+    "js/ts.preferences.quoteStyle": "double",
+    // Interpreta CSS como Tailwind CSS para habilitar IntelliSense de clases.
     "files.associations": {
       "*.css": "tailwindcss",
       "*.html": "html",
     },
-    /* --- Configuración de Extensiones --- */
-    // Aseguramos que Tailwind funcione en archivos de templates y layouts
+    // ================================================================
+    // TAILWIND CSS
+    // ================================================================
     "tailwindCSS.includeLanguages": {
       "html": "html",
       "handlebars": "html",
-    },
-    "tailwindCSS.emmetCompletions": true,
+    }, // Permite IntelliSense de Tailwind en HTML y Handlebars.
+    "tailwindCSS.emmetCompletions": true, // Activa abreviaturas Emmet para Tailwind.
     "tailwindCSS.experimental.configFile": {
       "./tailwind.config.js": "./src/web/**/*.{html,js,ts,jsx,tsx}",
       "./tailwind.email.config.js": "./src/emails/**/*.html",
-    },
+    }, // Asocia cada zona del proyecto con su configuración Tailwind.
     "tailwindCSS.experimental.classRegex": [
-      ["class=\"([^\"]*)\"", "([a-zA-Z0-9\\-:]+)"],
-      ["<x-[^>]*class=\"([^\"]*)\"", "([a-zA-Z0-9\\-:]+)"], // Para detectar clases dentro de tus tags <x-main>
+      [
+        "class=\"([^\"]*)\"",
+        "([a-zA-Z0-9\\-:]+)"
+      ], // Detecta clases en atributos class normales.
+      [
+        "<x-[^>]*class=\"([^\"]*)\"",
+        "([a-zA-Z0-9\\-:]+)"
+      ], // Detecta clases en componentes de email como <x-main>.
     ],
-    "tailwindCSS.files.exclude": ["**/.git/**", "**/node_modules/**", "**/dist/**", "**/.yarn/**"],
-    /* --- HTMLHint (Sintaxis Email) --- */
+    "tailwindCSS.files.exclude": [
+      "**/.git/**",
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/.yarn/**",
+      "**/.agent/**",
+      "**/.agents/**",
+      "**/.claude/**",
+      "**/.codex/**",
+      "**/.github/skills/**",
+      "**/.husky/_/**",
+    ], // Evita analizar dependencias y artefactos generados.
+    // ================================================================
+    // HTMLHINT PARA TEMPLATES DE EMAIL
+    // ================================================================
     "htmlhint.options": {
-      "doctype-first": false,
-      "title-require": false,
-      "tagname-lowercase": true,
-      "attr-lowercase": true,
-      "spec-char-escape": false, // Para que no chille con tus tags [[ ]]
+      "doctype-first": false, // Los emails no requieren doctype al inicio.
+      "title-require": false, // Los fragmentos no necesitan title.
+      "tagname-lowercase": true, // Mantiene nombres de tags en minúsculas.
+      "attr-lowercase": true, // Mantiene atributos en minúsculas.
+      "spec-char-escape": false, // Permite delimitadores Maizzle como [[ ]].
     },
+    // ================================================================
+    // VISIBILIDAD DEL EXPLORADOR
+    // Solo oculta artefactos o dependencias. Las carpetas de instrucciones,
+    // CI y hooks permanecen visibles para poder revisarlas.
+    // ================================================================
     "files.exclude": {
-      "**/.agent/**": true,
-      "**/.agents/**": true,
       "**/.cache/**": true,
-      "**/.claude/**": true,
       "**/.git/**": true,
-      "**/.husky/**": true,
-      "**/.vscode/**": true,
-      "**/.codex/**": true,
-      "**/.github/**": true,
       "**/dist/**": false,
       "**/node_modules/**": true,
-      "**/screenshots/**": false,
+      "**/.temp-screenshots/**": true,
+      "**/.agent/**": true,
+      "**/.agents/**": true,
+      "**/.claude/**": true,
+      "**/.codex/**": true,
+      "**/.github/skills/**": true,
+      "**/.husky/_/**": true,
+      "AGENTS.md": true,
+      "CLAUDE.md": true,
     },
-    "remote.autoForwardPortsFallback": 0,
   },
+  // ================================================================
+  // EXTENSIONES RECOMENDADAS
+  // Extensiones que ayudan a trabajar con este proyecto, sin forzar su uso.
+  // ================================================================
   "extensions": {
     "recommendations": [
-      "bradlc.vscode-tailwindcss",
-      "htmlhint.vscode-htmlhint",
-      "irongeek.vscode-caniemail",
-      "peterschmalfeldt.explorer-exclude",
-      "vincaslt.highlight-matching-tag",
-      "esbenp.prettier-vscode",
-      "formulahendry.auto-close-tag",
-      "formulahendry.auto-rename-tag",
+      "bradlc.vscode-tailwindcss", // IntelliSense de Tailwind.
+      "htmlhint.vscode-htmlhint", // Validación de HTML.
+      "irongeek.vscode-caniemail", // Compatibilidad de email clients.
+      "peterschmalfeldt.explorer-exclude", // Control visual de exclusiones.
+      "vincaslt.highlight-matching-tag", // Resalta tags relacionados.
+      "esbenp.prettier-vscode", // Formateador Prettier.
+      "formulahendry.auto-close-tag", // Cierra tags automáticamente.
+      "formulahendry.auto-rename-tag", // Renombra tags relacionados.
     ],
   },
 }
