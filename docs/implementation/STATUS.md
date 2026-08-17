@@ -3,7 +3,7 @@
 ## Resumen
 
 - ID activo: MHB-05
-- Estado: En revisión
+- Estado: Completada
 - Implementador: Kimi K2.7 Code
 - Revisor o autoridad de cierre: revisor de seguridad/CLI
 - Última actualización: 2026-08-17
@@ -15,8 +15,8 @@ en `En revisión`; otra autoridad decide `Completada`.
 
 ## Últimas entregas
 
-- MHB-05 en revisión: 51 casos de guard/entrypoints + 2 casos de restauración del
-  build selectivo; lint, typecheck, tests y build locales verdes.
+- MHB-05 completado: 51 casos de guard/entrypoints + 2 casos de restauración del
+  build selectivo; controles locales verdes y MR/PR asumido como mergeado.
 - MHB-04 completado: CI por rutas, gate de formato, `verify` y alineación con
   Node 24; cierre confirmado tras CI remota verde.
 - MHB-02 cerrado: procesos CLI/build sin shell, propagación de errores y
@@ -35,7 +35,7 @@ en `En revisión`; otra autoridad decide `Completada`.
   corregido y alineación de proyecto/acciones con Node 24.
 - Cierre: 2026-08-14 por el orquestador tras CI remota verde.
 
-## MHB-05 en revisión
+## MHB-05 completado
 
 - Alcance: regresiones de seguridad de comandos y filesystem para los controles de
   MHB-01, MHB-02 y MHB-04; no rediseño del CLI ni soporte de shell.
@@ -66,7 +66,7 @@ en `En revisión`; otra autoridad decide `Completada`.
      `scripts/shared/path-safety.test.js`, `scripts/ai/ci-route-matrix.test.js`,
      `scripts/build/build-selective.test.js`, `vite-mhb-email.code-workspace` y
      este `STATUS.md`.
-- Estado: `En revisión`.
+- Estado: `Completada`.
 
 ## Validaciones
 
@@ -105,13 +105,13 @@ en `En revisión`; otra autoridad decide `Completada`.
 
 ## Ejecuciones delegadas
 
-| Ámbito | Modelo/esfuerzo reales | Estado      | Propiedad                                             | Handoff                                      |
-| ------ | ---------------------- | ----------- | ----------------------------------------------------- | -------------------------------------------- |
-| MHB-01 | gpt-5.6-terra / alto   | Completada  | Guard, generador, exportador, build selectivo y tests | Usuario validó manualmente el resultado.     |
-| MHB-02 | GPT-5.6 Luna / alto    | Completada  | Procesos CLI/build y regresiones Bun                  | Cierre formal 2026-08-13 por el revisor.     |
-| MHB-03 | GPT-5.6 Terra / medio  | Completada  | Documentación de release y matriz de reconciliación   | Cierre formal 2026-08-13 por el orquestador. |
-| MHB-04 | GPT-5.6 Luna / medio   | Completada  | CI por rutas, formato, verify y Node 24               | Cierre formal 2026-08-14 por el orquestador. |
-| MHB-05 | Kimi K2.7 Code / alto  | En revisión | Tests de seguridad de comandos y filesystem           | A la espera de revisión independiente.       |
+| Ámbito | Modelo/esfuerzo reales | Estado     | Propiedad                                             | Handoff                                                          |
+| ------ | ---------------------- | ---------- | ----------------------------------------------------- | ---------------------------------------------------------------- |
+| MHB-01 | gpt-5.6-terra / alto   | Completada | Guard, generador, exportador, build selectivo y tests | Usuario validó manualmente el resultado.                         |
+| MHB-02 | GPT-5.6 Luna / alto    | Completada | Procesos CLI/build y regresiones Bun                  | Cierre formal 2026-08-13 por el revisor.                         |
+| MHB-03 | GPT-5.6 Terra / medio  | Completada | Documentación de release y matriz de reconciliación   | Cierre formal 2026-08-13 por el orquestador.                     |
+| MHB-04 | GPT-5.6 Luna / medio   | Completada | CI por rutas, formato, verify y Node 24               | Cierre formal 2026-08-14 por el orquestador.                     |
+| MHB-05 | Kimi K2.7 Code / alto  | Completada | Tests de seguridad de comandos y filesystem           | Cierre asumido tras MR/PR mergeado por autorización del usuario. |
 
 ## Revisión de cierre (MHB-02)
 
@@ -132,6 +132,20 @@ en `En revisión`; otra autoridad decide `Completada`.
 - Evidencia revisada: `RELEASE_BASELINE.md`, `README.md` y release remota de
   `v1.1.0`.
 - Decisión del revisor: `Completada` (2026-08-13).
+
+## Revisión de cierre (MHB-05)
+
+- Criterios de aceptación comprobados: traversal, nombres inválidos, códigos de
+  salida, aliases Bun y restauración de configuración ante fallos; CI ejecuta
+  los casos mediante el job `verify`.
+- Controles automáticos: `check:task-branch`, lint, typecheck, formato, 81
+  pruebas, build y `validate-email` verdes; warnings `href="#"` conocidos y
+  asignados a MHB-21.
+- Evidencia revisada: commit `b4e6216` en `feature/mhb-05`, diff contra
+  `origin/master` y validaciones registradas en este estado.
+- Control remoto: MR/PR de `feature/mhb-05` hacia `master`, considerado
+  mergeado por autorización explícita del usuario.
+- Decisión del revisor: `Completada` (2026-08-17).
 
 ## Revisión de cierre (MHB-04)
 
@@ -188,7 +202,8 @@ en `En revisión`; otra autoridad decide `Completada`.
 - Riesgo residual: el shell local usado para validaciones puede seguir en Node
   20.20.2; `.nvmrc` y CI exigen/verifican Node 24. No se modificaron tags,
   versión ni publicación.
-- MHB-05: `En revisión`; rama `feature/mhb-05`; diff de tests y estado únicamente.
+- MHB-05: `Completada`; rama `feature/mhb-05`, commit `b4e6216`; MR/PR
+  considerado mergeado a `master` por autorización del usuario.
 - MHB-04: `Completada`; rama `feature/mhb-04`, commit `cab72fd`; PR mergeado a
   `master`.
 - MHB-02: `Completada`; rama `feature/mhb-02`, commit `6ba9a23`.
@@ -198,5 +213,6 @@ en `En revisión`; otra autoridad decide `Completada`.
 - Riesgo residual: el shell local usado para validaciones puede seguir en Node
   20.20.2; `.nvmrc` y CI exigen/verifican Node 24. No se modificaron tags,
   versión ni publicación.
-- Próxima acción inmediata: revisión independiente de MHB-05.
-- Siguiente tarea del roadmap: MHB-06, bloqueado hasta que MHB-05 quede `Completada`.
+- Próxima acción inmediata: iniciar MHB-06 cuando sea asignado.
+- Siguiente tarea del roadmap: MHB-06, desbloqueado por el cierre de MHB-05; no
+  iniciado ni marcado `En progreso`.
