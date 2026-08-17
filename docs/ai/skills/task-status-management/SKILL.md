@@ -18,6 +18,19 @@ description: Actualizar docs/implementation/STATUS.md de EmailForge Toolkit dura
 - No registrar `Completada`: esa decisión pertenece al revisor indicado.
 - Registrar decisiones técnicas locales, no cambios de producto, IDs o
   aceptación; esos requieren actualizar el contrato de implementación.
+- Al cerrar una tarea, agregar también una línea resumida de esa entrega en
+  `## Últimas entregas`, conservando el formato y orden cronológico inverso de
+  las líneas existentes. La sección detallada de la tarea no sustituye ese
+  resumen.
+- En `## Handoff`, separar siempre:
+  - `Próxima acción inmediata`: revisión, merge, evidencia pendiente o bloqueo.
+  - `Siguiente tarea del roadmap`: el primer ID posterior del `PLAN.md` cuyas
+    dependencias estén satisfechas. Marcarlo como `desbloqueado` o
+    `bloqueado`; no iniciarlo ni marcarlo `En progreso` sin asignación explícita.
+- Antes de guardar el estado, comprobar que el ID cerrado aparece en
+  `Últimas entregas`, `Ejecuciones delegadas`, su revisión de cierre y el
+  handoff, y que el siguiente ID coincide con el orden/dependencias de
+  `PLAN.md`. Si no puede determinarse, registrar la razón explícitamente.
 
 Toda validación fallida o no ejecutada mantiene el ID bloqueado o en revisión y
 debe indicar la acción segura siguiente.

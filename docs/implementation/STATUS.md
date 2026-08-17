@@ -15,6 +15,8 @@ en `En revisión`; otra autoridad decide `Completada`.
 
 ## Últimas entregas
 
+- MHB-04 completado: CI por rutas, gate de formato, `verify` y alineación con
+  Node 24; cierre confirmado tras CI remota verde.
 - MHB-02 cerrado: procesos CLI/build sin shell, propagación de errores y
   regresiones Bun; cierre confirmado por el revisor.
 - MHB-03 completado: documentación de release, línea base y revisión remota de
@@ -137,4 +139,6 @@ en `En revisión`; otra autoridad decide `Completada`.
 - Riesgo residual: el shell local usado para validaciones puede seguir en Node
   20.20.2; `.nvmrc` y CI exigen/verifican Node 24. No se modificaron tags,
   versión ni publicación.
-- Próxima acción: merge del PR de MHB-04; MHB-05 queda desbloqueado.
+- Próxima acción inmediata: merge del PR de MHB-04 a `master`.
+- Siguiente tarea del roadmap: MHB-05, desbloqueada después de MHB-04; no
+  iniciada ni asignada todavía.
