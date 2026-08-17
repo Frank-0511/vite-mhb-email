@@ -130,8 +130,8 @@ en `En revisión`; otra autoridad decide `Completada`.
 
 ## Handoff
 
-- MHB-04: `Completada`; rama `feature/mhb-04`, commit `cab72fd`; PR pendiente de
-  merge a `master`.
+- MHB-04: `Completada`; rama `feature/mhb-04`, commit `cab72fd`; PR mergeado a
+  `master`.
 - MHB-02: `Completada`; rama `feature/mhb-02`, commit `6ba9a23`.
 - MHB-03: `Completada`; matriz en `RELEASE_BASELINE.md`, CHANGELOG actualizado,
   README enlazado y guard de rama autorizado; no se movieron tags, versión ni
@@ -139,6 +139,6 @@ en `En revisión`; otra autoridad decide `Completada`.
 - Riesgo residual: el shell local usado para validaciones puede seguir en Node
   20.20.2; `.nvmrc` y CI exigen/verifican Node 24. No se modificaron tags,
   versión ni publicación.
-- Próxima acción inmediata: merge del PR de MHB-04 a `master`.
+- Próxima acción inmediata: planificar y asignar MHB-05.
 - Siguiente tarea del roadmap: MHB-05, desbloqueada después de MHB-04; no
   iniciada ni asignada todavía.
