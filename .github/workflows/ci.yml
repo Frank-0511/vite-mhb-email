@@ -70,6 +70,7 @@ jobs:
               - "**/*.md"
               - "**/*.html"
               - "**/*.{js,mjs,json,css,yml,yaml}"
+              - "*.code-workspace"
 
   lint-md:
     name: Lint · Markdown

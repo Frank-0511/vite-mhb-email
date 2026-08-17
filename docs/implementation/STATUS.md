@@ -2,11 +2,11 @@
 
 ## Resumen
 
-- ID activo: ninguno
-- Estado: —
-- Implementador: —
-- Revisor o autoridad de cierre: —
-- Última actualización: 2026-08-14
+- ID activo: MHB-05
+- Estado: En revisión
+- Implementador: Kimi K2.7 Code
+- Revisor o autoridad de cierre: revisor de seguridad/CLI
+- Última actualización: 2026-08-17
 - Contrato estable: `docs/implementation/PLAN.md`
 
 Este archivo no replica el roadmap. Al iniciar una tarea, registrar solo el ID
@@ -15,6 +15,8 @@ en `En revisión`; otra autoridad decide `Completada`.
 
 ## Últimas entregas
 
+- MHB-05 en revisión: 51 casos de guard/entrypoints + 2 casos de restauración del
+  build selectivo; lint, typecheck, tests y build locales verdes.
 - MHB-04 completado: CI por rutas, gate de formato, `verify` y alineación con
   Node 24; cierre confirmado tras CI remota verde.
 - MHB-02 cerrado: procesos CLI/build sin shell, propagación de errores y
@@ -32,6 +34,39 @@ en `En revisión`; otra autoridad decide `Completada`.
 - Entrega: matriz ruta→job, gate de formato, lint HTML alineado, partial hero
   corregido y alineación de proyecto/acciones con Node 24.
 - Cierre: 2026-08-14 por el orquestador tras CI remota verde.
+
+## MHB-05 en revisión
+
+- Alcance: regresiones de seguridad de comandos y filesystem para los controles de
+  MHB-01, MHB-02 y MHB-04; no rediseño del CLI ni soporte de shell.
+- Dependencias: MHB-01, MHB-02 y MHB-04 `Completada`.
+- Rama: `feature/mhb-05`.
+- Entrega: tests de nombres inválidos, traversal, metacaracteres, códigos de
+  salida y restauración del build selectivo; suite conectada al CI vía el job
+  `verify` existente; ampliación autorizada de hooks y filtro CI para evitar que
+  archivos staged no formateados pasen al commit.
+- Hechos de entrega:
+  1. `path-safety.test.js` cubre 17+ casos de nombres, traversal, separadores,
+     metacaracteres de shell, tipos no string, `isPathInside` y códigos de salida
+     exactos (`status === 1`) para los tres entrypoints y dos alias Bun.
+  2. `build-selective.test.js` verifica restauración de `maizzle.config.js` y
+     eliminación del backup tras fallos de `maizzle build` y de glob no
+     encontrado, usando fixtures temporales y un `maizzle` falso en PATH.
+  3. No se modificó el CLI, `maizzle.config.js` ni se añadieron dependencias.
+  4. Por autorización del usuario, se formateó `vite-mhb-email.code-workspace` y se
+     configuró `formatOnSave` y Prettier como formateador por defecto en el
+     workspace para que el editor normalice al guardar.
+  5. Por autorización del usuario, se amplió `lint-staged` en `package.json` con
+     globs recursivos para `scripts/**/*.{js,mjs}`, `src/web/**/*.js`, configs JS,
+     HTML de layouts/partials, Markdown, JSON, YAML y el workspace. Se conservan
+     validadores existentes y no se añaden controles pesados en pre-commit.
+  6. Por autorización del usuario, se agregó `*.code-workspace` al filtro `format`
+     de `.github/workflows/ci.yml` y se protegió con `ci-route-matrix.test.js`.
+  7. El diff toca `package.json`, `.github/workflows/ci.yml`,
+     `scripts/shared/path-safety.test.js`, `scripts/ai/ci-route-matrix.test.js`,
+     `scripts/build/build-selective.test.js`, `vite-mhb-email.code-workspace` y
+     este `STATUS.md`.
+- Estado: `En revisión`.
 
 ## Validaciones
 
@@ -60,15 +95,23 @@ en `En revisión`; otra autoridad decide `Completada`.
 | 2026-08-14 | MHB-04 | Formato, tipos y pruebas         | Verde     | `format:check`, `lint:js`, `lint:json`, `typecheck` y 47 pruebas verdes.                  |
 | 2026-08-14 | MHB-04 | Lint/build completo              | Verde     | HTMLHint sin errores; build exitoso con 3 warnings `href="#"` conocidos y no bloqueantes. |
 | 2026-08-14 | MHB-04 | Validación remota                | Verde     | CI `31814207687`: acciones Node 24, detect, formato, lints y verify verdes.               |
+| 2026-08-17 | MHB-05 | Rama y dependencias              | Verde     | `feature/mhb-05`, guard de tarea y dependencias MHB-01/MHB-02/MHB-04 confirmadas.         |
+| 2026-08-17 | MHB-05 | Regresiones de nombres y rutas   | Verde     | 51 casos en `path-safety.test.js`: guard, `isPathInside`, entrypoints y alias Bun.        |
+| 2026-08-17 | MHB-05 | Restauración build selectivo     | Verde     | 2 casos en `build-selective.test.js`: config y backup limpios tras ambos fallos.          |
+| 2026-08-17 | MHB-05 | Lint, typecheck y tests          | Verde     | `lint`, `typecheck`, `test` y `build` locales verdes; 81 pruebas verdes.                  |
+| 2026-08-17 | MHB-05 | Formato global del repositorio   | Verde     | `bun run format:check` pasa en todo el repositorio tras formatear `code-workspace`.       |
+| 2026-08-17 | MHB-05 | Ampliación lint-staged y CI      | Verde     | `lint-staged --diff=HEAD` corre 12 globs; matriz CI detecta workspace; 0 errores.         |
+| 2026-08-17 | MHB-05 | Validación email post-build      | Verde     | `validate-email` verde; 3 warnings `href="#"` conocidos y asignados a MHB-21.             |
 
 ## Ejecuciones delegadas
 
-| Ámbito | Modelo/esfuerzo reales | Estado     | Propiedad                                             | Handoff                                      |
-| ------ | ---------------------- | ---------- | ----------------------------------------------------- | -------------------------------------------- |
-| MHB-01 | gpt-5.6-terra / alto   | Completada | Guard, generador, exportador, build selectivo y tests | Usuario validó manualmente el resultado.     |
-| MHB-02 | GPT-5.6 Luna / alto    | Completada | Procesos CLI/build y regresiones Bun                  | Cierre formal 2026-08-13 por el revisor.     |
-| MHB-03 | GPT-5.6 Terra / medio  | Completada | Documentación de release y matriz de reconciliación   | Cierre formal 2026-08-13 por el orquestador. |
-| MHB-04 | GPT-5.6 Luna / medio   | Completada | CI por rutas, formato, verify y Node 24               | Cierre formal 2026-08-14 por el orquestador. |
+| Ámbito | Modelo/esfuerzo reales | Estado      | Propiedad                                             | Handoff                                      |
+| ------ | ---------------------- | ----------- | ----------------------------------------------------- | -------------------------------------------- |
+| MHB-01 | gpt-5.6-terra / alto   | Completada  | Guard, generador, exportador, build selectivo y tests | Usuario validó manualmente el resultado.     |
+| MHB-02 | GPT-5.6 Luna / alto    | Completada  | Procesos CLI/build y regresiones Bun                  | Cierre formal 2026-08-13 por el revisor.     |
+| MHB-03 | GPT-5.6 Terra / medio  | Completada  | Documentación de release y matriz de reconciliación   | Cierre formal 2026-08-13 por el orquestador. |
+| MHB-04 | GPT-5.6 Luna / medio   | Completada  | CI por rutas, formato, verify y Node 24               | Cierre formal 2026-08-14 por el orquestador. |
+| MHB-05 | Kimi K2.7 Code / alto  | En revisión | Tests de seguridad de comandos y filesystem           | A la espera de revisión independiente.       |
 
 ## Revisión de cierre (MHB-02)
 
@@ -123,6 +166,12 @@ en `En revisión`; otra autoridad decide `Completada`.
   usuario, `showButton` se normalizó a `show-button` en el partial hero.
 - Por autorización del usuario, Node.js 24 queda como requisito local mínimo y
   las acciones CI se actualizan a majors compatibles.
+- Por autorización del usuario, se formateó `vite-mhb-email.code-workspace` y se
+  configuró `formatOnSave` en el workspace para que el editor normalice al guardar.
+- Por autorización del usuario, se amplió `lint-staged` y el filtro `format` de CI
+  para cubrir archivos staged de layout/partial HTML, web JS, scripts `.mjs`,
+  configs, YAML, Markdown recursivo, JSON recursivo y el workspace; no se añadieron
+  controles pesados (typecheck/test/build) en pre-commit.
 
 ## Bloqueos
 
@@ -139,6 +188,15 @@ en `En revisión`; otra autoridad decide `Completada`.
 - Riesgo residual: el shell local usado para validaciones puede seguir en Node
   20.20.2; `.nvmrc` y CI exigen/verifican Node 24. No se modificaron tags,
   versión ni publicación.
-- Próxima acción inmediata: planificar y asignar MHB-05.
-- Siguiente tarea del roadmap: MHB-05, desbloqueada después de MHB-04; no
-  iniciada ni asignada todavía.
+- MHB-05: `En revisión`; rama `feature/mhb-05`; diff de tests y estado únicamente.
+- MHB-04: `Completada`; rama `feature/mhb-04`, commit `cab72fd`; PR mergeado a
+  `master`.
+- MHB-02: `Completada`; rama `feature/mhb-02`, commit `6ba9a23`.
+- MHB-03: `Completada`; matriz en `RELEASE_BASELINE.md`, CHANGELOG actualizado,
+  README enlazado y guard de rama autorizado; no se movieron tags, versión ni
+  notas remotas.
+- Riesgo residual: el shell local usado para validaciones puede seguir en Node
+  20.20.2; `.nvmrc` y CI exigen/verifican Node 24. No se modificaron tags,
+  versión ni publicación.
+- Próxima acción inmediata: revisión independiente de MHB-05.
+- Siguiente tarea del roadmap: MHB-06, bloqueado hasta que MHB-05 quede `Completada`.

@@ -19,6 +19,38 @@
     // TypeScript insertará imports con comillas dobles en este proyecto.
     // La preferencia global puede mantenerse distinta para otros proyectos.
     "js/ts.preferences.quoteStyle": "double",
+    // ================================================================
+    // FORMATO AL GUARDAR (solo este workspace)
+    // Sobrescribe un formatOnSave global desactivado. Prettier usa
+    // `.prettierrc.json` y solo corre si encuentra config en el repo.
+    // ================================================================
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "prettier.requireConfig": true,
+    "[javascript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+    },
+    "[typescript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+    },
+    "[json]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+    },
+    "[jsonc]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+    },
+    "[html]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+    },
+    "[css]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+    },
+    "[markdown]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+    },
+    "[yaml]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+    },
     // Interpreta CSS como Tailwind CSS para habilitar IntelliSense de clases.
     "files.associations": {
       "*.css": "tailwindcss",
@@ -37,14 +69,8 @@
       "./tailwind.email.config.js": "./src/emails/**/*.html",
     }, // Asocia cada zona del proyecto con su configuración Tailwind.
     "tailwindCSS.experimental.classRegex": [
-      [
-        "class=\"([^\"]*)\"",
-        "([a-zA-Z0-9\\-:]+)"
-      ], // Detecta clases en atributos class normales.
-      [
-        "<x-[^>]*class=\"([^\"]*)\"",
-        "([a-zA-Z0-9\\-:]+)"
-      ], // Detecta clases en componentes de email como <x-main>.
+      ["class=\"([^\"]*)\"", "([a-zA-Z0-9\\-:]+)"], // Detecta clases en atributos class normales.
+      ["<x-[^>]*class=\"([^\"]*)\"", "([a-zA-Z0-9\\-:]+)"], // Detecta clases en componentes de email como <x-main>.
     ],
     "tailwindCSS.files.exclude": [
       "**/.git/**",
