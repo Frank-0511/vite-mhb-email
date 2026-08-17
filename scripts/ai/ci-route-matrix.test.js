@@ -32,6 +32,7 @@ describe("CI route matrix", () => {
     expect(workflow).toContain('- "**/*.md"');
     expect(workflow).toContain('- "**/*.html"');
     expect(workflow).toContain('- "**/*.{js,mjs,json,css,yml,yaml}"');
+    expect(workflow).toContain('- "*.code-workspace"');
     expect(workflow).toContain("bun run format:check");
   });
 

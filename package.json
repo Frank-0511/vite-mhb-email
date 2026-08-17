@@ -63,35 +63,47 @@
     "agents:check": "node scripts/ai/agents-check.mjs"
   },
   "lint-staged": {
-    "scripts/**/*.js": [
+    "scripts/**/*.{js,mjs}": [
       "eslint --fix",
       "prettier --write"
     ],
-    "vite.config.js": [
+    "src/web/**/*.js": [
       "eslint --fix",
+      "prettier --write"
+    ],
+    "{vite,maizzle}.config.js": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "{tailwind,tailwind.email,postcss,eslint}.config.js": [
+      "prettier --write"
+    ],
+    "src/emails/**/*.html": [
+      "htmlhint",
       "prettier --write"
     ],
     "src/web/**/*.html": [
       "htmlhint",
       "prettier --write"
     ],
-    "src/emails/templates/**/*.html": [
-      "htmlhint",
-      "prettier --write"
-    ],
     "src/emails/templates/*/data.json": [
-      "bun scripts/build/validate-json.js",
-      "prettier --write"
+      "bun scripts/build/validate-json.js"
     ],
-    "*.json": [
+    "**/*.json": [
       "prettier --write"
     ],
     "src/**/*.css": [
       "stylelint --fix",
       "prettier --write"
     ],
-    "*.md": [
+    "**/*.md": [
       "markdownlint-cli2 --fix",
+      "prettier --write"
+    ],
+    "**/*.{yml,yaml}": [
+      "prettier --write"
+    ],
+    "*.code-workspace": [
       "prettier --write"
     ]
   },
