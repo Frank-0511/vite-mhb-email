@@ -11,10 +11,10 @@
     "tailwindcss"
   ],
   "private": true,
-  "author": "Frank-0511",
+  "author": "Frank Villanueva",
   "contributors": [
     {
-      "name": "Frank-0511",
+      "name": "Frank Villanueva",
       "email": "frank05111996@gmail.com",
       "url": "https://github.com/Frank-0511"
     }
@@ -32,7 +32,7 @@
   "type": "module",
   "engines": {
     "node": ">=24",
-    "bun": ">=1.0.0"
+    "bun": ">=1.3.13"
   },
   "trustedDependencies": [
     "puppeteer"

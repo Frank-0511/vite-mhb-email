@@ -113,8 +113,8 @@ El pipeline principal es:
 ### Requisitos locales
 
 - **Node.js 24** (ver `.nvmrc`). Con NVM: `nvm use` dentro del repo.
-- **Bun >= 1.0.0** (CI usa **1.3.13**, alineado con `packageManager` en
-  `package.json`). Instálalo standalone y deja `~/.bun/bin` en tu `PATH`:
+- **Bun >= 1.3.13** (CI y `packageManager` usan **1.3.13**). Instálalo
+  standalone y deja `~/.bun/bin` en tu `PATH`:
 
 ```bash
 curl -fsSL https://bun.sh/install | bash
@@ -347,7 +347,13 @@ bun run agents:sync      # Sincronizar skills de agentes
 ## Requisitos
 
 - Node.js **24** (`.nvmrc`; mínimo declarado en `package.json`: >= 24)
-- Bun **>= 1.0.0** (recomendado: standalone; CI usa 1.3.13)
+- Bun **>= 1.3.13** (recomendado: standalone; CI usa 1.3.13)
+
+---
+
+## Licencia
+
+Este proyecto se distribuye bajo la [licencia MIT](LICENSE).
 
 ---
 
