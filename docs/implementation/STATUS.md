@@ -2,11 +2,11 @@
 
 ## Resumen
 
-- ID activo: MHB-22
-- Estado: En revisión
-- Implementador: Codex
-- Revisor o autoridad de cierre: orquestador
-- Última actualización: 2026-08-17
+- ID activo: MHB-06
+- Estado: En progreso
+- Implementador: pendiente de asignación
+- Revisor o autoridad de cierre: revisor de seguridad/compatibilidad
+- Última actualización: 2026-09-03
 - Contrato estable: `docs/implementation/PLAN.md`
 
 Este archivo no replica el roadmap. Al iniciar una tarea, registrar solo el ID
@@ -15,6 +15,9 @@ en `En revisión`; otra autoridad decide `Completada`.
 
 ## Últimas entregas
 
+- MHB-22 completado: licencia MIT materializada, README enlazado, metadata de
+  autoría alineada y Fase A cerrada por el orquestador tras PR #13 mergeado;
+  no se modifican versión, tag ni release.
 - MHB-22 en revisión: licencia MIT materializada, README enlazado y metadata de
   autoría alineada; gate completo de Fase A verde, pendiente de revisión
   independiente para cerrar la fase.
@@ -73,51 +76,53 @@ en `En revisión`; otra autoridad decide `Completada`.
 
 ## Validaciones
 
-| Fecha      | ID     | Control                          | Resultado | Nota                                                                                      |
-| ---------- | ------ | -------------------------------- | --------- | ----------------------------------------------------------------------------------------- |
-| 2026-08-10 | MHB-01 | Inventario de rutas              | Verde     | Tres rutas localizadas; implementación pendiente.                                         |
-| 2026-08-10 | MHB-01 | Tabla y no escritura             | Verde     | 17 casos focalizados; traversal no crea ni muta rutas.                                    |
-| 2026-08-10 | MHB-01 | Lint, typecheck, formato y suite | Verde     | `bun run lint`, `bun run typecheck`, `bun run format:check` y 30 pruebas.                 |
-| 2026-08-10 | MHB-01 | CLI manual válida                | Verde     | El generador confirmó `welcome` existente sin escribir.                                   |
-| 2026-08-10 | MHB-01 | Alias Bun de CLI                 | Verde     | `generate:email` y `export:screenshot` reenvían argumentos y rechazan traversal.          |
-| 2026-08-10 | MHB-01 | Build y compatibilidad           | Verde     | Templates compilados; 0 errores y warnings de links no bloqueantes.                       |
-| 2026-08-10 | MHB-01 | Exportación PNG portable         | Verde     | Puppeteer descargado por Bun completó una exportación PNG de prueba.                      |
-| 2026-08-13 | MHB-02 | Inventario de procesos           | Verde     | Los dos `spawn` con `shell: true` fueron endurecidos; no quedan en CLI/build helper.      |
-| 2026-08-13 | MHB-02 | Regresiones focalizadas          | Verde     | `bun test`: 40 pruebas verdes, incluidas 10 de procesos CLI/build helper.                 |
-| 2026-08-13 | MHB-02 | Smoke de códigos y errores       | Verde     | Node confirmó propagación de código 7 y rechazo accionable ante `ENOENT`.                 |
-| 2026-08-13 | MHB-02 | Lint, typecheck y formato        | Verde     | ESLint, TypeScript, HTMLHint, Markdownlint, JSON, Stylelint y Prettier locales.           |
-| 2026-08-13 | MHB-02 | Build manual vía CLI             | Verde     | Usuario confirmó build exitoso desde el menú del CLI.                                     |
-| 2026-08-13 | MHB-02 | Smoke focalizado tras fallo CI   | Verde     | Node verificó códigos, argumentos y ejecución sin shell con `spawn` inyectado.            |
-| 2026-08-13 | MHB-02 | Bun suite tras ajuste CI         | Verde     | Usuario confirmó `bun run test` local en Bun 1.3.13.                                      |
-| 2026-08-13 | MHB-03 | Tag, línea base y artefactos     | Verde     | Tag, relación de ancestro, CI, lockfile, `dist` y capturas comprobados localmente.        |
-| 2026-08-13 | MHB-03 | Markdown, formato y diff         | Verde     | `lint:md`, `format:check` y `git diff --check` sin errores.                               |
-| 2026-08-13 | MHB-03 | Release remota                   | Verde     | `v1.1.0` publicada, sin assets, no draft/prerelease; el tag apunta a `0d52a094`.          |
-| 2026-08-13 | MHB-03 | Guard de rama                    | Verde     | Preflight, hook vía `sh` y 3 regresiones Bun verifican `feature/mhb-03`.                  |
-| 2026-08-14 | MHB-04 | Rama y dependencias              | Verde     | `feature/mhb-04`, guard de tarea y dependencias MHB-01/MHB-02/MHB-03 confirmadas.         |
-| 2026-08-14 | MHB-04 | Matriz y sintaxis CI             | Verde     | Test declarativo 4/4, YAML válido y `git diff --check` sin errores.                       |
-| 2026-08-14 | MHB-04 | Formato, tipos y pruebas         | Verde     | `format:check`, `lint:js`, `lint:json`, `typecheck` y 47 pruebas verdes.                  |
-| 2026-08-14 | MHB-04 | Lint/build completo              | Verde     | HTMLHint sin errores; build exitoso con 3 warnings `href="#"` conocidos y no bloqueantes. |
-| 2026-08-14 | MHB-04 | Validación remota                | Verde     | CI `31814207687`: acciones Node 24, detect, formato, lints y verify verdes.               |
-| 2026-08-17 | MHB-05 | Rama y dependencias              | Verde     | `feature/mhb-05`, guard de tarea y dependencias MHB-01/MHB-02/MHB-04 confirmadas.         |
-| 2026-08-17 | MHB-05 | Regresiones de nombres y rutas   | Verde     | 51 casos en `path-safety.test.js`: guard, `isPathInside`, entrypoints y alias Bun.        |
-| 2026-08-17 | MHB-05 | Restauración build selectivo     | Verde     | 2 casos en `build-selective.test.js`: config y backup limpios tras ambos fallos.          |
-| 2026-08-17 | MHB-05 | Lint, typecheck y tests          | Verde     | `lint`, `typecheck`, `test` y `build` locales verdes; 81 pruebas verdes.                  |
-| 2026-08-17 | MHB-05 | Formato global del repositorio   | Verde     | `bun run format:check` pasa en todo el repositorio tras formatear `code-workspace`.       |
-| 2026-08-17 | MHB-05 | Ampliación lint-staged y CI      | Verde     | `lint-staged --diff=HEAD` corre 12 globs; matriz CI detecta workspace; 0 errores.         |
-| 2026-08-17 | MHB-05 | Validación email post-build      | Verde     | `validate-email` verde; 3 warnings `href="#"` conocidos y asignados a MHB-21.             |
-| 2026-08-17 | MHB-22 | Licencia, enlace y metadata      | Verde     | `LICENSE` MIT, README y `package.json` coinciden con Frank Villanueva (2026).             |
-| 2026-08-17 | MHB-22 | Gate completo de Fase A          | Verde     | Instalación congelada, lint, typecheck, 81 pruebas, build, validación email y formato.    |
+| Fecha      | ID     | Control                            | Resultado | Nota                                                                                      |
+| ---------- | ------ | ---------------------------------- | --------- | ----------------------------------------------------------------------------------------- |
+| 2026-08-10 | MHB-01 | Inventario de rutas                | Verde     | Tres rutas localizadas; implementación pendiente.                                         |
+| 2026-08-10 | MHB-01 | Tabla y no escritura               | Verde     | 17 casos focalizados; traversal no crea ni muta rutas.                                    |
+| 2026-08-10 | MHB-01 | Lint, typecheck, formato y suite   | Verde     | `bun run lint`, `bun run typecheck`, `bun run format:check` y 30 pruebas.                 |
+| 2026-08-10 | MHB-01 | CLI manual válida                  | Verde     | El generador confirmó `welcome` existente sin escribir.                                   |
+| 2026-08-10 | MHB-01 | Alias Bun de CLI                   | Verde     | `generate:email` y `export:screenshot` reenvían argumentos y rechazan traversal.          |
+| 2026-08-10 | MHB-01 | Build y compatibilidad             | Verde     | Templates compilados; 0 errores y warnings de links no bloqueantes.                       |
+| 2026-08-10 | MHB-01 | Exportación PNG portable           | Verde     | Puppeteer descargado por Bun completó una exportación PNG de prueba.                      |
+| 2026-08-13 | MHB-02 | Inventario de procesos             | Verde     | Los dos `spawn` con `shell: true` fueron endurecidos; no quedan en CLI/build helper.      |
+| 2026-08-13 | MHB-02 | Regresiones focalizadas            | Verde     | `bun test`: 40 pruebas verdes, incluidas 10 de procesos CLI/build helper.                 |
+| 2026-08-13 | MHB-02 | Smoke de códigos y errores         | Verde     | Node confirmó propagación de código 7 y rechazo accionable ante `ENOENT`.                 |
+| 2026-08-13 | MHB-02 | Lint, typecheck y formato          | Verde     | ESLint, TypeScript, HTMLHint, Markdownlint, JSON, Stylelint y Prettier locales.           |
+| 2026-08-13 | MHB-02 | Build manual vía CLI               | Verde     | Usuario confirmó build exitoso desde el menú del CLI.                                     |
+| 2026-08-13 | MHB-02 | Smoke focalizado tras fallo CI     | Verde     | Node verificó códigos, argumentos y ejecución sin shell con `spawn` inyectado.            |
+| 2026-08-13 | MHB-02 | Bun suite tras ajuste CI           | Verde     | Usuario confirmó `bun run test` local en Bun 1.3.13.                                      |
+| 2026-08-13 | MHB-03 | Tag, línea base y artefactos       | Verde     | Tag, relación de ancestro, CI, lockfile, `dist` y capturas comprobados localmente.        |
+| 2026-08-13 | MHB-03 | Markdown, formato y diff           | Verde     | `lint:md`, `format:check` y `git diff --check` sin errores.                               |
+| 2026-08-13 | MHB-03 | Release remota                     | Verde     | `v1.1.0` publicada, sin assets, no draft/prerelease; el tag apunta a `0d52a094`.          |
+| 2026-08-13 | MHB-03 | Guard de rama                      | Verde     | Preflight, hook vía `sh` y 3 regresiones Bun verifican `feature/mhb-03`.                  |
+| 2026-08-14 | MHB-04 | Rama y dependencias                | Verde     | `feature/mhb-04`, guard de tarea y dependencias MHB-01/MHB-02/MHB-03 confirmadas.         |
+| 2026-08-14 | MHB-04 | Matriz y sintaxis CI               | Verde     | Test declarativo 4/4, YAML válido y `git diff --check` sin errores.                       |
+| 2026-08-14 | MHB-04 | Formato, tipos y pruebas           | Verde     | `format:check`, `lint:js`, `lint:json`, `typecheck` y 47 pruebas verdes.                  |
+| 2026-08-14 | MHB-04 | Lint/build completo                | Verde     | HTMLHint sin errores; build exitoso con 3 warnings `href="#"` conocidos y no bloqueantes. |
+| 2026-08-14 | MHB-04 | Validación remota                  | Verde     | CI `31814207687`: acciones Node 24, detect, formato, lints y verify verdes.               |
+| 2026-08-17 | MHB-05 | Rama y dependencias                | Verde     | `feature/mhb-05`, guard de tarea y dependencias MHB-01/MHB-02/MHB-04 confirmadas.         |
+| 2026-08-17 | MHB-05 | Regresiones de nombres y rutas     | Verde     | 51 casos en `path-safety.test.js`: guard, `isPathInside`, entrypoints y alias Bun.        |
+| 2026-08-17 | MHB-05 | Restauración build selectivo       | Verde     | 2 casos en `build-selective.test.js`: config y backup limpios tras ambos fallos.          |
+| 2026-08-17 | MHB-05 | Lint, typecheck y tests            | Verde     | `lint`, `typecheck`, `test` y `build` locales verdes; 81 pruebas verdes.                  |
+| 2026-08-17 | MHB-05 | Formato global del repositorio     | Verde     | `bun run format:check` pasa en todo el repositorio tras formatear `code-workspace`.       |
+| 2026-08-17 | MHB-05 | Ampliación lint-staged y CI        | Verde     | `lint-staged --diff=HEAD` corre 12 globs; matriz CI detecta workspace; 0 errores.         |
+| 2026-08-17 | MHB-05 | Validación email post-build        | Verde     | `validate-email` verde; 3 warnings `href="#"` conocidos y asignados a MHB-21.             |
+| 2026-08-17 | MHB-22 | Licencia, enlace y metadata        | Verde     | `LICENSE` MIT, README y `package.json` coinciden con Frank Villanueva (2026).             |
+| 2026-08-17 | MHB-22 | Gate completo de Fase A            | Verde     | Instalación congelada, lint, typecheck, 81 pruebas, build, validación email y formato.    |
+| 2026-09-03 | MHB-22 | Revisión del orquestador           | Verde     | Titular/año sustentados por historial Git y metadata; PR #13 mergeado en `92f0c96`.       |
+| 2026-09-03 | MHB-22 | Cierre de Fase A y decisión v1.1.1 | Verde     | MHB-01/MHB-02/MHB-03/MHB-04/MHB-22 `Completada`; `v1.1.1` no se publica sin autorización. |
 
 ## Ejecuciones delegadas
 
-| Ámbito | Modelo/esfuerzo reales | Estado      | Propiedad                                             | Handoff                                                          |
-| ------ | ---------------------- | ----------- | ----------------------------------------------------- | ---------------------------------------------------------------- |
-| MHB-01 | gpt-5.6-terra / alto   | Completada  | Guard, generador, exportador, build selectivo y tests | Usuario validó manualmente el resultado.                         |
-| MHB-02 | GPT-5.6 Luna / alto    | Completada  | Procesos CLI/build y regresiones Bun                  | Cierre formal 2026-08-13 por el revisor.                         |
-| MHB-03 | GPT-5.6 Terra / medio  | Completada  | Documentación de release y matriz de reconciliación   | Cierre formal 2026-08-13 por el orquestador.                     |
-| MHB-04 | GPT-5.6 Luna / medio   | Completada  | CI por rutas, formato, verify y Node 24               | Cierre formal 2026-08-14 por el orquestador.                     |
-| MHB-05 | Kimi K2.7 Code / alto  | Completada  | Tests de seguridad de comandos y filesystem           | Cierre asumido tras MR/PR mergeado por autorización del usuario. |
-| MHB-22 | Codex / bajo           | En revisión | LICENSE, README, metadata y evidencia de Fase A       | Pendiente de revisión independiente del orquestador.             |
+| Ámbito | Modelo/esfuerzo reales | Estado     | Propiedad                                             | Handoff                                                           |
+| ------ | ---------------------- | ---------- | ----------------------------------------------------- | ----------------------------------------------------------------- |
+| MHB-01 | gpt-5.6-terra / alto   | Completada | Guard, generador, exportador, build selectivo y tests | Usuario validó manualmente el resultado.                          |
+| MHB-02 | GPT-5.6 Luna / alto    | Completada | Procesos CLI/build y regresiones Bun                  | Cierre formal 2026-08-13 por el revisor.                          |
+| MHB-03 | GPT-5.6 Terra / medio  | Completada | Documentación de release y matriz de reconciliación   | Cierre formal 2026-08-13 por el orquestador.                      |
+| MHB-04 | GPT-5.6 Luna / medio   | Completada | CI por rutas, formato, verify y Node 24               | Cierre formal 2026-08-14 por el orquestador.                      |
+| MHB-05 | Kimi K2.7 Code / alto  | Completada | Tests de seguridad de comandos y filesystem           | Cierre asumido tras MR/PR mergeado por autorización del usuario.  |
+| MHB-22 | Codex / bajo           | Completada | LICENSE, README, metadata y evidencia de Fase A       | Cierre formal 2026-09-03 por el orquestador tras PR #13 mergeado. |
 
 ## Revisión de cierre (MHB-02)
 
@@ -171,6 +176,30 @@ en `En revisión`; otra autoridad decide `Completada`.
 - Próxima decisión: el orquestador revisa titular/año, diff y evidencia antes de
   marcar MHB-22 `Completada` y cerrar la Fase A.
 
+## Revisión de cierre (MHB-22)
+
+- Criterios de aceptación comprobados: `LICENSE` con MIT, titular Frank
+  Villanueva y año 2026 coherentes con `package.json` y README; historial Git
+  de 2026 con `frank05111996@gmail.com` y perfil GitHub `Frank-0511`
+  sustentan la autoría.
+- Controles automáticos: instalación congelada, lint, typecheck, 81 pruebas,
+  build, `validate-email`, formato y `git diff --check` verdes en Bun
+  `1.3.13` (`bf2e2cecf`).
+- Control remoto: PR #13 mergeado a `master` (fast-forward) en `92f0c96`
+  con CI verde; la rama `feature/mhb-22` se eliminó local y remotamente.
+- Decisión técnica: el mínimo de Bun pasa de `>=1.0.0` a `>=1.3.13`,
+  alineado con `packageManager` y CI; no se modifican versión, tag ni
+  release publicada de `v1.1.0`.
+- Riesgo residual: tres warnings `href="#"` de templates existentes
+  pertenecen a MHB-21; no se ocultan ni bloquean MHB-22.
+- Decisión del revisor: `Completada` (2026-09-03); Fase A cerrada con MHB-01,
+  MHB-02, MHB-03, MHB-04 y MHB-22 `Completada`.
+- Decisión de release: `v1.1.1` no se publica automáticamente; los cambios
+  son documentación/metadata sin impacto en runtime, build, compatibilidad
+  ni uso de ESP, por lo que no justifican un tag ni release nuevos. Cualquier
+  release queda sujeta a autorización explícita del orquestador y al
+  contrato de MHB-03/MHB-15.
+
 ## Revisión de cierre (MHB-04)
 
 - Criterios de aceptación comprobados: cambios en workflow, layouts, templates,
@@ -223,21 +252,21 @@ en `En revisión`; otra autoridad decide `Completada`.
 - MHB-03: `Completada`; matriz en `RELEASE_BASELINE.md`, CHANGELOG actualizado,
   README enlazado y guard de rama autorizado; no se movieron tags, versión ni
   notas remotas.
-- Riesgo residual: el shell local usado para validaciones puede seguir en Node
-  20.20.2; `.nvmrc` y CI exigen/verifican Node 24. No se modificaron tags,
-  versión ni publicación.
 - MHB-05: `Completada`; rama `feature/mhb-05`, commit `b4e6216`; MR/PR
   considerado mergeado a `master` por autorización del usuario.
-- MHB-04: `Completada`; rama `feature/mhb-04`, commit `cab72fd`; PR mergeado a
-  `master`.
-- MHB-02: `Completada`; rama `feature/mhb-02`, commit `6ba9a23`.
-- MHB-03: `Completada`; matriz en `RELEASE_BASELINE.md`, CHANGELOG actualizado,
-  README enlazado y guard de rama autorizado; no se movieron tags, versión ni
-  notas remotas.
+- MHB-22: `Completada`; rama `feature/mhb-22`, commit `36cf384`; PR #13
+  mergeado a `master` en `92f0c96`. Fase A cerrada con MHB-01, MHB-02,
+  MHB-03, MHB-04 y MHB-22 `Completada`.
+- Decisión de release: `v1.1.1` no se publica automáticamente. Los cambios
+  de MHB-22 son documentación/metadata sin impacto en runtime, build,
+  compatibilidad ni uso de ESP, por lo que no justifican un tag ni release
+  nuevos. Cualquier publicación queda sujeta a autorización explícita del
+  orquestador y al contrato de MHB-03/MHB-15.
 - Riesgo residual: el shell local usado para validaciones puede seguir en Node
   20.20.2; `.nvmrc` y CI exigen/verifican Node 24. No se modificaron tags,
   versión ni publicación.
-- Próxima acción inmediata: revisión independiente de MHB-22 y veredicto del
-  orquestador sobre el cierre de Fase A.
-- Siguiente tarea del roadmap: MHB-06 permanece bloqueado hasta que MHB-22 y el
-  cierre de Fase A queden confirmados; no iniciado ni marcado `En progreso`.
+- Próxima acción inmediata: diseñar el contrato operativo de MHB-06 sobre la
+  rama `feature/mhb-06` recién creada, sin tocar código hasta acordar el
+  diseño con el orquestador.
+- Siguiente tarea del roadmap: MHB-06, desbloqueado por el cierre de Fase A;
+  rama `feature/mhb-06` creada y marcada `En progreso`.
