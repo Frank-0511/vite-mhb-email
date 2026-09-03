@@ -18,9 +18,6 @@ en `En revisión`; otra autoridad decide `Completada`.
 - MHB-22 completado: licencia MIT materializada, README enlazado, metadata de
   autoría alineada y Fase A cerrada por el orquestador tras PR #13 mergeado;
   no se modifican versión, tag ni release.
-- MHB-22 en revisión: licencia MIT materializada, README enlazado y metadata de
-  autoría alineada; gate completo de Fase A verde, pendiente de revisión
-  independiente para cerrar la fase.
 - MHB-05 completado: 51 casos de guard/entrypoints + 2 casos de restauración del
   build selectivo; controles locales verdes y MR/PR asumido como mergeado.
 - MHB-04 completado: CI por rutas, gate de formato, `verify` y alineación con
@@ -160,21 +157,9 @@ en `En revisión`; otra autoridad decide `Completada`.
 
 ## Entrega para revisión (MHB-22)
 
-- Criterios preparados: `LICENSE` contiene MIT con titular y año sustentados;
-  README enlaza la licencia; `package.json` declara el mismo titular y MIT.
-- Evidencia de autoría: historial Git de 2026 con `Frank Villanueva
-<frank05111996@gmail.com>` y metadata previa de `Frank-0511` con ese mismo
-  correo y perfil GitHub.
-- Controles automáticos: bajo Bun `1.3.13` (`bf2e2cecf`), instalación congelada
-  sin cambios, lint, typecheck, 81 pruebas, build, `validate-email`, formato y
-  `git diff --check` verdes.
-- Decisión técnica autorizada: el mínimo de Bun pasa de `>=1.0.0` a
-  `>=1.3.13`, coherente con CI y `packageManager`; no se modifican la versión
-  del producto, el tag ni los documentos históricos de release.
-- Riesgo residual: tres warnings `href="#"` de templates existentes pertenecen a
-  MHB-21; no se ocultan ni bloquean MHB-22.
-- Próxima decisión: el orquestador revisa titular/año, diff y evidencia antes de
-  marcar MHB-22 `Completada` y cerrar la Fase A.
+- Bloque histórico: la entrega original quedó registrada en el commit
+  `36cf384` y en el diff de PR #13. La revisión de cierre y la decisión
+  posterior aparecen en la siguiente sección.
 
 ## Revisión de cierre (MHB-22)
 
