@@ -2,10 +2,10 @@
 
 ## Resumen
 
-- ID activo: MHB-05
-- Estado: Completada
-- Implementador: Kimi K2.7 Code
-- Revisor o autoridad de cierre: revisor de seguridad/CLI
+- ID activo: MHB-22
+- Estado: En revisión
+- Implementador: Codex
+- Revisor o autoridad de cierre: orquestador
 - Última actualización: 2026-08-17
 - Contrato estable: `docs/implementation/PLAN.md`
 
@@ -15,6 +15,9 @@ en `En revisión`; otra autoridad decide `Completada`.
 
 ## Últimas entregas
 
+- MHB-22 en revisión: licencia MIT materializada, README enlazado y metadata de
+  autoría alineada; gate completo de Fase A verde, pendiente de revisión
+  independiente para cerrar la fase.
 - MHB-05 completado: 51 casos de guard/entrypoints + 2 casos de restauración del
   build selectivo; controles locales verdes y MR/PR asumido como mergeado.
 - MHB-04 completado: CI por rutas, gate de formato, `verify` y alineación con
@@ -102,16 +105,19 @@ en `En revisión`; otra autoridad decide `Completada`.
 | 2026-08-17 | MHB-05 | Formato global del repositorio   | Verde     | `bun run format:check` pasa en todo el repositorio tras formatear `code-workspace`.       |
 | 2026-08-17 | MHB-05 | Ampliación lint-staged y CI      | Verde     | `lint-staged --diff=HEAD` corre 12 globs; matriz CI detecta workspace; 0 errores.         |
 | 2026-08-17 | MHB-05 | Validación email post-build      | Verde     | `validate-email` verde; 3 warnings `href="#"` conocidos y asignados a MHB-21.             |
+| 2026-08-17 | MHB-22 | Licencia, enlace y metadata      | Verde     | `LICENSE` MIT, README y `package.json` coinciden con Frank Villanueva (2026).             |
+| 2026-08-17 | MHB-22 | Gate completo de Fase A          | Verde     | Instalación congelada, lint, typecheck, 81 pruebas, build, validación email y formato.    |
 
 ## Ejecuciones delegadas
 
-| Ámbito | Modelo/esfuerzo reales | Estado     | Propiedad                                             | Handoff                                                          |
-| ------ | ---------------------- | ---------- | ----------------------------------------------------- | ---------------------------------------------------------------- |
-| MHB-01 | gpt-5.6-terra / alto   | Completada | Guard, generador, exportador, build selectivo y tests | Usuario validó manualmente el resultado.                         |
-| MHB-02 | GPT-5.6 Luna / alto    | Completada | Procesos CLI/build y regresiones Bun                  | Cierre formal 2026-08-13 por el revisor.                         |
-| MHB-03 | GPT-5.6 Terra / medio  | Completada | Documentación de release y matriz de reconciliación   | Cierre formal 2026-08-13 por el orquestador.                     |
-| MHB-04 | GPT-5.6 Luna / medio   | Completada | CI por rutas, formato, verify y Node 24               | Cierre formal 2026-08-14 por el orquestador.                     |
-| MHB-05 | Kimi K2.7 Code / alto  | Completada | Tests de seguridad de comandos y filesystem           | Cierre asumido tras MR/PR mergeado por autorización del usuario. |
+| Ámbito | Modelo/esfuerzo reales | Estado      | Propiedad                                             | Handoff                                                          |
+| ------ | ---------------------- | ----------- | ----------------------------------------------------- | ---------------------------------------------------------------- |
+| MHB-01 | gpt-5.6-terra / alto   | Completada  | Guard, generador, exportador, build selectivo y tests | Usuario validó manualmente el resultado.                         |
+| MHB-02 | GPT-5.6 Luna / alto    | Completada  | Procesos CLI/build y regresiones Bun                  | Cierre formal 2026-08-13 por el revisor.                         |
+| MHB-03 | GPT-5.6 Terra / medio  | Completada  | Documentación de release y matriz de reconciliación   | Cierre formal 2026-08-13 por el orquestador.                     |
+| MHB-04 | GPT-5.6 Luna / medio   | Completada  | CI por rutas, formato, verify y Node 24               | Cierre formal 2026-08-14 por el orquestador.                     |
+| MHB-05 | Kimi K2.7 Code / alto  | Completada  | Tests de seguridad de comandos y filesystem           | Cierre asumido tras MR/PR mergeado por autorización del usuario. |
+| MHB-22 | Codex / bajo           | En revisión | LICENSE, README, metadata y evidencia de Fase A       | Pendiente de revisión independiente del orquestador.             |
 
 ## Revisión de cierre (MHB-02)
 
@@ -146,6 +152,24 @@ en `En revisión`; otra autoridad decide `Completada`.
 - Control remoto: MR/PR de `feature/mhb-05` hacia `master`, considerado
   mergeado por autorización explícita del usuario.
 - Decisión del revisor: `Completada` (2026-08-17).
+
+## Entrega para revisión (MHB-22)
+
+- Criterios preparados: `LICENSE` contiene MIT con titular y año sustentados;
+  README enlaza la licencia; `package.json` declara el mismo titular y MIT.
+- Evidencia de autoría: historial Git de 2026 con `Frank Villanueva
+<frank05111996@gmail.com>` y metadata previa de `Frank-0511` con ese mismo
+  correo y perfil GitHub.
+- Controles automáticos: bajo Bun `1.3.13` (`bf2e2cecf`), instalación congelada
+  sin cambios, lint, typecheck, 81 pruebas, build, `validate-email`, formato y
+  `git diff --check` verdes.
+- Decisión técnica autorizada: el mínimo de Bun pasa de `>=1.0.0` a
+  `>=1.3.13`, coherente con CI y `packageManager`; no se modifican la versión
+  del producto, el tag ni los documentos históricos de release.
+- Riesgo residual: tres warnings `href="#"` de templates existentes pertenecen a
+  MHB-21; no se ocultan ni bloquean MHB-22.
+- Próxima decisión: el orquestador revisa titular/año, diff y evidencia antes de
+  marcar MHB-22 `Completada` y cerrar la Fase A.
 
 ## Revisión de cierre (MHB-04)
 
@@ -213,6 +237,7 @@ en `En revisión`; otra autoridad decide `Completada`.
 - Riesgo residual: el shell local usado para validaciones puede seguir en Node
   20.20.2; `.nvmrc` y CI exigen/verifican Node 24. No se modificaron tags,
   versión ni publicación.
-- Próxima acción inmediata: iniciar MHB-06 cuando sea asignado.
-- Siguiente tarea del roadmap: MHB-06, desbloqueado por el cierre de MHB-05; no
-  iniciado ni marcado `En progreso`.
+- Próxima acción inmediata: revisión independiente de MHB-22 y veredicto del
+  orquestador sobre el cierre de Fase A.
+- Siguiente tarea del roadmap: MHB-06 permanece bloqueado hasta que MHB-22 y el
+  cierre de Fase A queden confirmados; no iniciado ni marcado `En progreso`.
