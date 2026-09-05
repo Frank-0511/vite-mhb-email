@@ -1,158 +1,62 @@
+// @ts-check
 /**
- * @file Render API client for preview
- * Handles template rendering via /api/render endpoint
+ * @fileoverview Cliente de Render API para el módulo de preview.
+ * Orquesta peticiones de renderizado, invalidación de caché y debounce de cambios.
  */
 
 import { createDebounceTimer, fetchText } from "../../shared/utils/http-helpers.js";
+import { parseRenderErrorResponse, RenderApiError } from "./render-error-parser.js";
 
-const RENDER_ERROR_MESSAGE = "No se pudo renderizar el template.";
-const SAFE_RENDER_CAUSES = new Set([
-  "El template contiene sintaxis inválida.",
-  "Fuente requerida no encontrada.",
-  "Fallo de compilación.",
-]);
-const SAFE_RENDER_LOCATION_PATH = /^[a-z0-9][a-z0-9._-]*(?:\/[a-z0-9][a-z0-9._-]*)*$/;
+export { parseRenderErrorResponse, RenderApiError };
 
 /**
- * Valida que una ubicación recibida de la API mantenga el formato relativo y
- * controlado del contrato de render.
- *
- * @param {unknown} location
- * @returns {{ path: string, line?: number, column?: number } | undefined}
+ * @typedef {Object} ESPValidationHeader
+ * @property {string[]} [missing] - Lista de variables ESP requeridas no provistas.
+ * @property {string[]} [unused] - Lista de variables provistas no usadas.
  */
-function parseSafeRenderLocation(location) {
-  if (
-    !location ||
-    typeof location !== "object" ||
-    typeof location.path !== "string" ||
-    !SAFE_RENDER_LOCATION_PATH.test(location.path)
-  ) {
-    return undefined;
-  }
-
-  /** @type {{ path: string, line?: number, column?: number }} */
-  const safeLocation = { path: location.path };
-  if (typeof location.line === "number" && Number.isInteger(location.line) && location.line > 0) {
-    safeLocation.line = location.line;
-  }
-  if (
-    typeof location.column === "number" &&
-    Number.isInteger(location.column) &&
-    location.column > 0
-  ) {
-    safeLocation.column = location.column;
-  }
-
-  return safeLocation;
-}
-
-/**
- * Error estructurado emitido por el cliente de render API.
- */
-export class RenderApiError extends Error {
-  /**
-   * @param {{
-   *   status: number,
-   *   code?: string,
-   *   message: string,
-   *   cause?: string,
-   *   location?: { path: string, line?: number, column?: number }
-   * }} options
-   */
-  constructor({ status, code = "RENDER_FAILED", message, cause, location }) {
-    super(message);
-    this.name = "RenderApiError";
-    this.status = status;
-    this.code = code;
-    this.cause = cause;
-    this.location = location;
-  }
-}
-
-/**
- * Parsea y valida una respuesta HTTP no exitosa con allowlist estricto.
- * Nunca refleja cuerpos arbitrarios, HTML ni statusText externos.
- *
- * @param {Pick<Response, "status"> | { status: number }} response
- * @param {string} body
- * @returns {RenderApiError}
- */
-export function parseRenderErrorResponse(response, body) {
-  const status = typeof response?.status === "number" ? response.status : 0;
-
-  if (status === 422 && typeof body === "string") {
-    try {
-      const parsed = JSON.parse(body);
-      if (
-        parsed &&
-        typeof parsed === "object" &&
-        parsed.success === false &&
-        parsed.error &&
-        typeof parsed.error === "object" &&
-        parsed.error.version === 1 &&
-        parsed.error.code === "RENDER_FAILED" &&
-        typeof parsed.error.message === "string"
-      ) {
-        const err = parsed.error;
-        const message = err.message === RENDER_ERROR_MESSAGE ? err.message : RENDER_ERROR_MESSAGE;
-        const cause =
-          typeof err.cause === "string" && SAFE_RENDER_CAUSES.has(err.cause)
-            ? err.cause
-            : undefined;
-        const location = parseSafeRenderLocation(err.location);
-
-        return new RenderApiError({
-          status,
-          code: "RENDER_FAILED",
-          message,
-          cause,
-          location,
-        });
-      }
-    } catch {
-      // JSON malformado; procede al fallback seguro
-    }
-  }
-
-  return new RenderApiError({
-    status,
-    code: "RENDER_FAILED",
-    message: RENDER_ERROR_MESSAGE,
-    cause: undefined,
-    location: undefined,
-  });
-}
 
 /**
  * @typedef {Object} RenderAPIConfig
- * @property {Function} onSuccess - Callback on successful render
- * @property {Function} onError - Callback on render error
- * @property {Function} [onValidation] - Callback with ESP validation result
- * @property {Function} onStatusChange - Callback for status updates
- * @property {Function} getTheme - Optional function to get current theme (default: get from localStorage)
+ * @property {(html: string) => void} onSuccess - Callback al completar el render exitoso.
+ * @property {(error: RenderApiError) => void} onError - Callback ante error de render o red.
+ * @property {(validation: ESPValidationHeader) => void} [onValidation] - Callback con el resultado de variables ESP.
+ * @property {(text: string, textColor: string, dotColor: string) => void} onStatusChange - Callback para actualizar el estado visual de sincronización.
+ * @property {() => string} [getTheme] - Función opcional para obtener el tema actual ('light' | 'dark').
  */
 
 /**
- * Create a render API client
+ * @typedef {Object} RenderAPIClient
+ * @property {(templateName: string, data: Record<string, unknown>) => Promise<void>} render
+ * @property {(templateName: string) => Promise<void>} invalidateTemplateCache
+ * @property {(templateName: string, getEditorContent: () => { json?: Record<string, unknown>, text: string }, debounceMs?: number) => () => void} createDebouncedRender
+ */
+
+/**
+ * Crea el cliente de Render API para el preview.
+ *
  * @param {RenderAPIConfig} config
- * @returns {Object} Render API
+ * @returns {RenderAPIClient}
  */
 export function createRenderAPI(config) {
   const { onSuccess, onError, onStatusChange, onValidation, getTheme } = config;
 
   /**
-   * Get current template theme
-   * @returns {string} 'light' or 'dark'
+   * Obtiene el tema activo ('light' o 'dark').
+   *
+   * @returns {string}
    */
   function getCurrentTheme() {
     if (getTheme) return getTheme();
-    return localStorage.getItem("template-theme") || "light";
+    return (
+      (typeof localStorage !== "undefined" && localStorage.getItem("template-theme")) || "light"
+    );
   }
 
   /**
-   * Render template with given data via API
+   * Renderiza el template con los datos provistos a través del endpoint `/api/render`.
+   *
    * @param {string} templateName
-   * @param {Object} data
+   * @param {Record<string, unknown>} data
    * @returns {Promise<void>}
    */
   async function render(templateName, data) {
@@ -213,13 +117,12 @@ export function createRenderAPI(config) {
   }
 
   /**
-   * Create a debounced render function
-   * Useful for live preview updates as user types
+   * Crea una función de renderizado con debounce para actualizaciones en vivo.
    *
    * @param {string} templateName
-   * @param {Function} getEditorContent - Function that returns current editor content
-   * @param {number} debounceMs
-   * @returns {Function} Debounced render function
+   * @param {() => { json?: Record<string, unknown>, text: string }} getEditorContent
+   * @param {number} [debounceMs=300]
+   * @returns {() => void}
    */
   function createDebouncedRender(templateName, getEditorContent, debounceMs = 300) {
     return createDebounceTimer(() => {

@@ -11,6 +11,8 @@
  * @typedef {Object} ModalElements
  * @property {HTMLElement | null} [buildAndCopyBtn]
  * @property {HTMLElement | null} [copyExistingBtn]
+ * @property {HTMLElement | null} [buildAndDownloadBtn]
+ * @property {HTMLElement | null} [downloadExistingBtn]
  * @property {HTMLElement | null} [modalStatus]
  */
 
@@ -20,6 +22,31 @@
  * @property {() => void} [onRetry]
  * @property {Document} [doc]
  */
+
+/**
+ * Habilita o deshabilita los botones de acción del modal.
+ *
+ * @param {ModalElements} elements
+ * @param {boolean} disabled
+ */
+function setActionButtonsDisabled(elements, disabled) {
+  const buttons = [
+    elements.buildAndCopyBtn,
+    elements.copyExistingBtn,
+    elements.buildAndDownloadBtn,
+    elements.downloadExistingBtn,
+  ];
+
+  for (const btn of buttons) {
+    if (btn) {
+      if (disabled) {
+        btn.setAttribute("disabled", "");
+      } else {
+        btn.removeAttribute("disabled");
+      }
+    }
+  }
+}
 
 /**
  * Aplica el estado visual y de accesibilidad a los elementos del modal.
@@ -39,29 +66,25 @@ export function renderModalState(elements, state, options = {}) {
 
   switch (state) {
     case "idle":
-      buildAndCopyBtn.removeAttribute("disabled");
-      copyExistingBtn.removeAttribute("disabled");
+      setActionButtonsDisabled(elements, false);
       modalStatus.textContent = "";
       modalStatus.className = "copy-html-status hidden";
       break;
 
     case "loading":
-      buildAndCopyBtn.setAttribute("disabled", "");
-      copyExistingBtn.setAttribute("disabled", "");
+      setActionButtonsDisabled(elements, true);
       modalStatus.textContent = message || "Procesando…";
       modalStatus.className = "copy-html-status loading";
       break;
 
     case "success":
-      buildAndCopyBtn.removeAttribute("disabled");
-      copyExistingBtn.removeAttribute("disabled");
+      setActionButtonsDisabled(elements, false);
       modalStatus.textContent = message || "✅ HTML copiado al portapapeles.";
       modalStatus.className = "copy-html-status success";
       break;
 
     case "clipboard-error": {
-      buildAndCopyBtn.removeAttribute("disabled");
-      copyExistingBtn.removeAttribute("disabled");
+      setActionButtonsDisabled(elements, false);
       modalStatus.className = "copy-html-status error";
       modalStatus.textContent = "";
 
@@ -103,8 +126,7 @@ export function renderModalState(elements, state, options = {}) {
     }
 
     case "error":
-      buildAndCopyBtn.removeAttribute("disabled");
-      copyExistingBtn.removeAttribute("disabled");
+      setActionButtonsDisabled(elements, false);
       modalStatus.textContent = message || "❌ Ocurrió un error.";
       modalStatus.className = "copy-html-status error";
       break;

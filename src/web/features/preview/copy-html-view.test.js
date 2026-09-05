@@ -74,6 +74,8 @@ describe("renderModalState", () => {
     return {
       buildAndCopyBtn: createMockDomElement("btn-build-and-copy"),
       copyExistingBtn: createMockDomElement("btn-copy-existing"),
+      buildAndDownloadBtn: createMockDomElement("btn-build-and-download"),
+      downloadExistingBtn: createMockDomElement("btn-download-existing"),
       modalStatus: createMockDomElement("copy-html-status"),
     };
   }
@@ -82,9 +84,10 @@ describe("renderModalState", () => {
     createElement: (tag) => createMockDomElement(tag),
   };
 
-  test("estado idle: habilita botones, oculta status y limpia texto", () => {
+  test("estado idle: habilita los cuatro botones, oculta status y limpia texto", () => {
     const elements = createTestElements();
     elements.buildAndCopyBtn.setAttribute("disabled", "");
+    elements.buildAndDownloadBtn.setAttribute("disabled", "");
     elements.modalStatus.className = "copy-html-status loading";
     elements.modalStatus.textContent = "Algo";
 
@@ -93,11 +96,13 @@ describe("renderModalState", () => {
 
     expect(elements.buildAndCopyBtn.hasAttribute("disabled")).toBe(false);
     expect(elements.copyExistingBtn.hasAttribute("disabled")).toBe(false);
+    expect(elements.buildAndDownloadBtn.hasAttribute("disabled")).toBe(false);
+    expect(elements.downloadExistingBtn.hasAttribute("disabled")).toBe(false);
     expect(elements.modalStatus.className).toBe("copy-html-status hidden");
     expect(elements.modalStatus.textContent).toBe("");
   });
 
-  test("estado loading: deshabilita botones y muestra mensaje de progreso", () => {
+  test("estado loading: deshabilita los cuatro botones y muestra mensaje de progreso", () => {
     const elements = createTestElements();
 
     // @ts-expect-error mock compatible
@@ -105,11 +110,13 @@ describe("renderModalState", () => {
 
     expect(elements.buildAndCopyBtn.hasAttribute("disabled")).toBe(true);
     expect(elements.copyExistingBtn.hasAttribute("disabled")).toBe(true);
+    expect(elements.buildAndDownloadBtn.hasAttribute("disabled")).toBe(true);
+    expect(elements.downloadExistingBtn.hasAttribute("disabled")).toBe(true);
     expect(elements.modalStatus.className).toBe("copy-html-status loading");
     expect(elements.modalStatus.textContent).toBe("Compilando maizzle…");
   });
 
-  test("estado success: habilita botones y muestra confirmación", () => {
+  test("estado success: habilita los cuatro botones y muestra confirmación", () => {
     const elements = createTestElements();
 
     // @ts-expect-error mock compatible
@@ -117,6 +124,8 @@ describe("renderModalState", () => {
 
     expect(elements.buildAndCopyBtn.hasAttribute("disabled")).toBe(false);
     expect(elements.copyExistingBtn.hasAttribute("disabled")).toBe(false);
+    expect(elements.buildAndDownloadBtn.hasAttribute("disabled")).toBe(false);
+    expect(elements.downloadExistingBtn.hasAttribute("disabled")).toBe(false);
     expect(elements.modalStatus.className).toBe("copy-html-status success");
     expect(elements.modalStatus.textContent).toBe("Listo");
   });
@@ -140,6 +149,8 @@ describe("renderModalState", () => {
 
     expect(elements.buildAndCopyBtn.hasAttribute("disabled")).toBe(false);
     expect(elements.copyExistingBtn.hasAttribute("disabled")).toBe(false);
+    expect(elements.buildAndDownloadBtn.hasAttribute("disabled")).toBe(false);
+    expect(elements.downloadExistingBtn.hasAttribute("disabled")).toBe(false);
     expect(elements.modalStatus.className).toBe("copy-html-status error");
     expect(elements.modalStatus.children).toHaveLength(2);
 
@@ -154,7 +165,7 @@ describe("renderModalState", () => {
     expect(retryClicked).toBe(true);
   });
 
-  test("estado error: habilita botones y muestra mensaje de error", () => {
+  test("estado error: habilita los cuatro botones y muestra mensaje de error", () => {
     const elements = createTestElements();
 
     // @ts-expect-error mock compatible
@@ -162,8 +173,28 @@ describe("renderModalState", () => {
 
     expect(elements.buildAndCopyBtn.hasAttribute("disabled")).toBe(false);
     expect(elements.copyExistingBtn.hasAttribute("disabled")).toBe(false);
+    expect(elements.buildAndDownloadBtn.hasAttribute("disabled")).toBe(false);
+    expect(elements.downloadExistingBtn.hasAttribute("disabled")).toBe(false);
     expect(elements.modalStatus.className).toBe("copy-html-status error");
     expect(elements.modalStatus.textContent).toBe("❌ 404 Not Found");
+  });
+
+  test("funciona con botones opcionales omitidos (retrocompatibilidad)", () => {
+    const legacyElements = {
+      buildAndCopyBtn: createMockDomElement("btn-build-and-copy"),
+      copyExistingBtn: createMockDomElement("btn-copy-existing"),
+      modalStatus: createMockDomElement("copy-html-status"),
+    };
+
+    // @ts-expect-error mock compatible
+    renderModalState(legacyElements, "loading", { message: "Cargando…" });
+    expect(legacyElements.buildAndCopyBtn.hasAttribute("disabled")).toBe(true);
+    expect(legacyElements.copyExistingBtn.hasAttribute("disabled")).toBe(true);
+
+    // @ts-expect-error mock compatible
+    renderModalState(legacyElements, "idle");
+    expect(legacyElements.buildAndCopyBtn.hasAttribute("disabled")).toBe(false);
+    expect(legacyElements.copyExistingBtn.hasAttribute("disabled")).toBe(false);
   });
 
   test("ignora con seguridad si faltan elementos requeridos", () => {

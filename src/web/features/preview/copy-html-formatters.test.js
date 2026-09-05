@@ -3,6 +3,7 @@ import { describe, expect, test } from "bun:test";
 
 import {
   copyTextToClipboard,
+  formatDownloadSuccessMessage,
   formatErrorMessage,
   formatLoadingMessage,
   formatSuccessMessage,
@@ -75,6 +76,33 @@ describe("formatSuccessMessage", () => {
       }),
     ).toBe(
       "✅ Build completado. HTML copiado al portapapeles. ⚠️ Variables faltantes: accountNumber · ℹ️ Claves sin uso: promoBanner",
+    );
+  });
+});
+
+describe("formatDownloadSuccessMessage", () => {
+  test("formatea mensaje estándar cuando build es false", () => {
+    expect(formatDownloadSuccessMessage(false)).toBe("✅ HTML descargado.");
+    expect(formatDownloadSuccessMessage(false, { missing: ["name"] })).toBe("✅ HTML descargado.");
+  });
+
+  test("incluye nota de build completado cuando build es true", () => {
+    expect(formatDownloadSuccessMessage(true)).toBe("✅ Build completado. HTML descargado.");
+  });
+
+  test("adjunta notas de validación ESP cuando existen al buildear", () => {
+    expect(
+      formatDownloadSuccessMessage(true, {
+        unused: ["legacy"],
+      }),
+    ).toBe("✅ Build completado. HTML descargado. ℹ️ Claves sin uso: legacy");
+    expect(
+      formatDownloadSuccessMessage(true, {
+        missing: ["accountNumber"],
+        unused: ["promoBanner"],
+      }),
+    ).toBe(
+      "✅ Build completado. HTML descargado. ⚠️ Variables faltantes: accountNumber · ℹ️ Claves sin uso: promoBanner",
     );
   });
 });
