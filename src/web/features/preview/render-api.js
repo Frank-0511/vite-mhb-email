@@ -5,6 +5,47 @@
 
 import { createDebounceTimer, fetchText } from "../../shared/utils/http-helpers.js";
 
+const RENDER_ERROR_MESSAGE = "No se pudo renderizar el template.";
+const SAFE_RENDER_CAUSES = new Set([
+  "El template contiene sintaxis inválida.",
+  "Fuente requerida no encontrada.",
+  "Fallo de compilación.",
+]);
+const SAFE_RENDER_LOCATION_PATH = /^[a-z0-9][a-z0-9._-]*(?:\/[a-z0-9][a-z0-9._-]*)*$/;
+
+/**
+ * Valida que una ubicación recibida de la API mantenga el formato relativo y
+ * controlado del contrato de render.
+ *
+ * @param {unknown} location
+ * @returns {{ path: string, line?: number, column?: number } | undefined}
+ */
+function parseSafeRenderLocation(location) {
+  if (
+    !location ||
+    typeof location !== "object" ||
+    typeof location.path !== "string" ||
+    !SAFE_RENDER_LOCATION_PATH.test(location.path)
+  ) {
+    return undefined;
+  }
+
+  /** @type {{ path: string, line?: number, column?: number }} */
+  const safeLocation = { path: location.path };
+  if (typeof location.line === "number" && Number.isInteger(location.line) && location.line > 0) {
+    safeLocation.line = location.line;
+  }
+  if (
+    typeof location.column === "number" &&
+    Number.isInteger(location.column) &&
+    location.column > 0
+  ) {
+    safeLocation.column = location.column;
+  }
+
+  return safeLocation;
+}
+
 /**
  * Error estructurado emitido por el cliente de render API.
  */
@@ -38,7 +79,6 @@ export class RenderApiError extends Error {
  */
 export function parseRenderErrorResponse(response, body) {
   const status = typeof response?.status === "number" ? response.status : 0;
-  const defaultMessage = "No se pudo renderizar el template.";
 
   if (status === 422 && typeof body === "string") {
     try {
@@ -54,35 +94,17 @@ export function parseRenderErrorResponse(response, body) {
         typeof parsed.error.message === "string"
       ) {
         const err = parsed.error;
-        const cause = typeof err.cause === "string" ? err.cause : undefined;
-        /** @type {{ path: string, line?: number, column?: number } | undefined} */
-        let location;
-        if (
-          err.location &&
-          typeof err.location === "object" &&
-          typeof err.location.path === "string"
-        ) {
-          location = { path: err.location.path };
-          if (
-            typeof err.location.line === "number" &&
-            Number.isInteger(err.location.line) &&
-            err.location.line > 0
-          ) {
-            location.line = err.location.line;
-          }
-          if (
-            typeof err.location.column === "number" &&
-            Number.isInteger(err.location.column) &&
-            err.location.column > 0
-          ) {
-            location.column = err.location.column;
-          }
-        }
+        const message = err.message === RENDER_ERROR_MESSAGE ? err.message : RENDER_ERROR_MESSAGE;
+        const cause =
+          typeof err.cause === "string" && SAFE_RENDER_CAUSES.has(err.cause)
+            ? err.cause
+            : undefined;
+        const location = parseSafeRenderLocation(err.location);
 
         return new RenderApiError({
           status,
           code: "RENDER_FAILED",
-          message: err.message,
+          message,
           cause,
           location,
         });
@@ -95,7 +117,7 @@ export function parseRenderErrorResponse(response, body) {
   return new RenderApiError({
     status,
     code: "RENDER_FAILED",
-    message: defaultMessage,
+    message: RENDER_ERROR_MESSAGE,
     cause: undefined,
     location: undefined,
   });
