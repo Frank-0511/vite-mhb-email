@@ -1,118 +1,39 @@
 // @ts-check
 /**
- * @fileoverview Tests unitarios del validador de variables ESP `{{ }}`.
- *
- * Cobertura mínima de MHB-06:
- *   - Coincidencia exacta: no emite issues.
- *   - Variable referenciada pero ausente en data → WARNING (missing).
- *   - Clave en data.json no usada en el template → INFO (unused).
- *   - Variable ESP intencional declarada en `espVariables` (frontmatter) →
- *     no se reporta aunque falte en data.json.
- *   - Delimitadores Maizzle (`[[ ]]`, `[[[ ]]]`) y Handlebars triple-stash
- *     (`{{{ }}}`) NO se confunden con ESP `{{ }}`.
- *   - data.json malformado o ausente no rompe la validación.
- *   - Frontmatter ausente o mal formado no rompe la validación.
+ * @fileoverview Tests de integración del validador de variables ESP `{{ }}` y su fachada.
  */
 
 import { describe, expect, test } from "bun:test";
-import { extractEspVariables, parseEspFrontmatter, validateEspVariables } from "./esp-variables.js";
-import { collectTemplateSource } from "./esp-sources.js";
+import {
+  ESP_SEVERITY,
+  FRONTMATTER_METADATA_KEYS,
+  extractEspVariables,
+  filterDataKeys,
+  frontmatterKeys,
+  parseEspFrontmatter,
+  validateEspVariables,
+} from "./esp-variables.js";
 
-// ── extractEspVariables ────────────────────────────────────────────────────────
-
-describe("extractEspVariables", () => {
-  test("extrae identificadores simples entre {{ y }}", () => {
-    const source = `<p>Hola {{ first_name }} en {{ company }}</p>`;
-    const vars = extractEspVariables(source);
-    expect([...vars].sort()).toEqual(["company", "first_name"]);
+describe("esp-variables fachada y contratos públicos", () => {
+  test("re-exporta todas las funciones y constantes de los submódulos", () => {
+    expect(typeof validateEspVariables).toBe("function");
+    expect(typeof extractEspVariables).toBe("function");
+    expect(typeof filterDataKeys).toBe("function");
+    expect(typeof parseEspFrontmatter).toBe("function");
+    expect(typeof frontmatterKeys).toBe("function");
+    expect(ESP_SEVERITY).toBeDefined();
+    expect(FRONTMATTER_METADATA_KEYS).toBeDefined();
   });
 
-  test("deduplica ocurrencias repetidas", () => {
-    const source = `<p>{{ first_name }} - {{ first_name }}</p>`;
-    const vars = extractEspVariables(source);
-    expect([...vars]).toEqual(["first_name"]);
+  test("define severidad WARNING para missing e INFO para unused", () => {
+    expect(ESP_SEVERITY.missing).toBe("WARNING");
+    expect(ESP_SEVERITY.unused).toBe("INFO");
   });
 
-  test("soporta nombres con guión bajo y dígitos", () => {
-    const source = `<a href="{{ dashboard_url }}">{{ user_id_2 }}</a>`;
-    const vars = extractEspVariables(source);
-    expect([...vars].sort()).toEqual(["dashboard_url", "user_id_2"]);
-  });
-
-  test("ignora delimitadores Maizzle [[ ]] y [[[ ]]]", () => {
-    const source = `<h1>[[ page.title ]]</h1><p>[[[ raw.html ]]]</p><p>{{ real_var }}</p>`;
-    const vars = extractEspVariables(source);
-    expect([...vars]).toEqual(["real_var"]);
-  });
-
-  test("ignora Handlebars triple-stash {{{ }}}", () => {
-    const source = `<div>{{{ html_snippet }}}</div><p>{{ safe_var }}</p>`;
-    const vars = extractEspVariables(source);
-    expect([...vars]).toEqual(["safe_var"]);
-  });
-
-  test("ignora el frontmatter", () => {
-    const source = `---
-title: "{{title}}"
-previewText: "Texto"
-espVariables:
-  - intentional
----
-<p>{{ first_name }}</p>`;
-    const vars = extractEspVariables(source);
-    // 'title' aparece dentro del frontmatter; no debe contar como ESP del body
-    expect([...vars]).toEqual(["first_name"]);
-  });
-
-  test("tolerante cuando no hay variables", () => {
-    const vars = extractEspVariables("<p>texto estático</p>");
-    expect([...vars]).toEqual([]);
-  });
-
-  test("ignora bloques Handlebars {{#each}} {{this}}", () => {
-    const source = `{{#each items}}<li>{{ this }}</li>{{/each}}<p>{{ footer }}</p>`;
-    const vars = extractEspVariables(source);
-    // {{ this }} dentro de un each no es una variable ESP del usuario
-    expect([...vars]).toEqual(["footer"]);
+  test("el objeto de severidades está congelado contra mutaciones", () => {
+    expect(Object.isFrozen(ESP_SEVERITY)).toBe(true);
   });
 });
-
-// ── parseEspFrontmatter ────────────────────────────────────────────────────────
-
-describe("parseEspFrontmatter", () => {
-  test("extrae espVariables como array de strings", () => {
-    const source = `---
-title: Test
-espVariables:
-  - opt_in_url
-  - promo_code
----`;
-    const fm = parseEspFrontmatter(source);
-    expect(fm.espVariables).toEqual(["opt_in_url", "promo_code"]);
-  });
-
-  test("espVariables admite formato inline JSON-like", () => {
-    const source = `---
-espVariables: ["a", "b"]
----`;
-    const fm = parseEspFrontmatter(source);
-    expect(fm.espVariables).toEqual(["a", "b"]);
-  });
-
-  test("devuelve objeto vacío si no hay frontmatter", () => {
-    expect(parseEspFrontmatter("<p>{{ var }}</p>")).toEqual({});
-  });
-
-  test("devuelve objeto vacío si el frontmatter está mal formado", () => {
-    const source = `---
-title: : : :
----`;
-    const fm = parseEspFrontmatter(source);
-    expect(fm).toEqual({});
-  });
-});
-
-// ── validateEspVariables ──────────────────────────────────────────────────────
 
 describe("validateEspVariables — coincidencia", () => {
   test("data y template coinciden exactamente → sin issues", () => {
@@ -189,8 +110,6 @@ espVariables:
     const data = { dynamic: "X" };
     const result = validateEspVariables({ source, data });
     expect(result.missing).toEqual([]);
-    // dynamic está referenciada → no es unused.
-    // reserved está en espVariables → excluida de unused por convención.
     expect(result.unused).toEqual([]);
   });
 
@@ -202,8 +121,6 @@ espVariables: ["x"]
     const data = { y: "Y" };
     const result = validateEspVariables({ source, data });
     expect(result.missing).toEqual([]);
-    // y está referenciada y en data → no unused.
-    // x está en espVariables → excluida de unused.
     expect(result.unused).toEqual([]);
   });
 });
@@ -212,7 +129,6 @@ describe("validateEspVariables — robustez", () => {
   test("data.json inválido (no objeto) no rompe la validación", () => {
     const source = `<p>{{ a }}</p>`;
     const result = validateEspVariables({ source, data: "string" });
-    // 'a' queda como missing; no hay unused (no es objeto enumerable).
     expect(result.missing).toEqual(["a"]);
     expect(result.unused).toEqual([]);
   });
@@ -221,7 +137,6 @@ describe("validateEspVariables — robustez", () => {
     const source = `<p>{{ first_name }}</p>`;
     const data = { first_name: "Frank", meta: { tag: "x" } };
     const result = validateEspVariables({ source, data });
-    // Solo se consideran claves de primer nivel.
     expect(result.unused).toEqual([]);
   });
 
@@ -235,16 +150,32 @@ describe("validateEspVariables — robustez", () => {
   });
 });
 
-describe("collectTemplateSource", () => {
-  test("incluye el layout y componentes realmente usados por welcome", () => {
-    const source = collectTemplateSource(process.cwd(), "welcome");
-    expect(source).toContain("{{ unsubscribe_url }}");
-    expect(source).toContain("[[component.buttonUrl]]");
+describe("validateEspVariables — orden estable y composición", () => {
+  test("ordena alfabéticamente los arrays missing y unused", () => {
+    const source = `<p>{{ zebra }} {{ alpha }} {{ mango }}</p>`;
+    const data = {
+      zoo: "1",
+      apple: "2",
+      banana: "3",
+    };
+    const result = validateEspVariables({ source, data });
+    expect(result.missing).toEqual(["alpha", "mango", "zebra"]);
+    expect(result.unused).toEqual(["apple", "banana", "zoo"]);
+  });
+
+  test("respeta espVariables intencionales combinadas con claves normales y layout", () => {
+    const source = `---
+espVariables:
+  - unsubscribe_url
+  - web_version_url
+---
+<p>Hola {{ first_name }}, puedes darte de baja en {{ unsubscribe_url }}.</p>`;
     const data = {
       first_name: "Frank",
-      dashboard_url: "https://example.com",
-      unsubscribe_url: "https://example.com/unsubscribe",
+      unused_prop: "valor",
     };
-    expect(validateEspVariables({ source, data }).missing).toEqual([]);
+    const result = validateEspVariables({ source, data });
+    expect(result.missing).toEqual([]);
+    expect(result.unused).toEqual(["unused_prop"]);
   });
 });
