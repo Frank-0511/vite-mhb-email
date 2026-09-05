@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * @file copy-html-modal.js
  * Maneja el modal <dialog> para "Copiar HTML" en la página de preview.
@@ -15,199 +16,211 @@
  */
 
 import { postJSON } from "../../shared/utils/http-helpers.js";
+import {
+  copyTextToClipboard,
+  formatErrorMessage,
+  formatLoadingMessage,
+  formatSuccessMessage,
+} from "./copy-html-formatters.js";
+import { renderModalState } from "./copy-html-view.js";
+
+// Re-exportar contratos públicos para compatibilidad total con consumidores
+export {
+  copyTextToClipboard,
+  formatErrorMessage,
+  formatLoadingMessage,
+  formatSuccessMessage,
+  formatValidation,
+} from "./copy-html-formatters.js";
+export { renderModalState } from "./copy-html-view.js";
 
 /**
- * @typedef {"idle" | "loading" | "success" | "clipboard-error" | "error"} ModalState
+ * @typedef {import("./copy-html-view.js").ModalState} ModalState
+ * @typedef {import("./copy-html-view.js").ModalElements} ModalElements
+ * @typedef {import("./copy-html-view.js").RenderModalStateOptions} RenderModalStateOptions
+ * @typedef {import("./copy-html-formatters.js").ValidationResult} ValidationResult
  */
 
 /**
- * Inicializa el modal de "Copiar HTML" y conecta todos los listeners.
+ * @typedef {Object} CopyHtmlApiResponse
+ * @property {boolean} success
+ * @property {string} [html]
+ * @property {string} [error]
+ * @property {ValidationResult} [validation]
+ */
+
+/**
+ * @typedef {Object} ControllerDeps
+ * @property {string} templateName
+ * @property {(url: string, body: { build: boolean }) => Promise<CopyHtmlApiResponse>} [postJsonFn]
+ * @property {(text: string) => Promise<boolean>} [copyToClipboard]
+ * @property {(state: ModalState, options?: RenderModalStateOptions) => void} [renderState]
+ */
+
+/**
+ * Crea el controlador desacoplado del modal de copia de HTML.
  *
- * @param {{ templateName: string }} options
- * @returns {void}
+ * @param {ControllerDeps} deps
  */
-export function initCopyHtmlModal({ templateName }) {
-  const openBtn = document.getElementById("btn-copy-html");
-  const dialog = /** @type {HTMLDialogElement | null} */ (
-    document.getElementById("dialog-copy-html")
-  );
-
-  if (!openBtn || !dialog) {
-    console.warn("[copy-html-modal] Required elements not found.");
-    return;
-  }
-
-  const buildAndCopyBtn = document.getElementById("btn-build-and-copy");
-  const copyExistingBtn = document.getElementById("btn-copy-existing");
-  const cancelBtn = document.getElementById("btn-copy-cancel");
-  const modalStatus = document.getElementById("copy-html-status");
-
-  /** HTML más reciente recibido desde la API (para reintentar clipboard sin rebuild). */
+export function createCopyHtmlModalController({
+  templateName,
+  postJsonFn = postJSON,
+  copyToClipboard = copyTextToClipboard,
+  renderState = () => {},
+}) {
+  /** @type {ModalState} */
+  let currentState = "idle";
+  /** @type {string} */
   let lastHtml = "";
 
   /**
-   * Formatea el resultado ESP devuelto por el build selectivo.
-   *
-   * @param {{ missing?: string[], unused?: string[] } | undefined} validation
-   * @returns {string}
-   */
-  function formatValidation(validation) {
-    if (!validation) return "";
-    const messages = [];
-    if (Array.isArray(validation.missing) && validation.missing.length > 0) {
-      messages.push(`⚠️ Variables faltantes: ${validation.missing.join(", ")}`);
-    }
-    if (Array.isArray(validation.unused) && validation.unused.length > 0) {
-      messages.push(`ℹ️ Claves sin uso: ${validation.unused.join(", ")}`);
-    }
-    return messages.length > 0 ? ` ${messages.join(" · ")}` : "";
-  }
-
-  /**
-   * Intenta copiar texto al portapapeles.
-   * Devuelve true si tuvo éxito, false si el navegador rechazó el acceso.
-   *
-   * @param {string} html
-   * @returns {Promise<boolean>}
-   */
-  async function tryClipboard(html) {
-    try {
-      await navigator.clipboard.writeText(html);
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
-  /**
-   * Aplica el estado visual del modal.
+   * Actualiza el estado local y notifica al renderizador.
    *
    * @param {ModalState} state
-   * @param {string} [message] - Texto adicional para los estados success/error.
+   * @param {RenderModalStateOptions} [options]
    */
-  function setState(state, message = "") {
-    if (!buildAndCopyBtn || !copyExistingBtn || !modalStatus) return;
+  function transition(state, options = {}) {
+    currentState = state;
+    renderState(state, options);
+  }
 
-    modalStatus.className = "copy-html-status";
-
-    switch (state) {
-      case "idle":
-        buildAndCopyBtn.removeAttribute("disabled");
-        copyExistingBtn.removeAttribute("disabled");
-        modalStatus.textContent = "";
-        modalStatus.className = "copy-html-status hidden";
-        break;
-
-      case "loading":
-        buildAndCopyBtn.setAttribute("disabled", "");
-        copyExistingBtn.setAttribute("disabled", "");
-        modalStatus.textContent = message || "Procesando…";
-        modalStatus.className = "copy-html-status loading";
-        break;
-
-      case "success":
-        buildAndCopyBtn.removeAttribute("disabled");
-        copyExistingBtn.removeAttribute("disabled");
-        modalStatus.textContent = message || "✅ HTML copiado al portapapeles.";
-        modalStatus.className = "copy-html-status success";
-        break;
-
-      case "clipboard-error":
-        // El HTML se obtuvo correctamente pero el clipboard fue rechazado.
-        // Mostramos un botón para reintentar el clipboard sin volver a buildear.
-        buildAndCopyBtn.removeAttribute("disabled");
-        copyExistingBtn.removeAttribute("disabled");
-        modalStatus.className = "copy-html-status error";
-        modalStatus.innerHTML = `
-          <span>⚠️ No se pudo acceder al portapapeles (el foco del navegador fue interrumpido).</span>
-          <button
-            id="btn-retry-clipboard"
-            type="button"
-            style="margin-top:8px;display:block;width:100%;padding:8px 12px;background:#0ea5e9;color:#fff;border:none;border-radius:6px;font-size:0.8125rem;font-weight:600;cursor:pointer;"
-          >Copiar ahora</button>`;
-
-        // El botón de reintento copia el HTML ya recibido sin volver a la API.
-        {
-          const retryBtn = document.getElementById("btn-retry-clipboard");
-          if (retryBtn) {
-            retryBtn.addEventListener("click", () => {
-              tryClipboard(lastHtml).then((ok) => {
-                if (ok) {
-                  setState("success", "✅ HTML copiado al portapapeles.");
-                } else {
-                  setState(
-                    "error",
-                    "❌ El portapapeles sigue bloqueado. Intenta hacer click en la página primero.",
-                  );
-                }
-              });
-            });
-          }
-        }
-        break;
-
-      case "error":
-        buildAndCopyBtn.removeAttribute("disabled");
-        copyExistingBtn.removeAttribute("disabled");
-        modalStatus.textContent = message || "❌ Ocurrió un error.";
-        modalStatus.className = "copy-html-status error";
-        break;
+  /**
+   * Reintenta copiar el HTML ya obtenido al portapapeles sin volver a invocar la API.
+   *
+   * @returns {Promise<void>}
+   */
+  async function retryClipboard() {
+    const ok = await copyToClipboard(lastHtml);
+    if (ok) {
+      transition("success", { message: "✅ HTML copiado al portapapeles." });
+    } else {
+      transition("error", {
+        message: "❌ El portapapeles sigue bloqueado. Intenta hacer click en la página primero.",
+      });
     }
   }
 
   /**
-   * Ejecuta la lógica de copia: llama a la API y copia al clipboard.
+   * Ejecuta la lógica de copia: llama a la API y copia al portapapeles.
    *
    * @param {boolean} build - true para buildear primero; false para usar dist existente.
    * @returns {Promise<void>}
    */
   async function performCopy(build) {
-    setState("loading", build ? "Buildeando template…" : "Leyendo HTML…");
+    transition("loading", { message: formatLoadingMessage(build) });
 
     try {
-      const result = await postJSON(`/api/copy-html?template=${encodeURIComponent(templateName)}`, {
-        build,
-      });
+      const result = await postJsonFn(
+        `/api/copy-html?template=${encodeURIComponent(templateName)}`,
+        { build },
+      );
 
       if (!result.success) {
-        setState("error", `❌ ${result.error ?? "Error desconocido"}`);
+        transition("error", {
+          message: formatErrorMessage(result.error ?? "Error desconocido"),
+        });
         return;
       }
 
-      // Guardar el HTML para reintentos de clipboard sin rebuild.
-      lastHtml = result.html;
+      const html = typeof result.html === "string" ? result.html : "";
+      lastHtml = html;
 
-      const ok = await tryClipboard(result.html);
+      const ok = await copyToClipboard(html);
       if (ok) {
-        const validationMessage = build ? formatValidation(result.validation) : "";
-        setState(
-          "success",
-          build
-            ? `✅ Build completado. HTML copiado al portapapeles.${validationMessage}`
-            : "✅ HTML copiado al portapapeles.",
-        );
+        transition("success", {
+          message: formatSuccessMessage(build, result.validation),
+        });
       } else {
-        // El modal está abierto pero el navegador bloqueó el clipboard.
-        setState("clipboard-error");
+        transition("clipboard-error", {
+          onRetry: () => {
+            retryClipboard().catch((err) => {
+              transition("error", { message: formatErrorMessage(err) });
+            });
+          },
+        });
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      setState("error", `❌ ${message}`);
+      transition("error", { message: formatErrorMessage(err) });
     }
   }
 
+  /**
+   * Restablece el modal a su estado inicial.
+   */
+  function reset() {
+    lastHtml = "";
+    transition("idle");
+  }
+
+  return {
+    getState: () => currentState,
+    getLastHtml: () => lastHtml,
+    performCopy,
+    retryClipboard,
+    reset,
+  };
+}
+
+/**
+ * Inicializa el modal de "Copiar HTML" y conecta todos los listeners.
+ *
+ * @param {{
+ *   templateName: string,
+ *   openBtn?: HTMLElement | null,
+ *   dialog?: HTMLDialogElement | null,
+ *   buildAndCopyBtn?: HTMLElement | null,
+ *   copyExistingBtn?: HTMLElement | null,
+ *   cancelBtn?: HTMLElement | null,
+ *   modalStatus?: HTMLElement | null,
+ *   postJsonFn?: (url: string, body: { build: boolean }) => Promise<any>,
+ *   copyToClipboard?: (text: string) => Promise<boolean>,
+ * }} options
+ * @returns {void}
+ */
+export function initCopyHtmlModal({
+  templateName,
+  openBtn = typeof document !== "undefined" ? document.getElementById("btn-copy-html") : null,
+  dialog = typeof document !== "undefined"
+    ? /** @type {HTMLDialogElement | null} */ (document.getElementById("dialog-copy-html"))
+    : null,
+  buildAndCopyBtn = typeof document !== "undefined"
+    ? document.getElementById("btn-build-and-copy")
+    : null,
+  copyExistingBtn = typeof document !== "undefined"
+    ? document.getElementById("btn-copy-existing")
+    : null,
+  cancelBtn = typeof document !== "undefined" ? document.getElementById("btn-copy-cancel") : null,
+  modalStatus = typeof document !== "undefined"
+    ? document.getElementById("copy-html-status")
+    : null,
+  postJsonFn,
+  copyToClipboard,
+}) {
+  if (!openBtn || !dialog) {
+    console.warn("[copy-html-modal] Required elements not found.");
+    return;
+  }
+
+  const elements = { buildAndCopyBtn, copyExistingBtn, modalStatus };
+
+  const controller = createCopyHtmlModalController({
+    templateName,
+    postJsonFn,
+    copyToClipboard,
+    renderState: (state, options) => renderModalState(elements, state, options),
+  });
+
   // Abrir el modal
   openBtn.addEventListener("click", () => {
-    setState("idle");
+    controller.reset();
     dialog.showModal();
   });
 
   // Botón "Buildear y copiar"
   if (buildAndCopyBtn) {
     buildAndCopyBtn.addEventListener("click", () => {
-      performCopy(true).catch((err) => {
-        const message = err instanceof Error ? err.message : String(err);
-        setState("error", `❌ ${message}`);
+      controller.performCopy(true).catch((err) => {
+        renderModalState(elements, "error", { message: formatErrorMessage(err) });
       });
     });
   }
@@ -215,9 +228,8 @@ export function initCopyHtmlModal({ templateName }) {
   // Botón "Copiar HTML existente"
   if (copyExistingBtn) {
     copyExistingBtn.addEventListener("click", () => {
-      performCopy(false).catch((err) => {
-        const message = err instanceof Error ? err.message : String(err);
-        setState("error", `❌ ${message}`);
+      controller.performCopy(false).catch((err) => {
+        renderModalState(elements, "error", { message: formatErrorMessage(err) });
       });
     });
   }
@@ -238,7 +250,6 @@ export function initCopyHtmlModal({ templateName }) {
 
   // Restaurar al cerrar
   dialog.addEventListener("close", () => {
-    lastHtml = "";
-    setState("idle");
+    controller.reset();
   });
 }
