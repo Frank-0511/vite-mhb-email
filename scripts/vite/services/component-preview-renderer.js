@@ -2,9 +2,10 @@
 /**
  * @fileoverview Renderizador de preview para componentes de email.
  *
- * Centraliza las transformaciones previas a Maizzle (delimitadores, condicionales,
- * `<each>`) y la composición final con Handlebars. No lee fuera del directorio
- * de parcials validado por `component-catalog.js`.
+ * Centraliza la orquestación del render previo con Maizzle y la composición final
+ * con Handlebars. Delega las transformaciones puras en `component-preview-transforms.js`
+ * y los fixtures de props en `component-preview-fixtures.js`. No lee fuera del
+ * directorio de parciales validado por `component-catalog.js`.
  */
 
 import { render } from "@maizzle/framework";
@@ -17,12 +18,13 @@ import {
   isValidComponentIdentifier,
   listVariantsFromDir,
 } from "./component-catalog.js";
-
-/**
- * Patrón único para reemplazar `[[ variable ]]` por `{{ variable }}`.
- * Se aplica una sola vez por bloque HTML antes y después de Maizzle.
- */
-const MAIZZLE_DELIMITER_PATTERN = /\[\[([^\]]+)\]\]/g;
+import { buildHandlebarsData } from "./component-preview-fixtures.js";
+import {
+  convertMaizzleConditionals,
+  convertMaizzleDelimiters,
+  stripPropsScript,
+  wrapTableFragment,
+} from "./component-preview-transforms.js";
 
 /**
  * @typedef {Object} RenderComponentPreviewOptions
@@ -31,95 +33,6 @@ const MAIZZLE_DELIMITER_PATTERN = /\[\[([^\]]+)\]\]/g;
  * @property {string} variant Variante solicitada (ya validada).
  * @property {unknown} [props] Props opcionales del componente.
  */
-
-/**
- * Convierte delimitadores `[[ var ]]` de Maizzle a Handlebars `{{ var }}`.
- *
- * @param {string} html
- * @returns {string}
- */
-function convertMaizzleDelimiters(html) {
-  return html.replace(MAIZZLE_DELIMITER_PATTERN, "{{$1}}");
-}
-
-/**
- * Convierte condicionales y loops de Maizzle (`<if>`, `<elseif>`, `<else>`,
- * `<each>`) a sus equivalentes Handlebars. Se aplica antes del render Maizzle.
- *
- * @param {string} html
- * @returns {string}
- */
-function convertMaizzleConditionals(html) {
-  let output = html.replace(
-    /<if\s+condition="([^"]+)">\s*([\s\S]*?)\s*<\/if>/gi,
-    (_match, condition, body) => `{{#if ${condition}}}${body}{{/if}}`,
-  );
-
-  output = output.replace(/<elseif\s+condition="([^"]+)">/gi, (_match, condition) => {
-    return `{{else if ${condition}}}`;
-  });
-
-  output = output.replace(/<else>\s*/gi, "{{else}}");
-
-  output = output.replace(
-    /<each\s+loop="([A-Za-z_$][\w$]*)\s+in\s+([^"]+)"\s*>/gi,
-    (_match, itemVar, collectionExpr) => {
-      const collection = String(collectionExpr || "").trim();
-      if (!collection) return _match;
-      return `{{#each ${collection} as |${itemVar}|}}`;
-    },
-  );
-
-  output = output.replace(/<\/each>/gi, "{{/each}}");
-  return output;
-}
-
-/**
- * Elimina el bloque `<script props>...</script>` del partial, si existe.
- *
- * @param {string} html
- * @returns {string}
- */
-function stripPropsScript(html) {
-  return html.replace(/<script\s+props[^>]*>[\s\S]*?<\/script>/i, "");
-}
-
-/**
- * Detecta si el componente comienza con un fragmento de tabla (`<tr>`, `<td>`,
- * `<tbody>`, `<thead>` o `<tfoot>`) y lo envuelve en una tabla mínima.
- *
- * @param {string} html
- * @returns {string}
- */
-function wrapTableFragment(html) {
-  const trimmed = html.trimStart();
-  const isTableFragment = /^<(tr|td|tbody|thead|tfoot)\b/i.test(trimmed);
-  if (!isTableFragment) return html;
-  return `<table class="w-full" cellpadding="0" cellspacing="0" role="none"><tbody>${html}</tbody></table>`;
-}
-
-/**
- * Normaliza el input `rows` (array, JSON string u otro) a un array usable.
- *
- * @param {unknown} rowsInput
- * @returns {Array<Record<string, unknown>>}
- */
-function normalizeRows(rowsInput) {
-  const defaultRows = [
-    { label: "Monto", value: "$10.000" },
-    { label: "Fecha", value: "25/05/2026" },
-  ];
-  if (Array.isArray(rowsInput)) return rowsInput;
-  if (typeof rowsInput === "string") {
-    try {
-      const parsed = JSON.parse(rowsInput);
-      if (Array.isArray(parsed)) return /** @type {Array<Record<string, unknown>>} */ (parsed);
-    } catch {
-      // Ignorar JSON inválido; se usan los defaults.
-    }
-  }
-  return defaultRows;
-}
 
 /**
  * Compone el documento HTML completo que Maizzle procesará, incluyendo layout
@@ -160,36 +73,6 @@ function buildPreviewDocument(componentHtmlForLayout) {
   </div>
 </body>
 </html>`;
-}
-
-/**
- * Compone los datos finales para Handlebars, mezclando props del usuario con
- * defaults consistentes con los parciales existentes.
- *
- * @param {Record<string, unknown>} normalizedProps
- * @returns {Record<string, unknown>}
- */
-function buildHandlebarsData(normalizedProps) {
-  return {
-    ...normalizedProps,
-    title: normalizedProps.title || "Bienvenido a Mi Empresa",
-    subtitle: normalizedProps.subtitle || "Descubre todo lo que podemos hacer por ti",
-    buttonText: normalizedProps.buttonText || normalizedProps["button-text"] || "Explorar ahora",
-    buttonUrl: normalizedProps.buttonUrl || normalizedProps["button-url"] || "https://ejemplo.com",
-    showButton: normalizedProps.showButton !== false && normalizedProps["show-button"] !== "false",
-
-    callCenterNumber:
-      normalizedProps.callCenterNumber ||
-      normalizedProps["call-center-number"] ||
-      "+56 2 1234 5678",
-    noReplayEmail:
-      normalizedProps.noReplayEmail ||
-      normalizedProps.noReplyEmail ||
-      normalizedProps["no-reply-email"] ||
-      "no-reply@ejemplo.com",
-
-    rows: normalizeRows(normalizedProps.rows),
-  };
 }
 
 /**
