@@ -2,11 +2,11 @@
 
 ## Resumen
 
-- ID activo: MHB-06
-- Estado: En revisión
-- Implementador: Codex
-- Revisor o autoridad de cierre: revisor de seguridad/compatibilidad
-- Última actualización: 2026-09-04
+- ID activo: MHB-24
+- Estado: Completada
+- Implementador: implementador actual
+- Revisor o autoridad de cierre: revisor técnico distinto del implementador
+- Última actualización: 2026-09-05
 - Contrato estable: `docs/implementation/PLAN.md`
 
 Este archivo no replica el roadmap. Al iniciar una tarea, registrar solo el ID
@@ -15,7 +15,10 @@ en `En revisión`; otra autoridad decide `Completada`.
 
 ## Últimas entregas
 
-- MHB-06 en revisión: helper de variables ESP con composición de layouts y
+- MHB-24 completada: modularización de components API, validador HTML, HMR
+  preview, modal copy HTML y helper ESP; cierre autorizado tras revisión
+  independiente, controles locales y smoke manual.
+- MHB-06 completado: helper de variables ESP con composición de layouts y
   componentes alcanzables; faltantes como WARNING, sobrantes como INFO y
   `espVariables` en frontmatter como override intencional; integrado en
   preview, build completo y build selectivo sin bloquear la compilación.
@@ -119,15 +122,16 @@ en `En revisión`; otra autoridad decide `Completada`.
 
 ## Ejecuciones delegadas
 
-| Ámbito | Modelo/esfuerzo reales | Estado      | Propiedad                                               | Handoff                                                                 |
-| ------ | ---------------------- | ----------- | ------------------------------------------------------- | ----------------------------------------------------------------------- |
-| MHB-01 | gpt-5.6-terra / alto   | Completada  | Guard, generador, exportador, build selectivo y tests   | Usuario validó manualmente el resultado.                                |
-| MHB-02 | GPT-5.6 Luna / alto    | Completada  | Procesos CLI/build y regresiones Bun                    | Cierre formal 2026-08-13 por el revisor.                                |
-| MHB-03 | GPT-5.6 Terra / medio  | Completada  | Documentación de release y matriz de reconciliación     | Cierre formal 2026-08-13 por el orquestador.                            |
-| MHB-04 | GPT-5.6 Luna / medio   | Completada  | CI por rutas, formato, verify y Node 24                 | Cierre formal 2026-08-14 por el orquestador.                            |
-| MHB-05 | Kimi K2.7 Code / alto  | Completada  | Tests de seguridad de comandos y filesystem             | Cierre asumido tras MR/PR mergeado por autorización del usuario.        |
-| MHB-22 | Codex / bajo           | Completada  | LICENSE, README, metadata y evidencia de Fase A         | Cierre formal 2026-09-03 por el orquestador tras PR #13 mergeado.       |
-| MHB-06 | Codex / alto           | En revisión | Helper esp-variables, integración preview/build y suite | Pendiente de revisión por seguridad/compatibilidad; entrega 2026-09-03. |
+| Ámbito | Modelo/esfuerzo reales      | Estado     | Propiedad                                                                | Handoff                                                                    |
+| ------ | --------------------------- | ---------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------------- |
+| MHB-01 | gpt-5.6-terra / alto        | Completada | Guard, generador, exportador, build selectivo y tests                    | Usuario validó manualmente el resultado.                                   |
+| MHB-02 | GPT-5.6 Luna / alto         | Completada | Procesos CLI/build y regresiones Bun                                     | Cierre formal 2026-08-13 por el revisor.                                   |
+| MHB-03 | GPT-5.6 Terra / medio       | Completada | Documentación de release y matriz de reconciliación                      | Cierre formal 2026-08-13 por el orquestador.                               |
+| MHB-04 | GPT-5.6 Luna / medio        | Completada | CI por rutas, formato, verify y Node 24                                  | Cierre formal 2026-08-14 por el orquestador.                               |
+| MHB-05 | Kimi K2.7 Code / alto       | Completada | Tests de seguridad de comandos y filesystem                              | Cierre asumido tras MR/PR mergeado por autorización del usuario.           |
+| MHB-22 | Codex / bajo                | Completada | LICENSE, README, metadata y evidencia de Fase A                          | Cierre formal 2026-09-03 por el orquestador tras PR #13 mergeado.          |
+| MHB-06 | Codex / alto                | Completada | Helper esp-variables, integración preview/build y suite                  | Cierre conciliado 2026-09-04 tras confirmación y merge del usuario.        |
+| MHB-24 | Implementador actual / alto | Completada | Modularización componentes, validador, HMR, modal copy HTML y helper ESP | Cierre autorizado por el usuario tras revisión independiente (2026-09-05). |
 
 ## Revisión de cierre (MHB-02)
 
@@ -169,72 +173,61 @@ en `En revisión`; otra autoridad decide `Completada`.
   `36cf384` y en el diff de PR #13. La revisión de cierre y la decisión
   posterior aparecen en la siguiente sección.
 
+## Entrega para revisión (MHB-24)
+
+- Alcance: modularización de components API (`components.js`,
+  `component-catalog.js`, `component-preview-renderer.js`), validador HTML
+  (`email-validation/`), preview HMR (`preview-hmr.js`), modal copy HTML
+  (`copy-html-modal.js`) y helper ESP (`esp-variables.js`), conservando contratos
+  públicos y compatibilidad de email.
+- Dependencias: MHB-05 y MHB-06 `Completada`.
+- Rama: `feature/mhb-24`.
+- Hechos de entrega:
+  1. API de componentes desacoplada en catálogo, renderizador y router HTTP;
+     endurecimiento y validación previa de `componentName` y `variant` con error
+     estructurado antes de acceder a filesystem.
+  2. Validador HTML organizado por módulos de regla en `email-validation/rules/`
+     con fachada CLI idéntica; regla `esp-variables` conserva severidades
+     WARNING (faltante) e INFO (sobrante) y el gate mantiene que solo ERROR
+     bloquea.
+  3. Lógica HMR del preview desacoplada en `preview-hmr.js`, encapsulando
+     decisiones de refresco y fuentes compartidas sin tocar la UI principal.
+  4. Modal de copiar HTML modularizado con formateo puro, manejo seguro de
+     portapapeles y renderizado DOM reactivo sin `innerHTML`.
+  5. Helper ESP extrae `filterDataKeys` puro, exporta `ESP_SEVERITY` inmutable y
+     conserva la firma y orden alfabético de `validateEspVariables`.
+- Controles automáticos ejecutados:
+  - `bun run check:task-branch` → Verde (`feature/mhb-24`).
+  - `bun run lint` → Verde (HTMLHint, ESLint, markdownlint, JSON, Stylelint sin
+    errores).
+  - `bun run typecheck` → Verde (`tsc --noEmit` sin errores).
+  - `bun run test` → Verde (241 pass, 0 fail, 600 expects en 28 archivos).
+  - `bun run format:check` → Verde (Prettier en todo el proyecto).
+  - `git diff --check` → Verde (sin advertencias ni whitespace residual).
+  - `bun run build` → Verde (3 templates compilados exitosamente).
+  - `bun run validate-email` → Verde (0 errores, 3 warnings conocidos
+    `link-targets`, 1 info `company`).
+- Controles manuales y smoke ejecutados:
+  - Catálogo de componentes enumera los 3 componentes existentes; renderiza
+    variante `v1` de `hero` con HTML completo.
+  - Rechazo controlado de identificadores con traversal (`../bad`) y scripts.
+  - Templates reales procesados sin falsos positivos de variables ESP faltantes.
+  - Formateo de validación y control de estados del modal copy HTML verificados.
+- Riesgo residual: los tres warnings `link-targets` y el INFO `company` se
+  mantienen visibles y no bloquean el build; su tratamiento corresponde a
+  MHB-21 o contenido futuro, no a esta modularización.
+- Decisión del revisor: `Completada` (2026-09-05), autorizada por el usuario
+  después de la revisión independiente, los controles locales y el smoke manual.
+
 ## Entrega para revisión (MHB-06)
 
-- Criterios preparados:
-  1. Helper puro `scripts/email/esp-variables.js` con `extractEspVariables`,
-     `parseEspFrontmatter` y `validateEspVariables`, más el adaptador
-     `scripts/email/esp-sources.js` para componer layouts y componentes
-     alcanzables; exporta `missing` y `unused` sin tocar DOM.
-  2. Cobertura mínima de pruebas: coincidencia, faltante (WARNING), sobrante
-     (INFO), intencional vía `espVariables`, frontmatter ausente o mal
-     formado, delimitadores `[[ ]]`, `[[[ ]]]`, `{{{ }}}` y bloques
-     `{{#each}}…{{/each}}` excluidos correctamente.
-  3. Integración en preview (`scripts/vite/api/render.js` y
-     `src/web/features/preview/`): valida antes de compilar, conserva el HTML
-     y entrega el resumen por `X-ESP-Validation` para mostrarlo en el dashboard;
-     no expone rutas ni altera el cache.
-  4. Integración en validación de build (`scripts/build/validate-email-html.js`)
-     y build selectivo (`scripts/vite/services/selective-build.js`): la misma
-     comparación usa la fuente compuesta y `data.json`; WARNING → `missing`,
-     INFO → `unused`. El gate de build sigue dependiendo solo de ERROR.
-- Severidades aplicadas: `missing` = WARNING, `unused` = INFO, intencional
-  en `espVariables` se excluye de ambos grupos; no se introdujo ERROR para
-  esta regla.
-- Controles automáticos ejecutados:
-  - `bun run check:task-branch` → verde (rama `feature/mhb-06`).
-  - `bun run lint` → 0 errores (HTMLHint, ESLint, Markdownlint, JSON,
-    Stylelint, Prettier).
-  - `bun run typecheck` → 0 errores (`tsc --noEmit`).
-  - `bun test` → 106 pass / 0 fail / 222 expects (81 previos + 25 nuevos).
-  - `bun run validate-email` → 0 errores, 3 warnings y 0 infos en los
-    tres templates reales; los warnings son `link-targets` preexistentes
-    (MHB-21), sin falsos positivos de `esp-variables`.
-  - `bun run build` → build verde; warnings/infos no bloquean.
-  - `bun run format:check` → verde tras aplicar Prettier.
-  - `git diff --check` → sin warnings.
-  - Smoke manual en preview `welcome` → visible `ℹ️ Sin uso: company` y
-    render correcto; el resumen llega al dashboard mediante el header de API.
-  - Build selectivo de `welcome` → `success: true`, HTML generado y aviso
-    `company` emitido antes de compilar; el resultado incluye `validation`.
-- Evidencia local sobre templates reales:
-  - `welcome`: usa `{{ first_name }}`, `{{ dashboard_url }}` y el layout
-    `{{ unsubscribe_url }}`; `company` queda como INFO legítimo.
-  - `example`: usa `[[ page.title ]]` (Maizzle) y declara/contiene
-    `unsubscribe_url` en su fixture.
-  - `user-created`: usa `{{ first_name }}`, `{{ email }}`, `{{ temp_password }}`,
-    `{{ login_url }}` y el layout `{{ unsubscribe_url }}`.
-  - Ningún template genera `missing` (WARNING); solo `company` en `welcome`
-    permanece como INFO legítimo.
-- Archivos modificados o creados:
-  - `scripts/email/esp-variables.js` (nuevo).
-  - `scripts/email/esp-variables.test.js` (nuevo, 25 casos).
-  - `scripts/email/esp-sources.js` (nuevo, composición segura de fuentes).
-  - `scripts/vite/api/render.js` (import + log previo a `compileTemplate`).
-  - `scripts/vite/services/selective-build.js` (gate previo a exportación).
-  - `scripts/build/validate-email-html.js` (import + regla #13 `esp-variables`).
-  - `src/web/features/preview/render-api.js`, `main.js`, `preview.html` y
-    `styles.css`, `copy-html-modal.js` (resumen visible de validación y
-    exportación).
-  - `src/emails/templates/example/data.json` (fixture de `unsubscribe_url`).
-  - `docs/implementation/STATUS.md` (este registro).
-- Riesgo residual: `company` en `welcome` permanece como INFO porque no se usa
-  en ninguna fuente alcanzable; decidir si eliminarlo o incorporarlo es una
-  decisión de contenido fuera de este ID.
-- Exclusiones respetadas: sin cambios en `[[ ]]`/`[[[ ]]]`/`{{{ }}}`,
-  sin reemplazo global de delimitadores, sin nuevas dependencias, sin
-  cambios en MHB-07+, sin rediseño de UI; el HTML final conserva las
-  variables ESP y los warnings/infos no bloquean el build.
+- Bloque histórico: la entrega original quedó registrada con helper
+  `scripts/email/esp-variables.js`, adaptador `scripts/email/esp-sources.js`,
+  integración en `scripts/vite/api/render.js`,
+  `scripts/build/validate-email-html.js`,
+  `scripts/vite/services/selective-build.js` y exposición segura del resumen
+  en `src/web/features/preview/`. La conciliación de cierre aparece en la
+  sección "Revisión de cierre (MHB-06)".
 
 ## Revisión de cierre (MHB-22)
 
@@ -259,6 +252,32 @@ en `En revisión`; otra autoridad decide `Completada`.
   ni uso de ESP, por lo que no justifican un tag ni release nuevos. Cualquier
   release queda sujeta a autorización explícita del orquestador y al
   contrato de MHB-03/MHB-15.
+
+## Revisión de cierre (MHB-06)
+
+- Criterios de aceptación comprobados: faltantes como WARNING y sobrantes como
+  INFO sin falsos positivos; `espVariables` en frontmatter reconocido como
+  override intencional; helper puro sin DOM y composición segura de layouts y
+  componentes alcanzables; integración no intrusiva en preview, build
+  completo y build selectivo; HTML final conserva `{{ }}`.
+- Controles automáticos: `bun run check:task-branch`, `bun run lint`,
+  `bun run typecheck`, `bun test` (106 pass / 0 fail), `bun run validate-email`,
+  `bun run build` y `bun run format:check` verdes; `git diff --check` sin
+  warnings; 25 casos nuevos en `scripts/email/esp-variables.test.js`.
+- Controles manuales: smoke de preview sobre `welcome`, `example` y
+  `user-created`; build selectivo de `welcome` con `success: true` y resumen
+  de validación emitido antes de compilar.
+- Evidencia revisada: `feature/mhb-06` con helper `scripts/email/esp-variables.js`,
+  adaptador `scripts/email/esp-sources.js`, integración en
+  `scripts/vite/api/render.js`, `scripts/build/validate-email-html.js` y
+  `scripts/vite/services/selective-build.js`, además de la exposición
+  segura del resumen en `src/web/features/preview/`.
+- Riesgo residual: `company` en `welcome` permanece como INFO legítimo;
+  decidir si eliminarlo o incorporarlo es una decisión de contenido fuera
+  del ID y queda registrada en MHB-09/MHB-21 si corresponde.
+- Decisión del revisor: conciliada como `Completada` (2026-09-04) por
+  confirmación y merge a `master` autorizados por el usuario; el ID no se
+  reabre y la rama `feature/mhb-06` se considera mergeada.
 
 ## Revisión de cierre (MHB-04)
 
@@ -317,6 +336,9 @@ en `En revisión`; otra autoridad decide `Completada`.
 - MHB-22: `Completada`; rama `feature/mhb-22`, commit `36cf384`; PR #13
   mergeado a `master` en `92f0c96`. Fase A cerrada con MHB-01, MHB-02,
   MHB-03, MHB-04 y MHB-22 `Completada`.
+- MHB-06: `Completada` por conciliación 2026-09-04; el usuario confirmó el
+  cierre y merge a `master`. La rama `feature/mhb-06` se considera mergeada
+  y el ID no se reabre.
 - Decisión de release: `v1.1.1` no se publica automáticamente. Los cambios
   de MHB-22 son documentación/metadata sin impacto en runtime, build,
   compatibilidad ni uso de ESP, por lo que no justifican un tag ni release
@@ -325,8 +347,9 @@ en `En revisión`; otra autoridad decide `Completada`.
 - Riesgo residual: el shell local usado para validaciones puede seguir en Node
   20.20.2; `.nvmrc` y CI exigen/verifican Node 24. No se modificaron tags,
   versión ni publicación.
-- Próxima acción inmediata: revisión independiente de MHB-06 por el revisor
-  de seguridad/compatibilidad antes de cerrar el ID; sin commits ni PR hasta
-  que la revisión lo confirme.
-- Siguiente tarea del roadmap: MHB-07 depende de MHB-06; no se inicia hasta
-  que MHB-06 quede `Completada`.
+- MHB-24: `Completada` por autorización del usuario tras revisión independiente;
+  la rama `feature/mhb-24` queda preservada hasta que se decida merge o PR.
+- Próxima acción inmediata: elegir integración de `feature/mhb-24` (merge local,
+  PR o conservar la rama); no se iniciará otra tarea sin asignación explícita.
+- Siguiente tarea del roadmap: MHB-07 está desbloqueada por MHB-05 y MHB-24,
+  pero no se inicia ni se marca `En progreso` sin asignación explícita.
