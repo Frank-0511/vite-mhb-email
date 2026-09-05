@@ -87,6 +87,7 @@ export function setupCopyHtmlApi(server, rootDir) {
         template: templateName,
         html: result.html,
         built: true,
+        validation: result.validation,
       });
     }
 

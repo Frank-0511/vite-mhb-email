@@ -4,6 +4,8 @@ import { createPreviewCacheManager, createPreviewDataHash } from "../services/pr
 import { isValidTemplateName, isPathInside } from "../../shared/path-safety.js";
 import { getProjectPaths } from "../../shared/paths.js";
 import { sendText, readJsonBody, getRequestUrl } from "./http.js";
+import { validateEspVariables } from "../../email/esp-variables.js";
+import { collectTemplateSource } from "../../email/esp-sources.js";
 
 let cacheManager;
 
@@ -134,6 +136,29 @@ export function setupRenderApi(server, rootDir) {
           return sendText(res, 404, "Template not found");
         }
 
+        // Validar variables ESP antes de renderizar (MHB-06).
+        // Solo log: no bloquea el preview, no cambia el HTML y no expone rutas.
+        let espValidation = { missing: [], unused: [] };
+        try {
+          const source = collectTemplateSource(rootDir, templateName);
+          espValidation = validateEspVariables({ source, data });
+          const { missing, unused } = espValidation;
+          if (missing.length > 0) {
+            console.warn(
+              `[maizzle] ESP variables faltantes en ${templateName}: ${missing.join(", ")}`,
+            );
+          }
+          if (unused.length > 0) {
+            console.info(
+              `[maizzle] Claves de data.json sin uso en ${templateName}: ${unused.join(", ")}`,
+            );
+          }
+        } catch (err) {
+          const message = err instanceof Error ? err.message : String(err);
+          console.warn(`[maizzle] No se pudo validar variables ESP de ${templateName}: ${message}`);
+        }
+
+        res.setHeader("X-ESP-Validation", JSON.stringify(espValidation));
         let finalHtml;
 
         // Verificar si hay cache válida para fuentes + datos + tema

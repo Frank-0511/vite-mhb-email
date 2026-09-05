@@ -14,6 +14,8 @@
 import fs from "fs-extra";
 import { globSync } from "glob";
 import { resolve } from "node:path";
+import { validateEspVariables } from "../email/esp-variables.js";
+import { collectTemplateSource } from "../email/esp-sources.js";
 
 // ─── Colores ANSI ─────────────────────────────────────────────────────────────
 
@@ -584,6 +586,81 @@ const rules = [
       }
 
       return [];
+    },
+  },
+
+  // ── 13. esp-variables ─────────────────────────────────────────────────────
+  {
+    id: "esp-variables",
+    severity: Severity.WARNING,
+    description:
+      "Variables ESP {{ }} referenciadas en el template fuente deben existir en data.json; las claves no usadas se reportan como INFO",
+    check(_html, filePath) {
+      const templateName = filePath
+        .split("/")
+        .pop()
+        ?.replace(/\.html$/i, "");
+      if (!templateName) return [];
+
+      const sourcePath = resolve(
+        process.cwd(),
+        "src",
+        "emails",
+        "templates",
+        templateName,
+        "index.html",
+      );
+      if (!fs.existsSync(sourcePath)) return [];
+
+      const dataPath = resolve(
+        process.cwd(),
+        "src",
+        "emails",
+        "templates",
+        templateName,
+        "data.json",
+      );
+
+      let source;
+      try {
+        source = collectTemplateSource(process.cwd(), templateName);
+      } catch {
+        return [];
+      }
+
+      let data = {};
+      if (fs.existsSync(dataPath)) {
+        try {
+          const raw = fs.readFileSync(dataPath, "utf-8");
+          data = JSON.parse(raw);
+        } catch {
+          // data.json inválido: se reportan todas las variables como missing.
+          data = {};
+        }
+      }
+
+      const { missing, unused } = validateEspVariables({ source, data });
+      const issues = [];
+
+      for (const name of missing) {
+        issues.push({
+          ruleId: "esp-variables",
+          severity: Severity.WARNING,
+          message: `Variable ESP {{ ${name} }} referenciada en el template sin clave correspondiente en data.json`,
+          hint: `Agregar "${name}" a src/emails/templates/${templateName}/data.json o declararla en frontmatter bajo espVariables si la completa el ESP`,
+        });
+      }
+
+      for (const name of unused) {
+        issues.push({
+          ruleId: "esp-variables",
+          severity: Severity.INFO,
+          message: `Clave "${name}" en data.json no se usa en el template`,
+          hint: `Eliminar la clave de src/emails/templates/${templateName}/data.json o referenciarla en el template`,
+        });
+      }
+
+      return issues;
     },
   },
 ];

@@ -9,6 +9,7 @@ import { createDebounceTimer, fetchText } from "../../shared/utils/http-helpers.
  * @typedef {Object} RenderAPIConfig
  * @property {Function} onSuccess - Callback on successful render
  * @property {Function} onError - Callback on render error
+ * @property {Function} [onValidation] - Callback with ESP validation result
  * @property {Function} onStatusChange - Callback for status updates
  * @property {Function} getTheme - Optional function to get current theme (default: get from localStorage)
  */
@@ -19,7 +20,7 @@ import { createDebounceTimer, fetchText } from "../../shared/utils/http-helpers.
  * @returns {Object} Render API
  */
 export function createRenderAPI(config) {
-  const { onSuccess, onError, onStatusChange, getTheme } = config;
+  const { onSuccess, onError, onStatusChange, onValidation, getTheme } = config;
 
   /**
    * Get current template theme
@@ -41,13 +42,28 @@ export function createRenderAPI(config) {
       onStatusChange("Actualizando...", "text-slate-500 font-medium", "bg-slate-400");
 
       const theme = getCurrentTheme();
-      const html = await fetchText(`/api/render?template=${templateName}&theme=${theme}`, {
+      const response = await fetch(`/api/render?template=${templateName}&theme=${theme}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
-      onSuccess(html);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const validationHeader = response.headers.get("X-ESP-Validation");
+      if (onValidation) {
+        try {
+          onValidation(
+            validationHeader ? JSON.parse(validationHeader) : { missing: [], unused: [] },
+          );
+        } catch {
+          onValidation({ missing: [], unused: [] });
+        }
+      }
+
+      onSuccess(await response.text());
     } catch (err) {
       console.error("Render API error:", err);
       onStatusChange("Error al renderizar", "text-red-600 font-bold", "bg-red-600");
