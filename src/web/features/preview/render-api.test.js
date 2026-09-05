@@ -110,6 +110,53 @@ describe("render-api (cliente seguro de preview)", () => {
     expect(error.location).toBeUndefined();
   });
 
+  test("descarta campos de diagnóstico seguros en apariencia pero con contenido sensible", () => {
+    const body = JSON.stringify({
+      success: false,
+      error: {
+        version: 1,
+        code: "RENDER_FAILED",
+        message: "token=secret /Users/fankvillanueva/private",
+        cause: "Error: stack trace at /Users/fankvillanueva/private",
+        location: { path: "/Users/fankvillanueva/private/index.html", line: 9 },
+      },
+    });
+
+    const error = parseRenderErrorResponse({ status: 422 }, body);
+
+    expect(error).toMatchObject({
+      message: "No se pudo renderizar el template.",
+      cause: undefined,
+      location: undefined,
+    });
+    expect(JSON.stringify(error)).not.toContain("secret");
+    expect(JSON.stringify(error)).not.toContain("/Users/fankvillanueva");
+    expect(JSON.stringify(error)).not.toContain("stack trace");
+  });
+
+  test("descarta rutas relativas con traversal o separadores de Windows", () => {
+    for (const path of [
+      "../private/index.html",
+      "welcome\\index.html",
+      "welcome/../../private.html",
+    ]) {
+      const body = JSON.stringify({
+        success: false,
+        error: {
+          version: 1,
+          code: "RENDER_FAILED",
+          message: "No se pudo renderizar el template.",
+          cause: "El template contiene sintaxis inválida.",
+          location: { path, line: 9 },
+        },
+      });
+
+      const error = parseRenderErrorResponse({ status: 422 }, body);
+      expect(error.cause).toBe("El template contiene sintaxis inválida.");
+      expect(error.location).toBeUndefined();
+    }
+  });
+
   test("maneja rechazo de red y emite RenderApiError seguro", async () => {
     /** @type {RenderApiError[]} */
     const capturedErrors = [];
