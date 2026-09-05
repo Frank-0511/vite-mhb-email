@@ -21,6 +21,7 @@ import { initializeEditor } from "./editor.js";
 import { createIframeManager } from "./iframe-manager.js";
 import { setupPreviewHmr } from "./preview-hmr.js";
 import { createRenderAPI } from "./render-api.js";
+import { createRenderErrorView } from "./render-error-view.js";
 import { setupResetButton, setupSaveButton } from "./save-reset.js";
 import "./styles.css";
 import { setupTemplateThemeToggle } from "./theme-manager.js";
@@ -97,6 +98,8 @@ async function initializePreview() {
   // Initialize sync status UI
   const syncStatus = initSyncStatus();
   const espValidationStatus = initEspValidationStatus();
+  const renderErrorEl = querySafe("preview-render-error");
+  const renderErrorView = createRenderErrorView(renderErrorEl);
 
   // Initialize iframe manager
   const iframeManager = createIframeManager({
@@ -106,10 +109,14 @@ async function initializePreview() {
 
   // Initialize render API
   const renderAPI = createRenderAPI({
-    onSuccess: (html) => iframeManager.updateContent(html),
+    onSuccess: (html) => {
+      renderErrorView.clear();
+      iframeManager.updateContent(html);
+    },
     onValidation: (result) => espValidationStatus.update(result),
     onError: (err) => {
       console.error("Render error:", err);
+      renderErrorView.show(err);
     },
     onStatusChange: (text, textColor, dotColor) => syncStatus.update(text, textColor, dotColor),
   });

@@ -23,6 +23,7 @@ import {
   formatSuccessMessage,
 } from "./copy-html-formatters.js";
 import { renderModalState } from "./copy-html-view.js";
+import "./copy-html-modal.css";
 
 // Re-exportar contratos públicos para compatibilidad total con consumidores
 export {

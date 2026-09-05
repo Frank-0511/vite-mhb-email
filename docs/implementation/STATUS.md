@@ -2,16 +2,43 @@
 
 ## Resumen
 
-- ID activo: MHB-24
-- Estado: Completada
+- ID activo: MHB-07
+- Estado: En revisión
 - Implementador: implementador actual
-- Revisor o autoridad de cierre: revisor técnico distinto del implementador
+- Revisor o autoridad de cierre: revisor UX/API independiente
 - Última actualización: 2026-09-05
 - Contrato estable: `docs/implementation/PLAN.md`
 
 Este archivo no replica el roadmap. Al iniciar una tarea, registrar solo el ID
 asignado, sus validaciones y el handoff. El implementador solo puede entregarlo
 en `En revisión`; otra autoridad decide `Completada`.
+
+## Entrega para revisión (MHB-07)
+
+- Alcance: diagnóstico estructurado y seguro ante fallos de render en `POST /api/render`, normalizador puro de errores, handler inyectable, cliente `RenderApiError` y vista accesible en preview.
+- Dependencias: MHB-05 y MHB-24 `Completada`.
+- Rama: `feature/mhb-07`.
+- Hechos de entrega:
+  1. Normalizador puro `normalizeRenderError` en `render-error.js` con contrato versión 1, causa controlada y ubicación relativa bajo `templatesRoot` sin exponer rutas absolutas, stack traces ni secretos.
+  2. Handler `createRenderRequestHandler` inyectable en `render-request-handler.js` que conserva 200 HTML, 400/404 existentes y emite 422 JSON ante fallos de render con fallback 500 de emergencia.
+  3. Fachada `setupRenderApi` en `render.js` delegada al handler inyectable preservando firma pública y helpers de tema.
+  4. Cliente `createRenderAPI` con clase `RenderApiError` y parsing estricto con allowlist en `parseRenderErrorResponse` sin reflejar cuerpos no confiables.
+  5. Vista accesible `createRenderErrorView` conectada en `main.js` y `preview.html` (`role="status"`, `aria-live="polite"`) que muestra diagnóstico mediante `textContent` y se limpia tras éxito.
+- Controles automáticos ejecutados:
+  - `bun run check:task-branch` → Verde (`feature/mhb-07`).
+  - `bun run lint` → Verde (HTMLHint, ESLint, markdownlint, JSON, Stylelint sin errores).
+  - `bun run typecheck` → Verde (`tsc --noEmit` sin errores).
+  - `bun run test` → Verde (279 pass, 0 fail, 680 expects en 33 archivos).
+  - `bun run format:check` → Verde (Prettier en todo el proyecto).
+  - `git diff --check` → Verde (sin advertencias ni whitespace residual).
+  - `bun run build` → Verde (3 templates compilados exitosamente).
+  - `bun run validate-email` → Verde (0 errores, 3 warnings conocidos `link-targets`, 1 info `company`).
+- Controles manuales y smoke ejecutados:
+  - Verificación integral simulada de ciclo de error 422: render fallido muestra causa, ubicación relativa y mensaje en la vista.
+  - Comprobación de que no aparecen rutas absolutas, stacks ni secretos.
+  - Verificación de que el último HTML correcto en iframe se conserva y de que el render exitoso limpia el panel de error y restaura `X-ESP-Validation`.
+- Riesgo residual: los 3 warnings conocidos `link-targets` y el info `company` provienen de templates base asignados a MHB-21.
+- Estado: `En revisión`.
 
 ## Últimas entregas
 
@@ -119,19 +146,21 @@ en `En revisión`; otra autoridad decide `Completada`.
 | 2026-09-03 | MHB-06 | Helper esp-variables y suite       | Verde     | 23 casos nuevos (104 totales): coincidencia, faltante, sobrante, intencional, frontmatter ausente/mal formado, triple-stash y Maizzle.          |
 | 2026-09-03 | MHB-06 | Integración en preview y build     | Verde     | `scripts/vite/api/render.js` loguea antes de compilar; `validate-email-html.js` añade regla `esp-variables` sin tocar severidades del gate.     |
 | 2026-09-03 | MHB-06 | Lint, typecheck, format y build    | Verde     | ESLint, TypeScript, Prettier, `validate-email` y `bun run build` verdes; warnings/infos no bloquean (3 warnings + 7 infos en templates reales). |
+| 2026-09-05 | MHB-07 | Suite, gates y smoke de render     | Verde     | 279 pruebas verdes, lint, typecheck, format:check, build, validate-email y ciclo 422/200 verificado.                                            |
 
 ## Ejecuciones delegadas
 
-| Ámbito | Modelo/esfuerzo reales      | Estado     | Propiedad                                                                | Handoff                                                                    |
-| ------ | --------------------------- | ---------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------------- |
-| MHB-01 | gpt-5.6-terra / alto        | Completada | Guard, generador, exportador, build selectivo y tests                    | Usuario validó manualmente el resultado.                                   |
-| MHB-02 | GPT-5.6 Luna / alto         | Completada | Procesos CLI/build y regresiones Bun                                     | Cierre formal 2026-08-13 por el revisor.                                   |
-| MHB-03 | GPT-5.6 Terra / medio       | Completada | Documentación de release y matriz de reconciliación                      | Cierre formal 2026-08-13 por el orquestador.                               |
-| MHB-04 | GPT-5.6 Luna / medio        | Completada | CI por rutas, formato, verify y Node 24                                  | Cierre formal 2026-08-14 por el orquestador.                               |
-| MHB-05 | Kimi K2.7 Code / alto       | Completada | Tests de seguridad de comandos y filesystem                              | Cierre asumido tras MR/PR mergeado por autorización del usuario.           |
-| MHB-22 | Codex / bajo                | Completada | LICENSE, README, metadata y evidencia de Fase A                          | Cierre formal 2026-09-03 por el orquestador tras PR #13 mergeado.          |
-| MHB-06 | Codex / alto                | Completada | Helper esp-variables, integración preview/build y suite                  | Cierre conciliado 2026-09-04 tras confirmación y merge del usuario.        |
-| MHB-24 | Implementador actual / alto | Completada | Modularización componentes, validador, HMR, modal copy HTML y helper ESP | Cierre autorizado por el usuario tras revisión independiente (2026-09-05). |
+| Ámbito | Modelo/esfuerzo reales      | Estado      | Propiedad                                                                | Handoff                                                                    |
+| ------ | --------------------------- | ----------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------------- |
+| MHB-01 | gpt-5.6-terra / alto        | Completada  | Guard, generador, exportador, build selectivo y tests                    | Usuario validó manualmente el resultado.                                   |
+| MHB-02 | GPT-5.6 Luna / alto         | Completada  | Procesos CLI/build y regresiones Bun                                     | Cierre formal 2026-08-13 por el revisor.                                   |
+| MHB-03 | GPT-5.6 Terra / medio       | Completada  | Documentación de release y matriz de reconciliación                      | Cierre formal 2026-08-13 por el orquestador.                               |
+| MHB-04 | GPT-5.6 Luna / medio        | Completada  | CI por rutas, formato, verify y Node 24                                  | Cierre formal 2026-08-14 por el orquestador.                               |
+| MHB-05 | Kimi K2.7 Code / alto       | Completada  | Tests de seguridad de comandos y filesystem                              | Cierre asumido tras MR/PR mergeado por autorización del usuario.           |
+| MHB-22 | Codex / bajo                | Completada  | LICENSE, README, metadata y evidencia de Fase A                          | Cierre formal 2026-09-03 por el orquestador tras PR #13 mergeado.          |
+| MHB-06 | Codex / alto                | Completada  | Helper esp-variables, integración preview/build y suite                  | Cierre conciliado 2026-09-04 tras confirmación y merge del usuario.        |
+| MHB-24 | Implementador actual / alto | Completada  | Modularización componentes, validador, HMR, modal copy HTML y helper ESP | Cierre autorizado por el usuario tras revisión independiente (2026-09-05). |
+| MHB-07 | Implementador actual / alto | En revisión | Handler 422, normalizador, render-api, vista accesible y tests           | Pendiente de revisión UX/API independiente.                                |
 
 ## Revisión de cierre (MHB-02)
 
@@ -349,7 +378,6 @@ en `En revisión`; otra autoridad decide `Completada`.
   versión ni publicación.
 - MHB-24: `Completada` por autorización del usuario tras revisión independiente;
   la rama `feature/mhb-24` queda preservada hasta que se decida merge o PR.
-- Próxima acción inmediata: elegir integración de `feature/mhb-24` (merge local,
-  PR o conservar la rama); no se iniciará otra tarea sin asignación explícita.
-- Siguiente tarea del roadmap: MHB-07 está desbloqueada por MHB-05 y MHB-24,
-  pero no se inicia ni se marca `En progreso` sin asignación explícita.
+- MHB-07: `En revisión`; rama `feature/mhb-07`.
+- Próxima acción inmediata: revisión UX/API independiente de MHB-07 antes de autorizar cierre o merge.
+- Siguiente tarea del roadmap: MHB-08 queda bloqueada hasta completar MHB-07.

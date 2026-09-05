@@ -1,13 +1,6 @@
-import fs from "fs-extra";
-import { compileTemplate } from "../services/maizzle-compiler.js";
-import { createPreviewCacheManager, createPreviewDataHash } from "../services/preview-cache.js";
-import { isValidTemplateName, isPathInside } from "../../shared/path-safety.js";
-import { getProjectPaths } from "../../shared/paths.js";
-import { sendText, readJsonBody, getRequestUrl } from "./http.js";
-import { validateEspVariables } from "../../email/esp-variables.js";
-import { collectTemplateSource } from "../../email/esp-sources.js";
+import { createRenderRequestHandler } from "../services/render-request-handler.js";
 
-let cacheManager;
+let handler;
 
 /**
  * Encuentra la llave de cierre correspondiente a una llave de apertura.
@@ -81,7 +74,7 @@ function transformColorSchemeMedia(css, theme) {
  * @param {string} theme
  * @returns {string}
  */
-function applyPreviewTheme(html, theme) {
+export function applyPreviewTheme(html, theme) {
   const normalizedTheme = theme === "dark" ? "dark" : "light";
 
   return html.replace(/<style\b([^>]*)>([\s\S]*?)<\/style>/gi, (_match, attrs, css) => {
@@ -97,93 +90,12 @@ function applyPreviewTheme(html, theme) {
  * @param {string} rootDir
  */
 export function setupRenderApi(server, rootDir) {
-  // Inicializar cache manager solo una vez
-  if (!cacheManager) {
-    cacheManager = createPreviewCacheManager(rootDir);
+  if (!handler) {
+    handler = createRenderRequestHandler({
+      rootDir,
+      applyPreviewTheme,
+    });
   }
 
-  const paths = getProjectPaths(rootDir);
-
-  server.middlewares.use(async (req, res, next) => {
-    if (!req.url?.startsWith("/api/render")) {
-      return next();
-    }
-
-    const url = getRequestUrl(req);
-    const templateName = url.searchParams.get("template");
-    const theme = url.searchParams.get("theme") === "dark" ? "dark" : "light";
-
-    if (req.method === "POST" && templateName) {
-      try {
-        if (!isValidTemplateName(templateName)) {
-          return sendText(res, 400, "Invalid template name");
-        }
-
-        const filePath = paths.templateHtml(templateName);
-        if (!isPathInside(paths.templatesRoot, filePath)) {
-          return sendText(res, 400, "Invalid template path");
-        }
-
-        let data;
-        try {
-          data = await readJsonBody(req);
-        } catch {
-          return sendText(res, 400, "Invalid JSON body");
-        }
-
-        const dataHash = createPreviewDataHash(data);
-        if (!fs.existsSync(filePath)) {
-          return sendText(res, 404, "Template not found");
-        }
-
-        // Validar variables ESP antes de renderizar (MHB-06).
-        // Solo log: no bloquea el preview, no cambia el HTML y no expone rutas.
-        let espValidation = { missing: [], unused: [] };
-        try {
-          const source = collectTemplateSource(rootDir, templateName);
-          espValidation = validateEspVariables({ source, data });
-          const { missing, unused } = espValidation;
-          if (missing.length > 0) {
-            console.warn(
-              `[maizzle] ESP variables faltantes en ${templateName}: ${missing.join(", ")}`,
-            );
-          }
-          if (unused.length > 0) {
-            console.info(
-              `[maizzle] Claves de data.json sin uso en ${templateName}: ${unused.join(", ")}`,
-            );
-          }
-        } catch (err) {
-          const message = err instanceof Error ? err.message : String(err);
-          console.warn(`[maizzle] No se pudo validar variables ESP de ${templateName}: ${message}`);
-        }
-
-        res.setHeader("X-ESP-Validation", JSON.stringify(espValidation));
-        let finalHtml;
-
-        // Verificar si hay cache válida para fuentes + datos + tema
-        if (cacheManager.isCacheValid(templateName, { theme, dataHash })) {
-          finalHtml = await cacheManager.readFromCache(templateName);
-          console.log(`[maizzle] Using cached render for ${templateName} (${theme})`);
-        } else {
-          // Compilar template
-          const compiledHtml = await compileTemplate(filePath, data, rootDir);
-          finalHtml = applyPreviewTheme(compiledHtml, theme);
-          // Guardar en cache
-          await cacheManager.saveToCache(templateName, finalHtml, { theme, dataHash });
-          console.log(`[maizzle] Compiled and cached ${templateName} (${theme})`);
-        }
-
-        res.setHeader("Content-Type", "text/html");
-        res.end(finalHtml);
-      } catch (err) {
-        const message = err instanceof Error ? err.message : String(err);
-        console.error("[maizzle] API Render Error:", message);
-        sendText(res, 500, "Internal server error");
-      }
-      return;
-    }
-
-    return next();
-  });
+  server.middlewares.use(handler);
 }
