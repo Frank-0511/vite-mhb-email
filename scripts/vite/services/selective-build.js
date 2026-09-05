@@ -30,11 +30,15 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { isValidTemplateName } from "../../shared/path-safety.js";
 import { getProjectPaths } from "../../shared/paths.js";
+import { validateEspVariables } from "../../email/esp-variables.js";
+import { collectTemplateSource } from "../../email/esp-sources.js";
 
 /**
  * @typedef {Object} SelectiveBuildResult
  * @property {boolean} success
  * @property {string} [html] - HTML final compilado (solo si success: true).
+ * @property {{ missing: string[], unused: string[] }} [validation]
+ *   Resultado de la validación ESP ejecutada antes del build.
  * @property {string} [error] - Mensaje de error si success es false.
  */
 
@@ -73,6 +77,25 @@ export async function runSelectiveBuild(rootDir, templateName) {
 
   try {
     console.log(`[selective-build] Starting build for template: ${templateName}`);
+
+    // Mantener el mismo aviso ESP que el build completo antes de exportar.
+    const source = collectTemplateSource(rootDir, templateName);
+    let data = {};
+    const dataPath = paths.templateData(templateName);
+    if (existsSync(dataPath)) {
+      try {
+        data = JSON.parse(await readFile(dataPath, "utf8"));
+      } catch {
+        data = {};
+      }
+    }
+    const { missing, unused } = validateEspVariables({ source, data });
+    if (missing.length > 0) {
+      console.warn(`[selective-build] ESP variables faltantes: ${missing.join(", ")}`);
+    }
+    if (unused.length > 0) {
+      console.info(`[selective-build] Claves de data.json sin uso: ${unused.join(", ")}`);
+    }
 
     // Directorio temporal: .cache/copy-html/<template>/
     const cacheDir = resolve(rootDir, ".cache", "copy-html", templateName);
@@ -145,7 +168,7 @@ export async function runSelectiveBuild(rootDir, templateName) {
     await writeFile(distPath, html, "utf-8");
 
     console.log(`[selective-build] Build complete. Output: dist/${templateName}.html`);
-    return { success: true, html };
+    return { success: true, html, validation: { missing, unused } };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error("[selective-build] Build failed:", message);

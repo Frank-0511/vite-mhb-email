@@ -36,6 +36,18 @@ body {
   display: block;
 }
 
+.esp-validation-status {
+  display: none;
+  max-width: 34rem;
+  color: #b45309;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.esp-validation-status.visible {
+  display: inline;
+}
+
 /* Personalizar el tema claro de Vanilla JSONEditor */
 .jse-theme-default {
   --jse-theme-color: #0ea5e9; /* sky-500 */

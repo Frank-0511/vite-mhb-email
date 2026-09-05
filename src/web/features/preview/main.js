@@ -85,6 +85,36 @@ function initSyncStatus() {
 }
 
 /**
+ * Inicializa el aviso visible de variables ESP del template.
+ *
+ * @returns {{ update: (result: { missing?: string[], unused?: string[] }) => void }}
+ */
+function initEspValidationStatus() {
+  const status = querySafe("esp-validation-status");
+
+  return {
+    update(result) {
+      if (!status) return;
+      const missing = Array.isArray(result?.missing) ? result.missing : [];
+      const unused = Array.isArray(result?.unused) ? result.unused : [];
+      const messages = [];
+
+      if (missing.length > 0) {
+        messages.push(`⚠️ Faltantes: ${missing.join(", ")}`);
+      }
+      if (unused.length > 0) {
+        messages.push(`ℹ️ Sin uso: ${unused.join(", ")}`);
+      }
+
+      status.textContent = messages.join(" · ");
+      status.className =
+        messages.length > 0 ? "esp-validation-status visible" : "esp-validation-status";
+      status.setAttribute("aria-hidden", messages.length > 0 ? "false" : "true");
+    },
+  };
+}
+
+/**
  * Main preview initialization
  */
 async function initializePreview() {
@@ -110,6 +140,7 @@ async function initializePreview() {
 
   // Initialize sync status UI
   const syncStatus = initSyncStatus();
+  const espValidationStatus = initEspValidationStatus();
 
   // Initialize iframe manager
   const iframeManager = createIframeManager({
@@ -120,6 +151,7 @@ async function initializePreview() {
   // Initialize render API
   const renderAPI = createRenderAPI({
     onSuccess: (html) => iframeManager.updateContent(html),
+    onValidation: (result) => espValidationStatus.update(result),
     onError: (err) => {
       console.error("Render error:", err);
     },

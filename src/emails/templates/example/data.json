@@ -1,4 +1,5 @@
 {
   "titleTemplate": "Nombre de example",
-  "title": "Título del email"
+  "title": "Título del email",
+  "unsubscribe_url": "https://miempresa.com/unsubscribe"
 }

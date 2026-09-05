@@ -46,6 +46,24 @@ export function initCopyHtmlModal({ templateName }) {
   let lastHtml = "";
 
   /**
+   * Formatea el resultado ESP devuelto por el build selectivo.
+   *
+   * @param {{ missing?: string[], unused?: string[] } | undefined} validation
+   * @returns {string}
+   */
+  function formatValidation(validation) {
+    if (!validation) return "";
+    const messages = [];
+    if (Array.isArray(validation.missing) && validation.missing.length > 0) {
+      messages.push(`⚠️ Variables faltantes: ${validation.missing.join(", ")}`);
+    }
+    if (Array.isArray(validation.unused) && validation.unused.length > 0) {
+      messages.push(`ℹ️ Claves sin uso: ${validation.unused.join(", ")}`);
+    }
+    return messages.length > 0 ? ` ${messages.join(" · ")}` : "";
+  }
+
+  /**
    * Intenta copiar texto al portapapeles.
    * Devuelve true si tuvo éxito, false si el navegador rechazó el acceso.
    *
@@ -161,10 +179,11 @@ export function initCopyHtmlModal({ templateName }) {
 
       const ok = await tryClipboard(result.html);
       if (ok) {
+        const validationMessage = build ? formatValidation(result.validation) : "";
         setState(
           "success",
           build
-            ? "✅ Build completado. HTML copiado al portapapeles."
+            ? `✅ Build completado. HTML copiado al portapapeles.${validationMessage}`
             : "✅ HTML copiado al portapapeles.",
         );
       } else {
