@@ -9,7 +9,7 @@
  *   - La lógica del gate (errors > 0 → debería fallar el build) es correcta.
  */
 
-import { afterEach, beforeEach, describe, expect, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, spyOn, test } from "bun:test";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
@@ -60,13 +60,21 @@ const HTML_CSS_ERROR = `<!doctype html>
 // ── Setup / Teardown ──────────────────────────────────────────────────────────
 
 let tempDir = "";
+/** @type {ReturnType<typeof spyOn> | null} */
+let consoleLogSpy = null;
+/** @type {ReturnType<typeof spyOn> | null} */
+let consoleErrorSpy = null;
 
 beforeEach(() => {
   tempDir = join(tmpdir(), `email-validate-${randomUUID()}`);
   mkdirSync(tempDir, { recursive: true });
+  consoleLogSpy = spyOn(console, "log").mockImplementation(() => {});
+  consoleErrorSpy = spyOn(console, "error").mockImplementation(() => {});
 });
 
 afterEach(() => {
+  consoleLogSpy?.mockRestore();
+  consoleErrorSpy?.mockRestore();
   if (tempDir) {
     rmSync(tempDir, { recursive: true, force: true });
     tempDir = "";
@@ -99,22 +107,19 @@ describe("validateEmailHtml — estructura del retorno", () => {
 describe("validateEmailHtml — HTML sin errores", () => {
   test("HTML limpio retorna errors: 0", () => {
     writeFileSync(join(tempDir, "clean.html"), HTML_CLEAN, "utf-8");
-    const { errors } = validateEmailHtml(tempDir);
-    expect(errors).toBe(0);
+    expect(validateEmailHtml(tempDir)).toEqual({ errors: 0, warnings: 1, infos: 0 });
   });
 });
 
 describe("validateEmailHtml — HTML con ERROR (doctype faltante)", () => {
   test("HTML sin <!doctype html> produce al menos 1 error", () => {
     writeFileSync(join(tempDir, "no-doctype.html"), HTML_MISSING_DOCTYPE, "utf-8");
-    const { errors } = validateEmailHtml(tempDir);
-    expect(errors).toBeGreaterThanOrEqual(1);
+    expect(validateEmailHtml(tempDir)).toEqual({ errors: 1, warnings: 1, infos: 0 });
   });
 
   test("HTML con display:flex produce al menos 1 error", () => {
     writeFileSync(join(tempDir, "flex.html"), HTML_CSS_ERROR, "utf-8");
-    const { errors } = validateEmailHtml(tempDir);
-    expect(errors).toBeGreaterThanOrEqual(1);
+    expect(validateEmailHtml(tempDir)).toEqual({ errors: 1, warnings: 1, infos: 1 });
   });
 });
 
