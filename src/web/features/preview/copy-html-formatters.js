@@ -53,6 +53,21 @@ export function formatSuccessMessage(build, validation) {
 }
 
 /**
+ * Devuelve el mensaje de confirmación tras una descarga exitosa.
+ *
+ * @param {boolean} build
+ * @param {ValidationResult | null | undefined} [validation]
+ * @returns {string}
+ */
+export function formatDownloadSuccessMessage(build, validation) {
+  if (build) {
+    const validationMessage = formatValidation(validation);
+    return `✅ Build completado. HTML descargado.${validationMessage}`;
+  }
+  return "✅ HTML descargado.";
+}
+
+/**
  * Normaliza y formatea un error ocurrido durante la operación.
  *
  * @param {unknown} err

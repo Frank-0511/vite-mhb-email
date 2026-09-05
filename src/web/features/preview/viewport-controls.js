@@ -79,7 +79,14 @@ export function getCommittedCustomViewportWidth(inputValue, fallbackWidth = DEFA
  * @param {ViewportStorage} storage
  * @returns {{ applyViewport: (mode: string, customWidth?: string | number, options?: { syncInput?: boolean }) => void }}
  */
-export function initViewportControls(elements, storage = window.localStorage) {
+export function initViewportControls(
+  elements,
+  storage = typeof window !== "undefined"
+    ? window.localStorage
+    : typeof localStorage !== "undefined"
+      ? localStorage
+      : { getItem: () => null, setItem: () => {} },
+) {
   /**
    * @param {HTMLButtonElement} button
    * @param {boolean} isSelected
@@ -190,4 +197,47 @@ export function initViewportControls(elements, storage = window.localStorage) {
   });
 
   return { applyViewport };
+}
+
+/**
+ * Inicializa los controles de viewport consultando los elementos estándar del DOM.
+ * Devuelve el controlador o null si no se encuentran los elementos requeridos.
+ *
+ * @param {Document | { getElementById: (id: string) => any } | null} [dom]
+ * @returns {{ applyViewport: (mode: string, customWidth?: number | string, options?: { syncInput?: boolean }) => void } | null}
+ */
+export function setupPreviewViewport(
+  dom = typeof document !== "undefined" ? document : null,
+  storage = typeof window !== "undefined"
+    ? window.localStorage
+    : typeof localStorage !== "undefined"
+      ? localStorage
+      : { getItem: () => null, setItem: () => {} },
+) {
+  if (!dom || typeof dom.getElementById !== "function") return null;
+
+  const desktopButton = dom.getElementById("viewport-desktop");
+  const mobileButton = dom.getElementById("viewport-mobile");
+  const customButton = dom.getElementById("viewport-custom");
+  const customInputWrap = dom.getElementById("viewport-custom-input-wrap");
+  const customInput = dom.getElementById("viewport-custom-input");
+  const previewFrame = dom.getElementById("preview-frame");
+  const widthIndicator = dom.getElementById("viewport-width-indicator");
+
+  if (desktopButton && mobileButton && customButton && previewFrame && widthIndicator) {
+    return initViewportControls(
+      {
+        desktopButton,
+        mobileButton,
+        customButton,
+        customInputWrap,
+        customInput,
+        previewFrame,
+        widthIndicator,
+      },
+      storage,
+    );
+  }
+
+  return null;
 }

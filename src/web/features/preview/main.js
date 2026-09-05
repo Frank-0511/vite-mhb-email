@@ -1,141 +1,87 @@
+// @ts-check
 /**
- * @file Preview page entry point
- * Orchestrates template editing, rendering, and data management for preview.html
- *
- * Features:
- * - Live JSON editor with Vanilla JSONEditor
- * - Real-time template rendering via /api/render
- * - Save/reset operations to /api/data
- * - App theme (light/dark) with editor sync
- * - Template theme toggle
- * - Viewport controls (desktop/mobile/custom)
+ * @fileoverview Punto de entrada de la página de preview.
+ * Orquesta la edición de plantillas, renderizado en vivo y gestión de datos.
  */
 
-import { queryRequired, querySafe } from "../../shared/utils/dom-helpers.js";
+import { queryRequired } from "../../shared/utils/dom-helpers.js";
 import { fetchJSON } from "../../shared/utils/http-helpers.js";
 import { initLucideIcons } from "../../shared/utils/lucide-setup.js";
-import "../../shared/utils/theme-toggle-component.js"; // Web Component auto-registers
+import "../../shared/utils/theme-toggle-component.js";
 
 import { initCopyHtmlModal } from "./copy-html-modal.js";
 import { initializeEditor } from "./editor.js";
 import { createIframeManager } from "./iframe-manager.js";
 import { setupPreviewHmr } from "./preview-hmr.js";
+import { getTemplateNameFromUrl, renderMissingTemplateError } from "./preview-params.js";
+import { createPreviewStatus } from "./preview-status.js";
 import { createRenderAPI } from "./render-api.js";
-import { createRenderErrorView } from "./render-error-view.js";
 import { setupResetButton, setupSaveButton } from "./save-reset.js";
 import "./styles.css";
 import { setupTemplateThemeToggle } from "./theme-manager.js";
-import { initViewportControls } from "./viewport-controls.js";
+import { setupPreviewViewport } from "./viewport-controls.js";
+
+export { getTemplateNameFromUrl, renderMissingTemplateError };
 
 /**
- * Initialize sync status UI
- */
-function initSyncStatus() {
-  const syncStatus = queryRequired("sync-status", "Preview Module");
-
-  return {
-    update(text, textColor, dotColor) {
-      syncStatus.className = `text-sm flex items-center gap-1 ${textColor}`;
-      syncStatus.innerHTML = `<span class="w-2 h-2 rounded-full ${dotColor}"></span> ${text}`;
-    },
-  };
-}
-
-/**
- * Inicializa el aviso visible de variables ESP del template.
+ * Orquesta la inicialización de todos los subsistemas del preview.
  *
- * @returns {{ update: (result: { missing?: string[], unused?: string[] }) => void }}
+ * @returns {Promise<void>}
  */
-function initEspValidationStatus() {
-  const status = querySafe("esp-validation-status");
-
-  return {
-    update(result) {
-      if (!status) return;
-      const missing = Array.isArray(result?.missing) ? result.missing : [];
-      const unused = Array.isArray(result?.unused) ? result.unused : [];
-      const messages = [];
-
-      if (missing.length > 0) {
-        messages.push(`⚠️ Faltantes: ${missing.join(", ")}`);
-      }
-      if (unused.length > 0) {
-        messages.push(`ℹ️ Sin uso: ${unused.join(", ")}`);
-      }
-
-      status.textContent = messages.join(" · ");
-      status.className =
-        messages.length > 0 ? "esp-validation-status visible" : "esp-validation-status";
-      status.setAttribute("aria-hidden", messages.length > 0 ? "false" : "true");
-    },
-  };
-}
-
-/**
- * Main preview initialization
- */
-async function initializePreview() {
-  // Get template name from URL params
-  const urlParams = new URLSearchParams(window.location.search);
-  const templateName = urlParams.get("template");
+export async function initializePreview() {
+  const templateName = getTemplateNameFromUrl();
 
   if (!templateName) {
-    document.body.innerHTML =
-      '<div class="p-8 text-red-500 font-bold">Error: No se especificó un template en la URL. (?template=nombre)</div>';
+    renderMissingTemplateError();
     throw new Error("No template specified");
   }
 
-  // Initialize Lucide icons
+  // Inicializar iconos de Lucide
   initLucideIcons();
 
-  // Get DOM elements
+  // Obtener elementos DOM requeridos
   const templateNameEl = queryRequired("template-name", "Preview Module");
   const iframeEl = queryRequired("preview-iframe", "Preview Module");
   const editorContainer = queryRequired("editor-container", "Preview Module");
 
   templateNameEl.textContent = templateName;
 
-  // Initialize sync status UI
-  const syncStatus = initSyncStatus();
-  const espValidationStatus = initEspValidationStatus();
-  const renderErrorEl = querySafe("preview-render-error");
-  const renderErrorView = createRenderErrorView(renderErrorEl);
+  // Inicializar controlador de estado visual
+  const previewStatus = createPreviewStatus();
 
-  // Initialize iframe manager
+  // Inicializar gestor de iframe
   const iframeManager = createIframeManager({
     iframe: iframeEl,
-    onSyncStatusChange: (text, textColor, dotColor) => syncStatus.update(text, textColor, dotColor),
+    onSyncStatusChange: (text, textColor, dotColor) =>
+      previewStatus.sync(text, textColor, dotColor),
   });
 
-  // Initialize render API
+  // Inicializar cliente de render API
   const renderAPI = createRenderAPI({
     onSuccess: (html) => {
-      renderErrorView.clear();
-      iframeManager.updateContent(html);
+      previewStatus.renderSuccess(html, iframeManager);
     },
-    onValidation: (result) => espValidationStatus.update(result),
+    onValidation: (result) => previewStatus.esp(result),
     onError: (err) => {
       console.error("Render error:", err);
-      renderErrorView.show(err);
+      previewStatus.renderError(err);
     },
-    onStatusChange: (text, textColor, dotColor) => syncStatus.update(text, textColor, dotColor),
+    onStatusChange: (text, textColor, dotColor) => previewStatus.sync(text, textColor, dotColor),
   });
 
-  // Placeholder for debounced render (will be initialized after editor creation)
+  /** @type {(() => void) | null} */
   let debouncedRender = null;
 
-  // Initialize JSONEditor
+  // Inicializar editor JSON
   const editorAPI = await initializeEditor({
     templateName,
     container: editorContainer,
     onChange: (_json) => {
-      // Debounced render will be set after editor initialization
       if (debouncedRender) debouncedRender();
     },
-    onStatusChange: (text, textColor, dotColor) => syncStatus.update(text, textColor, dotColor),
+    onStatusChange: (text, textColor, dotColor) => previewStatus.sync(text, textColor, dotColor),
   });
 
-  // Create debounced render function (reuses same timer across onChange calls)
   debouncedRender = renderAPI.createDebouncedRender(templateName, () => editorAPI.get(), 300);
 
   /**
@@ -160,10 +106,10 @@ async function initializePreview() {
     renderCurrentTemplate,
   });
 
-  // Render inicial usando el mismo endpoint que los cambios live.
+  // Render inicial usando el mismo endpoint que los cambios live
   await renderCurrentTemplate();
 
-  // Setup template theme toggle
+  // Toggle de tema de plantilla
   setupTemplateThemeToggle({
     onThemeChange: () => {
       renderCurrentTemplate().catch((error) => {
@@ -172,7 +118,7 @@ async function initializePreview() {
     },
   });
 
-  // Setup save and reset buttons
+  // Botones de guardar y restaurar datos
   setupSaveButton({
     templateName,
     getEditorContent: () => editorAPI.get(),
@@ -183,7 +129,7 @@ async function initializePreview() {
     resetIframe: (name) => {
       iframeManager.reset(name);
     },
-    onStatusChange: (text, textColor, dotColor) => syncStatus.update(text, textColor, dotColor),
+    onStatusChange: (text, textColor, dotColor) => previewStatus.sync(text, textColor, dotColor),
   });
 
   setupResetButton({
@@ -196,40 +142,20 @@ async function initializePreview() {
     },
   });
 
-  // Setup viewport controls (desktop/mobile/custom)
-  const viewportDesktopBtn = querySafe("viewport-desktop");
-  const viewportMobileBtn = querySafe("viewport-mobile");
-  const viewportCustomBtn = querySafe("viewport-custom");
-  const viewportCustomInputWrap = querySafe("viewport-custom-input-wrap");
-  const viewportCustomInput = querySafe("viewport-custom-input");
-  const previewFrame = querySafe("preview-frame");
-  const viewportWidthIndicator = querySafe("viewport-width-indicator");
+  // Controles de viewport
+  setupPreviewViewport();
 
-  if (
-    viewportDesktopBtn &&
-    viewportMobileBtn &&
-    viewportCustomBtn &&
-    previewFrame &&
-    viewportWidthIndicator
-  ) {
-    initViewportControls({
-      desktopButton: viewportDesktopBtn,
-      mobileButton: viewportMobileBtn,
-      customButton: viewportCustomBtn,
-      customInputWrap: viewportCustomInputWrap,
-      customInput: viewportCustomInput,
-      previewFrame,
-      widthIndicator: viewportWidthIndicator,
-    });
-  }
-
-  // Initialize Copy HTML modal
+  // Modal de Copiar y Descargar HTML
   initCopyHtmlModal({ templateName });
 }
 
-// Initialize when DOM is ready
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initializePreview);
-} else {
-  initializePreview();
+// Inicialización automática al cargar en navegador
+if (typeof window !== "undefined" && typeof document !== "undefined") {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+      initializePreview();
+    });
+  } else {
+    initializePreview();
+  }
 }

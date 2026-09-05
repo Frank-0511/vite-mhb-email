@@ -2,7 +2,7 @@
 
 ## Resumen
 
-- ID activo: MHB-07
+- ID activo: MHB-08
 - Estado: En revisión
 - Implementador: implementador actual
 - Revisor o autoridad de cierre: revisor UX/API independiente
@@ -13,34 +13,44 @@ Este archivo no replica el roadmap. Al iniciar una tarea, registrar solo el ID
 asignado, sus validaciones y el handoff. El implementador solo puede entregarlo
 en `En revisión`; otra autoridad decide `Completada`.
 
-## Entrega para revisión (MHB-07)
+## Entrega para revisión (MHB-08)
 
-- Alcance: diagnóstico estructurado y seguro ante fallos de render en `POST /api/render`, normalizador puro de errores, handler inyectable, cliente `RenderApiError` y vista accesible en preview.
-- Dependencias: MHB-05 y MHB-24 `Completada`.
-- Rama: `feature/mhb-07`.
+- Alcance: descarga segura en preview de `<template>.html` con HTML final desde `POST /api/copy-html`, utilidad `downloadHtml` pura e inyectable con `isSafeDownloadTemplateName`, bloqueo de concurrencia en modal para las cuatro acciones, mensajes de descarga y tests unitarios y de integración.
+- Dependencias: MHB-07 `Completada` (integrada en `master` en `708d8d7`).
+- Rama: `feature/mhb-08`.
 - Hechos de entrega:
-  1. Normalizador puro `normalizeRenderError` en `render-error.js` con contrato versión 1, causa controlada y ubicación relativa bajo `templatesRoot` sin exponer rutas absolutas, stack traces ni secretos.
-  2. Handler `createRenderRequestHandler` inyectable en `render-request-handler.js` que conserva 200 HTML, 400/404 existentes y emite 422 JSON ante fallos de render con fallback 500 de emergencia.
-  3. Fachada `setupRenderApi` en `render.js` delegada al handler inyectable preservando firma pública y helpers de tema.
-  4. Cliente `createRenderAPI` con clase `RenderApiError` y parsing estricto con allowlist en `parseRenderErrorResponse` sin reflejar cuerpos no confiables.
-  5. Vista accesible `createRenderErrorView` conectada en `main.js` y `preview.html` (`role="status"`, `aria-live="polite"`) que muestra diagnóstico mediante `textContent` y se limpia tras éxito.
+  1. Utilidad pura `downloadHtml` e `isSafeDownloadTemplateName` en `src/web/features/preview/html-download.js`: valida el nombre bajo `/^[a-z0-9-]+$/`, MIME `text/html;charset=utf-8`, empaqueta en Blob, dispara click en anchor temporal y revoca URL en bloque finally sin exponer contenido HTML en mensajes.
+  2. Formateador `formatDownloadSuccessMessage` en `copy-html-formatters.js` que integra validación ESP cuando `build: true` y conserva el contrato de copia.
+  3. Vista `renderModalState` en `copy-html-view.js` extendida con helper seguro `setActionButtonsDisabled` que bloquea concurrentemente los 4 botones de acción durante `loading` y los restaura en `idle`/`success`/`error`/`clipboard-error`.
+  4. Controlador `createCopyHtmlModalController` en `copy-html-modal.js` extendido con método `performDownload(build)` que reusa `POST /api/copy-html` (`build: true` o `false`), ignora cualquier propiedad no confiable del cuerpo (`result.template`) y delega a `downloadHtmlFn`.
+  5. Interfaz de usuario en `preview.html` con dos botones `#btn-build-and-download` y `#btn-download-existing` con iconos Lucide y clases reutilizadas sin alterar el diseño existente.
 - Controles automáticos ejecutados:
-  - `bun run check:task-branch` → Verde (`feature/mhb-07`).
+  - `bun run check:task-branch` → Verde (`feature/mhb-08`).
   - `bun run lint` → Verde (HTMLHint, ESLint, markdownlint, JSON, Stylelint sin errores).
   - `bun run typecheck` → Verde (`tsc --noEmit` sin errores).
-  - `bun run test` → Verde (279 pass, 0 fail, 680 expects en 33 archivos).
-  - `bun run format:check` → Verde (Prettier en todo el proyecto).
-  - `git diff --check` → Verde (sin advertencias ni whitespace residual).
+  - `bun run test` → Verde (326 pass, 0 fail, 787 expects en 34 archivos).
+  - `bun run format:check` → Verde (Prettier verificado en todo el proyecto).
   - `bun run build` → Verde (3 templates compilados exitosamente).
   - `bun run validate-email` → Verde (0 errores, 3 warnings conocidos `link-targets`, 1 info `company`).
+  - `git diff --check` → Verde (sin advertencias ni whitespace residual).
 - Controles manuales y smoke ejecutados:
-  - Verificación integral simulada de ciclo de error 422: render fallido muestra causa, ubicación relativa y mensaje en la vista.
-  - Comprobación de que no aparecen rutas absolutas, stacks ni secretos.
-  - Verificación de que el último HTML correcto en iframe se conserva y de que el render exitoso limpia el panel de error y restaura `X-ESP-Validation`.
-- Riesgo residual: los 3 warnings conocidos `link-targets` y el info `company` provienen de templates base asignados a MHB-21.
+  - Servidor Vite en ejecución y verificación de endpoints:
+    1. Descarga con `build: true` solicita `/api/copy-html?template=welcome` y produce HTML final compilado (17257 bytes).
+    2. Descarga con `build: false` coincide byte a byte con `dist/welcome.html` (17257 bytes).
+    3. `downloadHtml` valida nombre seguro `welcome.html`, genera Blob URL y revoca en `finally`.
+    4. Fallo recuperable ante template inexistente devuelve `success: false` sin archivo parcial ni bloqueo permanente.
+- Riesgo residual: los 3 warnings `link-targets` y el info `company` provienen de templates base asignados a MHB-21.
 - Estado: `En revisión`.
 
+## Revisión de cierre (MHB-07)
+
+- Criterios de aceptación comprobados: diagnóstico estructurado y seguro ante fallos de render en `POST /api/render`, normalizador puro de errores, handler inyectable, cliente `RenderApiError` y vista accesible en preview.
+- Controles: suite completa verde y merge a `master` confirmado en `708d8d7`.
+- Decisión del revisor: `Completada` (2026-09-05).
+
 ## Últimas entregas
+
+- MHB-07 completado: diagnóstico estructurado en `POST /api/render`, handler inyectable, cliente `RenderApiError` y vista accesible en preview; integrado en `master` (`708d8d7`).
 
 - MHB-24 completada: modularización de components API, validador HTML, HMR
   preview, modal copy HTML y helper ESP; cierre autorizado tras revisión
@@ -378,6 +388,7 @@ en `En revisión`; otra autoridad decide `Completada`.
   versión ni publicación.
 - MHB-24: `Completada` por autorización del usuario tras revisión independiente;
   la rama `feature/mhb-24` queda preservada hasta que se decida merge o PR.
-- MHB-07: `En revisión`; rama `feature/mhb-07`.
-- Próxima acción inmediata: revisión UX/API independiente de MHB-07 antes de autorizar cierre o merge.
-- Siguiente tarea del roadmap: MHB-08 queda bloqueada hasta completar MHB-07.
+- MHB-07: `Completada`; integrada en `master` en `708d8d7`.
+- MHB-08: `En revisión`; rama `feature/mhb-08`.
+- Próxima acción inmediata: revisión UX/API independiente de MHB-08 antes de autorizar cierre o merge.
+- Siguiente tarea del roadmap: MHB-09 (bloqueada hasta completar MHB-08).

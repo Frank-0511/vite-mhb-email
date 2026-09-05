@@ -4,6 +4,8 @@ import { describe, expect, test } from "bun:test";
 import {
   copyTextToClipboard,
   createCopyHtmlModalController,
+  downloadHtml,
+  formatDownloadSuccessMessage,
   formatErrorMessage,
   formatLoadingMessage,
   formatSuccessMessage,
@@ -16,6 +18,8 @@ describe("copy-html-modal re-exports (contrato público)", () => {
     expect(typeof formatValidation).toBe("function");
     expect(typeof formatLoadingMessage).toBe("function");
     expect(typeof formatSuccessMessage).toBe("function");
+    expect(typeof formatDownloadSuccessMessage).toBe("function");
+    expect(typeof downloadHtml).toBe("function");
     expect(typeof formatErrorMessage).toBe("function");
     expect(typeof copyTextToClipboard).toBe("function");
     expect(typeof renderModalState).toBe("function");
@@ -250,5 +254,215 @@ describe("createCopyHtmlModalController", () => {
     controller.reset();
     expect(controller.getState()).toBe("idle");
     expect(controller.getLastHtml()).toBe("");
+  });
+
+  test("descarga el HTML de build usando el template inicial y el body exacto", async () => {
+    const transitions = [];
+    const httpCalls = [];
+    /** @type {any} */
+    let receivedDownload = null;
+
+    const controller = createCopyHtmlModalController({
+      templateName: "welcome",
+      postJsonFn: (url, body) => {
+        httpCalls.push({ url, body });
+        return Promise.resolve({
+          success: true,
+          template: "untrusted-attacker-name", // Debe ser ignorado
+          html: "<p>final</p>",
+          validation: { unused: ["legacy"] },
+        });
+      },
+      // @ts-ignore
+      downloadHtmlFn: (input) => {
+        receivedDownload = input;
+        return { ok: true, filename: "welcome.html" };
+      },
+      renderState: (state, options) => {
+        transitions.push({ state, message: options?.message });
+      },
+    });
+
+    // @ts-ignore
+    await controller.performDownload(true);
+
+    expect(httpCalls).toEqual([
+      {
+        url: "/api/copy-html?template=welcome",
+        body: { build: true },
+      },
+    ]);
+    expect(receivedDownload).toEqual({
+      templateName: "welcome",
+      html: "<p>final</p>",
+    });
+    expect(controller.getState()).toBe("success");
+    expect(transitions).toEqual([
+      { state: "loading", message: "Buildeando template…" },
+      {
+        state: "success",
+        message: "✅ Build completado. HTML descargado. ℹ️ Claves sin uso: legacy",
+      },
+    ]);
+  });
+
+  test("descarga el HTML existente usando build: false", async () => {
+    const transitions = [];
+    const httpCalls = [];
+    /** @type {any} */
+    let receivedDownload = null;
+
+    const controller = createCopyHtmlModalController({
+      templateName: "newsletter",
+      postJsonFn: (url, body) => {
+        httpCalls.push({ url, body });
+        return Promise.resolve({
+          success: true,
+          html: "<p>existente</p>",
+        });
+      },
+      // @ts-ignore
+      downloadHtmlFn: (input) => {
+        receivedDownload = input;
+        return { ok: true, filename: "newsletter.html" };
+      },
+      renderState: (state, options) => {
+        transitions.push({ state, message: options?.message });
+      },
+    });
+
+    // @ts-ignore
+    await controller.performDownload(false);
+
+    expect(httpCalls).toEqual([
+      {
+        url: "/api/copy-html?template=newsletter",
+        body: { build: false },
+      },
+    ]);
+    expect(receivedDownload).toEqual({
+      templateName: "newsletter",
+      html: "<p>existente</p>",
+    });
+    expect(controller.getState()).toBe("success");
+    expect(transitions).toEqual([
+      { state: "loading", message: "Leyendo HTML…" },
+      { state: "success", message: "✅ HTML descargado." },
+    ]);
+  });
+
+  test("manejo de error devuelto por la API durante descarga (success: false)", async () => {
+    let downloadAttempted = false;
+    const transitions = [];
+
+    const controller = createCopyHtmlModalController({
+      templateName: "welcome",
+      postJsonFn: () =>
+        Promise.resolve({
+          success: false,
+          error: "El template aún no ha sido buildeado",
+        }),
+      // @ts-ignore
+      downloadHtmlFn: () => {
+        downloadAttempted = true;
+        return { ok: true, filename: "welcome.html" };
+      },
+      renderState: (state, options) => {
+        transitions.push({ state, message: options?.message });
+      },
+    });
+
+    // @ts-ignore
+    await controller.performDownload(false);
+
+    expect(downloadAttempted).toBe(false);
+    expect(controller.getState()).toBe("error");
+    expect(transitions).toEqual([
+      { state: "loading", message: "Leyendo HTML…" },
+      { state: "error", message: "❌ El template aún no ha sido buildeado" },
+    ]);
+  });
+
+  test("manejo de respuesta con html no string o ausente durante descarga", async () => {
+    let downloadAttempted = false;
+    const transitions = [];
+
+    const controller = createCopyHtmlModalController({
+      templateName: "welcome",
+      // @ts-ignore
+      postJsonFn: () => Promise.resolve({ success: true, html: 123 }),
+      // @ts-ignore
+      downloadHtmlFn: () => {
+        downloadAttempted = true;
+        return { ok: true, filename: "welcome.html" };
+      },
+      renderState: (state, options) => {
+        transitions.push({ state, message: options?.message });
+      },
+    });
+
+    // @ts-ignore
+    await controller.performDownload(true);
+
+    expect(downloadAttempted).toBe(false);
+    expect(controller.getState()).toBe("error");
+    expect(transitions[1]?.state).toBe("error");
+  });
+
+  test("manejo de fallo devuelto por downloadHtmlFn ({ ok: false, error: ... })", async () => {
+    const transitions = [];
+
+    const controller = createCopyHtmlModalController({
+      templateName: "welcome",
+      postJsonFn: () =>
+        Promise.resolve({
+          success: true,
+          html: "<p>final</p>",
+        }),
+      // @ts-ignore
+      downloadHtmlFn: () => {
+        return { ok: false, error: "Nombre de template inseguro" };
+      },
+      renderState: (state, options) => {
+        transitions.push({ state, message: options?.message });
+      },
+    });
+
+    // @ts-ignore
+    await controller.performDownload(true);
+
+    expect(controller.getState()).toBe("error");
+    expect(transitions).toEqual([
+      { state: "loading", message: "Buildeando template…" },
+      { state: "error", message: "❌ Nombre de template inseguro" },
+    ]);
+  });
+
+  test("manejo de excepción de red durante descarga", async () => {
+    let downloadAttempted = false;
+    const transitions = [];
+
+    const controller = createCopyHtmlModalController({
+      templateName: "welcome",
+      postJsonFn: () => Promise.reject(new Error("Conexión rechazada")),
+      // @ts-ignore
+      downloadHtmlFn: () => {
+        downloadAttempted = true;
+        return { ok: true, filename: "welcome.html" };
+      },
+      renderState: (state, options) => {
+        transitions.push({ state, message: options?.message });
+      },
+    });
+
+    // @ts-ignore
+    await controller.performDownload(true);
+
+    expect(downloadAttempted).toBe(false);
+    expect(controller.getState()).toBe("error");
+    expect(transitions).toEqual([
+      { state: "loading", message: "Buildeando template…" },
+      { state: "error", message: "❌ Conexión rechazada" },
+    ]);
   });
 });
