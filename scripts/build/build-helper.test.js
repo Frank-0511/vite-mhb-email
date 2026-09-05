@@ -2,11 +2,14 @@
 /** @fileoverview Regresiones para el build iniciado desde el CLI. */
 
 import { EventEmitter } from "node:events";
-import { beforeEach, describe, expect, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, spyOn, test } from "bun:test";
 import { buildIfNeeded } from "./build-helper.js";
 
 const spawnCalls = [];
 const children = [];
+
+/** @type {ReturnType<typeof spyOn> | null} */
+let consoleLogSpy = null;
 
 function spawnMock(...args) {
   const child = new EventEmitter();
@@ -26,6 +29,11 @@ function createReadline(answer) {
 beforeEach(() => {
   spawnCalls.length = 0;
   children.length = 0;
+  consoleLogSpy = spyOn(console, "log").mockImplementation(() => {});
+});
+
+afterEach(() => {
+  consoleLogSpy?.mockRestore();
 });
 
 describe("buildIfNeeded", () => {
