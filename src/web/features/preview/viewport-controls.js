@@ -63,7 +63,7 @@ export function getCommittedCustomViewportWidth(inputValue, fallbackWidth = DEFA
  * @property {HTMLElement} customInputWrap
  * @property {HTMLInputElement} customInput
  * @property {HTMLElement} previewFrame
- * @property {HTMLElement} widthIndicator
+ * @property {HTMLElement} [widthIndicator]
  */
 
 /**
@@ -139,7 +139,9 @@ export function initViewportControls(
     const syncInput = options.syncInput !== false;
 
     elements.previewFrame.style.width = `${width}px`;
-    elements.widthIndicator.textContent = `${width}px`;
+    if (elements.widthIndicator) {
+      elements.widthIndicator.textContent = `${width}px`;
+    }
     elements.customInputWrap.classList.toggle("hidden", resolvedMode !== "custom");
     elements.customInputWrap.classList.toggle("flex", resolvedMode === "custom");
 
@@ -224,7 +226,7 @@ export function setupPreviewViewport(
   const previewFrame = dom.getElementById("preview-frame");
   const widthIndicator = dom.getElementById("viewport-width-indicator");
 
-  if (desktopButton && mobileButton && customButton && previewFrame && widthIndicator) {
+  if (desktopButton && mobileButton && customButton && previewFrame) {
     return initViewportControls(
       {
         desktopButton,

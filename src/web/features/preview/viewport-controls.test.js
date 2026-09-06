@@ -70,5 +70,44 @@ describe("viewport custom width controls", () => {
       expect(controller).not.toBeNull();
       expect(typeof controller?.applyViewport).toBe("function");
     });
+
+    test("inicializa exitosamente sin viewport-width-indicator tras eliminar la barra redundante", () => {
+      /** @type {Record<string, any>} */
+      const elements = {
+        "viewport-desktop": {
+          addEventListener: () => {},
+          classList: { add: () => {}, remove: () => {}, toggle: () => {} },
+        },
+        "viewport-mobile": {
+          addEventListener: () => {},
+          classList: { add: () => {}, remove: () => {}, toggle: () => {} },
+        },
+        "viewport-custom": {
+          addEventListener: () => {},
+          classList: { add: () => {}, remove: () => {}, toggle: () => {} },
+        },
+        "viewport-custom-input-wrap": {
+          classList: { add: () => {}, remove: () => {}, toggle: () => {} },
+        },
+        "viewport-custom-input": {
+          addEventListener: () => {},
+          value: "600",
+          focus: () => {},
+          blur: () => {},
+        },
+        "preview-frame": { style: {} },
+      };
+
+      const mockDom = {
+        getElementById: (id) => elements[id] ?? null,
+      };
+
+      const controller = setupPreviewViewport(mockDom);
+      expect(controller).not.toBeNull();
+      expect(typeof controller?.applyViewport).toBe("function");
+
+      expect(() => controller?.applyViewport("mobile")).not.toThrow();
+      expect(elements["preview-frame"].style.width).toBe("375px");
+    });
   });
 });

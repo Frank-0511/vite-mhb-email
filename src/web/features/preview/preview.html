@@ -6,13 +6,13 @@
     <title>Email Preview & Edit - EmailForge Toolkit</title>
     <!-- Use the same Tailwind output -->
     <link href="/shared/styles/tailwind.css" rel="stylesheet" />
+    <link href="/features/preview/styles.css" rel="stylesheet" />
 
     <!-- Vanilla JSONEditor (Svelte JSONEditor) -->
     <link
       href="https://cdn.jsdelivr.net/npm/vanilla-jsoneditor@3.11.0/themes/jse-theme-dark.css"
       rel="stylesheet"
     />
-    <!-- styles.css is loaded from main.js -->
     <script>
       // Prevent FOUC by applying app theme immediately
       if (localStorage.getItem("app-theme") === "dark" || !("app-theme" in localStorage)) {
@@ -22,188 +22,386 @@
       }
     </script>
   </head>
-  <body class="font-sans text-slate-800 bg-slate-50 dark:bg-slate-900 dark:text-slate-200">
-    <!-- Aviso de modo oscuro -->
-    <div id="dark-mode-warning">
-      ⚠️ El modo oscuro no se refleja en el preview. Puede ser por caché, emulación o clases
-      Tailwind.
-    </div>
+  <body
+    class="font-sans text-slate-800 bg-slate-50 dark:bg-slate-900 dark:text-slate-200 flex h-screen overflow-hidden"
+  >
+    <!-- Mobile Tab Navigation (<768px) -->
+    <nav id="mobile-tab-bar" class="mobile-tab-bar" aria-label="Vistas del editor">
+      <button
+        id="tab-btn-preview"
+        type="button"
+        class="tab-btn active"
+        role="tab"
+        aria-selected="true"
+        aria-controls="right-panel"
+      >
+        <i data-lucide="eye" class="w-4 h-4 shrink-0"></i>
+        <span>Vista previa</span>
+      </button>
+      <button
+        id="tab-btn-editor"
+        type="button"
+        class="tab-btn"
+        role="tab"
+        aria-selected="false"
+        aria-controls="left-panel"
+      >
+        <i data-lucide="code" class="w-4 h-4 shrink-0"></i>
+        <span>Editar</span>
+      </button>
+    </nav>
+
     <!-- Panel Izquierdo: Editor -->
-    <div id="left-panel" class="dark:border-slate-700 dark:bg-slate-900">
+    <div
+      id="left-panel"
+      class="w-[35%] flex flex-col bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 shrink-0"
+    >
       <!-- Header del Editor -->
       <div
-        class="px-6 py-5 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 flex justify-between items-center"
+        class="editor-header px-4 py-3 sm:px-6 sm:py-5 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 flex justify-between items-center"
       >
-        <div class="flex items-center gap-3">
+        <!-- Skeleton del Header Izquierdo (botón volver, separador, icono y título) -->
+        <div
+          id="header-left-skeleton"
+          class="flex items-center gap-2 sm:gap-3 animate-pulse min-w-0"
+          aria-hidden="true"
+        >
+          <div
+            id="back-btn-skeleton"
+            class="w-6 h-6 rounded bg-slate-200 dark:bg-slate-700 shrink-0"
+          ></div>
+          <div class="h-5 border-l border-slate-200 dark:border-slate-700 shrink-0"></div>
+          <div class="flex items-center gap-2 min-w-0">
+            <div class="w-5 h-5 rounded bg-slate-200 dark:bg-slate-700 shrink-0"></div>
+            <div
+              id="template-name-skeleton"
+              class="h-5 w-20 sm:w-24 bg-slate-200 dark:bg-slate-700 rounded"
+            ></div>
+          </div>
+        </div>
+
+        <!-- Contenido Real del Header Izquierdo -->
+        <div id="header-left-content" class="hidden items-center gap-2 sm:gap-3 min-w-0">
           <a
+            id="btn-back"
             href="/"
-            class="text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 font-semibold inline-flex items-center gap-2 transition-colors"
+            class="text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 font-semibold inline-flex items-center p-1 sm:p-0 transition-colors shrink-0"
+            title="Volver a templates"
           >
-            <i data-lucide="arrow-left" class="w-5 h-5"></i>
+            <i data-lucide="arrow-left" class="w-5 h-5 shrink-0"></i>
           </a>
-          <div class="h-5 border-l border-slate-300 dark:border-slate-600"></div>
-          <h1 class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2 m-0">
-            <i data-lucide="file-text" class="w-5 h-5"></i>
-            <span id="template-name"></span>
+          <div class="h-5 border-l border-slate-300 dark:border-slate-600 shrink-0"></div>
+          <h1
+            class="text-base sm:text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2 m-0 min-w-0"
+          >
+            <i data-lucide="file-text" class="w-4 h-4 sm:w-5 sm:h-5 shrink-0"></i>
+            <span
+              id="template-name"
+              class="truncate max-w-[120px] sm:max-w-[180px] md:max-w-none"
+            ></span>
           </h1>
         </div>
 
-        <!-- App Theme Toggle -->
-        <theme-toggle>
-          <button
-            type="button"
-            aria-label="Toggle theme"
-            class="w-9 h-9 flex items-center justify-center rounded-md border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-700"
-          >
-            <i data-lucide="sun" class="w-5 h-5 text-slate-600 dark:hidden"></i>
-            <i data-lucide="moon" class="w-5 h-5 text-amber-400 hidden dark:block"></i>
-          </button>
-        </theme-toggle>
+        <!-- Acciones del Header Izquierdo -->
+        <div class="flex items-center gap-2 shrink-0">
+          <!-- Skeleton del App Theme Toggle -->
+          <div
+            id="theme-toggle-skeleton"
+            class="w-9 h-9 rounded-md bg-slate-200 dark:bg-slate-700 animate-pulse shrink-0"
+            aria-hidden="true"
+          ></div>
+
+          <!-- App Theme Toggle envuelto en menú desplegable ⋯ en <480px, directo en ≥480px -->
+          <details id="editor-more-menu" class="menu-more-dropdown">
+            <summary
+              class="w-9 h-9 flex items-center justify-center rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 list-none cursor-pointer"
+              title="Más opciones"
+              aria-label="Más opciones"
+            >
+              <i data-lucide="more-horizontal" class="w-5 h-5 shrink-0"></i>
+            </summary>
+            <div class="menu-dropdown-body">
+              <span class="dropdown-item-label">Tema</span>
+              <theme-toggle id="app-theme-toggle" class="hidden">
+                <button
+                  type="button"
+                  aria-label="Toggle theme"
+                  class="w-9 h-9 flex items-center justify-center rounded-md border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-700"
+                >
+                  <i data-lucide="sun" class="w-5 h-5 text-slate-600 dark:hidden"></i>
+                  <i data-lucide="moon" class="w-5 h-5 text-amber-400 hidden dark:block"></i>
+                </button>
+              </theme-toggle>
+            </div>
+          </details>
+        </div>
       </div>
 
       <!-- Contenedor del Editor -->
-      <div id="editor-container"></div>
+      <div id="editor-container" class="flex-1 overflow-hidden relative bg-white dark:bg-slate-900">
+        <!-- Skeleton mientras carga el editor y los datos -->
+        <div
+          id="editor-skeleton"
+          class="p-6 space-y-4 animate-pulse bg-white dark:bg-slate-900"
+          aria-hidden="true"
+        >
+          <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/3"></div>
+          <div class="space-y-2 pl-4">
+            <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-2/3"></div>
+            <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/2"></div>
+            <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-3/4"></div>
+            <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-2/5"></div>
+          </div>
+          <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/4 pt-2"></div>
+          <div class="space-y-2 pl-4">
+            <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-4/5"></div>
+            <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-3/5"></div>
+          </div>
+        </div>
+      </div>
 
       <!-- Acciones Inferiores -->
       <div
         class="px-6 py-5 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex flex-col gap-3"
       >
-        <button
-          id="btn-save"
-          class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-4 rounded-lg shadow-sm dark:shadow-lg flex justify-center items-center gap-2 transition-all"
-        >
-          <i data-lucide="save" class="w-5 h-5"></i>
-          <span>Guardar permanentemente en data.json</span>
-        </button>
-        <button
-          id="btn-reset"
-          class="w-full bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 font-semibold py-2 px-4 rounded-lg transition-colors text-sm border border-slate-200 dark:border-transparent"
-        >
-          Descartar cambios (Recargar)
-        </button>
+        <!-- Skeleton mientras carga -->
+        <div id="actions-skeleton" class="flex flex-col gap-3 animate-pulse" aria-hidden="true">
+          <div class="h-12 bg-slate-200 dark:bg-slate-700 rounded-lg w-full"></div>
+          <div class="h-9 bg-slate-200 dark:bg-slate-700 rounded-lg w-full"></div>
+        </div>
+
+        <div id="actions-buttons" class="hidden flex-col gap-3">
+          <button
+            id="btn-save"
+            disabled
+            class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-4 rounded-lg shadow-sm dark:shadow-lg flex justify-center items-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <i data-lucide="save" class="w-5 h-5 shrink-0"></i>
+            <span>Guardar</span>
+          </button>
+          <button
+            id="btn-reset"
+            disabled
+            class="w-full bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 font-semibold py-2 px-4 rounded-lg transition-colors text-sm border border-slate-200 dark:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Descartar
+          </button>
+        </div>
       </div>
     </div>
 
     <!-- Panel Derecho: Preview -->
-    <div id="right-panel" class="bg-slate-100 dark:bg-slate-800">
-      <!-- Top bar del iframe -->
+    <div
+      id="right-panel"
+      class="w-[65%] flex flex-col bg-slate-100 dark:bg-slate-800 flex-1 overflow-hidden"
+    >
+      <!-- Top bar del preview con soporte responsivo -->
       <div
-        class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 py-3 flex justify-between items-center shadow-sm dark:shadow-slate-900/50 z-10"
+        id="preview-top-container"
+        class="preview-top-container bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-slate-900/50 z-10"
       >
-        <div class="flex items-center gap-4">
-          <span class="font-medium text-slate-700 dark:text-slate-200 flex items-center gap-2">
-            <i data-lucide="eye" class="w-4 h-4"></i>
-            <span>Vista previa en vivo</span>
-          </span>
-          <!-- Template Theme Toggle -->
-          <button
-            id="theme-toggle-template"
-            class="p-1 px-2 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-semibold flex items-center transition-colors border border-slate-200 dark:border-slate-700"
-            title="Toggle Template Theme"
-          >
-            <i id="template-icon-light" data-lucide="sun" class="hidden w-4 h-4 mr-1"></i>
-            <i id="template-icon-dark" data-lucide="moon" class="hidden w-4 h-4 mr-1"></i>
-            <span>Template</span>
-          </button>
-
-          <!-- Viewport Toggle -->
-          <div class="flex items-center gap-2" aria-label="Viewport">
-            <div
-              class="inline-flex overflow-hidden rounded border border-slate-200 dark:border-slate-700"
-              role="group"
-              aria-label="Viewport selector"
+        <!-- Fila 1: Encabezado del preview (título, estado de sincronización y validación) -->
+        <div class="preview-header-bar">
+          <div class="preview-title-wrap">
+            <a
+              href="/"
+              class="md:hidden text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 font-semibold inline-flex items-center p-1 transition-colors shrink-0"
+              title="Volver a templates"
             >
-              <button
-                id="viewport-desktop"
-                type="button"
-                class="px-2.5 py-1.5 text-xs font-semibold bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                title="Desktop (600px)"
-              >
-                Desktop (600px)
-              </button>
-              <button
-                id="viewport-mobile"
-                type="button"
-                class="px-2.5 py-1.5 text-xs font-semibold bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border-l border-slate-200 dark:border-slate-700"
-                title="Mobile (375px)"
-              >
-                Mobile (375px)
-              </button>
-              <button
-                id="viewport-custom"
-                type="button"
-                class="px-2.5 py-1.5 text-xs font-semibold bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border-l border-slate-200 dark:border-slate-700"
-                title="Custom"
-              >
-                Custom
-              </button>
+              <i data-lucide="arrow-left" class="w-5 h-5 shrink-0"></i>
+            </a>
+            <!-- Skeleton de Vista previa en vivo (icono y texto) -->
+            <div
+              id="preview-title-skeleton"
+              class="flex items-center gap-2 animate-pulse shrink-0"
+              aria-hidden="true"
+            >
+              <div class="w-4 h-4 rounded bg-slate-200 dark:bg-slate-700 shrink-0"></div>
+              <div class="h-4 w-28 sm:w-32 bg-slate-200 dark:bg-slate-700 rounded"></div>
             </div>
+            <span
+              id="preview-title"
+              class="hidden font-medium text-slate-700 dark:text-slate-200 items-center gap-2 shrink-0 text-sm sm:text-base"
+            >
+              <i data-lucide="eye" class="w-4 h-4 shrink-0"></i>
+              <span>Vista previa en vivo</span>
+            </span>
+          </div>
 
-            <div id="viewport-custom-input-wrap" class="hidden items-center gap-2">
-              <input
-                id="viewport-custom-input"
-                type="number"
-                inputmode="numeric"
-                min="280"
-                max="1200"
-                step="1"
-                class="w-24 px-2 py-1 text-xs rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-4 focus:ring-sky-500/10 dark:focus:ring-sky-400/10"
-                aria-label="Custom viewport width"
-              />
-              <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">px</span>
-            </div>
+          <div class="preview-status-wrap">
+            <!-- Skeleton de estado de sincronización -->
+            <div
+              id="sync-status-skeleton"
+              class="h-5 w-20 sm:w-24 bg-slate-200 dark:bg-slate-700 rounded animate-pulse"
+              aria-hidden="true"
+            ></div>
+            <span
+              id="sync-status"
+              class="hidden text-green-600 font-medium text-xs sm:text-sm items-center gap-1 shrink-0"
+            >
+              <span class="w-2 h-2 rounded-full bg-green-500"></span> Sincronizado
+            </span>
+            <div
+              id="preview-render-error"
+              class="preview-render-error"
+              role="status"
+              aria-live="polite"
+              hidden
+            ></div>
+            <span
+              id="esp-validation-status"
+              class="esp-validation-status"
+              role="status"
+              aria-live="polite"
+              aria-hidden="true"
+              tabindex="0"
+            ></span>
           </div>
         </div>
-        <div class="flex items-center gap-3">
-          <span id="sync-status" class="text-green-600 font-medium text-sm flex items-center gap-1">
-            <span class="w-2 h-2 rounded-full bg-green-500"></span> Sincronizado
-          </span>
+
+        <!-- Fila 2: Barra contextual (Viewport, Tema de Template y Copiar HTML) -->
+        <div id="preview-contextual-bar" class="preview-contextual-bar">
+          <!-- Skeleton de controles del topbar -->
           <div
-            id="preview-render-error"
-            class="preview-render-error"
-            role="status"
-            aria-live="polite"
-            hidden
-          ></div>
-          <span
-            id="esp-validation-status"
-            class="esp-validation-status"
-            role="status"
-            aria-live="polite"
+            id="topbar-skeleton"
+            class="flex items-center gap-2 sm:gap-3 animate-pulse"
             aria-hidden="true"
-          ></span>
-          <!-- Copiar HTML -->
-          <button
-            id="btn-copy-html"
-            type="button"
-            class="p-1 px-2 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-semibold flex items-center gap-1 transition-colors border border-slate-200 dark:border-slate-700"
-            title="Copiar HTML final"
           >
-            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-            Copiar HTML
-          </button>
+            <div class="h-7 w-16 sm:w-20 bg-slate-200 dark:bg-slate-700 rounded"></div>
+            <div class="h-7 w-36 sm:w-48 bg-slate-200 dark:bg-slate-700 rounded"></div>
+          </div>
+
+          <!-- Controles del top bar -->
+          <div id="topbar-controls" class="hidden items-center gap-2 sm:gap-4">
+            <!-- Template Theme Toggle -->
+            <button
+              id="theme-toggle-template"
+              class="p-1 px-2 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-semibold flex items-center transition-colors border border-slate-200 dark:border-slate-700 shrink-0"
+              title="Toggle Template Theme"
+            >
+              <i
+                id="template-icon-light"
+                data-lucide="sun"
+                class="hidden w-4 h-4 mr-1 shrink-0"
+              ></i>
+              <i
+                id="template-icon-dark"
+                data-lucide="moon"
+                class="hidden w-4 h-4 mr-1 shrink-0"
+              ></i>
+              <span>Template</span>
+            </button>
+
+            <!-- Viewport Toggle -->
+            <div class="flex items-center gap-2" aria-label="Viewport">
+              <div
+                class="inline-flex overflow-hidden rounded border border-slate-200 dark:border-slate-700"
+                role="group"
+                aria-label="Viewport selector"
+              >
+                <button
+                  id="viewport-desktop"
+                  type="button"
+                  class="px-2 sm:px-2.5 py-1 sm:py-1.5 text-xs font-semibold bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shrink-0"
+                  title="Desktop (600px)"
+                >
+                  <span class="viewport-label-full">Desktop (600px)</span>
+                  <span class="viewport-label-short">Desk</span>
+                </button>
+                <button
+                  id="viewport-mobile"
+                  type="button"
+                  class="px-2 sm:px-2.5 py-1 sm:py-1.5 text-xs font-semibold bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border-l border-slate-200 dark:border-slate-700 shrink-0"
+                  title="Mobile (375px)"
+                >
+                  <span class="viewport-label-full">Mobile (375px)</span>
+                  <span class="viewport-label-short">Mob</span>
+                </button>
+                <button
+                  id="viewport-custom"
+                  type="button"
+                  class="px-2 sm:px-2.5 py-1 sm:py-1.5 text-xs font-semibold bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border-l border-slate-200 dark:border-slate-700 shrink-0"
+                  title="Custom"
+                >
+                  Custom
+                </button>
+              </div>
+
+              <div id="viewport-custom-input-wrap" class="hidden items-center gap-1 sm:gap-2">
+                <input
+                  id="viewport-custom-input"
+                  type="number"
+                  inputmode="numeric"
+                  min="280"
+                  max="1200"
+                  step="1"
+                  class="w-16 sm:w-24 px-1.5 sm:px-2 py-1 text-xs rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-4 focus:ring-sky-500/10 dark:focus:ring-sky-400/10"
+                  aria-label="Custom viewport width"
+                />
+                <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">px</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Copiar HTML -->
+          <div class="preview-copy-wrap">
+            <!-- Skeleton de Copiar HTML -->
+            <div
+              id="copy-html-skeleton"
+              class="h-7 w-20 sm:w-24 bg-slate-200 dark:bg-slate-700 rounded animate-pulse"
+              aria-hidden="true"
+            ></div>
+            <button
+              id="btn-copy-html"
+              type="button"
+              class="hidden p-1 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-semibold items-center gap-1 transition-colors border border-slate-200 dark:border-slate-700 shrink-0"
+              title="Copiar HTML final"
+            >
+              <i data-lucide="copy" class="w-3.5 h-3.5 shrink-0"></i>
+              <span>Copiar HTML</span>
+            </button>
+          </div>
         </div>
       </div>
 
       <!-- Preview area -->
-      <div class="flex-1 overflow-auto">
-        <div class="min-h-full flex justify-center p-6">
+      <div class="flex-1 overflow-auto preview-content-area">
+        <div class="min-h-full flex justify-center p-3 sm:p-4 md:p-6">
           <div
             id="preview-frame"
-            class="bg-white dark:bg-slate-900 overflow-hidden"
+            class="bg-white dark:bg-slate-900 overflow-hidden shadow-sm"
             style="width: 600px"
           >
+            <!-- Skeleton mientras se compila y carga el primer render -->
+            <div id="preview-skeleton" class="p-8 space-y-6 animate-pulse" aria-hidden="true">
+              <div
+                class="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-800"
+              >
+                <div class="h-6 bg-slate-200 dark:bg-slate-700 rounded w-28"></div>
+                <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded w-16"></div>
+              </div>
+              <div class="h-36 bg-slate-200 dark:bg-slate-700 rounded-lg w-full"></div>
+              <div class="space-y-3">
+                <div class="h-5 bg-slate-200 dark:bg-slate-700 rounded w-3/4"></div>
+                <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-full"></div>
+                <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-5/6"></div>
+                <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-4/6"></div>
+              </div>
+              <div class="pt-2">
+                <div class="h-10 bg-slate-200 dark:bg-slate-700 rounded-md w-36 mx-auto"></div>
+              </div>
+              <div
+                class="pt-6 border-t border-slate-100 dark:border-slate-800 flex justify-center space-x-4"
+              >
+                <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-16"></div>
+                <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-16"></div>
+              </div>
+            </div>
+
             <!-- Iframe donde volcaremos el HTML vivo -->
-            <iframe id="preview-iframe" title="Template Preview"></iframe>
+            <iframe id="preview-iframe" title="Template Preview" class="hidden"></iframe>
           </div>
         </div>
-      </div>
-
-      <!-- Bottom bar: current width indicator -->
-      <div
-        class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 px-6 py-2 text-xs text-slate-600 dark:text-slate-300"
-      >
-        Ancho actual: <span id="viewport-width-indicator" class="font-semibold">600px</span>
       </div>
     </div>
 
@@ -255,6 +453,56 @@
         <button id="btn-copy-cancel" type="button" class="btn-copy-cancel">Cancelar</button>
       </div>
     </dialog>
+
+    <!-- Mobile Tab Switching & Accessibility Controller -->
+    <script>
+      (function () {
+        function initMobileTabs() {
+          const btnPreview = document.getElementById("tab-btn-preview");
+          const btnEditor = document.getElementById("tab-btn-editor");
+          if (!btnPreview || !btnEditor) return;
+
+          function switchTab(activeTab) {
+            const isPreview = activeTab === "preview";
+
+            btnPreview.classList.toggle("active", isPreview);
+            btnPreview.setAttribute("aria-selected", isPreview ? "true" : "false");
+
+            btnEditor.classList.toggle("active", !isPreview);
+            btnEditor.setAttribute("aria-selected", !isPreview ? "true" : "false");
+
+            document.body.setAttribute("data-mobile-tab", activeTab);
+          }
+
+          btnPreview.addEventListener("click", () => switchTab("preview"));
+          btnEditor.addEventListener("click", () => switchTab("editor"));
+
+          // Iniciar por defecto en la pestaña Vista previa en móvil
+          if (!document.body.hasAttribute("data-mobile-tab")) {
+            document.body.setAttribute("data-mobile-tab", "preview");
+          }
+        }
+
+        // Cerrar menú desplegable ⋯ al hacer click fuera
+        document.addEventListener("click", (e) => {
+          const menu = document.getElementById("editor-more-menu");
+          if (
+            menu &&
+            menu.hasAttribute("open") &&
+            e.target &&
+            !menu.contains(/** @type {Node} */ (e.target))
+          ) {
+            menu.removeAttribute("open");
+          }
+        });
+
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", initMobileTabs);
+        } else {
+          initMobileTabs();
+        }
+      })();
+    </script>
 
     <!-- Preview App Entry Point -->
     <script type="module" src="/features/preview/main.js"></script>

@@ -37,7 +37,22 @@ describe("preview-status (controlador de estado visual)", () => {
     expect(syncStatus.innerHTML).toContain("Guardado");
   });
 
-  test("esp formatea variables faltantes y añade visibilidad", () => {
+  test("sync preserva la clase hidden si el indicador aún está oculto", () => {
+    const syncStatus = createMockElement("hidden");
+    const status = createPreviewStatus({
+      syncStatus,
+      espStatus: null,
+      renderErrorView: { show: () => {}, clear: () => {} },
+    });
+
+    status.sync("Compilando...", "text-sky-500", "bg-sky-500");
+
+    expect(syncStatus.className).toContain("hidden");
+    expect(syncStatus.className).toContain("text-sky-500");
+    expect(syncStatus.innerHTML).toContain("Compilando...");
+  });
+
+  test("esp resume variables faltantes y expone sus nombres como detalle", () => {
     const espStatus = createMockElement();
     const status = createPreviewStatus({
       syncStatus: createMockElement(),
@@ -47,12 +62,16 @@ describe("preview-status (controlador de estado visual)", () => {
 
     status.esp({ missing: ["first_name", "cta_url"], unused: [] });
 
-    expect(espStatus.textContent).toBe("⚠️ Faltantes: first_name, cta_url");
-    expect(espStatus.className).toBe("esp-validation-status visible");
+    expect(espStatus.textContent).toBe("⚠️ 2 variables faltantes");
+    expect(espStatus.getAttribute("data-details")).toBe("Faltantes: first_name, cta_url");
+    expect(espStatus.getAttribute("aria-label")).toBe(
+      "2 variables faltantes. Faltantes: first_name, cta_url",
+    );
+    expect(espStatus.className).toBe("esp-validation-status visible warning");
     expect(espStatus.getAttribute("aria-hidden")).toBe("false");
   });
 
-  test("esp formatea variables sobrantes (sin uso)", () => {
+  test("esp resume claves sin uso como información ámbar y expone el detalle", () => {
     const espStatus = createMockElement();
     const status = createPreviewStatus({
       syncStatus: createMockElement(),
@@ -60,14 +79,18 @@ describe("preview-status (controlador de estado visual)", () => {
       renderErrorView: { show: () => {}, clear: () => {} },
     });
 
-    status.esp({ missing: [], unused: ["extra_key"] });
+    status.esp({ missing: [], unused: ["extra_key", "promo_code"] });
 
-    expect(espStatus.textContent).toBe("ℹ️ Sin uso: extra_key");
-    expect(espStatus.className).toBe("esp-validation-status visible");
+    expect(espStatus.textContent).toBe("ⓘ 2 claves sin usar");
+    expect(espStatus.getAttribute("data-details")).toBe("Sin uso: extra_key, promo_code");
+    expect(espStatus.getAttribute("aria-label")).toBe(
+      "2 claves sin usar. Sin uso: extra_key, promo_code",
+    );
+    expect(espStatus.className).toBe("esp-validation-status visible info");
     expect(espStatus.getAttribute("aria-hidden")).toBe("false");
   });
 
-  test("esp combina faltantes y sin uso con delimitador", () => {
+  test("esp separa los resúmenes de faltantes y claves sin uso", () => {
     const espStatus = createMockElement();
     const status = createPreviewStatus({
       syncStatus: createMockElement(),
@@ -77,8 +100,9 @@ describe("preview-status (controlador de estado visual)", () => {
 
     status.esp({ missing: ["first_name"], unused: ["legacy"] });
 
-    expect(espStatus.textContent).toBe("⚠️ Faltantes: first_name · ℹ️ Sin uso: legacy");
-    expect(espStatus.className).toBe("esp-validation-status visible");
+    expect(espStatus.textContent).toBe("⚠️ 1 variable faltante · ⓘ 1 clave sin usar");
+    expect(espStatus.getAttribute("data-details")).toBe("Faltantes: first_name · Sin uso: legacy");
+    expect(espStatus.className).toBe("esp-validation-status visible warning");
   });
 
   test("esp oculta el contenedor cuando no hay mensajes o datos son nulos", () => {
@@ -93,6 +117,8 @@ describe("preview-status (controlador de estado visual)", () => {
 
     expect(espStatus.textContent).toBe("");
     expect(espStatus.className).toBe("esp-validation-status");
+    expect(espStatus.getAttribute("data-details")).toBe("");
+    expect(espStatus.getAttribute("aria-label")).toBe("");
     expect(espStatus.getAttribute("aria-hidden")).toBe("true");
 
     status.esp(null);

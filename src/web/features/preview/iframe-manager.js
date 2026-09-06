@@ -6,6 +6,7 @@
 /**
  * @typedef {Object} IframeManagerConfig
  * @property {HTMLIFrameElement} iframe - The iframe element
+ * @property {HTMLElement | null} [skeleton] - Elemento DOM del skeleton inicial
  * @property {Function} onSyncStatusChange - Callback for sync status updates
  */
 
@@ -16,6 +17,25 @@
  */
 export function createIframeManager(config) {
   const { iframe, onSyncStatusChange } = config;
+  const skeletonEl =
+    config.skeleton !== undefined
+      ? config.skeleton
+      : typeof document !== "undefined"
+        ? document.getElementById("preview-skeleton")
+        : null;
+
+  /**
+   * Oculta el skeleton inicial del preview y muestra el iframe.
+   * @returns {void}
+   */
+  function hideSkeleton() {
+    if (skeletonEl && skeletonEl.classList) {
+      skeletonEl.classList.add("hidden");
+    }
+    if (iframe && iframe.classList) {
+      iframe.classList.remove("hidden");
+    }
+  }
 
   /**
    * Update iframe HTML content
@@ -23,6 +43,7 @@ export function createIframeManager(config) {
    * @returns {void}
    */
   function updateContent(htmlContent) {
+    hideSkeleton();
     const doc = iframe.contentWindow.document;
     doc.open();
     doc.write(htmlContent);
@@ -32,7 +53,9 @@ export function createIframeManager(config) {
     applyTemplateTheme();
 
     // Add spacing for preview
-    doc.body.style.padding = "32px 0";
+    if (doc.body) {
+      doc.body.style.padding = "32px 0";
+    }
 
     onSyncStatusChange("Sincronizado", "text-green-600 font-medium", "bg-green-500");
   }
@@ -43,11 +66,13 @@ export function createIframeManager(config) {
    * @returns {void}
    */
   function loadTemplate(templateName) {
+    hideSkeleton();
     iframe.src = `/templates/${templateName}/index.html`;
     iframe.onload = () => {
       applyTemplateTheme();
-      iframe.contentWindow.document.body.style.padding = "32px 0";
-      checkDarkModeWarning(templateName);
+      if (iframe.contentWindow?.document?.body) {
+        iframe.contentWindow.document.body.style.padding = "32px 0";
+      }
     };
   }
 
@@ -95,26 +120,6 @@ export function createIframeManager(config) {
   }
 
   /**
-   * Check if dark mode is properly applied and warn if not
-   * @returns {void}
-   */
-  function checkDarkModeWarning() {
-    const isTemplateDark = localStorage.getItem("template-theme") === "dark";
-    const warning = document.getElementById("dark-mode-warning");
-
-    setTimeout(() => {
-      if (
-        isTemplateDark &&
-        !iframe.contentWindow.document.documentElement.classList.contains("dark")
-      ) {
-        if (warning) warning.style.display = "block";
-      } else {
-        if (warning) warning.style.display = "none";
-      }
-    }, 600);
-  }
-
-  /**
    * Toggle template theme
    * @param {string} _templateName - For internal tracking (not critical)
    * @returns {void}
@@ -142,5 +147,6 @@ export function createIframeManager(config) {
     applyTemplateTheme,
     toggleTheme,
     reset,
+    hideSkeleton,
   };
 }

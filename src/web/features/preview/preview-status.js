@@ -38,7 +38,12 @@ import { createRenderErrorView } from "./render-error-view.js";
 function updateSyncStatusElement(element, text, textColor, dotColor) {
   if (!element) return;
 
-  element.className = `text-sm flex items-center gap-1 ${textColor}`;
+  const isHidden =
+    element.classList && typeof element.classList.contains === "function"
+      ? element.classList.contains("hidden")
+      : typeof element.className === "string" && element.className.includes("hidden");
+
+  element.className = `text-sm flex items-center gap-1 ${textColor}${isHidden ? " hidden" : ""}`;
 
   if (
     typeof document !== "undefined" &&
@@ -52,6 +57,18 @@ function updateSyncStatusElement(element, text, textColor, dotColor) {
   } else {
     element.innerHTML = `<span class="w-2 h-2 rounded-full ${dotColor}"></span> ${text}`;
   }
+}
+
+/**
+ * Devuelve un resumen legible con pluralización para una cantidad de variables.
+ *
+ * @param {number} count
+ * @param {string} singular
+ * @param {string} plural
+ * @returns {string}
+ */
+function formatCount(count, singular, plural) {
+  return `${count} ${count === 1 ? singular : plural}`;
 }
 
 /**
@@ -78,19 +95,35 @@ export function createPreviewStatus(elements) {
       const missing = Array.isArray(result?.missing) ? result.missing : [];
       const unused = Array.isArray(result?.unused) ? result.unused : [];
       const messages = [];
+      const details = [];
 
       if (missing.length > 0) {
-        messages.push(`⚠️ Faltantes: ${missing.join(", ")}`);
+        messages.push(
+          `⚠️ ${formatCount(missing.length, "variable faltante", "variables faltantes")}`,
+        );
+        details.push(`Faltantes: ${missing.join(", ")}`);
       }
       if (unused.length > 0) {
-        messages.push(`ℹ️ Sin uso: ${unused.join(", ")}`);
+        messages.push(`ⓘ ${formatCount(unused.length, "clave sin usar", "claves sin usar")}`);
+        details.push(`Sin uso: ${unused.join(", ")}`);
       }
 
       espStatus.textContent = messages.join(" · ");
       espStatus.className =
-        messages.length > 0 ? "esp-validation-status visible" : "esp-validation-status";
+        messages.length > 0
+          ? `esp-validation-status visible ${missing.length > 0 ? "warning" : "info"}`
+          : "esp-validation-status";
       if (typeof espStatus.setAttribute === "function") {
+        const accessibleMessages = messages
+          .map((message) => message.replace(/^(?:⚠️|ⓘ)\s*/, ""))
+          .join(". ");
+
         espStatus.setAttribute("aria-hidden", messages.length > 0 ? "false" : "true");
+        espStatus.setAttribute("data-details", details.join(" · "));
+        espStatus.setAttribute(
+          "aria-label",
+          messages.length > 0 ? `${accessibleMessages}. ${details.join(". ")}` : "",
+        );
       }
     },
 
