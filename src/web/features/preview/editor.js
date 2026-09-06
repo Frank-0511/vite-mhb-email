@@ -5,6 +5,7 @@
 
 import { JSONEditor } from "https://cdn.jsdelivr.net/npm/vanilla-jsoneditor@3.11.0/standalone.js";
 import { fetchJSON } from "../../shared/utils/http-helpers.js";
+import { filterEditorMenuItems } from "./editor-menu-filter.js";
 
 /**
  * @typedef {Object} EditorConfig
@@ -26,10 +27,17 @@ export async function initializeEditor(config) {
   let initialData = {};
   let isFirstChange = true;
 
+  // Clear placeholder skeleton before mounting the editor
+  const skeleton = container.querySelector("#editor-skeleton");
+  if (skeleton) {
+    skeleton.remove();
+  }
+
   // Update container theme based on app theme
   function updateThemeClass() {
     const isDark = document.documentElement.classList.contains("dark");
-    container.className = isDark ? "jse-theme-dark" : "jse-theme-default";
+    container.classList.remove("jse-theme-dark", "jse-theme-default");
+    container.classList.add(isDark ? "jse-theme-dark" : "jse-theme-default");
   }
 
   updateThemeClass();
@@ -41,20 +49,10 @@ export async function initializeEditor(config) {
   editor = new JSONEditor({
     target: container,
     props: {
+      mode: "text",
       content: { json: {} },
       onRenderMenu(items, _context) {
-        // Filter out 'table' mode which doesn't work with single objects
-        function filterTable(itemList) {
-          return itemList
-            .filter((item) => item.text !== "table" && item.value !== "table")
-            .map((item) => {
-              if (item.items) {
-                return { ...item, items: filterTable(item.items) };
-              }
-              return item;
-            });
-        }
-        return filterTable(items);
+        return filterEditorMenuItems(items);
       },
       onChange: (updatedContent, _previousContent, { contentErrors }) => {
         if (isFirstChange) {
@@ -84,7 +82,7 @@ export async function initializeEditor(config) {
   try {
     const data = await fetchJSON(`/api/data?template=${templateName}`);
     initialData = data;
-    editor.updateProps({ content: { json: data } });
+    editor.updateProps({ mode: "text", content: { json: data } });
     isFirstChange = true;
   } catch (err) {
     console.error("Error loading template data:", err);
@@ -98,7 +96,7 @@ export async function initializeEditor(config) {
     },
     updateContent(data) {
       isFirstChange = true;
-      editor.updateProps({ content: { json: data } });
+      editor.updateProps({ mode: "text", content: { json: data } });
     },
     getInitialData() {
       return initialData;

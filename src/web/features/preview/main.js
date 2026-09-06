@@ -14,6 +14,7 @@ import { initializeEditor } from "./editor.js";
 import { createIframeManager } from "./iframe-manager.js";
 import { setupPreviewHmr } from "./preview-hmr.js";
 import { getTemplateNameFromUrl, renderMissingTemplateError } from "./preview-params.js";
+import { markPreviewReady } from "./preview-ready.js";
 import { createPreviewStatus } from "./preview-status.js";
 import { createRenderAPI } from "./render-api.js";
 import { setupResetButton, setupSaveButton } from "./save-reset.js";
@@ -21,7 +22,7 @@ import "./styles.css";
 import { setupTemplateThemeToggle } from "./theme-manager.js";
 import { setupPreviewViewport } from "./viewport-controls.js";
 
-export { getTemplateNameFromUrl, renderMissingTemplateError };
+export { getTemplateNameFromUrl, markPreviewReady, renderMissingTemplateError };
 
 /**
  * Orquesta la inicialización de todos los subsistemas del preview.
@@ -49,9 +50,12 @@ export async function initializePreview() {
   // Inicializar controlador de estado visual
   const previewStatus = createPreviewStatus();
 
+  const previewSkeleton = document.getElementById("preview-skeleton");
+
   // Inicializar gestor de iframe
   const iframeManager = createIframeManager({
     iframe: iframeEl,
+    skeleton: previewSkeleton,
     onSyncStatusChange: (text, textColor, dotColor) =>
       previewStatus.sync(text, textColor, dotColor),
   });
@@ -65,6 +69,8 @@ export async function initializePreview() {
     onError: (err) => {
       console.error("Render error:", err);
       previewStatus.renderError(err);
+      iframeManager.hideSkeleton();
+      markPreviewReady();
     },
     onStatusChange: (text, textColor, dotColor) => previewStatus.sync(text, textColor, dotColor),
   });
@@ -147,6 +153,9 @@ export async function initializePreview() {
 
   // Modal de Copiar y Descargar HTML
   initCopyHtmlModal({ templateName });
+
+  // Todo listo al 100%: desbloquear acciones e interfaz
+  markPreviewReady();
 }
 
 // Inicialización automática al cargar en navegador
