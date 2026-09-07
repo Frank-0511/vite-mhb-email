@@ -62,8 +62,8 @@ src/
 │   ├── styles/         # CSS especializado para email (Tailwind email config)
 │   └── templates/      # Templates y fixtures (index.html + data.json)
 │       ├── welcome/    # Template de producto (Onboarding)
-│       ├── example/    # Fixture interno de prueba
-│       └── user-created/ # Fixture interno de prueba
+│       ├── example/    # Template de producto
+│       └── user-created/ # Template de producto
 └── web/                # Dashboard Vite (preview + libreria de componentes)
     ├── features/
     │   ├── home/       # Lista de templates
@@ -170,8 +170,6 @@ EmailForge Toolkit define cuatro templates en su catálogo canónico:
 | `password-reset` | Transaccional | En roadmap (MHB-10) | Recuperación de contraseña con token y expiración |
 | `receipt`        | Transaccional | En roadmap (MHB-11) | Recibo de compra con desglose de ítems y totales  |
 | `newsletter`     | Marketing     | En roadmap (MHB-12) | Boletín editorial con desuscripción obligatoria   |
-
-Los scaffolds `example` y `user-created` se preservan aislados como fixtures internos de pruebas y validadores, por lo que no se listan como producto en el dashboard.
 
 ---
 

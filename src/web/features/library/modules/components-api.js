@@ -18,7 +18,7 @@ export const componentsManager = {
       atoms: { name: "Atoms", icon: "building-columns", items: [] },
       molecules: { name: "Molecules", icon: "molecule2", items: [] },
       organisms: { name: "Organisms", icon: "dna", items: [] },
-      other: { name: "Others", icon: "package", items: [] },
+      other: { name: "Templates", icon: "package", items: [] },
     };
 
     for (const comp of components) {
@@ -28,6 +28,7 @@ export const componentsManager = {
       if (path.includes("/atoms/")) type = "atoms";
       else if (path.includes("/molecules/")) type = "molecules";
       else if (path.includes("/organisms/")) type = "organisms";
+      else if (path.includes("/templates/")) type = "other";
 
       groups[type].items.push(comp);
     }

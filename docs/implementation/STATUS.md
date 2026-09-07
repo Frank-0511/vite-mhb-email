@@ -6,7 +6,7 @@
 - Estado: En revisión
 - Implementador: implementador actual
 - Revisor o autoridad de cierre: revisor de email
-- Última actualización: 2026-09-06
+- Última actualización: 2026-09-07
 - Contrato estable: `docs/implementation/PLAN.md`
 
 Este archivo no replica el roadmap. Al iniciar una tarea, registrar solo el ID
@@ -15,21 +15,21 @@ en `En revisión`; otra autoridad decide `Completada`.
 
 ## Entrega para revisión (MHB-09)
 
-- Alcance: arquitectura de arquetipos bajo Atomic Design en `src/emails/partials/templates/` (`starter`, `welcome`, `password-reset`, `receipt`, `newsletter`) descubiertos dinámicamente en tiempo de ejecución por `scripts/generators/archetypes.js` (`@ts-check`), dashboard web limpio en `scripts/vite/plugins/dashboard.js` mostrando únicamente templates reales en disco (`welcome`) y excluyendo fixtures internos (`example`, `user-created`), generador interactivo (`--list`, creación desde cero o con arquetipo poblando `index.html` y `data.json`), CLI interactivo (`askCreationMode`, `askSelectArchetype`), eliminación de utilidades redundantes (`template-catalog.js`), eliminación del directorio residual `welcome2` y actualización de documentación y tests.
+- Alcance: arquitectura de arquetipos bajo Atomic Design en `src/emails/partials/templates/` (`starter`, `welcome`, `password-reset`, `receipt`, `newsletter`) descubiertos dinámicamente en tiempo de ejecución por `scripts/generators/archetypes.js` (`@ts-check`), dashboard web en `scripts/vite/plugins/dashboard.js` mostrando todos los templates presentes en disco (`src/emails/templates/`), generador interactivo (`--list`, creación desde cero o con arquetipo poblando `index.html` y `data.json`), CLI interactivo (`askCreationMode`, `askSelectArchetype`), eliminación de utilidades redundantes (`template-catalog.js`), eliminación del directorio residual `welcome2` y actualización de documentación y tests.
 - Dependencias: MHB-06 y MHB-08 `Completada`.
 - Rama: `feature/mhb-09`.
 - Hechos de entrega:
   1. Módulo de descubrimiento dinámico en `scripts/generators/archetypes.js` con tipado JSDoc estricto (`@ts-check`): sin listas estáticas ni arrays hardcodeados. Descubre dinámicamente arquetipos en disco mediante `getAvailableArchetypes(rootDir)` inspeccionando `src/emails/partials/templates/` y obtiene metadata vía `getArchetypeById(id, rootDir)`.
-  2. Dashboard web limpio en `scripts/vite/plugins/dashboard.js` y `src/web/features/home/index.html`: renderiza únicamente los templates reales creados en `src/emails/templates/` (actualmente `welcome`). Cero tarjetas fantasma/dummies ni enlaces rotos. Excluye fixtures internos (`example`, `user-created`).
+  2. Dashboard web en `scripts/vite/plugins/dashboard.js` y `src/web/features/home/index.html`: renderiza todos los templates presentes en `src/emails/templates/` (actualmente `welcome`, `example` y `user-created`). Se eliminó la constante `INTERNAL_FIXTURES` y el filtro que excluía `example` y `user-created` del catálogo y de `/api/template-sizes`. Cero tarjetas fantasma ni enlaces rotos para templates inexistentes.
   3. Cinco arquetipos de template creados bajo Atomic Design en `src/emails/partials/templates/`: `welcome` (onboarding), `password-reset` (transaccional de seguridad), `receipt` (recibo de compra con desglose de ítems y totales), `newsletter` (boletín con artículos y desuscripción) y `starter` (base modular limpia). Cada uno provisto de `index.html` (componente Maizzle email-safe con dark mode), `schema.json` (metadata y variables ESP) y `data.json` (datos de contexto iniciales).
   4. Generador (`scripts/generators/generate-email.js`) y CLI interactivo (`scripts/cli/actions.js`, `scripts/cli/helpers.js`): soporte para `--list`, pregunta interactiva "¿Cómo deseas crear el template? [1] Desde cero / [2] Basado en un template existente", listado dinámico de opciones descubiertas en disco y generación con populación de `index.html` y `data.json`.
   5. Limpieza de residuales y documentación: eliminación de `scripts/shared/template-catalog.js` redundante; directorio residual `src/emails/templates/welcome2` removido; ejemplo en `scripts/build/build-selective.js` actualizado a `welcome`; `README.md` documentando la arquitectura atómica y comandos CLI.
-  6. Suite de pruebas con 406 pruebas en verde y cero fallos en 45 archivos (4 en `archetypes.test.js`, 7 en `dashboard.test.js` y 14 en `helpers.test.js`).
+  6. Suite de pruebas con 412 pruebas en verde y cero fallos en 48 archivos (incluyendo `archetypes.test.js`, `dashboard.test.js` y `helpers.test.js` actualizados para reflejar que todos los templates en disco se listan sin exclusiones).
 - Controles automáticos ejecutados:
   - `bun run check:task-branch` → Verde (`feature/mhb-09`).
   - `bun run lint` → Verde (HTMLHint con 24 archivos, ESLint, markdownlint, JSON, Stylelint sin errores).
   - `bun run typecheck` → Verde (`tsc --noEmit` sin errores).
-  - `bun run test` → Verde (406 pass, 0 fail, 1080 expects en 45 archivos).
+  - `bun run test` → Verde (412 pass, 0 fail, 1084 expects en 48 archivos).
   - `bun run format:check` → Verde (Prettier verificado en todo el proyecto).
   - `bun run build` → Verde (3 templates compilados exitosamente).
   - `bun run validate-email` → Verde (0 errores, 3 warnings conocidos `link-targets`, 1 info `company`).
@@ -37,7 +37,7 @@ en `En revisión`; otra autoridad decide `Completada`.
 - Controles manuales y smoke ejecutados:
   - Descubrimiento dinámico comprobado: `bun scripts/generators/generate-email.js --list` descubre y lista los 5 arquetipos en disco.
   - Creación de template con arquetipo comprobada: genera `index.html` y `data.json` consistentes y listos para Maizzle.
-  - Verificación del dashboard web: renderiza únicamente `welcome` con iframe interactivo y métricas de tamaño, sin tarjetas fantasma ni scaffolds.
+  - Verificación del dashboard web: renderiza `welcome`, `example` y `user-created` con iframe interactivo y métricas de tamaño, sin tarjetas fantasma.
 - Riesgo residual: los 3 warnings `link-targets` y el info `company` provienen de templates base asignados a MHB-21.
 - Estado: `En revisión`.
 
@@ -196,6 +196,7 @@ en `En revisión`; otra autoridad decide `Completada`.
 | 2026-09-05 | MHB-07 | Suite, gates y smoke de render      | Verde     | 279 pruebas verdes, lint, typecheck, format:check, build, validate-email y ciclo 422/200 verificado.                                            |
 | 2026-09-06 | MHB-08 | Suite, gates y rediseño exportación | Verde     | 386 pruebas verdes, lint, typecheck, format:check, build, validate-email y UX moderna de exportación verificado.                                |
 | 2026-09-06 | MHB-09 | Catálogo, dashboard y gates         | Verde     | 428 pruebas verdes, lint, typecheck, format:check, build, validate-email y smoke sin enlaces rotos verificado.                                  |
+| 2026-09-07 | MHB-09 | Corrección INTERNAL_FIXTURES        | Verde     | Se eliminó el filtro que excluía `example` y `user-created`; tests actualizados; 412 pass, 0 fail, 1084 expects en 48 archivos.                 |
 
 ## Ejecuciones delegadas
 
@@ -435,6 +436,6 @@ en `En revisión`; otra autoridad decide `Completada`.
   la rama `feature/mhb-24` queda preservada hasta que se decida merge o PR.
 - MHB-07: `Completada`; integrada en `master` en `708d8d7`.
 - MHB-08: `Completada`; rama `feature/mhb-08`, commit `1999aac`; cierre autorizado por el usuario tras validación de controles y smoke manual.
-- MHB-09: `En revisión`; rama `feature/mhb-09`; catálogo dinámico en disco, dashboard limpio con templates reales, 5 arquetipos atómicos en partials/templates leídos dinámicamente, soporte en generador/CLI y 413 pruebas verdes.
+- MHB-09: `En revisión`; rama `feature/mhb-09`; catálogo dinámico en disco, dashboard sin exclusiones (todos los templates en `src/emails/templates/` visibles), corrección de `INTERNAL_FIXTURES` eliminada, 5 arquetipos atómicos en partials/templates leídos dinámicamente, soporte en generador/CLI y 412 pruebas verdes.
 - Próxima acción inmediata: revisión independiente de email para confirmar aceptación y cierre de MHB-09.
 - Siguiente tarea del roadmap: MHB-10 (bloqueada; depende de MHB-06 y MHB-09).
