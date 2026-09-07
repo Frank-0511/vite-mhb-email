@@ -2,7 +2,7 @@
 /**
  * Build selective por template
  * Uso: bun run build-selective <templateName>
- * Ejemplo: bun run build-selective user-created
+ * Ejemplo: bun run build-selective welcome
  *
  * Genera dist/<templateName>.html sin afectar los otros templates.
  * No muta tailwind.config.js; el CSS de email lo gestiona
@@ -23,7 +23,7 @@ try {
 } catch {
   console.error("❌ Template name must use only lowercase letters, numbers, and hyphens");
   console.error("Usage: bun run build-selective <templateName>");
-  console.error("Example: bun run build-selective user-created");
+  console.error("Example: bun run build-selective welcome");
   process.exit(1);
 }
 

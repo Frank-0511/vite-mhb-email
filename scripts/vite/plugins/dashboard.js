@@ -3,19 +3,115 @@ import { globSync } from "glob";
 import { resolve } from "node:path";
 import { getProjectPaths } from "../../shared/paths.js";
 
-// Build the template list for the dashboard
+/** Fixtures internos y scaffolds de desarrollo que no deben listarse en el dashboard */
+const INTERNAL_FIXTURES = new Set(["example", "user-created"]);
+
+/**
+ * Retorna los templates activos creados en `src/emails/templates/` para el dashboard.
+ * Excluye fixtures internos y scaffolds de prueba (example, user-created).
+ *
+ * @param {string} rootDir
+ * @returns {Array<{ id: string, name: string, title: string, path: string, status: string, category: string, description: string, hasSource: boolean, isBuilt: boolean }>}
+ */
 export function getTemplates(rootDir) {
   const paths = getProjectPaths(rootDir);
-  return globSync("src/emails/templates/*/index.html").map((file) => {
+  const templateFiles = globSync("src/emails/templates/*/index.html", { cwd: rootDir });
+
+  const templates = [];
+  for (const file of templateFiles) {
     const name = file.split("/").slice(-2, -1)[0];
+    if (INTERNAL_FIXTURES.has(name)) {
+      continue;
+    }
+
     const dataPath = paths.templateData(name);
-    const data = fs.existsSync(dataPath) ? fs.readJsonSync(dataPath) : {};
-    return {
+    /** @type {Record<string, unknown>} */
+    let data = {};
+    if (fs.existsSync(dataPath)) {
+      try {
+        data = fs.readJsonSync(dataPath);
+      } catch {
+        // Fallback a objeto vacío
+      }
+    }
+
+    const distPath = resolve(paths.distDir, `${name}.html`);
+    const title = (typeof data.titleTemplate === "string" && data.titleTemplate) || name;
+    const description =
+      (typeof data.previewText === "string" && data.previewText) || `Template ${name}`;
+
+    templates.push({
+      id: name,
       name,
-      title: data.titleTemplate || name,
+      title,
       path: `/templates/${name}/index.html`,
-    };
-  });
+      status: "available",
+      category: "Email",
+      description,
+      hasSource: true,
+      isBuilt: fs.existsSync(distPath),
+    });
+  }
+
+  templates.sort((a, b) => a.name.localeCompare(b.name));
+  return templates;
+}
+
+/**
+ * Renderiza la tarjeta de un template real y activo con iframe y enlace a preview.
+ *
+ * @param {{ name: string, title: string, path: string }} template
+ * @returns {string}
+ */
+function renderTemplateCard({ name, title, path }) {
+  return `
+      <a
+        href="/preview?template=${name}"
+        class="block bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm dark:shadow-slate-900/50 hover:border-sky-400 dark:hover:border-sky-500 hover:shadow-lg dark:hover:shadow-sky-500/30 transition-all duration-300 overflow-hidden group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500"
+      >
+        <!-- Preview Section -->
+        <div class="preview-wrapper border-b border-slate-200 dark:border-slate-700 group-hover:border-sky-300 dark:group-hover:border-sky-500 transition-colors bg-gradient-to-br from-slate-50 to-white dark:from-slate-800 dark:to-slate-900">
+          <iframe src="${path}" title="Preview: ${title}" scrolling="no" tabindex="-1"></iframe>
+        </div>
+
+        <!-- Content Section -->
+        <div class="p-6 space-y-4">
+          <!-- Title -->
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors flex items-center gap-2">
+              <span class="text-amber-500 dark:text-amber-400 shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                  <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+              </span>
+              <span>${title}</span>
+            </h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">/templates/${name}/</p>
+          </div>
+
+          <!-- Divider -->
+          <div class="border-t border-slate-200 dark:border-slate-700"></div>
+
+          <!-- Size Badge & Status -->
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">Size</span>
+            </div>
+            <div class="template-size-badge-${name} flex items-center gap-2">
+              <span class="text-sm font-semibold text-slate-600 dark:text-slate-300">
+                <span class="template-size-${name}">—</span>
+              </span>
+              <span class="template-status-${name} w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600 transition-colors"></span>
+            </div>
+          </div>
+
+          <!-- Gmail Limit Indicator -->
+          <div class="text-xs text-slate-500 dark:text-slate-400 mt-2">
+            <span>Gmail limit: 102KB</span>
+          </div>
+        </div>
+      </a>`;
 }
 
 export const dashboardPlugin = (rootDir) => ({
@@ -56,56 +152,14 @@ export const dashboardPlugin = (rootDir) => ({
       if (ctx.filename.includes("/templates/")) return html;
 
       const templates = getTemplates(rootDir);
-      const cards = templates
-        .map(
-          ({ name, title, path }) => `
-      <a
-        href="/preview?template=${name}"
-        class="block bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm dark:shadow-slate-900/50 hover:border-sky-400 dark:hover:border-sky-500 hover:shadow-lg dark:hover:shadow-sky-500/30 transition-all duration-300 overflow-hidden group"
-      >
-        <!-- Preview Section -->
-        <div class="preview-wrapper border-b border-slate-200 dark:border-slate-700 group-hover:border-sky-300 dark:group-hover:border-sky-500 transition-colors bg-gradient-to-br from-slate-50 to-white dark:from-slate-800 dark:to-slate-900">
-          <iframe src="${path}" title="Preview: ${title}" scrolling="no" tabindex="-1"></iframe>
-        </div>
-
-        <!-- Content Section -->
-        <div class="p-6 space-y-4">
-          <!-- Title -->
-          <div>
-            <h2 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-500 dark:text-amber-400">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                <polyline points="22,6 12,13 2,6"></polyline>
-              </svg>
-              ${title}
-            </h2>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">/templates/${name}/</p>
-          </div>
-
-          <!-- Divider -->
-          <div class="border-t border-slate-200 dark:border-slate-700"></div>
-
-          <!-- Size Badge & Status -->
-          <div class="flex items-center justify-between gap-3">
-            <div class="flex items-center gap-2">
-              <span class="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">Size</span>
-            </div>
-            <div class="template-size-badge-${name} flex items-center gap-2">
-              <span class="text-sm font-semibold text-slate-600 dark:text-slate-300">
-                <span class="template-size-${name}">—</span>
-              </span>
-              <span class="template-status-${name} w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600 transition-colors"></span>
-            </div>
-          </div>
-
-          <!-- Gmail Limit Indicator -->
-          <div class="text-xs text-slate-500 dark:text-slate-400 mt-2">
-            <span>Gmail limit: 102KB</span>
-          </div>
-        </div>
-      </a>`,
-        )
-        .join("\n");
+      const cards =
+        templates.length > 0
+          ? templates.map((template) => renderTemplateCard(template)).join("\n")
+          : `
+        <div class="col-span-full py-12 text-center border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl p-8">
+          <p class="text-base font-semibold text-slate-700 dark:text-slate-300">No hay templates creados aún.</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Crea tu primer template desde la terminal con <code class="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded font-mono">bun run cli</code> o <code class="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded font-mono">bun run generate:email &lt;nombre&gt;</code>.</p>
+        </div>`;
 
       // Add script to load and display template sizes
       const sizeScript = `

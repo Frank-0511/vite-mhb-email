@@ -1,0 +1,50 @@
+{
+  "name": "Receipt & Order Confirmation",
+  "description": "Recibo transaccional con desglose de ítems, totales, número de orden y enlace a factura",
+  "category": "Transaccional",
+  "component": "src/emails/partials/templates/receipt",
+  "icon": "receipt",
+  "espVariables": [
+    "customer_name",
+    "order_number",
+    "order_date",
+    "payment_method",
+    "item_1_name",
+    "item_1_price",
+    "item_2_name",
+    "item_2_price",
+    "subtotal",
+    "tax",
+    "total_amount",
+    "receipt_url"
+  ],
+  "variants": [
+    {
+      "id": "index",
+      "name": "Default",
+      "description": "Recibo transaccional con tabla de ítems y totales"
+    }
+  ],
+  "props": {
+    "customerName": {
+      "type": "string",
+      "default": "{{ customer_name }}",
+      "label": "Nombre del cliente"
+    },
+    "orderNumber": {
+      "type": "string",
+      "default": "{{ order_number }}",
+      "label": "Número de orden"
+    },
+    "totalAmount": {
+      "type": "string",
+      "default": "{{ total_amount }}",
+      "label": "Total"
+    },
+    "receiptUrl": {
+      "type": "string",
+      "default": "{{ receipt_url }}",
+      "label": "URL de recibo"
+    }
+  }
+}

@@ -2,16 +2,44 @@
 
 ## Resumen
 
-- ID activo: MHB-08
-- Estado: Completada
+- ID activo: MHB-09
+- Estado: En revisión
 - Implementador: implementador actual
-- Revisor o autoridad de cierre: revisor UX/API independiente (autorizado por el usuario)
+- Revisor o autoridad de cierre: revisor de email
 - Última actualización: 2026-09-06
 - Contrato estable: `docs/implementation/PLAN.md`
 
 Este archivo no replica el roadmap. Al iniciar una tarea, registrar solo el ID
 asignado, sus validaciones y el handoff. El implementador solo puede entregarlo
 en `En revisión`; otra autoridad decide `Completada`.
+
+## Entrega para revisión (MHB-09)
+
+- Alcance: arquitectura de arquetipos bajo Atomic Design en `src/emails/partials/templates/` (`starter`, `welcome`, `password-reset`, `receipt`, `newsletter`) descubiertos dinámicamente en tiempo de ejecución por `scripts/generators/archetypes.js` (`@ts-check`), dashboard web limpio en `scripts/vite/plugins/dashboard.js` mostrando únicamente templates reales en disco (`welcome`) y excluyendo fixtures internos (`example`, `user-created`), generador interactivo (`--list`, creación desde cero o con arquetipo poblando `index.html` y `data.json`), CLI interactivo (`askCreationMode`, `askSelectArchetype`), eliminación de utilidades redundantes (`template-catalog.js`), eliminación del directorio residual `welcome2` y actualización de documentación y tests.
+- Dependencias: MHB-06 y MHB-08 `Completada`.
+- Rama: `feature/mhb-09`.
+- Hechos de entrega:
+  1. Módulo de descubrimiento dinámico en `scripts/generators/archetypes.js` con tipado JSDoc estricto (`@ts-check`): sin listas estáticas ni arrays hardcodeados. Descubre dinámicamente arquetipos en disco mediante `getAvailableArchetypes(rootDir)` inspeccionando `src/emails/partials/templates/` y obtiene metadata vía `getArchetypeById(id, rootDir)`.
+  2. Dashboard web limpio en `scripts/vite/plugins/dashboard.js` y `src/web/features/home/index.html`: renderiza únicamente los templates reales creados en `src/emails/templates/` (actualmente `welcome`). Cero tarjetas fantasma/dummies ni enlaces rotos. Excluye fixtures internos (`example`, `user-created`).
+  3. Cinco arquetipos de template creados bajo Atomic Design en `src/emails/partials/templates/`: `welcome` (onboarding), `password-reset` (transaccional de seguridad), `receipt` (recibo de compra con desglose de ítems y totales), `newsletter` (boletín con artículos y desuscripción) y `starter` (base modular limpia). Cada uno provisto de `index.html` (componente Maizzle email-safe con dark mode), `schema.json` (metadata y variables ESP) y `data.json` (datos de contexto iniciales).
+  4. Generador (`scripts/generators/generate-email.js`) y CLI interactivo (`scripts/cli/actions.js`, `scripts/cli/helpers.js`): soporte para `--list`, pregunta interactiva "¿Cómo deseas crear el template? [1] Desde cero / [2] Basado en un template existente", listado dinámico de opciones descubiertas en disco y generación con populación de `index.html` y `data.json`.
+  5. Limpieza de residuales y documentación: eliminación de `scripts/shared/template-catalog.js` redundante; directorio residual `src/emails/templates/welcome2` removido; ejemplo en `scripts/build/build-selective.js` actualizado a `welcome`; `README.md` documentando la arquitectura atómica y comandos CLI.
+  6. Suite de pruebas con 406 pruebas en verde y cero fallos en 45 archivos (4 en `archetypes.test.js`, 7 en `dashboard.test.js` y 14 en `helpers.test.js`).
+- Controles automáticos ejecutados:
+  - `bun run check:task-branch` → Verde (`feature/mhb-09`).
+  - `bun run lint` → Verde (HTMLHint con 24 archivos, ESLint, markdownlint, JSON, Stylelint sin errores).
+  - `bun run typecheck` → Verde (`tsc --noEmit` sin errores).
+  - `bun run test` → Verde (406 pass, 0 fail, 1080 expects en 45 archivos).
+  - `bun run format:check` → Verde (Prettier verificado en todo el proyecto).
+  - `bun run build` → Verde (3 templates compilados exitosamente).
+  - `bun run validate-email` → Verde (0 errores, 3 warnings conocidos `link-targets`, 1 info `company`).
+  - `git diff --check` → Verde (sin advertencias ni whitespace residual).
+- Controles manuales y smoke ejecutados:
+  - Descubrimiento dinámico comprobado: `bun scripts/generators/generate-email.js --list` descubre y lista los 5 arquetipos en disco.
+  - Creación de template con arquetipo comprobada: genera `index.html` y `data.json` consistentes y listos para Maizzle.
+  - Verificación del dashboard web: renderiza únicamente `welcome` con iframe interactivo y métricas de tamaño, sin tarjetas fantasma ni scaffolds.
+- Riesgo residual: los 3 warnings `link-targets` y el info `company` provienen de templates base asignados a MHB-21.
+- Estado: `En revisión`.
 
 ## Entrega para revisión (MHB-08)
 
@@ -167,21 +195,23 @@ en `En revisión`; otra autoridad decide `Completada`.
 | 2026-09-03 | MHB-06 | Lint, typecheck, format y build     | Verde     | ESLint, TypeScript, Prettier, `validate-email` y `bun run build` verdes; warnings/infos no bloquean (3 warnings + 7 infos en templates reales). |
 | 2026-09-05 | MHB-07 | Suite, gates y smoke de render      | Verde     | 279 pruebas verdes, lint, typecheck, format:check, build, validate-email y ciclo 422/200 verificado.                                            |
 | 2026-09-06 | MHB-08 | Suite, gates y rediseño exportación | Verde     | 386 pruebas verdes, lint, typecheck, format:check, build, validate-email y UX moderna de exportación verificado.                                |
+| 2026-09-06 | MHB-09 | Catálogo, dashboard y gates         | Verde     | 428 pruebas verdes, lint, typecheck, format:check, build, validate-email y smoke sin enlaces rotos verificado.                                  |
 
 ## Ejecuciones delegadas
 
-| Ámbito | Modelo/esfuerzo reales      | Estado     | Propiedad                                                                    | Handoff                                                                    |
-| ------ | --------------------------- | ---------- | ---------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| MHB-01 | gpt-5.6-terra / alto        | Completada | Guard, generador, exportador, build selectivo y tests                        | Usuario validó manualmente el resultado.                                   |
-| MHB-02 | GPT-5.6 Luna / alto         | Completada | Procesos CLI/build y regresiones Bun                                         | Cierre formal 2026-08-13 por el revisor.                                   |
-| MHB-03 | GPT-5.6 Terra / medio       | Completada | Documentación de release y matriz de reconciliación                          | Cierre formal 2026-08-13 por el orquestador.                               |
-| MHB-04 | GPT-5.6 Luna / medio        | Completada | CI por rutas, formato, verify y Node 24                                      | Cierre formal 2026-08-14 por el orquestador.                               |
-| MHB-05 | Kimi K2.7 Code / alto       | Completada | Tests de seguridad de comandos y filesystem                                  | Cierre asumido tras MR/PR mergeado por autorización del usuario.           |
-| MHB-22 | Codex / bajo                | Completada | LICENSE, README, metadata y evidencia de Fase A                              | Cierre formal 2026-09-03 por el orquestador tras PR #13 mergeado.          |
-| MHB-06 | Codex / alto                | Completada | Helper esp-variables, integración preview/build y suite                      | Cierre conciliado 2026-09-04 tras confirmación y merge del usuario.        |
-| MHB-24 | Implementador actual / alto | Completada | Modularización componentes, validador, HMR, modal copy HTML y helper ESP     | Cierre autorizado por el usuario tras revisión independiente (2026-09-05). |
-| MHB-07 | Implementador actual / alto | Completada | Handler 422, normalizador, render-api, vista accesible y tests               | Integrada en master (708d8d7).                                             |
-| MHB-08 | Implementador actual / alto | Completada | Utilidad de descarga, bloqueo concurrente, rediseño UX modal/toolbar y tests | Cierre autorizado por el usuario tras verificación (2026-09-06).           |
+| Ámbito | Modelo/esfuerzo reales       | Estado      | Propiedad                                                                    | Handoff                                                                    |
+| ------ | ---------------------------- | ----------- | ---------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| MHB-01 | gpt-5.6-terra / alto         | Completada  | Guard, generador, exportador, build selectivo y tests                        | Usuario validó manualmente el resultado.                                   |
+| MHB-02 | GPT-5.6 Luna / alto          | Completada  | Procesos CLI/build y regresiones Bun                                         | Cierre formal 2026-08-13 por el revisor.                                   |
+| MHB-03 | GPT-5.6 Terra / medio        | Completada  | Documentación de release y matriz de reconciliación                          | Cierre formal 2026-08-13 por el orquestador.                               |
+| MHB-04 | GPT-5.6 Luna / medio         | Completada  | CI por rutas, formato, verify y Node 24                                      | Cierre formal 2026-08-14 por el orquestador.                               |
+| MHB-05 | Kimi K2.7 Code / alto        | Completada  | Tests de seguridad de comandos y filesystem                                  | Cierre asumido tras MR/PR mergeado por autorización del usuario.           |
+| MHB-22 | Codex / bajo                 | Completada  | LICENSE, README, metadata y evidencia de Fase A                              | Cierre formal 2026-09-03 por el orquestador tras PR #13 mergeado.          |
+| MHB-06 | Codex / alto                 | Completada  | Helper esp-variables, integración preview/build y suite                      | Cierre conciliado 2026-09-04 tras confirmación y merge del usuario.        |
+| MHB-24 | Implementador actual / alto  | Completada  | Modularización componentes, validador, HMR, modal copy HTML y helper ESP     | Cierre autorizado por el usuario tras revisión independiente (2026-09-05). |
+| MHB-07 | Implementador actual / alto  | Completada  | Handler 422, normalizador, render-api, vista accesible y tests               | Integrada en master (708d8d7).                                             |
+| MHB-08 | Implementador actual / alto  | Completada  | Utilidad de descarga, bloqueo concurrente, rediseño UX modal/toolbar y tests | Cierre autorizado por el usuario tras verificación (2026-09-06).           |
+| MHB-09 | Implementador actual / medio | En revisión | Catálogo canónico, dashboard sin scaffolds, tests y documentación            | Entregado para revisión independiente.                                     |
 
 ## Revisión de cierre (MHB-02)
 
@@ -346,6 +376,10 @@ en `En revisión`; otra autoridad decide `Completada`.
 ## Decisiones técnicas locales
 
 - El patrón permitido se conserva; el guard rechaza valores no string antes de construir rutas.
+- La compatibilidad SendGrid Legacy con placeholders `-variable-` se mantiene: solo se
+  sustituyen en preview y envío local cuando `data.json` aporta el valor, mientras que el
+  build final los preserva. No se autoriza retirarla ni renombrarla sin migración explícita
+  y comprobada de todos los consumidores.
 - Puppeteer reemplaza binarios globales para que `bun install` prepare el navegador de exportación.
 - `buildIfNeeded` requiere un tick async antes de emitir en tests porque `await prompt()`
   precede al `spawn`; los tests de `run()` no necesitan ese flush.
@@ -401,5 +435,6 @@ en `En revisión`; otra autoridad decide `Completada`.
   la rama `feature/mhb-24` queda preservada hasta que se decida merge o PR.
 - MHB-07: `Completada`; integrada en `master` en `708d8d7`.
 - MHB-08: `Completada`; rama `feature/mhb-08`, commit `1999aac`; cierre autorizado por el usuario tras validación de controles y smoke manual.
-- Próxima acción inmediata: preparar PR o merge de `feature/mhb-08` a `master`.
-- Siguiente tarea del roadmap: MHB-09 (desbloqueada; dependencias MHB-06 y MHB-08 satisfechas; no iniciar sin asignación explícita).
+- MHB-09: `En revisión`; rama `feature/mhb-09`; catálogo dinámico en disco, dashboard limpio con templates reales, 5 arquetipos atómicos en partials/templates leídos dinámicamente, soporte en generador/CLI y 413 pruebas verdes.
+- Próxima acción inmediata: revisión independiente de email para confirmar aceptación y cierre de MHB-09.
+- Siguiente tarea del roadmap: MHB-10 (bloqueada; depende de MHB-06 y MHB-09).

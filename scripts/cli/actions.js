@@ -9,7 +9,14 @@ import { sendToMailtester } from "../mail/send-mailtester.js";
 import { sendTemplate } from "../mail/send-mailtrap.js";
 import { getBuiltTemplates } from "../shared/built-templates.js";
 import { c, paint } from "../shared/console.js";
-import { askSelectTemplate, askTemplateName, run } from "./helpers.js";
+import { getAvailableArchetypes } from "../generators/archetypes.js";
+import {
+  askCreationMode,
+  askSelectArchetype,
+  askSelectTemplate,
+  askTemplateName,
+  run,
+} from "./helpers.js";
 import { clearScreen } from "./ui.js";
 
 /**
@@ -53,7 +60,26 @@ export async function createTemplate(rl) {
   }
 
   console.log();
-  const code = await run("bun", ["scripts/generators/generate-email.js", name]);
+  const mode = await askCreationMode(rl);
+  let archetype = "";
+
+  if (mode === "template") {
+    const availableArchetypes = getAvailableArchetypes(process.cwd());
+    const selected = await askSelectArchetype(rl, availableArchetypes);
+    if (!selected) {
+      console.log(paint(c.yellow, "  ⚠️ Creación cancelada o arquetipo no seleccionado.\n"));
+      return;
+    }
+    archetype = selected;
+  }
+
+  console.log();
+  const args = ["scripts/generators/generate-email.js", name];
+  if (archetype) {
+    args.push(archetype);
+  }
+
+  const code = await run("bun", args);
   if (code !== 0) {
     console.log(paint(c.red, `\n  ❌ Error al crear el template (código ${code}).\n`));
   }

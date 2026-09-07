@@ -60,10 +60,10 @@ src/
 │   │       ├── key-value-card/
 │   │       └── supporting-section/
 │   ├── styles/         # CSS especializado para email (Tailwind email config)
-│   └── templates/      # Templates de producto (index.html + data.json)
-│       ├── welcome/
-│       ├── example/
-│       └── user-created/
+│   └── templates/      # Templates y fixtures (index.html + data.json)
+│       ├── welcome/    # Template de producto (Onboarding)
+│       ├── example/    # Fixture interno de prueba
+│       └── user-created/ # Fixture interno de prueba
 └── web/                # Dashboard Vite (preview + libreria de componentes)
     ├── features/
     │   ├── home/       # Lista de templates
@@ -160,6 +160,19 @@ Vite abre el dashboard local en `http://localhost:5173`. Desde ahi puedes:
 | `/preview` | Preview/editor de templates              |
 | `/library` | Libreria de componentes HTML para emails |
 
+### Catálogo de templates de producto
+
+EmailForge Toolkit define cuatro templates en su catálogo canónico:
+
+| Template         | Categoría     | Estado              | Descripción                                       |
+| ---------------- | ------------- | ------------------- | ------------------------------------------------- |
+| `welcome`        | Onboarding    | Disponible          | Email de bienvenida con credenciales y checklist  |
+| `password-reset` | Transaccional | En roadmap (MHB-10) | Recuperación de contraseña con token y expiración |
+| `receipt`        | Transaccional | En roadmap (MHB-11) | Recibo de compra con desglose de ítems y totales  |
+| `newsletter`     | Marketing     | En roadmap (MHB-12) | Boletín editorial con desuscripción obligatoria   |
+
+Los scaffolds `example` y `user-created` se preservan aislados como fixtures internos de pruebas y validadores, por lo que no se listan como producto en el dashboard.
+
 ---
 
 ## Build de Produccion
@@ -190,10 +203,17 @@ El build hace lo siguiente:
 | --------------------- | ----------------------------------------------- |
 | `[[ page.variable ]]` | Variables internas de Maizzle/front matter      |
 | `{{ variable }}`      | Variables del ESP, renderizadas solo en preview |
+| `-variable-`          | Compatibilidad SendGrid Legacy (ver nota)       |
 
 Durante el preview, Handlebars usa `data.json` para mostrar valores de ejemplo.
 Durante el build final, las variables `{{ }}` quedan intactas para que el ESP
 las resuelva al enviar el email.
+
+La compatibilidad con placeholders SendGrid Legacy (`-variable-`) se mantiene:
+el preview y los flujos locales de envío los sustituyen solo cuando existe un
+valor en `data.json`; el build final los conserva. No se debe retirar ni
+renombrar este soporte sin una migración explícita y comprobada de todos sus
+consumidores.
 
 ---
 
@@ -225,17 +245,23 @@ Cada template debe tener datos de preview:
 
 ---
 
-## Componentes
+## Componentes y Arquetipos (Atomic Design)
 
-Los componentes viven en `src/emails/partials/` y pueden incluir un `schema.json`
-para describir campos editables en la UI de la libreria.
+Los componentes viven en `src/emails/partials/` (`molecules`, `organisms`, `templates`).
+La capa de plantillas atómicas en `src/emails/partials/templates/` aloja arquetipos reutilizables (`welcome`, `password-reset`, `receipt`, `newsletter`, `starter`) que se descubren dinámicamente al crear nuevos correos.
 
 ```bash
-# Crear un nuevo template
+# Crear un template desde cero
 bun run g:email <nombre>
+
+# Crear un template basado en un arquetipo existente
+bun run g:email <nombre> <arquetipo>
+
+# Listar todos los arquetipos disponibles dinámicamente
+bun scripts/generators/generate-email.js --list
 ```
 
-El generador crea `src/emails/templates/<nombre>/{index.html,data.json}`.
+Desde el menú interactivo (`bun run cli` opción `[3]`), el CLI consulta si se desea crear desde cero o basarse en un arquetipo, listando todas las plantillas descubiertas dinámicamente.
 
 ---
 

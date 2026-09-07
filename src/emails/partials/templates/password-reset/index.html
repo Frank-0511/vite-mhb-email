@@ -1,0 +1,84 @@
+<script props>
+  module.exports = {
+    userName: props["user-name"] || "{{ user_name }}",
+    resetUrl: props["reset-url"] || "{{ reset_url }}",
+    expirationMinutes: props["expiration-minutes"] || "{{ expiration_minutes }}",
+    supportUrl: props["support-url"] || "{{ support_url }}",
+  };
+</script>
+
+<div class="password-reset-template" style="padding: 16px 0">
+  <table cellpadding="0" cellspacing="0" role="none" class="mb-4">
+    <tr>
+      <td
+        class="bg-amber-100 text-amber-800 rounded-full px-3 py-1 text-xs font-bold"
+        style="
+          background-color: #fef3c7;
+          color: #92400e;
+          padding: 4px 12px;
+          border-radius: 9999px;
+          font-weight: 700;
+        "
+      >
+        Seguridad de la cuenta
+      </td>
+    </tr>
+  </table>
+
+  <h1 class="text-2xl font-bold mb-3 text-zinc-800 dark:text-zinc-100">
+    Restablecer tu contraseña
+  </h1>
+
+  <p class="text-base text-zinc-700 dark:text-zinc-300 mb-4 leading-relaxed">
+    Hola [[ userName ]], recibimos una solicitud para restablecer la contraseña de tu cuenta. Para
+    continuar, haz clic en el siguiente botón:
+  </p>
+
+  <table cellpadding="0" cellspacing="0" role="none" class="my-6">
+    <tr>
+      <td
+        class="bg-zinc-900 dark:bg-zinc-100 rounded-lg text-center"
+        style="background-color: #18181b; border-radius: 8px"
+      >
+        <a
+          href="[[ resetUrl ]]"
+          class="inline-block py-3 px-6 text-white dark:text-zinc-900 font-semibold text-sm no-underline"
+          style="
+            display: inline-block;
+            padding: 12px 24px;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 600;
+          "
+        >
+          Restablecer contraseña &rarr;
+        </a>
+      </td>
+    </tr>
+  </table>
+
+  <table cellpadding="0" cellspacing="0" width="100%" role="none" class="mb-6">
+    <tr>
+      <td
+        class="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-4"
+        style="padding: 16px; border-radius: 8px; border: 1px solid #e4e4e7"
+      >
+        <p class="text-xs text-zinc-600 dark:text-zinc-400 mb-2">
+          <strong>Aviso importante:</strong> Este enlace expirará en [[ expirationMinutes ]] minutos
+          por motivos de seguridad.
+        </p>
+        <p class="text-xs text-zinc-500 dark:text-zinc-400" style="margin-bottom: 0">
+          Si no solicitaste este cambio, puedes ignorar este mensaje; tu contraseña actual
+          permanecerá segura.
+        </p>
+      </td>
+    </tr>
+  </table>
+
+  <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+    ¿Tienes problemas con el enlace? Contacta a nuestro
+    <a href="[[ supportUrl ]]" class="text-indigo-600 dark:text-indigo-400 underline">
+      centro de soporte </a
+    >.
+  </p>
+</div>

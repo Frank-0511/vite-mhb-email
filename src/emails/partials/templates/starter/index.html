@@ -1,0 +1,44 @@
+<script props>
+  module.exports = {
+    title: props.title || "Título del correo",
+    userName: props["user-name"] || "{{ user_name }}",
+    content:
+      props.content || "Este es un mensaje inicial creado con la plantilla base de EmailForge.",
+    ctaUrl: props["cta-url"] || "{{ cta_url }}",
+    ctaText: props["cta-text"] || "Comenzar ahora",
+  };
+</script>
+
+<div class="starter-container" style="padding: 16px 0">
+  <h1 class="text-2xl font-bold mb-3 text-zinc-800 dark:text-zinc-100">[[ title ]]</h1>
+  <p class="text-base text-zinc-700 dark:text-zinc-300 mb-4 leading-relaxed">
+    Hola [[ userName ]], [[ content ]]
+  </p>
+  <table cellpadding="0" cellspacing="0" role="none" class="my-6">
+    <tr>
+      <td
+        class="bg-indigo-600 rounded-lg text-center"
+        style="background-color: #4f46e5; border-radius: 8px"
+      >
+        <a
+          href="[[ ctaUrl ]]"
+          class="inline-block py-3 px-6 text-white font-semibold text-sm no-underline"
+          style="
+            display: inline-block;
+            padding: 12px 24px;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 600;
+          "
+        >
+          [[ ctaText ]] &rarr;
+        </a>
+      </td>
+    </tr>
+  </table>
+  <p
+    class="text-xs text-zinc-500 dark:text-zinc-400 mt-6 pt-4 border-t border-zinc-200 dark:border-zinc-700"
+  >
+    Si tienes preguntas sobre este mensaje, responde directamente a este correo.
+  </p>
+</div>

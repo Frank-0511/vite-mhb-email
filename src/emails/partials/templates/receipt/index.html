@@ -1,0 +1,150 @@
+<script props>
+  module.exports = {
+    customerName: props["customer-name"] || "{{ customer_name }}",
+    orderNumber: props["order-number"] || "{{ order_number }}",
+    orderDate: props["order-date"] || "{{ order_date }}",
+    paymentMethod: props["payment-method"] || "{{ payment_method }}",
+    item1Name: props["item-1-name"] || "{{ item_1_name }}",
+    item1Price: props["item-1-price"] || "{{ item_1_price }}",
+    item2Name: props["item-2-name"] || "{{ item_2_name }}",
+    item2Price: props["item-2-price"] || "{{ item_2_price }}",
+    subtotal: props.subtotal || "{{ subtotal }}",
+    tax: props.tax || "{{ tax }}",
+    totalAmount: props["total-amount"] || "{{ total_amount }}",
+    receiptUrl: props["receipt-url"] || "{{ receipt_url }}",
+  };
+</script>
+
+<div class="receipt-template" style="padding: 16px 0">
+  <table cellpadding="0" cellspacing="0" role="none" class="mb-4">
+    <tr>
+      <td
+        class="bg-emerald-100 text-emerald-800 rounded-full px-3 py-1 text-xs font-bold"
+        style="
+          background-color: #d1fae5;
+          color: #065f46;
+          padding: 4px 12px;
+          border-radius: 9999px;
+          font-weight: 700;
+        "
+      >
+        Pago confirmado
+      </td>
+    </tr>
+  </table>
+
+  <h1 class="text-2xl font-bold mb-2 text-zinc-800 dark:text-zinc-100">Gracias por tu compra</h1>
+  <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-6">
+    Hola [[ customerName ]], hemos procesado tu orden con éxito.
+  </p>
+
+  <table
+    cellpadding="0"
+    cellspacing="0"
+    width="100%"
+    role="none"
+    class="mb-6 bg-zinc-50 dark:bg-zinc-800 rounded-lg p-4"
+    style="padding: 16px; border-radius: 8px; border: 1px solid #e4e4e7"
+  >
+    <tr>
+      <td class="text-xs text-zinc-500 dark:text-zinc-400 pb-1">Número de orden:</td>
+      <td class="text-xs text-right font-mono font-semibold text-zinc-800 dark:text-zinc-200 pb-1">
+        [[ orderNumber ]]
+      </td>
+    </tr>
+    <tr>
+      <td class="text-xs text-zinc-500 dark:text-zinc-400 pb-1">Fecha:</td>
+      <td class="text-xs text-right text-zinc-800 dark:text-zinc-200 pb-1">[[ orderDate ]]</td>
+    </tr>
+    <tr>
+      <td class="text-xs text-zinc-500 dark:text-zinc-400">Método de pago:</td>
+      <td class="text-xs text-right text-zinc-800 dark:text-zinc-200">[[ paymentMethod ]]</td>
+    </tr>
+  </table>
+
+  <!-- Detalle de ítems -->
+  <table cellpadding="0" cellspacing="0" width="100%" role="none" class="mb-6">
+    <thead>
+      <tr class="border-b border-zinc-200 dark:border-zinc-700">
+        <th align="left" class="pb-2 text-xs font-bold text-zinc-500 uppercase">Descripción</th>
+        <th align="right" class="pb-2 text-xs font-bold text-zinc-500 uppercase">Importe</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td
+          class="py-3 text-sm text-zinc-800 dark:text-zinc-200 border-b border-zinc-100 dark:border-zinc-800"
+        >
+          [[ item1Name ]]
+        </td>
+        <td
+          align="right"
+          class="py-3 text-sm text-zinc-800 dark:text-zinc-200 border-b border-zinc-100 dark:border-zinc-800 font-mono"
+        >
+          [[ item1Price ]]
+        </td>
+      </tr>
+      <tr>
+        <td
+          class="py-3 text-sm text-zinc-800 dark:text-zinc-200 border-b border-zinc-100 dark:border-zinc-800"
+        >
+          [[ item2Name ]]
+        </td>
+        <td
+          align="right"
+          class="py-3 text-sm text-zinc-800 dark:text-zinc-200 border-b border-zinc-100 dark:border-zinc-800 font-mono"
+        >
+          [[ item2Price ]]
+        </td>
+      </tr>
+      <tr>
+        <td class="pt-3 text-xs text-zinc-500 dark:text-zinc-400">Subtotal</td>
+        <td align="right" class="pt-3 text-xs text-zinc-700 dark:text-zinc-300 font-mono">
+          [[ subtotal ]]
+        </td>
+      </tr>
+      <tr>
+        <td class="py-1 text-xs text-zinc-500 dark:text-zinc-400">Impuestos</td>
+        <td align="right" class="py-1 text-xs text-zinc-700 dark:text-zinc-300 font-mono">
+          [[ tax ]]
+        </td>
+      </tr>
+      <tr>
+        <td
+          class="pt-2 text-base font-bold text-zinc-900 dark:text-zinc-100 border-t border-zinc-200 dark:border-zinc-700"
+        >
+          Total pagado
+        </td>
+        <td
+          align="right"
+          class="pt-2 text-base font-bold text-indigo-600 dark:text-indigo-400 font-mono border-t border-zinc-200 dark:border-zinc-700"
+        >
+          [[ totalAmount ]]
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table cellpadding="0" cellspacing="0" role="none" class="my-6">
+    <tr>
+      <td
+        class="bg-indigo-600 rounded-lg text-center"
+        style="background-color: #4f46e5; border-radius: 8px"
+      >
+        <a
+          href="[[ receiptUrl ]]"
+          class="inline-block py-3 px-6 text-white font-semibold text-sm no-underline"
+          style="
+            display: inline-block;
+            padding: 12px 24px;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 600;
+          "
+        >
+          Descargar factura oficial &rarr;
+        </a>
+      </td>
+    </tr>
+  </table>
+</div>

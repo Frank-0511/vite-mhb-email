@@ -1,0 +1,64 @@
+<script props>
+  module.exports = {
+    firstName: props["first-name"] || "{{ first_name }}",
+    company: props.company || "Mi Empresa",
+    dashboardUrl: props["dashboard-url"] || "{{ dashboard_url }}",
+  };
+</script>
+
+<div class="welcome-template" style="padding: 16px 0">
+  <h1 class="text-2xl font-bold mb-3 text-zinc-800 dark:text-zinc-100">¡Hola, [[ firstName ]]!</h1>
+  <p class="text-base text-zinc-700 dark:text-zinc-300 mb-6 leading-relaxed">
+    Te damos la bienvenida a <strong>[[ company ]]</strong>. Tu cuenta está lista para que empieces
+    a utilizar todas las funciones desde hoy.
+  </p>
+
+  <table cellpadding="0" cellspacing="0" width="100%" role="none" class="mb-6">
+    <tr>
+      <td
+        class="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-4"
+        style="padding: 16px; border-radius: 8px; border: 1px solid #e4e4e7"
+      >
+        <p class="font-bold text-sm text-zinc-900 dark:text-zinc-100 mb-2" style="margin-top: 0">
+          Primeros pasos recomendados:
+        </p>
+        <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-2">
+          1. Completa la información de tu perfil.
+        </p>
+        <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-2">
+          2. Conecta tus servicios e integraciones favoritas.
+        </p>
+        <p class="text-sm text-zinc-600 dark:text-zinc-400" style="margin-bottom: 0">
+          3. Invita a los miembros de tu equipo a colaborar.
+        </p>
+      </td>
+    </tr>
+  </table>
+
+  <table cellpadding="0" cellspacing="0" role="none" class="my-6">
+    <tr>
+      <td
+        class="bg-indigo-600 rounded-lg text-center"
+        style="background-color: #4f46e5; border-radius: 8px"
+      >
+        <a
+          href="[[ dashboardUrl ]]"
+          class="inline-block py-3 px-6 text-white font-semibold text-sm no-underline"
+          style="
+            display: inline-block;
+            padding: 12px 24px;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 600;
+          "
+        >
+          Ir al panel principal &rarr;
+        </a>
+      </td>
+    </tr>
+  </table>
+
+  <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+    Si tienes dudas, nuestro equipo de soporte está siempre disponible para ayudarte.
+  </p>
+</div>
