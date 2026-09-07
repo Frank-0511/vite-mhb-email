@@ -11,7 +11,7 @@
  *   /preview  -> features/preview/preview.html
  *   /library  -> features/library/components-library.html
  *
- * Legacy redirects (301):
+ * Legacy redirects (302 en desarrollo):
  *   /index.html                -> /
  *   /preview.html?...          -> /preview?...
  *   /components-library.html   -> /library
