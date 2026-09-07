@@ -9,6 +9,18 @@
 
 /**
  * @typedef {Object} ModalElements
+ * @property {HTMLElement | null} [buildActionBtn]
+ * @property {HTMLElement | null} [existingActionBtn]
+ * @property {HTMLInputElement | null} [modeCopyRadio]
+ * @property {HTMLInputElement | null} [modeDownloadRadio]
+ * @property {HTMLElement | null} [textExportBuild]
+ * @property {HTMLElement | null} [descExportBuild]
+ * @property {HTMLElement | null} [textExportExisting]
+ * @property {HTMLElement | null} [descExportExisting]
+ * @property {HTMLElement | null} [templateChip]
+ * @property {HTMLElement | null} [actionsSub]
+ * @property {HTMLElement | null} [iconExportExistingCopy]
+ * @property {HTMLElement | null} [iconExportExistingDownload]
  * @property {HTMLElement | null} [buildAndCopyBtn]
  * @property {HTMLElement | null} [copyExistingBtn]
  * @property {HTMLElement | null} [buildAndDownloadBtn]
@@ -24,27 +36,80 @@
  */
 
 /**
- * Habilita o deshabilita los botones de acción del modal.
+ * Habilita o deshabilita los botones y controles de acción del modal.
  *
  * @param {ModalElements} elements
  * @param {boolean} disabled
  */
 function setActionButtonsDisabled(elements, disabled) {
-  const buttons = [
+  const controls = [
+    elements.buildActionBtn,
+    elements.existingActionBtn,
+    elements.modeCopyRadio,
+    elements.modeDownloadRadio,
     elements.buildAndCopyBtn,
     elements.copyExistingBtn,
     elements.buildAndDownloadBtn,
     elements.downloadExistingBtn,
   ];
 
-  for (const btn of buttons) {
-    if (btn) {
+  for (const ctrl of controls) {
+    if (ctrl) {
       if (disabled) {
-        btn.setAttribute("disabled", "");
+        ctrl.setAttribute("disabled", "");
       } else {
-        btn.removeAttribute("disabled");
+        ctrl.removeAttribute("disabled");
       }
     }
+  }
+}
+
+/**
+ * Actualiza las etiquetas e iconos de los botones según el modo de exportación seleccionado.
+ *
+ * @param {ModalElements} elements
+ * @param {"copy" | "download"} mode
+ * @returns {void}
+ */
+export function updateExportModeView(elements, mode) {
+  const isCopy = mode === "copy";
+  if (elements.actionsSub) {
+    elements.actionsSub.textContent = isCopy
+      ? "Acciones para copiar al portapapeles:"
+      : "Acciones para descargar archivo .html:";
+  }
+  if (elements.textExportBuild) {
+    elements.textExportBuild.textContent = isCopy ? "Compilar y copiar" : "Compilar y descargar";
+  }
+  if (elements.descExportBuild) {
+    elements.descExportBuild.textContent = isCopy
+      ? "Compila con Maizzle e inyecta los estilos y variables actuales del preview."
+      : "Compila con Maizzle y genera el archivo .html para descarga directa.";
+  }
+  if (elements.textExportExisting) {
+    elements.textExportExisting.textContent = isCopy
+      ? "Copiar versión en disco"
+      : "Descargar versión en disco";
+  }
+  if (elements.descExportExisting) {
+    elements.descExportExisting.textContent = isCopy
+      ? "Usa el último HTML generado en dist/ sin volver a compilar."
+      : "Descarga el último HTML generado en dist/ sin volver a compilar.";
+  }
+  const iconCopy =
+    elements.iconExportExistingCopy ||
+    (typeof document !== "undefined" ? document.getElementById("icon-export-existing-copy") : null);
+  const iconDownload =
+    elements.iconExportExistingDownload ||
+    (typeof document !== "undefined"
+      ? document.getElementById("icon-export-existing-download")
+      : null);
+
+  if (iconCopy) {
+    iconCopy.style.display = isCopy ? "" : "none";
+  }
+  if (iconDownload) {
+    iconDownload.style.display = isCopy ? "none" : "";
   }
 }
 
@@ -58,8 +123,11 @@ function setActionButtonsDisabled(elements, disabled) {
  * @returns {void}
  */
 export function renderModalState(elements, state, options = {}) {
-  const { buildAndCopyBtn, copyExistingBtn, modalStatus } = elements;
-  if (!buildAndCopyBtn || !copyExistingBtn || !modalStatus) return;
+  const hasActionButtons =
+    (elements.buildActionBtn && elements.existingActionBtn) ||
+    (elements.buildAndCopyBtn && elements.copyExistingBtn);
+  const modalStatus = elements.modalStatus;
+  if (!hasActionButtons || !modalStatus) return;
 
   const message = options.message || "";
   const activeDocument = options.doc || (typeof document !== "undefined" ? document : null);

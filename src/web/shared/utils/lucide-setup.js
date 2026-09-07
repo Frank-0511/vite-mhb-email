@@ -5,12 +5,14 @@
 
 import {
   ArrowLeft,
+  ArrowRight,
   BookOpen,
   CheckCircle,
   Clock,
   Copy,
   createIcons,
   Dna,
+  Download,
   Eye,
   FileOutput,
   FileText,
@@ -20,6 +22,7 @@ import {
   Rocket,
   Save,
   Sun,
+  X,
   Zap,
 } from "lucide";
 
@@ -29,11 +32,13 @@ import {
  */
 const AVAILABLE_ICONS = {
   ArrowLeft,
+  ArrowRight,
   BookOpen,
   CheckCircle,
   Clock,
   Copy,
   Dna,
+  Download,
   Eye,
   FileOutput,
   FileText,
@@ -43,6 +48,7 @@ const AVAILABLE_ICONS = {
   Rocket,
   Save,
   Sun,
+  X,
   Zap,
 };
 

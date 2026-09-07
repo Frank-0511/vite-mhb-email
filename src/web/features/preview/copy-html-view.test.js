@@ -1,7 +1,7 @@
 // @ts-check
 import { describe, expect, test } from "bun:test";
 
-import { renderModalState } from "./copy-html-view.js";
+import { renderModalState, updateExportModeView } from "./copy-html-view.js";
 
 /**
  * Crea un nodo DOM simulado ligero para probar manipulación visual sin browser.
@@ -197,10 +197,87 @@ describe("renderModalState", () => {
     expect(legacyElements.copyExistingBtn.hasAttribute("disabled")).toBe(false);
   });
 
+  test("funciona con botones unificados y selectores de modo", () => {
+    const unifiedElements = {
+      buildActionBtn: createMockDomElement("btn-export-build"),
+      existingActionBtn: createMockDomElement("btn-export-existing"),
+      modeCopyRadio: createMockDomElement("export-mode-copy"),
+      modeDownloadRadio: createMockDomElement("export-mode-download"),
+      modalStatus: createMockDomElement("copy-html-status"),
+    };
+
+    // @ts-expect-error mock compatible
+    renderModalState(unifiedElements, "loading", { message: "Procesando…" });
+    expect(unifiedElements.buildActionBtn.hasAttribute("disabled")).toBe(true);
+    expect(unifiedElements.existingActionBtn.hasAttribute("disabled")).toBe(true);
+    expect(unifiedElements.modeCopyRadio.hasAttribute("disabled")).toBe(true);
+    expect(unifiedElements.modeDownloadRadio.hasAttribute("disabled")).toBe(true);
+
+    // @ts-expect-error mock compatible
+    renderModalState(unifiedElements, "idle");
+    expect(unifiedElements.buildActionBtn.hasAttribute("disabled")).toBe(false);
+    expect(unifiedElements.existingActionBtn.hasAttribute("disabled")).toBe(false);
+    expect(unifiedElements.modeCopyRadio.hasAttribute("disabled")).toBe(false);
+    expect(unifiedElements.modeDownloadRadio.hasAttribute("disabled")).toBe(false);
+  });
+
   test("ignora con seguridad si faltan elementos requeridos", () => {
     expect(() => {
       // @ts-expect-error elementos incompletos
       renderModalState({ buildAndCopyBtn: null }, "idle");
+    }).not.toThrow();
+  });
+});
+
+describe("updateExportModeView", () => {
+  test("actualiza etiquetas, descripciones e iconos al cambiar a modo download", () => {
+    const elements = {
+      actionsSub: createMockDomElement("copy-html-actions-sub"),
+      textExportBuild: createMockDomElement("text-export-build"),
+      descExportBuild: createMockDomElement("desc-export-build"),
+      textExportExisting: createMockDomElement("text-export-existing"),
+      descExportExisting: createMockDomElement("desc-export-existing"),
+      iconExportExistingCopy: createMockDomElement("icon-export-existing-copy"),
+      iconExportExistingDownload: createMockDomElement("icon-export-existing-download"),
+    };
+
+    updateExportModeView(elements, "download");
+
+    expect(elements.actionsSub.textContent).toBe("Acciones para descargar archivo .html:");
+    expect(elements.textExportBuild.textContent).toBe("Compilar y descargar");
+    expect(elements.descExportBuild.textContent).toContain("descarga directa");
+    expect(elements.textExportExisting.textContent).toBe("Descargar versión en disco");
+    expect(elements.descExportExisting.textContent).toContain("sin volver a compilar");
+    expect(elements.iconExportExistingCopy.style.display).toBe("none");
+    expect(elements.iconExportExistingDownload.style.display).toBe("");
+  });
+
+  test("actualiza etiquetas, descripciones e iconos al cambiar a modo copy", () => {
+    const elements = {
+      actionsSub: createMockDomElement("copy-html-actions-sub"),
+      textExportBuild: createMockDomElement("text-export-build"),
+      descExportBuild: createMockDomElement("desc-export-build"),
+      textExportExisting: createMockDomElement("text-export-existing"),
+      descExportExisting: createMockDomElement("desc-export-existing"),
+      iconExportExistingCopy: createMockDomElement("icon-export-existing-copy"),
+      iconExportExistingDownload: createMockDomElement("icon-export-existing-download"),
+    };
+
+    updateExportModeView(elements, "copy");
+
+    expect(elements.actionsSub.textContent).toBe("Acciones para copiar al portapapeles:");
+    expect(elements.textExportBuild.textContent).toBe("Compilar y copiar");
+    expect(elements.descExportBuild.textContent).toContain("actuales del preview");
+    expect(elements.textExportExisting.textContent).toBe("Copiar versión en disco");
+    expect(elements.descExportExisting.textContent).toContain("sin volver a compilar");
+    expect(elements.iconExportExistingCopy.style.display).toBe("");
+    expect(elements.iconExportExistingDownload.style.display).toBe("none");
+  });
+
+  test("se degrada con seguridad si faltan elementos", () => {
+    expect(() => {
+      // @ts-expect-error elementos vacíos
+      updateExportModeView({}, "copy");
     }).not.toThrow();
   });
 });
