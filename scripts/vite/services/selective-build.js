@@ -63,7 +63,7 @@ export async function runSelectiveBuild(rootDir, templateName) {
   const templateDir = paths.templateDir(templateName);
 
   if (!existsSync(templateDir)) {
-    return { success: false, error: `Template not found: ${templateName}` };
+    return { success: false, error: `Template not found: ${templateDir}` };
   }
 
   if (buildInProgress) {

@@ -12,7 +12,7 @@ import {
   ensureScreenshotDir,
   getOutputPaths,
 } from "./file-manager.js";
-import { tryPuppeteer } from "./renderers.js";
+import { getPuppeteerLaunchError, tryPuppeteer } from "./renderers.js";
 
 /**
  * Imprime mensaje de éxito.
@@ -55,9 +55,7 @@ export async function exportScreenshot(htmlFile, templateName, templateData) {
       return;
     }
 
-    throw new Error(
-      "Puppeteer no pudo iniciar el navegador incluido. Ejecuta bun install y revisa sus errores.",
-    );
+    throw new Error(getPuppeteerLaunchError(templateName));
   } catch (error) {
     if (tempHtmlFile) await cleanupTempFile(tempHtmlFile);
     const errorMsg = error instanceof Error ? error.message : String(error);

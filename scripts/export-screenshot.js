@@ -3,7 +3,7 @@
 /**
  * @fileoverview Entry point para exportar templates como imágenes PNG.
  *
- * Genera PNG automáticamente usando wkhtmltoimage, puppeteer, o PDF + ImageMagick.
+ * Genera PNG automáticamente con el navegador gestionado por Puppeteer.
  *
  * Uso:
  *   bun run export-screenshot nombre-template

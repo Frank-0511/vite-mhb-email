@@ -53,7 +53,7 @@ EmailForge Toolkit te da un entorno de desarrollo local completo para emails:
 ```text
 src/
 ├── emails/
-│   ├── layouts/        # Layouts base de email (main.html, layout-alt.html)
+│   ├── layouts/        # Layouts base de email (main.html)
 │   ├── partials/       # Componentes reutilizables con schema.json
 │   │   └── organisms/
 │   │       ├── hero/

@@ -376,7 +376,7 @@ en `En revisión`; otra autoridad decide `Completada`.
 ## Decisiones técnicas locales
 
 - El patrón permitido se conserva; el guard rechaza valores no string antes de construir rutas.
-- La compatibilidad SendGrid Legacy con placeholders `-variable-` se mantiene: solo se
+- La compatibilidad SendGrid Legacy con placeholders `-variable-` se mantiene permanentemente: solo se
   sustituyen en preview y envío local cuando `data.json` aporta el valor, mientras que el
   build final los preserva. No se autoriza retirarla ni renombrarla sin migración explícita
   y comprobada de todos los consumidores.
