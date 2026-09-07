@@ -13,6 +13,7 @@ import {
   initCopyHtmlModal,
   isSafeDownloadTemplateName,
   renderModalState,
+  updateExportModeView,
 } from "./copy-html-modal.js";
 
 describe("copy-html-modal re-exports (contrato público)", () => {
@@ -26,6 +27,7 @@ describe("copy-html-modal re-exports (contrato público)", () => {
     expect(typeof formatErrorMessage).toBe("function");
     expect(typeof copyTextToClipboard).toBe("function");
     expect(typeof renderModalState).toBe("function");
+    expect(typeof updateExportModeView).toBe("function");
     expect(typeof createCopyHtmlModalController).toBe("function");
     expect(typeof initCopyHtmlModal).toBe("function");
   });

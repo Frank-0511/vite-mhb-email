@@ -1,16 +1,21 @@
 import {
   ArrowLeft,
+  ArrowRight,
   BookOpen,
+  Code,
   Copy,
+  Download,
   Eye,
   FileOutput,
   FileText,
   List,
   Moon,
+  MoreHorizontal,
   Package,
   Rocket,
   Save,
   Sun,
+  X,
   Zap,
 } from "lucide";
 
@@ -18,17 +23,22 @@ import {
 // and serialize in this Node-side (build/dev-time) module.
 const ICONS = {
   "arrow-left": ArrowLeft,
+  "arrow-right": ArrowRight,
   "book-open": BookOpen,
+  code: Code,
   copy: Copy,
+  download: Download,
   eye: Eye,
   "file-output": FileOutput,
   "file-text": FileText,
   list: List,
   moon: Moon,
+  "more-horizontal": MoreHorizontal,
   package: Package,
   rocket: Rocket,
   save: Save,
   sun: Sun,
+  x: X,
   zap: Zap,
 };
 

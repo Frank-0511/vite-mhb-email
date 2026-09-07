@@ -25,7 +25,7 @@
   <body
     class="font-sans text-slate-800 bg-slate-50 dark:bg-slate-900 dark:text-slate-200 flex h-screen overflow-hidden"
   >
-    <!-- Mobile Tab Navigation (<768px) -->
+    <!-- Tab Navigation (≤1279px) -->
     <nav id="mobile-tab-bar" class="mobile-tab-bar" aria-label="Vistas del editor">
       <button
         id="tab-btn-preview"
@@ -54,7 +54,7 @@
     <!-- Panel Izquierdo: Editor -->
     <div
       id="left-panel"
-      class="w-[35%] flex flex-col bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 shrink-0"
+      class="w-[550px] flex flex-col bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 shrink-0"
     >
       <!-- Header del Editor -->
       <div
@@ -193,7 +193,7 @@
     <!-- Panel Derecho: Preview -->
     <div
       id="right-panel"
-      class="w-[65%] flex flex-col bg-slate-100 dark:bg-slate-800 flex-1 overflow-hidden"
+      class="flex flex-col bg-slate-100 dark:bg-slate-800 flex-1 overflow-hidden"
     >
       <!-- Top bar del preview con soporte responsivo -->
       <div
@@ -205,7 +205,7 @@
           <div class="preview-title-wrap">
             <a
               href="/"
-              class="md:hidden text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 font-semibold inline-flex items-center p-1 transition-colors shrink-0"
+              class="preview-back-btn text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 font-semibold items-center p-1 transition-colors shrink-0"
               title="Volver a templates"
             >
               <i data-lucide="arrow-left" class="w-5 h-5 shrink-0"></i>
@@ -217,11 +217,11 @@
               aria-hidden="true"
             >
               <div class="w-4 h-4 rounded bg-slate-200 dark:bg-slate-700 shrink-0"></div>
-              <div class="h-4 w-28 sm:w-32 bg-slate-200 dark:bg-slate-700 rounded"></div>
+              <div class="h-4 w-32 bg-slate-200 dark:bg-slate-700 rounded"></div>
             </div>
             <span
               id="preview-title"
-              class="hidden font-medium text-slate-700 dark:text-slate-200 items-center gap-2 shrink-0 text-sm sm:text-base"
+              class="hidden font-medium text-slate-700 dark:text-slate-200 items-center gap-2 shrink-0 text-base"
             >
               <i data-lucide="eye" class="w-4 h-4 shrink-0"></i>
               <span>Vista previa en vivo</span>
@@ -355,10 +355,10 @@
               id="btn-copy-html"
               type="button"
               class="hidden p-1 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-semibold items-center gap-1 transition-colors border border-slate-200 dark:border-slate-700 shrink-0"
-              title="Copiar HTML final"
+              title="Exportar HTML final (copiar o descargar)"
             >
-              <i data-lucide="copy" class="w-3.5 h-3.5 shrink-0"></i>
-              <span>Copiar HTML</span>
+              <i data-lucide="file-output" class="w-3.5 h-3.5 shrink-0"></i>
+              <span>Exportar HTML</span>
             </button>
           </div>
         </div>
@@ -405,52 +405,124 @@
       </div>
     </div>
 
-    <!-- Copy HTML Dialog -->
+    <!-- Export / Copy HTML Dialog -->
     <dialog id="dialog-copy-html" aria-labelledby="copy-html-dialog-title">
       <div class="copy-html-dialog-inner">
-        <p id="copy-html-dialog-title" class="copy-html-dialog-title">
-          <i data-lucide="copy" style="width: 18px; height: 18px; flex-shrink: 0"></i>
-          Copiar HTML final
-        </p>
-        <p class="copy-html-dialog-desc">
-          Elige cómo obtener el HTML de producción de este template.
-        </p>
+        <!-- Botón de cerrar X en la esquina superior derecha -->
+        <button
+          id="btn-copy-cancel"
+          type="button"
+          class="copy-html-close-btn"
+          aria-label="Cerrar modal"
+          title="Cerrar"
+        >
+          <i data-lucide="x" style="width: 16px; height: 16px"></i>
+        </button>
 
-        <div class="copy-html-actions">
-          <!-- Acción principal: Copia -->
-          <button id="btn-build-and-copy" type="button" class="btn-build-copy">
-            <i data-lucide="zap" style="width: 15px; height: 15px"></i>
-            Buildear y copiar
+        <!-- Cabecera moderna con icono y chip de template -->
+        <div class="copy-html-header">
+          <div class="copy-html-icon-badge">
+            <i data-lucide="file-output" style="width: 20px; height: 20px"></i>
+          </div>
+          <div class="copy-html-header-text">
+            <div class="copy-html-title-row">
+              <h3 id="copy-html-dialog-title" class="copy-html-title">Exportar HTML</h3>
+              <span id="copy-html-template-chip" class="copy-html-template-chip"
+                >template.html</span
+              >
+            </div>
+            <p class="copy-html-desc">
+              Genera el HTML listo para tu ESP o descarga el archivo final.
+            </p>
+          </div>
+        </div>
+
+        <!-- Segmented Control estilo píldora para destino -->
+        <div class="export-segmented-control" role="radiogroup" aria-label="Destino de exportación">
+          <label class="export-segmented-tab" for="export-mode-copy">
+            <input type="radio" id="export-mode-copy" name="export-mode" value="copy" checked />
+            <span class="export-segmented-label">
+              <i data-lucide="copy" style="width: 14px; height: 14px"></i>
+              <span>Copiar al portapapeles</span>
+            </span>
+          </label>
+
+          <label class="export-segmented-tab" for="export-mode-download">
+            <input type="radio" id="export-mode-download" name="export-mode" value="download" />
+            <span class="export-segmented-label">
+              <i data-lucide="download" style="width: 14px; height: 14px"></i>
+              <span>Descargar archivo</span>
+            </span>
+          </label>
+        </div>
+
+        <!-- Lista de Tarjetas de Acción (Action Cards) -->
+        <div class="export-actions-list">
+          <!-- Tarjeta 1: Compilar y Ejecutar (Recomendado) -->
+          <button
+            id="btn-export-build"
+            type="button"
+            class="export-action-card export-action-card-primary"
+          >
+            <div class="export-card-icon-wrap primary">
+              <i data-lucide="zap" style="width: 18px; height: 18px"></i>
+            </div>
+            <div class="export-card-content">
+              <div class="export-card-header">
+                <span id="text-export-build" class="export-card-title">Compilar y copiar</span>
+                <span class="export-badge export-badge-recommended">Recomendado</span>
+              </div>
+              <p id="desc-export-build" class="export-card-desc">
+                Compila con Maizzle e inyecta los estilos y variables actuales del preview.
+              </p>
+            </div>
+            <div class="export-card-arrow" aria-hidden="true">
+              <i data-lucide="arrow-right" style="width: 16px; height: 16px"></i>
+            </div>
           </button>
 
-          <button id="btn-copy-existing" type="button" class="btn-copy-existing">
-            <i data-lucide="file-output" style="width: 14px; height: 14px"></i>
-            Copiar HTML existente
-          </button>
-
-          <!-- Acciones de descarga -->
-          <button id="btn-build-and-download" type="button" class="btn-build-copy">
-            <i data-lucide="download" style="width: 15px; height: 15px"></i>
-            Buildear y descargar
-          </button>
-
-          <button id="btn-download-existing" type="button" class="btn-copy-existing">
-            <i data-lucide="download" style="width: 14px; height: 14px"></i>
-            Descargar HTML existente
+          <!-- Tarjeta 2: Usar versión existente en disco (Rápido) -->
+          <button
+            id="btn-export-existing"
+            type="button"
+            class="export-action-card export-action-card-secondary"
+          >
+            <div class="export-card-icon-wrap secondary">
+              <i
+                id="icon-export-existing-copy"
+                data-lucide="copy"
+                style="width: 16px; height: 16px"
+              ></i>
+              <i
+                id="icon-export-existing-download"
+                data-lucide="download"
+                style="width: 16px; height: 16px; display: none"
+              ></i>
+            </div>
+            <div class="export-card-content">
+              <div class="export-card-header">
+                <span id="text-export-existing" class="export-card-title"
+                  >Copiar versión en disco</span
+                >
+                <span class="export-badge export-badge-fast">Rápido</span>
+              </div>
+              <p id="desc-export-existing" class="export-card-desc">
+                Usa el último HTML generado en dist/ sin volver a compilar.
+              </p>
+            </div>
+            <div class="export-card-arrow" aria-hidden="true">
+              <i data-lucide="arrow-right" style="width: 16px; height: 16px"></i>
+            </div>
           </button>
         </div>
 
-        <!-- Estado: loading / success / error -->
+        <!-- Feedback de estado: loading / success / error -->
         <div
           id="copy-html-status"
           class="copy-html-status hidden"
           role="status"
           aria-live="polite"
         ></div>
-
-        <hr class="copy-html-divider" />
-
-        <button id="btn-copy-cancel" type="button" class="btn-copy-cancel">Cancelar</button>
       </div>
     </dialog>
 

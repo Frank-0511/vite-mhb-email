@@ -12,5 +12,5 @@ export {
   formatSuccessMessage,
   formatValidation,
 } from "./copy-html-formatters.js";
-export { renderModalState } from "./copy-html-view.js";
+export { renderModalState, updateExportModeView } from "./copy-html-view.js";
 export { downloadHtml, isSafeDownloadTemplateName } from "./html-download.js";
