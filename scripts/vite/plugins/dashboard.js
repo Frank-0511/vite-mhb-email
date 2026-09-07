@@ -3,12 +3,8 @@ import { globSync } from "glob";
 import { resolve } from "node:path";
 import { getProjectPaths } from "../../shared/paths.js";
 
-/** Fixtures internos y scaffolds de desarrollo que no deben listarse en el dashboard */
-const INTERNAL_FIXTURES = new Set(["example", "user-created"]);
-
 /**
  * Retorna los templates activos creados en `src/emails/templates/` para el dashboard.
- * Excluye fixtures internos y scaffolds de prueba (example, user-created).
  *
  * @param {string} rootDir
  * @returns {Array<{ id: string, name: string, title: string, path: string, status: string, category: string, description: string, hasSource: boolean, isBuilt: boolean }>}
@@ -20,9 +16,6 @@ export function getTemplates(rootDir) {
   const templates = [];
   for (const file of templateFiles) {
     const name = file.split("/").slice(-2, -1)[0];
-    if (INTERNAL_FIXTURES.has(name)) {
-      continue;
-    }
 
     const dataPath = paths.templateData(name);
     /** @type {Record<string, unknown>} */

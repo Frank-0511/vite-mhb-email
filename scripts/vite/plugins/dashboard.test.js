@@ -6,17 +6,14 @@ const rootDir = resolve(import.meta.dir, "../../..");
 
 describe("dashboardPlugin", () => {
   describe("getTemplates", () => {
-    test("retorna los templates reales creados y excluye scaffolds", () => {
+    test("retorna todos los templates creados en src/emails/templates/", () => {
       const templates = getTemplates(rootDir);
       const ids = templates.map((t) => t.id);
 
-      // welcome existe en disco y no es scaffold
+      // Templates existentes en disco deben aparecer
       expect(ids).toContain("welcome");
-
-      // Scaffolds y fixtures de prueba quedan excluidos
-      expect(ids).not.toContain("example");
-      expect(ids).not.toContain("user-created");
-      expect(ids).not.toContain("welcome2");
+      expect(ids).toContain("example");
+      expect(ids).toContain("user-created");
 
       // Templates no creados aún en src/emails/templates/ no aparecen
       expect(ids).not.toContain("password-reset");
@@ -51,14 +48,12 @@ describe("dashboardPlugin", () => {
       expect(result).toContain("Gmail limit: 102KB");
     });
 
-    test("no incluye scaffolds (example, user-created) ni tarjetas fantasma de correos no creados", () => {
+    test("no incluye tarjetas fantasma de correos no creados en src/emails/templates/", () => {
       const result = /** @type {{ handler: Function }} */ (plugin.transformIndexHtml).handler(
         mockHtml,
         { filename: "/features/home/index.html" },
       );
 
-      expect(result).not.toContain("/templates/example/");
-      expect(result).not.toContain("/templates/user-created/");
       expect(result).not.toContain("/templates/password-reset/");
       expect(result).not.toContain("/templates/receipt/");
       expect(result).not.toContain("/templates/newsletter/");
@@ -120,10 +115,10 @@ describe("dashboardPlugin", () => {
 
       const parsed = JSON.parse(responseData);
       expect(parsed).toHaveProperty("welcome");
+      expect(parsed).toHaveProperty("example");
+      expect(parsed).toHaveProperty("user-created");
 
-      // Scaffolds y no creados no están presentes
-      expect(parsed).not.toHaveProperty("example");
-      expect(parsed).not.toHaveProperty("user-created");
+      // Templates no creados en src/emails/templates/ no están presentes
       expect(parsed).not.toHaveProperty("password-reset");
       expect(parsed).not.toHaveProperty("receipt");
       expect(parsed).not.toHaveProperty("newsletter");
