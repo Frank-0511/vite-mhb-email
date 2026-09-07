@@ -3,9 +3,9 @@
 ## Resumen
 
 - ID activo: MHB-08
-- Estado: En revisión
+- Estado: Completada
 - Implementador: implementador actual
-- Revisor o autoridad de cierre: revisor UX/API independiente
+- Revisor o autoridad de cierre: revisor UX/API independiente (autorizado por el usuario)
 - Última actualización: 2026-09-06
 - Contrato estable: `docs/implementation/PLAN.md`
 
@@ -40,7 +40,15 @@ en `En revisión`; otra autoridad decide `Completada`.
     3. `downloadHtml` valida nombre seguro `welcome.html`, genera Blob URL y revoca en `finally`.
     4. Fallo recuperable ante template inexistente devuelve `success: false` sin archivo parcial ni bloqueo permanente.
 - Riesgo residual: los 3 warnings `link-targets` y el info `company` provienen de templates base asignados a MHB-21.
-- Estado: `En revisión`.
+- Estado: `Completada`.
+
+## Revisión de cierre (MHB-08)
+
+- Criterios de aceptación comprobados: descarga en preview de `<template>.html` equivalente al HTML compilado desde `POST /api/copy-html`, validación de nombre de template con `isSafeDownloadTemplateName`, utilidad pura `downloadHtml` con Blob URL temporal y revocación segura en bloque `finally`, bloqueo concurrente en modal/toolbar para las cuatro combinaciones de copia y descarga, y rediseño de UI de exportación con Action Cards accesibles y segmented control.
+- Controles automáticos: `check:task-branch`, `lint`, `typecheck`, `test` (386 pass / 0 fail en 43 archivos), `format:check`, `build` y `validate-email` verdes.
+- Controles manuales y smoke: endpoints `/api/copy-html?template=welcome` verificados con `build: true` y `build: false` coincidiendo byte a byte con `dist/welcome.html`, Blob URL generado y revocado limpiamente, y error recuperable ante template inexistente sin bloqueo persistente.
+- Evidencia revisada: commit `1999aac` en rama `feature/mhb-08`.
+- Decisión del revisor: `Completada` (2026-09-06), autorizada por el usuario tras validación de controles y smoke manual.
 
 ## Revisión de cierre (MHB-07)
 
@@ -50,6 +58,7 @@ en `En revisión`; otra autoridad decide `Completada`.
 
 ## Últimas entregas
 
+- MHB-08 completado: descarga segura de HTML final (`<template>.html`) desde `POST /api/copy-html`, utilidad `downloadHtml` e `isSafeDownloadTemplateName`, bloqueo concurrente en modal/toolbar, rediseño accesible de UI de exportación y suite con 386 pruebas verdes; commit `1999aac` en `feature/mhb-08`.
 - MHB-07 completado: diagnóstico estructurado en `POST /api/render`, handler inyectable, cliente `RenderApiError` y vista accesible en preview; integrado en `master` (`708d8d7`).
 
 - MHB-24 completada: modularización de components API, validador HTML, HMR
@@ -161,18 +170,18 @@ en `En revisión`; otra autoridad decide `Completada`.
 
 ## Ejecuciones delegadas
 
-| Ámbito | Modelo/esfuerzo reales      | Estado      | Propiedad                                                                    | Handoff                                                                    |
-| ------ | --------------------------- | ----------- | ---------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| MHB-01 | gpt-5.6-terra / alto        | Completada  | Guard, generador, exportador, build selectivo y tests                        | Usuario validó manualmente el resultado.                                   |
-| MHB-02 | GPT-5.6 Luna / alto         | Completada  | Procesos CLI/build y regresiones Bun                                         | Cierre formal 2026-08-13 por el revisor.                                   |
-| MHB-03 | GPT-5.6 Terra / medio       | Completada  | Documentación de release y matriz de reconciliación                          | Cierre formal 2026-08-13 por el orquestador.                               |
-| MHB-04 | GPT-5.6 Luna / medio        | Completada  | CI por rutas, formato, verify y Node 24                                      | Cierre formal 2026-08-14 por el orquestador.                               |
-| MHB-05 | Kimi K2.7 Code / alto       | Completada  | Tests de seguridad de comandos y filesystem                                  | Cierre asumido tras MR/PR mergeado por autorización del usuario.           |
-| MHB-22 | Codex / bajo                | Completada  | LICENSE, README, metadata y evidencia de Fase A                              | Cierre formal 2026-09-03 por el orquestador tras PR #13 mergeado.          |
-| MHB-06 | Codex / alto                | Completada  | Helper esp-variables, integración preview/build y suite                      | Cierre conciliado 2026-09-04 tras confirmación y merge del usuario.        |
-| MHB-24 | Implementador actual / alto | Completada  | Modularización componentes, validador, HMR, modal copy HTML y helper ESP     | Cierre autorizado por el usuario tras revisión independiente (2026-09-05). |
-| MHB-07 | Implementador actual / alto | En revisión | Handler 422, normalizador, render-api, vista accesible y tests               | Pendiente de revisión UX/API independiente.                                |
-| MHB-08 | Implementador actual / alto | En revisión | Utilidad de descarga, bloqueo concurrente, rediseño UX modal/toolbar y tests | Entregado para revisión independiente (2026-09-06).                        |
+| Ámbito | Modelo/esfuerzo reales      | Estado     | Propiedad                                                                    | Handoff                                                                    |
+| ------ | --------------------------- | ---------- | ---------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| MHB-01 | gpt-5.6-terra / alto        | Completada | Guard, generador, exportador, build selectivo y tests                        | Usuario validó manualmente el resultado.                                   |
+| MHB-02 | GPT-5.6 Luna / alto         | Completada | Procesos CLI/build y regresiones Bun                                         | Cierre formal 2026-08-13 por el revisor.                                   |
+| MHB-03 | GPT-5.6 Terra / medio       | Completada | Documentación de release y matriz de reconciliación                          | Cierre formal 2026-08-13 por el orquestador.                               |
+| MHB-04 | GPT-5.6 Luna / medio        | Completada | CI por rutas, formato, verify y Node 24                                      | Cierre formal 2026-08-14 por el orquestador.                               |
+| MHB-05 | Kimi K2.7 Code / alto       | Completada | Tests de seguridad de comandos y filesystem                                  | Cierre asumido tras MR/PR mergeado por autorización del usuario.           |
+| MHB-22 | Codex / bajo                | Completada | LICENSE, README, metadata y evidencia de Fase A                              | Cierre formal 2026-09-03 por el orquestador tras PR #13 mergeado.          |
+| MHB-06 | Codex / alto                | Completada | Helper esp-variables, integración preview/build y suite                      | Cierre conciliado 2026-09-04 tras confirmación y merge del usuario.        |
+| MHB-24 | Implementador actual / alto | Completada | Modularización componentes, validador, HMR, modal copy HTML y helper ESP     | Cierre autorizado por el usuario tras revisión independiente (2026-09-05). |
+| MHB-07 | Implementador actual / alto | Completada | Handler 422, normalizador, render-api, vista accesible y tests               | Integrada en master (708d8d7).                                             |
+| MHB-08 | Implementador actual / alto | Completada | Utilidad de descarga, bloqueo concurrente, rediseño UX modal/toolbar y tests | Cierre autorizado por el usuario tras verificación (2026-09-06).           |
 
 ## Revisión de cierre (MHB-02)
 
@@ -391,6 +400,6 @@ en `En revisión`; otra autoridad decide `Completada`.
 - MHB-24: `Completada` por autorización del usuario tras revisión independiente;
   la rama `feature/mhb-24` queda preservada hasta que se decida merge o PR.
 - MHB-07: `Completada`; integrada en `master` en `708d8d7`.
-- MHB-08: `En revisión`; rama `feature/mhb-08`.
-- Próxima acción inmediata: revisión UX/API independiente de MHB-08 antes de autorizar cierre o merge.
-- Siguiente tarea del roadmap: MHB-09 (bloqueada hasta completar MHB-08).
+- MHB-08: `Completada`; rama `feature/mhb-08`, commit `1999aac`; cierre autorizado por el usuario tras validación de controles y smoke manual.
+- Próxima acción inmediata: preparar PR o merge de `feature/mhb-08` a `master`.
+- Siguiente tarea del roadmap: MHB-09 (desbloqueada; dependencias MHB-06 y MHB-08 satisfechas; no iniciar sin asignación explícita).
