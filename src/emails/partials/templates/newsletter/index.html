@@ -1,0 +1,98 @@
+<script props>
+  module.exports = {
+    subscriberName: props["subscriber-name"] || "{{ subscriber_name }}",
+    issueNumber: props["issue-number"] || "{{ issue_number }}",
+    issueDate: props["issue-date"] || "{{ issue_date }}",
+    readArticleUrl: props["read-article-url"] || "{{ read_article_url }}",
+    unsubscribeUrl: props["unsubscribe-url"] || "{{ unsubscribe_url }}",
+    preferencesUrl: props["preferences-url"] || "{{ preferences_url }}",
+  };
+</script>
+
+<div class="newsletter-template" style="padding: 16px 0">
+  <table
+    cellpadding="0"
+    cellspacing="0"
+    width="100%"
+    role="none"
+    class="mb-4 pb-3 border-b border-zinc-200 dark:border-zinc-700"
+  >
+    <tr>
+      <td class="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+        Edición [[ issueNumber ]]
+      </td>
+      <td align="right" class="text-xs text-zinc-500 dark:text-zinc-400">[[ issueDate ]]</td>
+    </tr>
+  </table>
+
+  <h1 class="text-2xl font-bold mb-2 text-zinc-800 dark:text-zinc-100">
+    Las novedades de este mes
+  </h1>
+  <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-6">
+    Hola [[ subscriberName ]], te compartimos los artículos, actualizaciones y lanzamientos más
+    destacados de nuestro equipo.
+  </p>
+
+  <!-- Artículo destacado -->
+  <table
+    cellpadding="0"
+    cellspacing="0"
+    width="100%"
+    role="none"
+    class="mb-6 bg-zinc-50 dark:bg-zinc-800 rounded-lg p-5"
+    style="padding: 20px; border-radius: 8px; border: 1px solid #e4e4e7"
+  >
+    <tr>
+      <td>
+        <span
+          class="inline-block bg-indigo-100 text-indigo-800 text-xs font-bold px-2 py-1 rounded mb-2"
+          style="
+            background-color: #e0e7ff;
+            color: #3730a3;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+          "
+        >
+          Destacado
+        </span>
+        <h2 class="text-lg font-bold text-zinc-900 dark:text-zinc-100 mt-2 mb-2">
+          Cómo optimizar el rendimiento y compatibilidad de tus emails
+        </h2>
+        <p class="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4">
+          Descubre las mejores prácticas de codificación para clientes modernos y antiguos,
+          asegurando que tu diseño se renderice impecable en cualquier bandeja de entrada.
+        </p>
+        <a
+          href="[[ readArticleUrl ]]"
+          class="text-indigo-600 dark:text-indigo-400 font-semibold text-sm underline"
+        >
+          Leer artículo completo &rarr;
+        </a>
+      </td>
+    </tr>
+  </table>
+
+  <!-- Sección de pie y baja -->
+  <table
+    cellpadding="0"
+    cellspacing="0"
+    width="100%"
+    role="none"
+    class="mt-8 pt-4 border-t border-zinc-200 dark:border-zinc-700"
+  >
+    <tr>
+      <td class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+        Recibes este correo porque estás suscrito a nuestro boletín periódico.
+        <br />
+        <a href="[[ preferencesUrl ]]" class="text-zinc-600 dark:text-zinc-400 underline">
+          Modificar preferencias
+        </a>
+        &nbsp;&bull;&nbsp;
+        <a href="[[ unsubscribeUrl ]]" class="text-zinc-600 dark:text-zinc-400 underline">
+          Darse de baja
+        </a>
+      </td>
+    </tr>
+  </table>
+</div>

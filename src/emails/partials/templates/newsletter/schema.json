@@ -1,0 +1,49 @@
+{
+  "name": "Newsletter Digest",
+  "description": "Boletín informativo editorial con artículo principal, novedades breves y pie de desuscripción",
+  "category": "Marketing",
+  "component": "src/emails/partials/templates/newsletter",
+  "icon": "newspaper",
+  "espVariables": [
+    "subscriber_name",
+    "issue_number",
+    "issue_date",
+    "read_article_url",
+    "unsubscribe_url",
+    "preferences_url"
+  ],
+  "variants": [
+    {
+      "id": "index",
+      "name": "Default",
+      "description": "Boletín informativo estándar"
+    }
+  ],
+  "props": {
+    "subscriberName": {
+      "type": "string",
+      "default": "{{ subscriber_name }}",
+      "label": "Nombre del suscriptor"
+    },
+    "issueNumber": {
+      "type": "string",
+      "default": "{{ issue_number }}",
+      "label": "Número de edición"
+    },
+    "issueDate": {
+      "type": "string",
+      "default": "{{ issue_date }}",
+      "label": "Fecha de edición"
+    },
+    "readArticleUrl": {
+      "type": "string",
+      "default": "{{ read_article_url }}",
+      "label": "URL del artículo"
+    },
+    "unsubscribeUrl": {
+      "type": "string",
+      "default": "{{ unsubscribe_url }}",
+      "label": "URL de baja"
+    }
+  }
+}

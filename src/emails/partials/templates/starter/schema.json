@@ -1,0 +1,42 @@
+{
+  "name": "Starter Base",
+  "description": "Plantilla base modular limpia con encabezado, tarjeta y llamada a la acción",
+  "category": "Base",
+  "component": "src/emails/partials/templates/starter",
+  "icon": "layout",
+  "espVariables": ["user_name", "cta_url"],
+  "variants": [
+    {
+      "id": "index",
+      "name": "Default",
+      "description": "Plantilla base modular limpia"
+    }
+  ],
+  "props": {
+    "title": {
+      "type": "string",
+      "default": "Título del correo",
+      "label": "Título principal"
+    },
+    "userName": {
+      "type": "string",
+      "default": "{{ user_name }}",
+      "label": "Nombre del destinatario"
+    },
+    "content": {
+      "type": "string",
+      "default": "Este es un mensaje inicial creado con la plantilla base de EmailForge.",
+      "label": "Contenido del mensaje"
+    },
+    "ctaUrl": {
+      "type": "string",
+      "default": "{{ cta_url }}",
+      "label": "URL del botón de acción"
+    },
+    "ctaText": {
+      "type": "string",
+      "default": "Comenzar ahora",
+      "label": "Texto del botón"
+    }
+  }
+}

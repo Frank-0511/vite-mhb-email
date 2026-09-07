@@ -1,0 +1,37 @@
+{
+  "name": "Password Reset",
+  "description": "Recuperación de contraseña con botón de acción directa, tiempo de expiración y aviso de seguridad",
+  "category": "Transaccional",
+  "component": "src/emails/partials/templates/password-reset",
+  "icon": "key",
+  "espVariables": ["user_name", "reset_url", "expiration_minutes", "support_url"],
+  "variants": [
+    {
+      "id": "index",
+      "name": "Default",
+      "description": "Plantilla estándar de recuperación segura"
+    }
+  ],
+  "props": {
+    "userName": {
+      "type": "string",
+      "default": "{{ user_name }}",
+      "label": "Nombre del usuario"
+    },
+    "resetUrl": {
+      "type": "string",
+      "default": "{{ reset_url }}",
+      "label": "URL de restablecimiento"
+    },
+    "expirationMinutes": {
+      "type": "string",
+      "default": "{{ expiration_minutes }}",
+      "label": "Minutos de validez"
+    },
+    "supportUrl": {
+      "type": "string",
+      "default": "{{ support_url }}",
+      "label": "URL de soporte"
+    }
+  }
+}

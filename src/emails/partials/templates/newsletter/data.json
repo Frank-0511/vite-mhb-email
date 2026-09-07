@@ -1,0 +1,9 @@
+{
+  "titleTemplate": "Newsletter Mensual",
+  "subscriber_name": "Elena",
+  "issue_number": "#42",
+  "issue_date": "Septiembre 2026",
+  "read_article_url": "https://example.com/blog/novedades-septiembre",
+  "unsubscribe_url": "https://example.com/newsletter/unsubscribe",
+  "preferences_url": "https://example.com/newsletter/preferences"
+}

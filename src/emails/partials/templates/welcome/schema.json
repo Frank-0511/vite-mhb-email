@@ -1,0 +1,32 @@
+{
+  "name": "Welcome Onboarding",
+  "description": "Email de bienvenida para nuevos usuarios con pasos iniciales y llamada a la acción",
+  "category": "Onboarding",
+  "component": "src/emails/partials/templates/welcome",
+  "icon": "mail",
+  "espVariables": ["first_name", "company", "dashboard_url"],
+  "variants": [
+    {
+      "id": "index",
+      "name": "Default",
+      "description": "Flujo de bienvenida con pasos recomendados"
+    }
+  ],
+  "props": {
+    "firstName": {
+      "type": "string",
+      "default": "{{ first_name }}",
+      "label": "Nombre del usuario"
+    },
+    "company": {
+      "type": "string",
+      "default": "Mi Empresa",
+      "label": "Nombre de la empresa"
+    },
+    "dashboardUrl": {
+      "type": "string",
+      "default": "{{ dashboard_url }}",
+      "label": "URL del panel"
+    }
+  }
+}
