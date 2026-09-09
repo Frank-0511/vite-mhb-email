@@ -6,19 +6,20 @@ El contrato sigue siendo `PLAN.md`; commits, PRs y CI son la evidencia primaria.
 
 ## Índice de cierres
 
-| ID     | Estado     | Fecha      | Evidencia resumida                                                  |
-| ------ | ---------- | ---------- | ------------------------------------------------------------------- |
-| MHB-01 | Completada | 2026-08-10 | Guard de rutas, aliases Bun y exportación PNG portable.             |
-| MHB-02 | Completada | 2026-08-13 | Procesos CLI/build sin shell; commit `6ba9a23`.                     |
-| MHB-03 | Completada | 2026-08-13 | Línea base/release `v1.1.0`; tag `0d52a094`.                        |
-| MHB-04 | Completada | 2026-08-14 | CI por rutas, formato y Node 24; CI remoto `31814207687`.           |
-| MHB-05 | Completada | 2026-08-17 | Regresiones de seguridad y restauración de build; commit `b4e6216`. |
-| MHB-06 | Completada | 2026-09-04 | Variables ESP en preview/build; conciliación y merge autorizados.   |
-| MHB-07 | Completada | 2026-09-05 | Diagnóstico de render; integrado en `708d8d7`.                      |
-| MHB-08 | Completada | 2026-09-06 | Descarga HTML segura; commit `1999aac`.                             |
-| MHB-09 | Completada | 2026-09-09 | Catálogo dinámico y CLI/generador; 412 pruebas verdes.              |
-| MHB-22 | Completada | 2026-09-03 | LICENSE/README/metadata; PR #13 mergeado en `92f0c96`.              |
-| MHB-24 | Completada | 2026-09-05 | Modularización de components API, validación, HMR y modal.          |
+| ID                   | Estado     | Fecha      | Evidencia resumida                                                               |
+| -------------------- | ---------- | ---------- | -------------------------------------------------------------------------------- |
+| MHB-01               | Completada | 2026-08-10 | Guard de rutas, aliases Bun y exportación PNG portable.                          |
+| MHB-02               | Completada | 2026-08-13 | Procesos CLI/build sin shell; commit `6ba9a23`.                                  |
+| MHB-03               | Completada | 2026-08-13 | Línea base/release `v1.1.0`; tag `0d52a094`.                                     |
+| MHB-04               | Completada | 2026-08-14 | CI por rutas, formato y Node 24; CI remoto `31814207687`.                        |
+| MHB-05               | Completada | 2026-08-17 | Regresiones de seguridad y restauración de build; commit `b4e6216`.              |
+| MHB-06               | Completada | 2026-09-04 | Variables ESP en preview/build; conciliación y merge autorizados.                |
+| MHB-07               | Completada | 2026-09-05 | Diagnóstico de render; integrado en `708d8d7`.                                   |
+| MHB-08               | Completada | 2026-09-06 | Descarga HTML segura; commit `1999aac`.                                          |
+| MHB-09               | Completada | 2026-09-09 | Catálogo dinámico y CLI/generador; 412 pruebas verdes.                           |
+| MHB-10/MHB-11/MHB-12 | Completada | 2026-09-09 | Templates de producto; controles previos verdes y aceptación manual del usuario. |
+| MHB-22               | Completada | 2026-09-03 | LICENSE/README/metadata; PR #13 mergeado en `92f0c96`.                           |
+| MHB-24               | Completada | 2026-09-05 | Modularización de components API, validación, HMR y modal.                       |
 
 ## Decisiones históricas que siguen aplicando
 
