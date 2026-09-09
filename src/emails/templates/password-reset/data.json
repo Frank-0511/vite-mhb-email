@@ -1,0 +1,8 @@
+{
+  "titleTemplate": "Recuperación de contraseña",
+  "user_name": "Carlos",
+  "reset_url": "https://example.com/auth/reset-password?token=sample-token-12345",
+  "expiration_minutes": "30",
+  "support_url": "https://example.com/soporte",
+  "unsubscribe_url": "https://example.com/preferences"
+}

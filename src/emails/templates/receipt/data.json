@@ -1,0 +1,16 @@
+{
+  "titleTemplate": "Confirmación de compra",
+  "customer_name": "María",
+  "order_number": "ORD-98432",
+  "order_date": "06 Sep 2026",
+  "payment_method": "Visa terminada en 4242",
+  "item_1_name": "Suscripción Anual Pro",
+  "item_1_price": "$120.00",
+  "item_2_name": "Créditos Adicionales API",
+  "item_2_price": "$29.00",
+  "subtotal": "$149.00",
+  "tax": "$14.90",
+  "total_amount": "$163.90",
+  "receipt_url": "https://example.com/receipts/ORD-98432",
+  "unsubscribe_url": "https://example.com/preferences"
+}

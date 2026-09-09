@@ -5,6 +5,7 @@
 
 import { initLucideIcons } from "../../shared/utils/lucide-setup.js";
 import "../../shared/utils/theme-toggle-component.js"; // Web Component auto-registers
+import { initializeTemplateCardPreviews } from "./card-previews.js";
 import "./styles.css";
 
 /**
@@ -12,6 +13,7 @@ import "./styles.css";
  */
 function initializeHome() {
   initLucideIcons();
+  initializeTemplateCardPreviews();
 }
 
 // Initialize when DOM is ready
