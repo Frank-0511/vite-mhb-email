@@ -64,7 +64,12 @@ function renderTemplateCard({ name, title, path }) {
       >
         <!-- Preview Section -->
         <div class="preview-wrapper border-b border-slate-200 dark:border-slate-700 group-hover:border-sky-300 dark:group-hover:border-sky-500 transition-colors bg-gradient-to-br from-slate-50 to-white dark:from-slate-800 dark:to-slate-900">
-          <iframe src="${path}" title="Preview: ${title}" scrolling="no" tabindex="-1"></iframe>
+          <div class="template-preview-skeleton" data-template-preview-skeleton="${name}" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <iframe data-preview-src="${path}" loading="lazy" title="Preview: ${title}" scrolling="no" tabindex="-1"></iframe>
         </div>
 
         <!-- Content Section -->

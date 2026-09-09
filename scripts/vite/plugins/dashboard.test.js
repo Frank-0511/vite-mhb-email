@@ -15,10 +15,10 @@ describe("dashboardPlugin", () => {
       expect(ids).toContain("example");
       expect(ids).toContain("user-created");
 
-      // Templates no creados aún en src/emails/templates/ no aparecen
-      expect(ids).not.toContain("password-reset");
-      expect(ids).not.toContain("receipt");
-      expect(ids).not.toContain("newsletter");
+      // Los templates de producto promovidos desde los arquetipos aparecen
+      expect(ids).toContain("password-reset");
+      expect(ids).toContain("receipt");
+      expect(ids).toContain("newsletter");
     });
 
     test("welcome tiene status 'available' y ruta de preview", () => {
@@ -44,19 +44,22 @@ describe("dashboardPlugin", () => {
 
       expect(result).toContain("/templates/welcome/");
       expect(result).toContain('href="/preview?template=welcome"');
-      expect(result).toContain('<iframe src="/templates/welcome/index.html"');
+      expect(result).toContain(
+        '<iframe data-preview-src="/templates/welcome/index.html" loading="lazy"',
+      );
+      expect(result).toContain('data-template-preview-skeleton="welcome"');
       expect(result).toContain("Gmail limit: 102KB");
     });
 
-    test("no incluye tarjetas fantasma de correos no creados en src/emails/templates/", () => {
+    test("incluye tarjetas para los templates de producto creados", () => {
       const result = /** @type {{ handler: Function }} */ (plugin.transformIndexHtml).handler(
         mockHtml,
         { filename: "/features/home/index.html" },
       );
 
-      expect(result).not.toContain("/templates/password-reset/");
-      expect(result).not.toContain("/templates/receipt/");
-      expect(result).not.toContain("/templates/newsletter/");
+      expect(result).toContain("/templates/password-reset/");
+      expect(result).toContain("/templates/receipt/");
+      expect(result).toContain("/templates/newsletter/");
       expect(result).not.toContain("En roadmap");
     });
 
@@ -118,10 +121,9 @@ describe("dashboardPlugin", () => {
       expect(parsed).toHaveProperty("example");
       expect(parsed).toHaveProperty("user-created");
 
-      // Templates no creados en src/emails/templates/ no están presentes
-      expect(parsed).not.toHaveProperty("password-reset");
-      expect(parsed).not.toHaveProperty("receipt");
-      expect(parsed).not.toHaveProperty("newsletter");
+      expect(parsed).toHaveProperty("password-reset");
+      expect(parsed).toHaveProperty("receipt");
+      expect(parsed).toHaveProperty("newsletter");
     });
   });
 });

@@ -22,6 +22,63 @@
   pointer-events: none;
 }
 
+.template-preview-skeleton {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  justify-content: center;
+  padding: 2rem;
+  background: linear-gradient(
+    110deg,
+    rgb(226 232 240 / 70%) 8%,
+    rgb(241 245 249) 18%,
+    rgb(226 232 240 / 70%) 33%
+  );
+  background-size: 200% 100%;
+  animation: template-preview-shimmer 1.4s linear infinite;
+}
+
+.template-preview-skeleton span {
+  display: block;
+  height: 0.875rem;
+  border-radius: 9999px;
+  background-color: rgb(203 213 225 / 80%);
+}
+
+.template-preview-skeleton span:nth-child(2) {
+  width: 78%;
+}
+
+.template-preview-skeleton span:nth-child(3) {
+  width: 56%;
+}
+
+.dark .template-preview-skeleton {
+  background: linear-gradient(
+    110deg,
+    rgb(51 65 85 / 75%) 8%,
+    rgb(71 85 105 / 75%) 18%,
+    rgb(51 65 85 / 75%) 33%
+  );
+  background-size: 200% 100%;
+}
+
+.dark .template-preview-skeleton span {
+  background-color: rgb(100 116 139 / 80%);
+}
+
+.is-preview-loaded .template-preview-skeleton {
+  display: none;
+}
+
+@keyframes template-preview-shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
 /* Template cards enhancement */
 #template-list a {
   --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px -1px rgb(0 0 0 / 10%);

@@ -5,6 +5,23 @@ description: Actualizar docs/implementation/STATUS.md de EmailForge Toolkit dura
 
 # Estado e handoff
 
+## Estructura operativa estable
+
+- `STATUS.md` es un tablero operativo: mantenerlo normalmente por debajo de
+  160 líneas. Debe contener, en este orden, propósito/formato, resumen,
+  paquete activo, controles, riesgo/bloqueo, últimas entregas, ejecuciones
+  relevantes, decisiones vigentes y handoff.
+- Conservar como máximo cinco hechos por entrega activa y una línea por entrega
+  cerrada reciente. Usar tablas para controles cuando reduzcan repetición.
+- Mover revisiones largas, logs, tablas antiguas de validación y decisiones
+  cerradas a `docs/implementation/STATUS-HISTORY.md`. Ese archivo es un índice
+  de trazabilidad, no una copia del roadmap: resumir con ID, fecha, evidencia y
+  enlace a commit/PR cuando exista.
+- Si `STATUS.md` se acerca al límite, compactar antes de añadir una nueva
+  entrega. Nunca eliminar un hecho vigente, una decisión aplicable, una
+  evidencia de cierre o un bloqueo sin trasladarlo al historial o a su fuente
+  canónica.
+
 - Mantener `STATUS.md` breve: fase/ID, estado, implementador, revisor,
   validaciones, bloqueos, desviaciones y siguiente acción. No copiar logs,
   prompts, conversaciones, diffs extensos ni contenido del plan.
