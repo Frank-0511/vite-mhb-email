@@ -9,48 +9,36 @@ el contrato en `PLAN.md` y el detalle reproducible en los commits y PRs.
 
 ## Resumen
 
-| Campo                         | Valor                           |
-| ----------------------------- | ------------------------------- |
-| ID activo                     | MHB-10, MHB-11 y MHB-12         |
-| Estado                        | En revisión                     |
-| Implementador                 | Implementador actual            |
-| Revisor o autoridad de cierre | Revisor de email/compatibilidad |
-| Rama autorizada               | `feature/mhb-10`                |
-| Última actualización          | 2026-09-09                      |
-| Contrato estable              | `docs/implementation/PLAN.md`   |
+| Campo                         | Valor                         |
+| ----------------------------- | ----------------------------- |
+| ID activo                     | Ninguno                       |
+| Estado                        | Sin tarea en progreso         |
+| Implementador                 | No aplica                     |
+| Revisor o autoridad de cierre | Usuario (aceptación manual)   |
+| Rama autorizada               | `feature/mhb-10`              |
+| Última actualización          | 2026-09-09                    |
+| Contrato estable              | `docs/implementation/PLAN.md` |
 
-## Paquete activo — MHB-10, MHB-11 y MHB-12
+## Paquete activo
 
-- Alcance: promover `password-reset`, `receipt` y `newsletter` de arquetipos a
-  templates de producto compilables, con fixtures y pruebas de aceptación.
-- Desviación autorizada: los tres IDs comparten `feature/mhb-10`, pero cada uno
-  permanece `En revisión` hasta su aceptación independiente.
-- Entregado: cada template tiene `index.html` y `data.json`, aparece en el
-  dashboard y declara `logoUrl` para no heredar el enlace `#` del layout.
-- Cobertura entregada: catálogo, tarjetas, tamaños y variables ESP críticas
-  `reset_url`, `total_amount` y `unsubscribe_url`.
+- No hay un ID iniciado. MHB-10, MHB-11 y MHB-12 fueron aceptadas por el
+  usuario el 2026-09-09 tras su validación manual.
 
 ### Controles
 
-| Control                       | Resultado    | Nota                                                       |
-| ----------------------------- | ------------ | ---------------------------------------------------------- |
-| `bun run check:task-branch`   | Verde        | Rama `feature/mhb-10`.                                     |
-| Suite                         | Verde        | 415 pruebas.                                               |
-| Typecheck, formato y lint     | Verde        | Ejecutados durante la entrega.                             |
-| Build y `validate-email`      | Verde        | Cada HTML queda bajo 21 KB.                                |
-| Warnings/INFO                 | Visible      | Tres warnings y un INFO pertenecen a templates anteriores. |
-| Revisión visual desktop/móvil | No ejecutado | Requisito pendiente del revisor.                           |
+| Control                       | Resultado | Nota                                                      |
+| ----------------------------- | --------- | --------------------------------------------------------- |
+| Revisión visual desktop/móvil | Verde     | Aceptación manual del usuario el 2026-09-09.              |
+| Controles previos             | Verde     | Suite (415), typecheck, formato, lint, build y validador. |
 
 ### Riesgo y bloqueo
 
-- No hay bloqueo técnico automático.
-- La falta de aceptación visual y revisión independiente impide marcar los tres
-  IDs como `Completada`.
+- No hay bloqueo técnico en los IDs recién cerrados.
 
 ## Últimas entregas
 
-- MHB-10/MHB-11/MHB-12: `En revisión`; templates password reset, receipt y
-  newsletter promovidos a producto; falta aceptación visual independiente.
+- MHB-10/MHB-11/MHB-12: `Completada` el 2026-09-09; templates password reset,
+  receipt y newsletter aceptados manualmente por el usuario.
 - MHB-09: `Completada` el 2026-09-09; catálogo dinámico, dashboard de todos
   los templates en disco y CLI/generador, con 412 pruebas verdes.
 - MHB-08: `Completada`; descarga segura de HTML final y modal accesible;
@@ -62,10 +50,10 @@ el contrato en `PLAN.md` y el detalle reproducible en los commits y PRs.
 
 ## Ejecuciones delegadas relevantes
 
-| Ámbito               | Estado      | Propiedad                                  | Handoff                                    |
-| -------------------- | ----------- | ------------------------------------------ | ------------------------------------------ |
-| MHB-09               | Completada  | Catálogo, dashboard, tests y documentación | Cierre autorizado el 2026-09-09.           |
-| MHB-10/MHB-11/MHB-12 | En revisión | Templates y pruebas de catálogo/ESP        | Pendiente aceptación visual independiente. |
+| Ámbito               | Estado     | Propiedad                                  | Handoff                                      |
+| -------------------- | ---------- | ------------------------------------------ | -------------------------------------------- |
+| MHB-09               | Completada | Catálogo, dashboard, tests y documentación | Cierre autorizado el 2026-09-09.             |
+| MHB-10/MHB-11/MHB-12 | Completada | Templates y pruebas de catálogo/ESP        | Aceptación manual del usuario el 2026-09-09. |
 
 ## Decisiones y desviaciones vigentes
 
@@ -77,9 +65,8 @@ el contrato en `PLAN.md` y el detalle reproducible en los commits y PRs.
 
 ## Handoff
 
-- Próxima acción inmediata: el revisor de email/compatibilidad debe revisar el
-  diff y aceptar visualmente los tres templates en desktop y móvil.
-- Criterio de cierre: documentar esa aceptación y la revisión independiente;
-  solo entonces otra autoridad puede cambiar cada ID a `Completada`.
+- Próxima acción inmediata: definir y autorizar un ID independiente si se va a
+  iniciar el upgrade de la UI web.
+- Criterio de cierre: no aplica; MHB-10, MHB-11 y MHB-12 están completadas.
 - Siguiente tarea del roadmap: MHB-13, `bloqueada` hasta completar MHB-19 y
   MHB-20 según `PLAN.md`.
