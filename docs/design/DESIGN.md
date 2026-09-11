@@ -12,6 +12,7 @@ colors:
   border: "#27425F"
   accent: "#4FA3FF"
   accent-strong: "#2587F5"
+  text-on-accent: "#FFFFFF"
   focus: "#7DC0FF"
   success: "#45D39A"
   warning: "#F5BE4F"
@@ -52,7 +53,7 @@ spacing:
 components:
   action-primary:
     backgroundColor: "{colors.accent-strong}"
-    textColor: "{colors.text}"
+    textColor: "{colors.text-on-accent}"
     rounded: "{rounded.md}"
     padding: 8px 12px
   panel:

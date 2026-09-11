@@ -644,19 +644,28 @@ html.dark .preview-render-error {
 .preview-shell #topbar-controls button.bg-sky-500 {
   border-color: var(--ef-accent-strong);
   background: var(--ef-accent-strong);
-  color: #fff;
+  color: var(--ef-text-on-accent);
 }
 
 .preview-shell #topbar-controls button.bg-sky-500:hover {
   border-color: var(--ef-accent);
   background: var(--ef-accent);
-  color: #fff;
+  color: var(--ef-text-on-accent);
+}
+
+/* The dark-theme --ef-accent-strong (#2587f5) gives white 12px text only
+   3.58:1, under the 4.5:1 WCAG AA text minimum (axe-core color-contrast).
+   Scoped to this small-text button only, not the shared token, to avoid
+   changing every other accent-strong usage (borders, hover states). */
+.dark .preview-shell #topbar-controls button.bg-sky-500 {
+  border-color: #126ac2;
+  background: #126ac2;
 }
 
 .preview-shell #btn-save {
   border: 1px solid var(--ef-accent-strong);
   background: var(--ef-accent-strong);
-  color: #fff;
+  color: var(--ef-text-on-accent);
 }
 
 .preview-shell #btn-save:hover {
@@ -749,4 +758,11 @@ html.dark .preview-render-error {
     background: var(--ef-surface);
     border-top-color: var(--ef-border);
   }
+}
+
+/* Tailwind's text-green-600 falls under 4.5:1 against --ef-surface; the
+   design-token success color passes WCAG AA in both themes. */
+.sync-status-ok {
+  color: var(--ef-success);
+  font-weight: 500;
 }

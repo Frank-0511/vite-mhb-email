@@ -9,77 +9,53 @@ el contrato en `PLAN.md` y el detalle reproducible en los commits y PRs.
 
 ## Resumen
 
-- ID activo: ninguno
-- Estado: sin ID en curso
+- ID activo: MHB-27
+- Estado: En revisión
+- Implementador: perfil habilitador técnico (medio)
+- Revisor o autoridad de cierre: revisor técnico independiente
+- Rama autorizada: `feature/mhb-27`
 - Última actualización: 2026-09-11
 - Contrato estable: `docs/implementation/PLAN.md`
 
 ## Paquete activo
 
-Ninguno. Último paquete cerrado: MHB-26 (ver «Últimas entregas»).
-
-### MHB-26 (cerrado)
-
-- MHB-26 — Validación automatizada de accesibilidad y contraste: agrega
-  `scripts/build/validate-contrast.js` (WCAG por tokens, sin navegador) y
-  `scripts/build/a11y-check.js` (axe-core sobre el Puppeteer ya existente,
-  vía un servidor Vite efímero), para no depender de revisión manual en el
-  Browser pane.
-- Ambos quedan como scripts dedicados (`bun run lint:contrast`,
-  `bun run a11y-check`), fuera de la cadena de `bun run lint`/`bun run build`
-  — igual que `validate-email` hoy — para no romper el pipeline con
-  hallazgos ya existentes que este ID no corrige.
-- Hallazgos reales detectados (documentados, no corregidos en este ID):
-  `lint:contrast` — `action-primary` (texto sobre `accent-strong`) da
-  2.90:1 en modo claro, bajo el mínimo AA de 3:1. `a11y-check` — 3 tipos de
-  violación axe-core: `color-contrast` (Home dark, Library ambos temas),
-  `scrollable-region-focusable` (Library y Preview) y `aria-required-parent`
-  (tabs de Preview, ambos temas).
-- CI: `contrast-check` y `a11y-check` agregados a `.github/workflows/ci.yml`
-  con `continue-on-error: true` (decisión del orquestador) — visibles en
-  logs, no bloquean el pipeline hasta que un ID posterior resuelva los
-  hallazgos.
-- Superficies tocadas: `scripts/build/validate-contrast.js` (+ test),
-  `scripts/build/a11y-check.js`, `package.json` (scripts + `axe-core`
-  devDependency), `.github/workflows/ci.yml`, `docs/ai/AGENTS.md` (nota de
-  preferencia texto/markdown), `docs/implementation/`. Sin cambios en
-  `design-tokens.css`, `DESIGN.md` ni componentes de `src/web/**`.
+- MHB-27 — Corregir hallazgos de MHB-26 y estabilizar `a11y-check`: la causa
+  real de las 9 violaciones no era una carrera con el optimizador de Vite
+  (hipótesis inicial descartada), sino `a11y-check.js` pasando un `root`
+  explícito a `createServer()` que pisaba el `root: "src/web"` de
+  `vite.config.js`, más `waitUntil: "networkidle0"` incompatible con las
+  conexiones abiertas de `/preview`. Corregido eso, 5 de los 9 hallazgos
+  originales resultaron falsos positivos y aparecieron 2 nuevos reales; el
+  `meta-viewport` reportado en un diagnóstico intermedio tampoco era real
+  (una página de error de Chrome, no la app). Quedan 6 hallazgos reales,
+  corregidos: par `action-primary` (token `text-on-accent`), scroll sin
+  foco en Library, tabs sin `tablist` en Preview, y 2 de contraste
+  (`#sync-status` y el label del viewport activo en tema oscuro). Ver
+  contrato completo y diagnóstico en `PLAN.md`.
 
 ### Controles
 
-| Control                    | Resultado | Nota                                                                    |
-| -------------------------- | --------- | ----------------------------------------------------------------------- |
-| `bun run lint:contrast`    | Rojo      | 1 error real (`action-primary` 2.90:1); fuera de alcance corregirlo.    |
-| `bun run a11y-check`       | Rojo      | 9 violaciones reales (3 reglas axe-core); fuera de alcance corregirlas. |
-| `bun run lint`             | Verde     | html/js/md/json/css sin errores (no incluye `lint:contrast`).           |
-| `bun run typecheck`        | Verde     | Sin salida de `tsc --noEmit`.                                           |
-| `bun run test`             | Verde     | 440 pruebas (428 previas + 12 nuevas), 0 fallos.                        |
-| `bun run format:check`     | Verde     | Todos los archivos con estilo Prettier.                                 |
-| `bun run agents:check`     | Verde     | 7 targets declarados, sin conflictos.                                   |
-| Controles previos (MHB-21) | Verde     | Evidencia completa en STATUS-HISTORY.md.                                |
+| Control                     | Resultado | Nota                                                          |
+| --------------------------- | --------- | ------------------------------------------------------------- |
+| `bun run lint:contrast`     | Verde     | 26/26 pares OK (3 corridas consecutivas).                     |
+| `bun run a11y-check`        | Verde     | 0 violaciones en las 6 rutas/temas (3 corridas consecutivas). |
+| `bun run lint`              | Verde     | html/js/md/json/css sin errores.                              |
+| `bun run typecheck`         | Verde     | Sin salida de `tsc --noEmit`.                                 |
+| `bun run test`              | Verde     | 440 pruebas, 0 fallos (sin cambios de cobertura).             |
+| `bun run format:check`      | Verde     | Todos los archivos con estilo Prettier.                       |
+| `bun run agents:check`      | Verde     | 7 targets declarados, sin conflictos.                         |
+| `bun run check:task-branch` | Verde     | Rama `feature/mhb-27` verificada.                             |
 
 ### Riesgo y bloqueo
 
-- Ninguno vigente. Sin cambios de pipeline de email, APIs Vite, editor ni
-  documento del iframe. El rojo en `lint:contrast`/`a11y-check` es esperado
-  y documentado: son las herramientas detectando deuda preexistente, no una
-  regresión introducida por MHB-26.
+- Ninguno vigente. Cambios acotados a los 6 hallazgos reales diagnosticados;
+  sin cambios de pipeline de email, APIs Vite ni contrato de `components.js`.
+  El único cambio con impacto visual es el label del botón de viewport activo
+  en tema oscuro (fondo más oscuro, texto blanco legible); el resto es
+  invisible (tokens ya usados, o fixes de accesibilidad sin efecto visual).
 
-### Desviación de proceso (documentada, no de alcance)
-
-- El commit `1176564` quedó en `master` directamente (pusheado a
-  `origin/master`), sin PR y sin revisión independiente previa al push —
-  se apartó del flujo `feature/<id>` + PR a `master` que exige
-  `task-verification`. La rama `feature/mhb-26` era un commit duplicado
-  (mismo árbol, distinto timestamp de commit) y no el origen de un PR; fue
-  eliminada (local y remota) tras esta revisión.
-- Revisión independiente realizada el 2026-09-11 post-hoc: se repitieron
-  todos los controles (`lint:contrast`, `a11y-check`, `lint`, `typecheck`,
-  `test`, `format:check`, `agents:check`) sobre el commit ya en `master` y
-  los resultados coinciden exactamente con lo documentado — sin código
-  irregular ni desviación de alcance, solo del procedimiento de entrega.
-  Se acepta el cierre en base a esa verificación; no se reescribe historial
-  de `master`.
+Detalle de cierre de MHB-26 (incluida la desviación de proceso de push
+directo a `master`): [STATUS-HISTORY.md](STATUS-HISTORY.md).
 
 ## Últimas entregas
 
@@ -107,37 +83,46 @@ Ninguno. Último paquete cerrado: MHB-26 (ver «Últimas entregas»).
 
 ## Ejecuciones delegadas relevantes
 
-| Ámbito               | Estado     | Propiedad                                  | Handoff                                          |
-| -------------------- | ---------- | ------------------------------------------ | ------------------------------------------------ |
-| MHB-26               | Completada | Validadores de contraste y accesibilidad   | Revisión independiente post-hoc el 2026-09-11.   |
-| MHB-21               | Completada | `logoUrl` en welcome, links de producto    | Aceptación manual del orquestador el 2026-09-11. |
-| MHB-25               | Completada | Tokens Space Blue, skeletons de Library    | Aceptación manual del orquestador el 2026-09-11. |
-| MHB-09               | Completada | Catálogo, dashboard, tests y documentación | Cierre autorizado el 2026-09-09.                 |
-| MHB-10/MHB-11/MHB-12 | Completada | Templates y pruebas de catálogo/ESP        | Aceptación manual del usuario el 2026-09-09.     |
+| Ámbito               | Estado      | Propiedad                                     | Handoff                                          |
+| -------------------- | ----------- | --------------------------------------------- | ------------------------------------------------ |
+| MHB-27               | En revisión | Corrección de hallazgos MHB-26 y `a11y-check` | Pendiente de revisor técnico independiente.      |
+| MHB-26               | Completada  | Validadores de contraste y accesibilidad      | Revisión independiente post-hoc el 2026-09-11.   |
+| MHB-21               | Completada  | `logoUrl` en welcome, links de producto       | Aceptación manual del orquestador el 2026-09-11. |
+| MHB-25               | Completada  | Tokens Space Blue, skeletons de Library       | Aceptación manual del orquestador el 2026-09-11. |
+| MHB-09               | Completada  | Catálogo, dashboard, tests y documentación    | Cierre autorizado el 2026-09-09.                 |
+| MHB-10/MHB-11/MHB-12 | Completada  | Templates y pruebas de catálogo/ESP           | Aceptación manual del usuario el 2026-09-09.     |
 
 ## Decisiones y desviaciones vigentes
 
 - Excepción de fixture (MHB-21): `example` y `user-created` no son
   templates de producto y conservan `href="#"`; no requieren corrección para
   cerrar MHB-21.
-- MHB-26 no corrige hallazgos de contraste/accesibilidad que sus propios
-  validadores reporten; solo entrega la herramienta. Cualquier corrección de
-  `design-tokens.css`/`DESIGN.md`/`src/web/**` queda para un ID posterior a
-  decisión del orquestador.
-- `contrast-check` y `a11y-check` corren en CI con `continue-on-error: true`
-  hasta que ese ID de corrección exista; no se interpretan como aceptación
-  de los hallazgos, solo como visibilidad sin bloqueo.
+- MHB-27 corrigió los hallazgos reales que MHB-26 dejó documentados (y
+  descartó 5 de los 9 reportados como falsos positivos del propio script).
+  `contrast-check`/`a11y-check` siguen en CI con `continue-on-error: true`;
+  ahora que ambos corren en verde, un ID futuro puede evaluar si ese
+  `continue-on-error` sigue siendo necesario.
+- El par `action-primary` de `lint:contrast` sigue clasificado `role: "ui"`
+  (umbral 3:1); WCAG 1.4.3 exige 4.5:1 para texto normal, y axe-core sí lo
+  aplica así (por eso detectó el label del viewport activo en tema oscuro
+  aun con `lint:contrast` en verde). Reclasificar ese par a `role: "text"`
+  afectaría otros pares de la familia `action-primary`; queda fuera de
+  alcance de MHB-27, documentado para decisión futura del orquestador.
 - Las variables ESP `{{ }}` deben preservarse en el HTML final; `[[ page.* ]]`
   sigue reservado para Maizzle.
 - No se publica versión, tag ni release sin autorización explícita.
 
 ## Handoff
 
-- Próxima acción inmediata: ninguna en curso. MHB-26 quedó `Completada` tras
-  revisión independiente post-hoc (ver «Desviación de proceso»); no hay ID
-  activo.
+- Próxima acción inmediata: MHB-27 está `En revisión` en `feature/mhb-27`,
+  sin commitear; falta revisión técnica independiente y decidir
+  commit/PR/merge.
+- Criterio de cierre: pendiente de confirmación del revisor técnico
+  independiente (diff, controles y ausencia de desviaciones); el contrato
+  fue ampliado a mitad de tarea con acuerdo explícito del orquestador (ver
+  «Paquete activo» y `PLAN.md`), documentado como desviación autorizada, no
+  como incidente.
 - Siguiente tarea del roadmap: no hay otro ID `Requerida` pendiente en
-  `PLAN.md` tras MHB-21/MHB-25/MHB-26; solo queda MHB-23 (`Opcional`, ampliar
-  biblioteca de componentes), `bloqueado` hasta asignación explícita del
-  orquestador. Los hallazgos de contraste/accesibilidad de MHB-26 quedan
-  disponibles para un ID de corrección futuro, a decisión del orquestador.
+  `PLAN.md` tras MHB-21/MHB-25/MHB-26/MHB-27; solo queda MHB-23
+  (`Opcional`, ampliar biblioteca de componentes), `bloqueado` hasta
+  asignación explícita del orquestador.
