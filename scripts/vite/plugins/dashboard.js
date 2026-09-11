@@ -60,20 +60,22 @@ function renderTemplateCard({ name, title, path }) {
   return `
       <a
         href="/preview?template=${name}"
-        class="block bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm dark:shadow-slate-900/50 hover:border-sky-400 dark:hover:border-sky-500 hover:shadow-lg dark:hover:shadow-sky-500/30 transition-all duration-300 overflow-hidden group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500"
+        class="template-card"
       >
         <!-- Preview Section -->
-        <div class="preview-wrapper border-b border-slate-200 dark:border-slate-700 group-hover:border-sky-300 dark:group-hover:border-sky-500 transition-colors bg-gradient-to-br from-slate-50 to-white dark:from-slate-800 dark:to-slate-900">
-          <div class="template-preview-skeleton" data-template-preview-skeleton="${name}" aria-hidden="true">
-            <span></span>
-            <span></span>
-            <span></span>
+        <div class="template-card-preview">
+          <div class="preview-wrapper">
+            <div class="template-preview-skeleton" data-template-preview-skeleton="${name}" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <iframe data-preview-src="${path}" loading="lazy" title="Preview: ${title}" scrolling="no" tabindex="-1"></iframe>
           </div>
-          <iframe data-preview-src="${path}" loading="lazy" title="Preview: ${title}" scrolling="no" tabindex="-1"></iframe>
         </div>
 
         <!-- Content Section -->
-        <div class="p-6 space-y-4">
+        <div class="template-card-meta">
           <!-- Title -->
           <div>
             <h2 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors flex items-center gap-2">

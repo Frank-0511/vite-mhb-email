@@ -23,7 +23,7 @@
     </script>
   </head>
   <body
-    class="font-sans text-slate-800 bg-slate-50 dark:bg-slate-900 dark:text-slate-200 flex h-screen overflow-hidden"
+    class="preview-shell font-sans text-slate-800 bg-slate-50 dark:bg-slate-900 dark:text-slate-200 flex h-screen overflow-hidden"
   >
     <!-- Tab Navigation (≤1279px) -->
     <nav id="mobile-tab-bar" class="mobile-tab-bar" aria-label="Vistas del editor">
@@ -112,7 +112,7 @@
           ></div>
 
           <!-- App Theme Toggle envuelto en menú desplegable ⋯ en <480px, directo en ≥480px -->
-          <details id="editor-more-menu" class="menu-more-dropdown">
+          <details id="editor-more-menu" class="menu-more-dropdown" open>
             <summary
               class="w-9 h-9 flex items-center justify-center rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 list-none cursor-pointer"
               title="Más opciones"
@@ -555,12 +555,16 @@
           }
         }
 
-        // Cerrar menú desplegable ⋯ al hacer click fuera
+        // Cerrar menú desplegable ⋯ al hacer click fuera (solo aplica en
+        // <480px: en ese ancho el menú es un desplegable real. En ≥480px
+        // permanece "open" siempre a propósito — ahí no es un desplegable,
+        // es cómo se muestra el toggle de tema directamente en el header).
         document.addEventListener("click", (e) => {
           const menu = document.getElementById("editor-more-menu");
           if (
             menu &&
             menu.hasAttribute("open") &&
+            window.matchMedia("(max-width: 479px)").matches &&
             e.target &&
             !menu.contains(/** @type {Node} */ (e.target))
           ) {

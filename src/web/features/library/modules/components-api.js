@@ -13,24 +13,31 @@ export const componentsManager = {
     }
   },
 
+  /**
+   * Derive the atomic design category from a component's file path.
+   * Falls back to "templates" for paths outside the atoms/molecules/organisms
+   * folders (e.g. `/templates/`), matching the group's visible "Templates" name.
+   * @param {string} [path] - Component file path
+   * @returns {"atoms"|"molecules"|"organisms"|"templates"}
+   */
+  getType(path) {
+    const p = path || "";
+    if (p.includes("/atoms/")) return "atoms";
+    if (p.includes("/molecules/")) return "molecules";
+    if (p.includes("/organisms/")) return "organisms";
+    return "templates";
+  },
+
   groupByType(components) {
     const groups = {
       atoms: { name: "Atoms", icon: "building-columns", items: [] },
       molecules: { name: "Molecules", icon: "molecule2", items: [] },
       organisms: { name: "Organisms", icon: "dna", items: [] },
-      other: { name: "Templates", icon: "package", items: [] },
+      templates: { name: "Templates", icon: "package", items: [] },
     };
 
     for (const comp of components) {
-      const path = comp.path || "";
-      let type = "other";
-
-      if (path.includes("/atoms/")) type = "atoms";
-      else if (path.includes("/molecules/")) type = "molecules";
-      else if (path.includes("/organisms/")) type = "organisms";
-      else if (path.includes("/templates/")) type = "other";
-
-      groups[type].items.push(comp);
+      groups[this.getType(comp.path)].items.push(comp);
     }
 
     return Object.entries(groups)

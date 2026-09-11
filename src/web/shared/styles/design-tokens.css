@@ -1,0 +1,31 @@
+/* Semantic application tokens for the Space Blue interface. */
+:root {
+  --ef-canvas: #e4edf6;
+  --ef-surface: #f8fbfe;
+  --ef-surface-raised: #eef4f9;
+  --ef-text: #10243a;
+  --ef-text-muted: #52677e;
+  --ef-border: #b9cadb;
+  --ef-accent: #247ed8;
+  --ef-accent-strong: #126ac2;
+  --ef-focus: #126ac2;
+  --ef-success: #177a55;
+  --ef-warning: #9a6200;
+  --ef-danger: #bd3144;
+}
+
+.dark {
+  --ef-canvas: #07111f;
+  --ef-surface: #0c1b2d;
+  --ef-surface-raised: #122842;
+  --ef-surface-hover: #183656;
+  --ef-text: #f2f7ff;
+  --ef-text-muted: #a8b8cc;
+  --ef-border: #27425f;
+  --ef-accent: #4fa3ff;
+  --ef-accent-strong: #2587f5;
+  --ef-focus: #7dc0ff;
+  --ef-success: #45d39a;
+  --ef-warning: #f5be4f;
+  --ef-danger: #ff717d;
+}

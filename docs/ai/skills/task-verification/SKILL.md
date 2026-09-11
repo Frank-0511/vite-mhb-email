@@ -21,6 +21,16 @@ description: Verificar tareas, ejecutar comandos permitidos, preparar ramas o co
   no reescribir historial ni revertir cambios ajenos.
 - Entregar el ID a `En revisión`; un revisor independiente confirma aceptación,
   diff, pruebas y ausencia de desviaciones antes de `Completada`.
+- Al confirmar el usuario que la tarea quedó correcta, eliminar los planes,
+  specs y demás archivos auxiliares creados solo para trabajarla (borradores,
+  notas de análisis, specs temporales). No borrar documentación oficial del
+  repo (`docs/implementation/PLAN.md`, `docs/implementation/STATUS.md`, etc.);
+  ante la duda de si un archivo es oficial o de trabajo, confirmar antes de
+  borrar. Rutas conocidas donde buscar este tipo de material por ID:
+  - `docs/superpowers/plans/<fecha>-<id-en-minusculas>-*.md`
+  - `docs/superpowers/specs/<fecha>-<id-en-minusculas>-*.md`
+  - `.superpowers/sdd/<fecha>-<id-en-minusculas>-*/` (brief, progress, report,
+    review-package.diff; conservar solo `.superpowers/sdd/.gitignore`)
 
 Escalar tags, versiones, release, publicación, permisos CI y cualquier operación
 destructiva al orquestador.

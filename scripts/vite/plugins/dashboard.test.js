@@ -44,6 +44,8 @@ describe("dashboardPlugin", () => {
 
       expect(result).toContain("/templates/welcome/");
       expect(result).toContain('href="/preview?template=welcome"');
+      expect(result).toContain('class="template-card"');
+      expect(result).toContain('class="template-card-preview"');
       expect(result).toContain(
         '<iframe data-preview-src="/templates/welcome/index.html" loading="lazy"',
       );
