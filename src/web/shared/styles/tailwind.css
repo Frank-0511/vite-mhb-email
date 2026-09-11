@@ -1,5 +1,7 @@
 /* src/web/shared/styles/tailwind.css */
 
+@import url("./design-tokens.css");
+
 /* Para Vite/preview: darkMode: "class" */
 @config "../../../../tailwind.config.js";
 

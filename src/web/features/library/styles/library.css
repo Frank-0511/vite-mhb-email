@@ -203,3 +203,129 @@ body {
 .dark .toggle-switch-label {
   @apply text-slate-200;
 }
+
+/* Space Blue shell. These rules intentionally stop at the preview iframe's
+   own content (sandboxed component markup is never restyled from here). */
+.library-shell {
+  color: var(--ef-text);
+  background: var(--ef-canvas);
+}
+
+.library-shell .library-sidebar,
+.library-shell .library-sidebar-header {
+  background: var(--ef-surface);
+  border-color: var(--ef-border);
+}
+
+.library-shell .library-content {
+  background: var(--ef-canvas);
+}
+
+.library-shell .library-back-link {
+  border-color: var(--ef-border);
+  background: var(--ef-surface-raised);
+  color: var(--ef-accent);
+}
+
+.library-shell .library-back-link:hover {
+  border-color: var(--ef-accent);
+  background: var(--ef-surface-hover, var(--ef-surface-raised));
+}
+
+.library-shell .library-back-link-icon {
+  color: var(--ef-text-muted);
+}
+
+.library-shell h1 {
+  color: var(--ef-text);
+}
+
+.library-shell theme-toggle button {
+  border-color: var(--ef-border);
+  background: var(--ef-surface-raised);
+}
+
+.library-shell #search-input {
+  border-color: var(--ef-border);
+  background: var(--ef-surface);
+  color: var(--ef-text);
+}
+
+.library-shell #search-input:focus {
+  border-color: var(--ef-accent);
+}
+
+.library-shell .library-preview,
+.library-shell .library-form {
+  border-color: var(--ef-border);
+}
+
+.library-shell .library-preview-skeleton {
+  background: var(--ef-surface);
+}
+
+.library-shell .library-preview-skeleton [data-skeleton-variant] {
+  display: none;
+}
+
+.library-shell .library-preview-skeleton[data-type="atoms"] [data-skeleton-variant="atoms"],
+.library-shell .library-preview-skeleton[data-type="molecules"] [data-skeleton-variant="molecules"],
+.library-shell .library-preview-skeleton[data-type="organisms"] [data-skeleton-variant="organisms"],
+.library-shell
+  .library-preview-skeleton[data-type="templates"]
+  [data-skeleton-variant="templates"] {
+  display: block;
+}
+
+.library-shell .library-form {
+  background: var(--ef-surface);
+}
+
+.library-shell #empty-preview,
+.library-shell #form-placeholder {
+  color: var(--ef-text-muted);
+}
+
+.library-shell .component-group-header {
+  color: var(--ef-text);
+}
+
+.library-shell .component-group-header:hover {
+  background: var(--ef-surface-hover, var(--ef-surface-raised));
+}
+
+.library-shell .component-item {
+  color: var(--ef-text-muted);
+}
+
+.library-shell .component-item:hover {
+  background: var(--ef-surface-hover, var(--ef-surface-raised));
+  border-color: var(--ef-border);
+}
+
+.library-shell .component-item.selected {
+  border-left-color: var(--ef-accent-strong);
+  background: color-mix(in srgb, var(--ef-accent) 16%, var(--ef-surface));
+  color: var(--ef-accent-strong);
+}
+
+.library-shell .component-item.selected .component-item-icon {
+  color: var(--ef-accent-strong);
+}
+
+.library-shell .toggle-switch-input:checked {
+  background: var(--ef-accent-strong);
+}
+
+.library-shell .toggle-switch-input:checked:hover {
+  background: var(--ef-accent);
+}
+
+.library-shell .toggle-switch-label {
+  color: var(--ef-text);
+}
+
+.library-shell :is(a, button, input, summary):focus-visible {
+  outline: 3px solid var(--ef-focus);
+  outline-offset: 3px;
+}

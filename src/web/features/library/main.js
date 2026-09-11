@@ -26,6 +26,7 @@ class ComponentLibraryApp {
   constructor() {
     this.currentComponent = null;
     this.currentVariant = null;
+    this.currentType = null;
     this.formData = {};
     this.allComponents = [];
   }
@@ -44,6 +45,7 @@ class ComponentLibraryApp {
     previewManager.init(
       document.getElementById("preview-iframe"),
       document.getElementById("empty-preview"),
+      document.getElementById("preview-skeleton"),
     );
 
     // Initialize list renderer
@@ -90,6 +92,13 @@ class ComponentLibraryApp {
    * @returns {Promise<void>}
    */
   async selectComponent(comp) {
+    // Reveal the loading skeleton immediately: schema and render are two
+    // sequential fetches, and the previous component must not linger on
+    // screen while either of them is in flight. Its shape reflects the
+    // component's atomic design category.
+    this.currentType = componentsManager.getType(comp.path);
+    previewManager.showSkeleton(this.currentType);
+
     // Load full component schema
     const componentId = comp.id || comp.name;
     const fullSchema = await componentsManager.loadFull(componentId);
@@ -118,12 +127,12 @@ class ComponentLibraryApp {
     // Re-render icons after DOM update
     initLucideIcons();
 
-    // Show preview and render immediately
-    previewManager.show();
+    // Render the newly selected component; previewManager.render() hides the
+    // skeleton (shown above) once the compiled HTML is ready
     if (updatePreviewTimeout) {
       clearTimeout(updatePreviewTimeout);
     }
-    await this.renderPreview();
+    await this.renderPreview(true);
   }
 
   /**
@@ -144,13 +153,18 @@ class ComponentLibraryApp {
   /**
    * Render component preview
    * @async
+   * @param {boolean} [showLoading] - Show the loading skeleton (component
+   *   switch) instead of updating silently (prop edits)
    * @returns {Promise<void>}
    */
-  async renderPreview() {
+  async renderPreview(showLoading = false) {
     if (!this.currentComponent || !this.currentVariant) return;
 
     const componentId = this.currentComponent._id || this.currentComponent.id;
-    await previewManager.render(componentId, this.currentVariant, this.formData);
+    await previewManager.render(componentId, this.currentVariant, this.formData, {
+      showLoading,
+      type: this.currentType,
+    });
 
     // Maintain selection highlight in list
     this.maintainSelection();

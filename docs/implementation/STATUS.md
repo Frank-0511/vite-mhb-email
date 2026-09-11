@@ -9,51 +9,58 @@ el contrato en `PLAN.md` y el detalle reproducible en los commits y PRs.
 
 ## Resumen
 
-| Campo                         | Valor                         |
-| ----------------------------- | ----------------------------- |
-| ID activo                     | Ninguno                       |
-| Estado                        | Sin tarea en progreso         |
-| Implementador                 | No aplica                     |
-| Revisor o autoridad de cierre | Usuario (aceptación manual)   |
-| Rama autorizada               | `feature/mhb-10`              |
-| Última actualización          | 2026-09-09                    |
-| Contrato estable              | `docs/implementation/PLAN.md` |
+- ID activo: Ninguno (MHB-25 cerrado)
+- Estado: Completada (MHB-25)
+- Implementador: UI/web (Tasks 1 a 5 + skeleton por categoría)
+- Revisor o autoridad de cierre: Orquestador (aceptación manual)
+- Rama autorizada: `feature/mhb-25`
+- Última actualización: 2026-09-11
+- Contrato estable: `docs/implementation/PLAN.md`
 
 ## Paquete activo
 
-- No hay un ID iniciado. MHB-10, MHB-11 y MHB-12 fueron aceptadas por el
-  usuario el 2026-09-09 tras su validación manual.
+- No hay ID en progreso ni en revisión. MHB-25 quedó `Completada` el
+  2026-09-11 por aceptación manual del orquestador; detalle de controles y
+  evidencia por fase en [STATUS-HISTORY.md](STATUS-HISTORY.md).
+- Deuda documentada al cierre: Library conserva un layout de dos columnas de
+  ancho fijo sin colapso propio a 375px (fuera del alcance autorizado de
+  MHB-25); no bloqueó el cierre, queda pendiente de decisión futura.
+- MHB-10, MHB-11 y MHB-12 permanecen `Completada` tras la aceptación manual del
+  usuario el 2026-09-09; no se reabre ninguno.
 
 ### Controles
 
-| Control                       | Resultado | Nota                                                      |
-| ----------------------------- | --------- | --------------------------------------------------------- |
-| Revisión visual desktop/móvil | Verde     | Aceptación manual del usuario el 2026-09-09.              |
-| Controles previos             | Verde     | Suite (415), typecheck, formato, lint, build y validador. |
+| Control           | Resultado | Nota                                              |
+| ----------------- | --------- | ------------------------------------------------- |
+| Cierre MHB-25     | Verde     | Aceptación manual del orquestador el 2026-09-11.  |
+| Controles previos | Verde     | Evidencia completa por fase en STATUS-HISTORY.md. |
 
 ### Riesgo y bloqueo
 
-- No hay bloqueo técnico en los IDs recién cerrados.
+- Ninguno vigente. No hubo cambios de pipeline, APIs, editor ni documento del
+  iframe en ninguna fase de MHB-25.
 
 ## Últimas entregas
 
+- MHB-25: `Completada` el 2026-09-11; tokens Space Blue en Home/Preview/
+  Library, skeleton de carga y skeleton por categoría atomic design;
+  aceptación manual del orquestador.
 - MHB-10/MHB-11/MHB-12: `Completada` el 2026-09-09; templates password reset,
   receipt y newsletter aceptados manualmente por el usuario.
 - MHB-09: `Completada` el 2026-09-09; catálogo dinámico, dashboard de todos
   los templates en disco y CLI/generador, con 412 pruebas verdes.
 - MHB-08: `Completada`; descarga segura de HTML final y modal accesible;
   commit `1999aac`.
-- MHB-07: `Completada`; diagnóstico seguro de render, integrado en `master`
-  (`708d8d7`).
-- Historial de entregas MHB-01 a MHB-06, MHB-22 y MHB-24:
+- Historial de entregas MHB-01 a MHB-07, MHB-22 y MHB-24:
   [STATUS-HISTORY.md](STATUS-HISTORY.md).
 
 ## Ejecuciones delegadas relevantes
 
-| Ámbito               | Estado     | Propiedad                                  | Handoff                                      |
-| -------------------- | ---------- | ------------------------------------------ | -------------------------------------------- |
-| MHB-09               | Completada | Catálogo, dashboard, tests y documentación | Cierre autorizado el 2026-09-09.             |
-| MHB-10/MHB-11/MHB-12 | Completada | Templates y pruebas de catálogo/ESP        | Aceptación manual del usuario el 2026-09-09. |
+| Ámbito               | Estado     | Propiedad                                  | Handoff                                          |
+| -------------------- | ---------- | ------------------------------------------ | ------------------------------------------------ |
+| MHB-25               | Completada | Tokens Space Blue, skeletons de Library    | Aceptación manual del orquestador el 2026-09-11. |
+| MHB-09               | Completada | Catálogo, dashboard, tests y documentación | Cierre autorizado el 2026-09-09.                 |
+| MHB-10/MHB-11/MHB-12 | Completada | Templates y pruebas de catálogo/ESP        | Aceptación manual del usuario el 2026-09-09.     |
 
 ## Decisiones y desviaciones vigentes
 
@@ -65,8 +72,10 @@ el contrato en `PLAN.md` y el detalle reproducible en los commits y PRs.
 
 ## Handoff
 
-- Próxima acción inmediata: definir y autorizar un ID independiente si se va a
-  iniciar el upgrade de la UI web.
-- Criterio de cierre: no aplica; MHB-10, MHB-11 y MHB-12 están completadas.
-- Siguiente tarea del roadmap: MHB-13, `bloqueada` hasta completar MHB-19 y
-  MHB-20 según `PLAN.md`.
+- Próxima acción inmediata: los cambios de MHB-25 (incluida la ampliación de
+  alcance del skeleton por categoría) están sin commitear en
+  `feature/mhb-25`; confirmar con el orquestador si se commitea/mergea ahora.
+- Criterio de cierre: cumplido; MHB-25 completo aceptado por el orquestador.
+- Siguiente tarea del roadmap: no hay ID `Requerida` posterior a MHB-25 en
+  `PLAN.md`; solo queda MHB-23 (`Opcional`, ampliar biblioteca de componentes),
+  `bloqueado` hasta asignación explícita del orquestador.

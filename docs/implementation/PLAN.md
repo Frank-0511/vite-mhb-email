@@ -1,7 +1,7 @@
 # Plan de implementación — EmailForge Toolkit
 
 Este es el contrato técnico completo del repositorio. Contiene todas las
-features MHB-01 a MHB-23, sus dependencias, criterios de aceptación, pruebas,
+features MHB-01 a MHB-25, sus dependencias, criterios de aceptación, pruebas,
 riesgos y diseño de orquestación. `STATUS.md` registra solo la tarea que se
 está ejecutando; no reduce ni sustituye este plan.
 
@@ -81,6 +81,12 @@ del PLAN o STATUS originales.
 | MHB-22 | Entregable de portafolio | Licencia MIT verificable                                   | `package.json` declara MIT, pero falta `LICENSE`.                                                                                                         | Requerida | MHB-03                                 | Existe archivo de licencia coherente con metadata y autoría; README lo enlaza.                                                                                                                   | A    | gpt-5.6-terra   | Bajo              |
 | MHB-23 | Feature                  | Ampliar biblioteca de componentes                          | F3-T2 estaba mencionada sin ID ni cierre.                                                                                                                 | Opcional  | MHB-18, MHB-20                         | Cada componente adicional es email-safe, tiene schema, aparece en `/library` y cuenta con validación/prueba aplicable.                                                                           | D    | gpt-5.6-terra   | Medio             |
 | MHB-24 | Habilitador técnico      | Modularización segura de validación, componentes y preview | Las superficies de validación ESP, components API, HMR preview, modal copy HTML y helper ESP crecieron acopladas y comparten responsabilidades con la UI. | Requerida | MHB-05, MHB-06                         | Contratos de build/preview/API conservados; `componentName` y `variant` inseguros se invalidan antes de tocar rutas; pruebas focalizadas verdes por módulo; sin cambios de severidad ni de gate. | B    | gpt-5.6-terra   | Alto              |
+
+<!-- markdownlint-disable MD060 -->
+
+| MHB-25 | Feature | Upgrade del sistema visual web | Home, Preview y Library necesitan una identidad visual coherente, accesible y responsive sin alterar el pipeline de email. | Requerida | MHB-24 | Tokens Space Blue en Home, Preview y Library; gates por fase en dark/light y móvil/desktop; sin cambios de email, APIs Vite ni pipeline. | B | gpt-5.6-terra | Alto |
+
+<!-- markdownlint-enable MD060 -->
 
 ## Detalle ejecutable de las fases inmediatas
 
@@ -553,6 +559,55 @@ del PLAN o STATUS originales.
   components API, del payload de validación, de las severidades del gate o
   del helper ESP que no esté cubierto por el criterio de aceptación.
 
+### MHB-25 — Upgrade del sistema visual web
+
+- **Objetivo observable:** aplicar el contrato visual Space Blue a la interfaz
+  web, con dark como tema inicial y un modo light equivalente, manteniendo la
+  navegación, edición, renderizado, validación, exportación y consulta actuales.
+- **Superficies autorizadas:** `docs/design/**`, `src/web/**` y el markup de
+  tarjetas Home generado en `scripts/vite/plugins/dashboard.js`; también sus
+  pruebas focalizadas. No se modifica `src/emails/**`, el HTML dentro de
+  iframes, Maizzle, Handlebars, variables ESP, validadores ni APIs Vite.
+- **Dependencias y precondiciones:** MHB-24 `Completada`; rama
+  `feature/mhb-25`; conservar `app-theme`, su control de teclado y
+  `theme-changed`.
+- **Fases y pasos técnicos:** formalizar y congelar `docs/design/DESIGN.md`;
+  implementar tokens web y el piloto Home; aplicar los roles semánticos a
+  Preview preservando IDs, controles, editor, temas de iframe y renderizado;
+  aplicar los roles a Library preservando catálogo, selección, formularios y
+  renderizado. Preview y Library son fases del mismo ID, pero ninguna fase se
+  completa sin sus propios controles automatizados y revisión visual.
+- **Ampliación de alcance (2026-09-11, autorizada por el orquestador):** el
+  skeleton de carga de Library (`#preview-skeleton`) diferencia su forma según
+  la categoría atomic design del componente seleccionado (`atoms`, `molecules`,
+  `organisms`, `templates`), en vez de un único layout genérico. Incluye
+  renombrar la clave interna `other` de `componentsManager.groupByType` a
+  `templates` (su `name` visible ya era "Templates"; solo corrige el key). No
+  cambia catálogo, selección, formularios, renderizado ni contratos públicos.
+- **Criterios de aceptación:** se conservan contratos públicos, semántica,
+  ARIA, teclado e iframe aislado; tokens dark/light apuntan a contraste AA;
+  móvil no oculta operaciones críticas; no cambia la salida de email ni se
+  agregan dependencias o fuentes remotas.
+- **Validación automática:** `bun run lint`, pruebas focalizadas por fase,
+  `bun run format:check` y `git diff --check`; sumar build y validador solo si
+  una fase afecta la salida de email.
+- **Validación manual:** `bun run dev` en 375px, 768px y 1440px, dark y light;
+  comprobar navegación, foco, contraste, controles y aislamiento del iframe.
+- **Evidencia requerida:** diff acotado, salidas de controles por fase,
+  recorrido manual fechado y revisión visual independiente antes de cada cierre.
+- **Riesgos y reversión:** degradación de contraste, densidad, foco o responsive;
+  mantener cambios incrementales y reversibles por feature, registrando toda
+  limitación manual sin convertirla en aceptación automática.
+- **Exclusiones específicas:** no rediseñar pipeline, templates/layouts, APIs,
+  validadores, HTML compilado, iframes ni incorporar otro framework CSS,
+  dependencias visuales o fuentes remotas.
+- **Implementador:** perfil UI/web con propiedad exclusiva de las superficies
+  autorizadas; medio/alto. **Revisor independiente:** revisor UI distinto por
+  fase; el orquestador confirma el cierre del ID completo.
+- **Condición de escalamiento:** cualquier cambio de contrato público,
+  pipeline/email, API Vite, dependencia, alcance autorizado o imposibilidad de
+  demostrar contraste, teclado o aislamiento.
+
 ## Fases
 
 ### Fase A — Seguridad y trazabilidad
@@ -570,7 +625,7 @@ del PLAN o STATUS originales.
 
 - **Hallazgos que resuelve:** validación de variables, errores de preview,
   descarga y ejemplos de producto incompletos.
-- **IDs incluidos:** MHB-05 a MHB-12, MHB-17, MHB-18, MHB-21, MHB-24.
+- **IDs incluidos:** MHB-05 a MHB-12, MHB-17, MHB-18, MHB-21, MHB-24, MHB-25.
 - **Entregables:** pruebas de flujo crítico, preview con errores seguros,
   descarga HTML, toggle render/código, documentación de componentes, cuatro
   templates de producto sin links placeholder y modularización segura de
@@ -719,13 +774,20 @@ agente permanente.
 
 ### Fase B — Producto
 
-| Línea                            | Skills obligatorias                                                            | Implementador y propiedad                                                                        | Revisor                               | Controles                                                                | Escalar cuando                                                       |
-| -------------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ | ------------------------------------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------- |
-| MHB-05/MHB-06 validadores        | `email-compatibility`, `email-quality-gates`                                   | Terra alto; validadores y tests asociados                                                        | Revisor de seguridad/compatibilidad   | Fixtures, preview, build/export y gate                                   | Cambie semántica ESP o severidades.                                  |
-| MHB-24 modularización            | `email-refactor-type-safety`, `email-quality-gates`, `email-preview-dashboard` | Terra alto; módulos de components API, validate-email, HMR preview, copy HTML modal y helper ESP | Terra alto distinto del implementador | Pruebas focalizadas por módulo, build, validate-email y recorrido manual | Cambie contrato de build/preview/API, severidades o helper ESP.      |
-| MHB-07/MHB-08/MHB-17 preview     | `email-preview-dashboard`, `email-quality-gates`                               | Terra alto; API/UI preview                                                                       | Revisor UX/API                        | Tests más recorrido manual desktop/móvil                                 | Exponga rutas, cambie payload público o requiera nueva arquitectura. |
-| MHB-09 a MHB-12/MHB-21 templates | `email-compatibility`, `email-project-stack`                                   | Terra medio; catálogo/templates y `dist` derivado                                                | Revisor de email                      | Build, validate-email, visual y links                                    | Una regla impida el diseño o aparezcan decisiones de marca.          |
-| MHB-18 documentación             | `task-verification`, `email-compatibility`                                     | Terra medio; guía/matriz                                                                         | Revisor que siga la guía desde cero   | Lint y ejercicio de componente                                           | La guía requiera crear una skill adicional.                          |
+| Línea                     | Skills obligatorias                                                            | Implementador y propiedad                                                                        | Revisor                               | Controles                                                                | Escalar cuando                                                  |
+| ------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ | ------------------------------------- | ------------------------------------------------------------------------ | --------------------------------------------------------------- |
+| MHB-05/MHB-06 validadores | `email-compatibility`, `email-quality-gates`                                   | Terra alto; validadores y tests asociados                                                        | Revisor de seguridad/compatibilidad   | Fixtures, preview, build/export y gate                                   | Cambie semántica ESP o severidades.                             |
+| MHB-24 modularización     | `email-refactor-type-safety`, `email-quality-gates`, `email-preview-dashboard` | Terra alto; módulos de components API, validate-email, HMR preview, copy HTML modal y helper ESP | Terra alto distinto del implementador | Pruebas focalizadas por módulo, build, validate-email y recorrido manual | Cambie contrato de build/preview/API, severidades o helper ESP. |
+
+<!-- markdownlint-disable MD060 -->
+
+| MHB-25 upgrade visual web | `email-preview-dashboard`, `email-quality-gates`, `task-verification` | Terra alto; docs/design y src/web autorizados | Revisor UI por fase y orquestador | Lint, tests, formato, diff y recorrido dark/light | Cambie pipeline/email, APIs o alcance autorizado. |
+
+<!-- markdownlint-enable MD060 -->
+
+| MHB-07/MHB-08/MHB-17 preview | `email-preview-dashboard`, `email-quality-gates` | Terra alto; API/UI preview | Revisor UX/API | Tests más recorrido manual desktop/móvil | Exponga rutas, cambie payload público o requiera nueva arquitectura. |
+| MHB-09 a MHB-12/MHB-21 templates | `email-compatibility`, `email-project-stack` | Terra medio; catálogo/templates y `dist` derivado | Revisor de email | Build, validate-email, visual y links | Una regla impida el diseño o aparezcan decisiones de marca. |
+| MHB-18 documentación | `task-verification`, `email-compatibility` | Terra medio; guía/matriz | Revisor que siga la guía desde cero | Lint y ejercicio de componente | La guía requiera crear una skill adicional. |
 
 ### Fase C — Calidad y evidencia
 

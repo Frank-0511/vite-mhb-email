@@ -1,14 +1,20 @@
 // Preview manager module
+const SKELETON_TYPES = new Set(["atoms", "molecules", "organisms", "templates"]);
+
 export const previewManager = {
   iframe: null,
   emptyPreview: null,
+  skeleton: null,
 
-  init(iframeEl, emptyPreviewEl) {
+  init(iframeEl, emptyPreviewEl, skeletonEl) {
     this.iframe = iframeEl;
     this.emptyPreview = emptyPreviewEl;
+    this.skeleton = skeletonEl;
   },
 
-  async render(componentId, variant, props) {
+  async render(componentId, variant, props, { showLoading = false, type } = {}) {
+    if (showLoading) this.showSkeleton(type);
+
     try {
       const response = await fetch(`/api/components/${componentId}/render`, {
         method: "POST",
@@ -33,6 +39,8 @@ export const previewManager = {
       };
     } catch (err) {
       console.error("Error rendering component:", err);
+    } finally {
+      if (showLoading) this.hideSkeleton();
     }
   },
 
@@ -44,5 +52,26 @@ export const previewManager = {
   hide() {
     this.emptyPreview.style.display = "flex";
     this.iframe.style.display = "none";
+    if (this.skeleton) this.skeleton.style.display = "none";
+  },
+
+  /**
+   * @param {"atoms"|"molecules"|"organisms"|"templates"} [type] - Atomic
+   *   design category driving the skeleton shape shown; defaults to
+   *   "organisms" when omitted or unrecognized.
+   * @returns {void}
+   */
+  showSkeleton(type) {
+    if (!this.skeleton) return;
+    this.skeleton.dataset.type = SKELETON_TYPES.has(type) ? type : "organisms";
+    this.emptyPreview.style.display = "none";
+    this.iframe.style.display = "none";
+    this.skeleton.style.display = "block";
+  },
+
+  hideSkeleton() {
+    if (!this.skeleton) return;
+    this.skeleton.style.display = "none";
+    this.iframe.style.display = "block";
   },
 };
