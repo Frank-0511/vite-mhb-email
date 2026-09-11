@@ -9,15 +9,16 @@ el contrato en `PLAN.md` y el detalle reproducible en los commits y PRs.
 
 ## Resumen
 
-- ID activo: MHB-26
-- Estado: En revisión
-- Implementador: perfil habilitador técnico (medio)
-- Revisor o autoridad de cierre: revisor técnico independiente
-- Rama autorizada: `feature/mhb-26`
+- ID activo: ninguno
+- Estado: sin ID en curso
 - Última actualización: 2026-09-11
 - Contrato estable: `docs/implementation/PLAN.md`
 
 ## Paquete activo
+
+Ninguno. Último paquete cerrado: MHB-26 (ver «Últimas entregas»).
+
+### MHB-26 (cerrado)
 
 - MHB-26 — Validación automatizada de accesibilidad y contraste: agrega
   `scripts/build/validate-contrast.js` (WCAG por tokens, sin navegador) y
@@ -64,12 +65,30 @@ el contrato en `PLAN.md` y el detalle reproducible en los commits y PRs.
   y documentado: son las herramientas detectando deuda preexistente, no una
   regresión introducida por MHB-26.
 
+### Desviación de proceso (documentada, no de alcance)
+
+- El commit `1176564` quedó en `master` directamente (pusheado a
+  `origin/master`), sin PR y sin revisión independiente previa al push —
+  se apartó del flujo `feature/<id>` + PR a `master` que exige
+  `task-verification`. La rama `feature/mhb-26` era un commit duplicado
+  (mismo árbol, distinto timestamp de commit) y no el origen de un PR; fue
+  eliminada (local y remota) tras esta revisión.
+- Revisión independiente realizada el 2026-09-11 post-hoc: se repitieron
+  todos los controles (`lint:contrast`, `a11y-check`, `lint`, `typecheck`,
+  `test`, `format:check`, `agents:check`) sobre el commit ya en `master` y
+  los resultados coinciden exactamente con lo documentado — sin código
+  irregular ni desviación de alcance, solo del procedimiento de entrega.
+  Se acepta el cierre en base a esa verificación; no se reescribe historial
+  de `master`.
+
 ## Últimas entregas
 
-- MHB-26: `En revisión` el 2026-09-11; validador de contraste WCAG y checker
+- MHB-26: `Completada` el 2026-09-11; validador de contraste WCAG y checker
   de accesibilidad (axe-core + Puppeteer) agregados como scripts dedicados;
-  ambos detectan deuda real (contraste de `action-primary`, 3 violaciones
-  a11y del dashboard) documentada y no corregida en este ID; CI informativo.
+  ambos detectan deuda real (contraste de `action-primary`, 9 violaciones
+  axe-core en 3 reglas) documentada y no corregida en este ID; CI
+  informativo; commit `1176564` en `master`, revisado post-hoc por
+  desviación de proceso (sin PR previo).
 - MHB-21: `Completada` el 2026-09-11; `logoUrl` agregado a `welcome` elimina
   el warning `href="#"` de los cuatro templates de producto; example/
   user-created quedan como excepción documentada de fixture; aceptación
@@ -88,13 +107,13 @@ el contrato en `PLAN.md` y el detalle reproducible en los commits y PRs.
 
 ## Ejecuciones delegadas relevantes
 
-| Ámbito               | Estado      | Propiedad                                  | Handoff                                          |
-| -------------------- | ----------- | ------------------------------------------ | ------------------------------------------------ |
-| MHB-26               | En revisión | Validadores de contraste y accesibilidad   | Pendiente de revisor técnico independiente.      |
-| MHB-21               | Completada  | `logoUrl` en welcome, links de producto    | Aceptación manual del orquestador el 2026-09-11. |
-| MHB-25               | Completada  | Tokens Space Blue, skeletons de Library    | Aceptación manual del orquestador el 2026-09-11. |
-| MHB-09               | Completada  | Catálogo, dashboard, tests y documentación | Cierre autorizado el 2026-09-09.                 |
-| MHB-10/MHB-11/MHB-12 | Completada  | Templates y pruebas de catálogo/ESP        | Aceptación manual del usuario el 2026-09-09.     |
+| Ámbito               | Estado     | Propiedad                                  | Handoff                                          |
+| -------------------- | ---------- | ------------------------------------------ | ------------------------------------------------ |
+| MHB-26               | Completada | Validadores de contraste y accesibilidad   | Revisión independiente post-hoc el 2026-09-11.   |
+| MHB-21               | Completada | `logoUrl` en welcome, links de producto    | Aceptación manual del orquestador el 2026-09-11. |
+| MHB-25               | Completada | Tokens Space Blue, skeletons de Library    | Aceptación manual del orquestador el 2026-09-11. |
+| MHB-09               | Completada | Catálogo, dashboard, tests y documentación | Cierre autorizado el 2026-09-09.                 |
+| MHB-10/MHB-11/MHB-12 | Completada | Templates y pruebas de catálogo/ESP        | Aceptación manual del usuario el 2026-09-09.     |
 
 ## Decisiones y desviaciones vigentes
 
@@ -114,17 +133,11 @@ el contrato en `PLAN.md` y el detalle reproducible en los commits y PRs.
 
 ## Handoff
 
-- Próxima acción inmediata: MHB-26 está `En revisión` en `feature/mhb-26`,
-  sin commitear; falta revisión técnica independiente y decidir
-  commit/PR/merge, y si se abre un ID de seguimiento para corregir los
-  hallazgos de contraste/accesibilidad ya detectados.
-- Criterio de cierre: pendiente de confirmación del revisor técnico
-  independiente (diff, controles y ausencia de desviaciones); el rojo de
-  `lint:contrast`/`a11y-check` es esperado y no bloquea el cierre, según el
-  contrato del ID.
+- Próxima acción inmediata: ninguna en curso. MHB-26 quedó `Completada` tras
+  revisión independiente post-hoc (ver «Desviación de proceso»); no hay ID
+  activo.
 - Siguiente tarea del roadmap: no hay otro ID `Requerida` pendiente en
   `PLAN.md` tras MHB-21/MHB-25/MHB-26; solo queda MHB-23 (`Opcional`, ampliar
   biblioteca de componentes), `bloqueado` hasta asignación explícita del
-  orquestador. Además, los hallazgos de contraste/accesibilidad de MHB-26
-  quedan disponibles para un ID de corrección futuro, a decisión del
-  orquestador.
+  orquestador. Los hallazgos de contraste/accesibilidad de MHB-26 quedan
+  disponibles para un ID de corrección futuro, a decisión del orquestador.
