@@ -6,13 +6,14 @@
       "name": "vite-mhb-email",
       "dependencies": {
         "handlebars": "4.7.9",
-        "lucide": "^1.14.0",
+        "lucide": "1.14.0",
       },
       "devDependencies": {
         "@eslint/js": "10.0.1",
         "@maizzle/framework": "5.5.0",
         "@types/node": "26.0.1",
         "autoprefixer": "10.5.0",
+        "axe-core": "4.13.0",
         "eslint": "10.2.1",
         "eslint-config-prettier": "10.1.8",
         "fs-extra": "11.3.4",
@@ -27,8 +28,8 @@
         "postcss": "8.5.12",
         "prettier": "3.8.3",
         "puppeteer": "24.42.0",
-        "stylelint": "^17.14.0",
-        "stylelint-config-standard": "^40.0.0",
+        "stylelint": "17.14.0",
+        "stylelint-config-standard": "40.0.0",
         "tailwindcss": "3.4.19",
         "typescript": "6.0.3",
         "vite": "8.0.10",
@@ -246,6 +247,8 @@
     "async": ["async@3.2.6", "", {}, "sha512-htCUDlxyyCLMgaM3xXg0C0LW2xqfuQ6p05pCEIsXuyQ+a1koYKTuBMzRNwmybfLgvJDMd0r1LTn4+E0Ti6C2AA=="],
 
     "autoprefixer": ["autoprefixer@10.5.0", "", { "dependencies": { "browserslist": "^4.28.2", "caniuse-lite": "^1.0.30001787", "fraction.js": "^5.3.4", "picocolors": "^1.1.1", "postcss-value-parser": "^4.2.0" }, "peerDependencies": { "postcss": "^8.1.0" }, "bin": { "autoprefixer": "bin/autoprefixer" } }, "sha512-FMhOoZV4+qR6aTUALKX2rEqGG+oyATvwBt9IIzVR5rMa2HRWPkxf+P+PAJLD1I/H5/II+HuZcBJYEFBpq39ong=="],
+
+    "axe-core": ["axe-core@4.13.0", "", {}, "sha512-UzGt8zg7Ny8djbYMhxl2zuEevVa7r2gJjYY5Lwr1xM7+XU2nd6CkIWFTVcCIbAP63vSz71NaVyyuSk9lHKcy0A=="],
 
     "b4a": ["b4a@1.8.1", "", { "peerDependencies": { "react-native-b4a": "*" }, "optionalPeers": ["react-native-b4a"] }, "sha512-aiqre1Nr0B/6DgE2N5vwTc+2/oQZ4Wh1t4NznYY4E00y8LCt6NqdRv81so00oo27D8MVKTpUa/MwUUtBLXCoDw=="],
 
