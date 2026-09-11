@@ -29,6 +29,7 @@ validar y exportar templates HTML de email. Todo cambio debe preservar:
 | Seguridad, JSDoc, errores, tests o validación      | `email-quality-gates`        |
 | Templates, layouts, CSS email o validadores        | `email-compatibility`        |
 | Preview, dashboard, biblioteca o API Vite          | `email-preview-dashboard`    |
+| Tokens, temas dark/light o contraste del web       | `email-visual-design-system` |
 | Refactor, modularización o tipado gradual          | `email-refactor-type-safety` |
 | Evidencias, ramas, commits o cierre                | `task-verification`          |
 | Actualizar `docs/implementation/STATUS.md`         | `task-status-management`     |
