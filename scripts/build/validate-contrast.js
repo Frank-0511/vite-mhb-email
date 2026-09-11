@@ -61,8 +61,8 @@ export const PAIRS = [
     role: "text",
   },
   {
-    name: "action-primary (text/accent-strong)",
-    fg: "ef-text",
+    name: "action-primary (text-on-accent/accent-strong)",
+    fg: "ef-text-on-accent",
     bg: "ef-accent-strong",
     role: "ui",
   },

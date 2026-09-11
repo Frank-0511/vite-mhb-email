@@ -8,6 +8,7 @@
   --ef-border: #b9cadb;
   --ef-accent: #247ed8;
   --ef-accent-strong: #126ac2;
+  --ef-text-on-accent: #fff;
   --ef-focus: #126ac2;
   --ef-success: #177a55;
   --ef-warning: #9a6200;
@@ -24,6 +25,7 @@
   --ef-border: #27425f;
   --ef-accent: #4fa3ff;
   --ef-accent-strong: #2587f5;
+  --ef-text-on-accent: #fff;
   --ef-focus: #7dc0ff;
   --ef-success: #45d39a;
   --ef-warning: #f5be4f;

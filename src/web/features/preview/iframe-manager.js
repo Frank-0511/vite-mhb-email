@@ -57,7 +57,7 @@ export function createIframeManager(config) {
       doc.body.style.padding = "32px 0";
     }
 
-    onSyncStatusChange("Sincronizado", "text-green-600 font-medium", "bg-green-500");
+    onSyncStatusChange("Sincronizado", "sync-status-ok", "bg-green-500");
   }
 
   /**
@@ -138,7 +138,7 @@ export function createIframeManager(config) {
    */
   function reset(templateName) {
     loadTemplate(templateName);
-    onSyncStatusChange("Sincronizado", "text-green-600 font-medium", "bg-green-500");
+    onSyncStatusChange("Sincronizado", "sync-status-ok", "bg-green-500");
   }
 
   return {

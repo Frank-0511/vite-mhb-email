@@ -86,6 +86,7 @@ del PLAN o STATUS originales.
 
 | MHB-25 | Feature | Upgrade del sistema visual web | Home, Preview y Library necesitan una identidad visual coherente, accesible y responsive sin alterar el pipeline de email. | Requerida | MHB-24 | Tokens Space Blue en Home, Preview y Library; gates por fase en dark/light y móvil/desktop; sin cambios de email, APIs Vite ni pipeline. | B | gpt-5.6-terra | Alto |
 | MHB-26 | Habilitador técnico | Validación automatizada de accesibilidad y contraste | La verificación de contraste WCAG y accesibilidad del dashboard dependía de revisión manual en navegador. | Requerida | MHB-25 | Un validador de contraste por tokens y un checker de accesibilidad (axe-core sobre el Puppeteer existente) reportan hallazgos por texto sin abrir el navegador; hallazgos de contraste existentes quedan documentados, no corregidos en este ID. | D | gpt-5.6-terra | Medio |
+| MHB-27 | Habilitador técnico | Corregir hallazgos de MHB-26 y estabilizar `a11y-check` | `lint:contrast` reporta `action-primary` bajo AA; `a11y-check` reportaba 9 violaciones que resultaron ser falsos positivos por una carrera con el optimizador de dependencias de Vite, que enmascaraban un hallazgo real (`meta-viewport`/zoom deshabilitado). | Requerida | MHB-26 | `lint:contrast` y `a11y-check` corren en verde; `a11y-check.js` espera de forma determinista el full-reload del optimizador de Vite antes de auditar, sin falsos positivos reproducibles; el contrato de `action-primary` en `DESIGN.md` coincide con el componente real; el viewport permite zoom táctil. | D | gpt-5.6-terra | Medio |
 
 <!-- markdownlint-enable MD060 -->
 
@@ -654,11 +655,110 @@ del PLAN o STATUS originales.
 - **Exclusiones específicas:** no corregir el contraste/tokens que el
   validador reporte como fallidos; no agregar un segundo motor de navegador
   (Playwright) teniendo Puppeteer disponible.
+
+### MHB-27 — Corregir hallazgos de MHB-26 y estabilizar `a11y-check`
+
+- **Objetivo observable:** `bun run lint:contrast` y `bun run a11y-check`
+  corren en verde de forma reproducible; los hallazgos reales de
+  accesibilidad/contraste que ambos detectan quedan corregidos en la UI.
+- **Superficies autorizadas (ampliadas tras el diagnóstico real, acordado con
+  el orquestador):** `docs/design/DESIGN.md` (contrato de `action-primary`),
+  `scripts/build/validate-contrast.js` (par fg/bg de `action-primary`),
+  `scripts/build/a11y-check.js` (servidor Vite y estrategia de espera),
+  `src/web/shared/styles/design-tokens.css` (token `text-on-accent`),
+  `src/web/features/preview/styles.css` (usar el token en vez de `#fff`
+  literal), `src/web/features/library/**` y `src/web/features/preview/**`
+  (los 4 hallazgos reales descritos abajo) y `docs/implementation/`.
+- **Dependencias y precondiciones:** MHB-26 `Completada`.
+- **Diagnóstico real (reemplaza la hipótesis inicial de este contrato; no
+  repetir el proceso):**
+  1. La causa de las 9 violaciones originales de `a11y-check` NO era una
+     carrera con el optimizador de dependencias de Vite. La causa real:
+     `a11y-check.js` pasaba `root: projectRoot` a `createServer()`, pisando
+     el `root: "src/web"` declarado en `vite.config.js` — eso dejaba la app
+     en un estado inconsistente. Quitar ese `root` explícito (dejar que
+     `configFile` lo resuelva) basta para que `/`, `/library` y `/preview`
+     sirvan la app real.
+  2. Con el `root` corregido, `/preview?template=welcome` nunca cumple
+     `waitUntil: "networkidle0"` (el iframe de render y el editor JSON dejan
+     conexiones abiertas) y el script agotaba el timeout de navegación de
+     Puppeteer. Se reemplazó por `waitUntil: "load"` más
+     `page.waitForNetworkIdle({ idleTime: 500, timeout: 8000 })` tolerante a
+     no llegar a cero conexiones.
+  3. Con ambos fixes, 5 de los 9 hallazgos originales resultaron falsos
+     positivos (desaparecen de forma reproducible en ≥3 corridas):
+     `color-contrast` en Home (dark) y Library (ambos temas), y
+     `scrollable-region-focusable` en Preview (ambos temas). El hallazgo
+     `meta-viewport`/`user-scalable=no` reportado en un diagnóstico
+     intermedio tampoco era real: correspondía a una página de error interna
+     de Chrome (`chrome-error://chromewebdata/`) alcanzada durante una
+     navegación inestable, no a la app — el `<meta viewport>` de todas las
+     páginas del dashboard ya es correcto en el código fuente y no requiere
+     cambio.
+  4. Quedan 6 hallazgos reales, reproducibles en 3 corridas consecutivas:
+     - `action-primary (text/accent-strong)` da 2.90:1 en tema claro porque
+       `DESIGN.md` declaraba `textColor: {colors.text}`, pero ningún botón
+       real usa esa combinación (ya usan texto blanco). Corregido: nuevo
+       token `--ef-text-on-accent` (blanco) referenciado por `DESIGN.md` y
+       `validate-contrast.js`; pasa en ambos temas (5.43:1 claro, 3.58:1
+       oscuro — ver punto siguiente).
+     - `scrollable-region-focusable` en Library (`.library-preview`, ambos
+       temas): el panel de preview con `overflow-auto` no es alcanzable por
+       teclado.
+     - `aria-required-parent` en Preview (`#tab-btn-preview`/`#tab-btn-editor`,
+       ambos temas): botones `role="tab"` sin un ancestro `role="tablist"`.
+     - `color-contrast` en Preview claro: `#sync-status` usa `text-green-600`
+       de Tailwind (2.56:1 sobre `--ef-surface`) en vez del token
+       `--ef-success` del sistema de diseño (que sí pasa, 5.12:1).
+     - `color-contrast` en Preview oscuro: el label del botón de viewport
+       activo (`.viewport-label-full`, 12px) usa texto blanco sobre
+       `--ef-accent-strong` oscuro a 3.58:1 — pasa el umbral "ui" (3:1) que
+       usa `lint:contrast` para `action-primary`, pero no el 4.5:1 real que
+       exige WCAG 1.4.3 para texto normal (axe-core lo clasifica como texto,
+       no como componente UI). Es la misma pareja de tokens que el punto
+       `action-primary`; el `lint:contrast` existente seguirá sin detectar
+       este caso porque cataloga esa pareja como `role: "ui"` — se documenta
+       la limitación en vez de reclasificar el validador (fuera de alcance).
+- **Pasos técnicos:**
+  1. Corregir el contrato de `action-primary` en `DESIGN.md`/
+     `validate-contrast.js` (token `text-on-accent`, sin cambio visual).
+  2. Corregir `a11y-check.js`: quitar el `root` explícito y cambiar la
+     estrategia de espera de `/preview` (paso 2 del diagnóstico).
+  3. Library: agregar `tabindex="0"` (y rol/etiqueta accesible si aplica) al
+     contenedor `.library-preview` con scroll.
+  4. Preview: envolver los botones `#tab-btn-preview`/`#tab-btn-editor` en un
+     contenedor con `role="tablist"`.
+  5. Preview: reemplazar `text-green-600` de `#sync-status` por el token
+     `--ef-success`.
+  6. Preview: corregir el contraste del label del viewport activo en tema
+     oscuro sin migrar todo `--ef-accent-strong` (afectaría otros usos
+     decorativos); usar una solución acotada al propio label (p. ej. peso/
+     tamaño que califique como texto grande, o un tono de fondo específico
+     para ese estado activo) — decisión de implementación menor, sin
+     rediseñar el componente.
+- **Criterios de aceptación:** `bun run lint:contrast` y `bun run a11y-check`
+  terminan en verde (0 errores) en al menos 3 corridas consecutivas locales;
+  el contrato de `action-primary` en `DESIGN.md` coincide con el componente
+  real; los 4 hallazgos de UI quedan corregidos sin alterar el pipeline de
+  email, las APIs Vite ni el contrato de `components.js`.
+- **Validación automática:** `bun run lint:contrast`, `bun run a11y-check`
+  (≥3 corridas), `bun run lint`, `bun run typecheck`, `bun run test`,
+  `bun run format:check`, `bun run agents:check`.
+- **Validación manual:** ninguna adicional; los scripts existentes son la
+  fuente de verdad para accesibilidad/contraste.
+- **Evidencia requerida:** salida de las 3 corridas de `lint:contrast`/
+  `a11y-check` en verde, diff de todos los archivos tocados.
+- **Riesgos y reversión:** el fix del label de viewport oscuro es el único
+  con impacto visual (aunque menor); si genera desacuerdo, revertir solo ese
+  cambio puntual sin afectar el resto del ID.
+- **Exclusiones específicas:** no reclasificar `role: "ui"` a `role: "text"`
+  en `validate-contrast.js` para toda la familia `action-primary` (cambiaría
+  el umbral de otros pares); no migrar `a11y-check.js` a otro motor de
+  navegador; no rediseñar Library/Preview más allá de los 4 hallazgos.
 - **Implementador:** perfil habilitador técnico, medio. **Revisor
   independiente:** revisor técnico distinto.
-- **Condición de escalamiento:** que el hallazgo de contraste existente
-  (`action-primary` en modo claro) requiera decidirse antes de cerrar, o que
-  se necesite ampliar rutas/temas más allá de los tres fijos.
+- **Condición de escalamiento:** que corregir el label del viewport oscuro
+  requiera un cambio de token más amplio que el acotado al propio label.
 
 ## Fases
 

@@ -127,7 +127,6 @@ export function printReport(reports) {
  */
 export async function crawlDashboard() {
   const server = await createServer({
-    root: projectRoot,
     configFile: path.resolve(projectRoot, "vite.config.js"),
     server: { port: 0, open: false, strictPort: false },
     logLevel: "warn",
@@ -159,7 +158,13 @@ export async function crawlDashboard() {
             // eslint-disable-next-line no-undef
             window.localStorage.setItem("app-theme", themeName);
           }, theme);
-          await page.goto(`${baseURL}${route}`, { waitUntil: "networkidle0" });
+          // `networkidle0` nunca se cumple en `/preview`: el iframe de
+          // renderizado y el editor JSON dejan conexiones abiertas que
+          // agotan el timeout de navegación. Se espera la carga y una
+          // ventana acotada de inactividad de red, tolerante a que no
+          // llegue a cero conexiones.
+          await page.goto(`${baseURL}${route}`, { waitUntil: "load" });
+          await page.waitForNetworkIdle({ idleTime: 500, timeout: 8000 }).catch(() => {});
           await page.evaluate(axeSource);
           const axeResults = await page.evaluate((tags) => {
             // Corre en contexto de navegador; axe se inyecta en runtime vía axeSource.
