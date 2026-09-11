@@ -49,6 +49,10 @@ asignado.
 - El implementador entrega a `En revisión`; un revisor distinto confirma
   `Completada` con aceptación, diff y evidencia.
 - Una desviación de alcance detiene el ID hasta acordar su tratamiento.
+- No abrir el Browser pane (preview, screenshots, navegación) por decisión
+  propia; solo cuando el usuario lo solicite explícitamente. Verificar
+  cambios por defecto con los comandos del proyecto (build, validate-email,
+  lint, typecheck, test).
 
 ## Comandos comprobados
 

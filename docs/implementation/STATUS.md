@@ -9,39 +9,56 @@ el contrato en `PLAN.md` y el detalle reproducible en los commits y PRs.
 
 ## Resumen
 
-- ID activo: Ninguno (MHB-25 cerrado)
-- Estado: Completada (MHB-25)
-- Implementador: UI/web (Tasks 1 a 5 + skeleton por categoría)
-- Revisor o autoridad de cierre: Orquestador (aceptación manual)
-- Rama autorizada: `feature/mhb-25`
+- ID activo: MHB-21
+- Estado: Completada
+- Implementador: perfil email/producto (medio)
+- Revisor o autoridad de cierre: aceptación manual del orquestador
+- Rama autorizada: `feature/mhb-21`
 - Última actualización: 2026-09-11
 - Contrato estable: `docs/implementation/PLAN.md`
 
 ## Paquete activo
 
-- No hay ID en progreso ni en revisión. MHB-25 quedó `Completada` el
-  2026-09-11 por aceptación manual del orquestador; detalle de controles y
-  evidencia por fase en [STATUS-HISTORY.md](STATUS-HISTORY.md).
-- Deuda documentada al cierre: Library conserva un layout de dos columnas de
-  ancho fijo sin colapso propio a 375px (fuera del alcance autorizado de
-  MHB-25); no bloqueó el cierre, queda pendiente de decisión futura.
-- MHB-10, MHB-11 y MHB-12 permanecen `Completada` tras la aceptación manual del
-  usuario el 2026-09-09; no se reabre ninguno.
+- MHB-21 — Resolver links placeholder: los cuatro templates de producto
+  (welcome, password-reset, receipt, newsletter) ya no generan warnings
+  `link-targets` de `href="#"`.
+- Causa raíz: `src/emails/layouts/main.html` usa
+  `href="[[ page.logoUrl || '#' ]]"`; welcome no declaraba `logoUrl` en su
+  front matter (los otros tres ya lo hacían). Se agregó
+  `logoUrl: "https://example.com"` a `welcome/index.html`, igual que en los
+  demás templates de producto.
+- Excepción documentada (fuera de catálogo de producto, MHB-09): `example` y
+  `user-created` son fixtures internos de desarrollo/prueba, no forman parte
+  de los cuatro casos de producto y conservan `href="#"` sin bloquear el
+  cierre.
+- Superficies tocadas: `src/emails/templates/welcome/index.html` y
+  `dist/welcome.html` (rebuild). Sin cambios de pipeline, validador ni
+  catálogo.
 
 ### Controles
 
-| Control           | Resultado | Nota                                              |
-| ----------------- | --------- | ------------------------------------------------- |
-| Cierre MHB-25     | Verde     | Aceptación manual del orquestador el 2026-09-11.  |
-| Controles previos | Verde     | Evidencia completa por fase en STATUS-HISTORY.md. |
+| Control                    | Resultado | Nota                                                                        |
+| -------------------------- | --------- | --------------------------------------------------------------------------- |
+| `bun run build`            | Verde     | 6 archivos, 0 errores, 2 warnings (example/user-created, fuera de alcance). |
+| `bun run validate-email`   | Verde     | welcome/password-reset/receipt/newsletter sin warnings de `link-targets`.   |
+| `bun run lint`             | Verde     | html/js/md/json/css sin errores.                                            |
+| `bun run typecheck`        | Verde     | Sin salida de `tsc --noEmit`.                                               |
+| `bun run test`             | Verde     | 428 pruebas, 0 fallos.                                                      |
+| `bun run format:check`     | Verde     | Todos los archivos con estilo Prettier.                                     |
+| Controles previos (MHB-25) | Verde     | Evidencia completa por fase en STATUS-HISTORY.md.                           |
 
 ### Riesgo y bloqueo
 
-- Ninguno vigente. No hubo cambios de pipeline, APIs, editor ni documento del
-  iframe en ninguna fase de MHB-25.
+- Ninguno vigente. Sin cambios de pipeline, APIs, editor ni documento del
+  iframe. No se usaron URLs de marca, legal ni producción (se mantuvo
+  `https://example.com`, mismo patrón que password-reset/receipt/newsletter).
 
 ## Últimas entregas
 
+- MHB-21: `Completada` el 2026-09-11; `logoUrl` agregado a `welcome` elimina
+  el warning `href="#"` de los cuatro templates de producto; example/
+  user-created quedan como excepción documentada de fixture; aceptación
+  manual del orquestador.
 - MHB-25: `Completada` el 2026-09-11; tokens Space Blue en Home/Preview/
   Library, skeleton de carga y skeleton por categoría atomic design;
   aceptación manual del orquestador.
@@ -58,24 +75,27 @@ el contrato en `PLAN.md` y el detalle reproducible en los commits y PRs.
 
 | Ámbito               | Estado     | Propiedad                                  | Handoff                                          |
 | -------------------- | ---------- | ------------------------------------------ | ------------------------------------------------ |
+| MHB-21               | Completada | `logoUrl` en welcome, links de producto    | Aceptación manual del orquestador el 2026-09-11. |
 | MHB-25               | Completada | Tokens Space Blue, skeletons de Library    | Aceptación manual del orquestador el 2026-09-11. |
 | MHB-09               | Completada | Catálogo, dashboard, tests y documentación | Cierre autorizado el 2026-09-09.                 |
 | MHB-10/MHB-11/MHB-12 | Completada | Templates y pruebas de catálogo/ESP        | Aceptación manual del usuario el 2026-09-09.     |
 
 ## Decisiones y desviaciones vigentes
 
-- Los warnings `href="#"` conocidos pertenecen a MHB-21; se mantienen visibles
-  y no bloquean el paquete activo.
+- Excepción de fixture (MHB-21): `example` y `user-created` no son
+  templates de producto y conservan `href="#"`; no requieren corrección para
+  cerrar MHB-21.
 - Las variables ESP `{{ }}` deben preservarse en el HTML final; `[[ page.* ]]`
   sigue reservado para Maizzle.
 - No se publica versión, tag ni release sin autorización explícita.
 
 ## Handoff
 
-- Próxima acción inmediata: los cambios de MHB-25 (incluida la ampliación de
-  alcance del skeleton por categoría) están sin commitear en
-  `feature/mhb-25`; confirmar con el orquestador si se commitea/mergea ahora.
-- Criterio de cierre: cumplido; MHB-25 completo aceptado por el orquestador.
-- Siguiente tarea del roadmap: no hay ID `Requerida` posterior a MHB-25 en
-  `PLAN.md`; solo queda MHB-23 (`Opcional`, ampliar biblioteca de componentes),
-  `bloqueado` hasta asignación explícita del orquestador.
+- Próxima acción inmediata: MHB-21 está `Completada` en `feature/mhb-21`,
+  sin commitear; decidir commit/PR/merge.
+- Criterio de cierre: cumplido por aceptación manual del orquestador (diff,
+  controles verdes y ausencia de desviaciones).
+- Siguiente tarea del roadmap: no hay otro ID `Requerida` pendiente en
+  `PLAN.md` tras MHB-21/MHB-25; solo queda MHB-23 (`Opcional`, ampliar
+  biblioteca de componentes), `bloqueado` hasta asignación explícita del
+  orquestador.
