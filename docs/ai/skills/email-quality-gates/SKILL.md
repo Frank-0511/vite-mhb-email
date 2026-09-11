@@ -17,6 +17,10 @@ description: Aplicar calidad, seguridad, JSDoc, validación runtime, errores, de
   causa, restaurar estado temporal y devolver códigos HTTP accionables.
 - No imprimir secretos, escribir fuera del workspace, ejecutar operaciones
   destructivas ni añadir dependencias sin justificar costo y mantenimiento.
+- Fijar todas las dependencias (`dependencies` y `devDependencies` de
+  `package.json`) a versión exacta, sin rangos (`^`, `~`, `>=`, etc.). Tras
+  cualquier cambio de versión ejecutar `bun install` para mantener
+  `bun.lock` sincronizado.
 - Para cambios de scripts o frontend ejecutar como mínimo `bun run lint`,
   controles del ID y `bun run format:check`.
 

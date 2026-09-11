@@ -85,6 +85,7 @@ del PLAN o STATUS originales.
 <!-- markdownlint-disable MD060 -->
 
 | MHB-25 | Feature | Upgrade del sistema visual web | Home, Preview y Library necesitan una identidad visual coherente, accesible y responsive sin alterar el pipeline de email. | Requerida | MHB-24 | Tokens Space Blue en Home, Preview y Library; gates por fase en dark/light y móvil/desktop; sin cambios de email, APIs Vite ni pipeline. | B | gpt-5.6-terra | Alto |
+| MHB-26 | Habilitador técnico | Validación automatizada de accesibilidad y contraste | La verificación de contraste WCAG y accesibilidad del dashboard dependía de revisión manual en navegador. | Requerida | MHB-25 | Un validador de contraste por tokens y un checker de accesibilidad (axe-core sobre el Puppeteer existente) reportan hallazgos por texto sin abrir el navegador; hallazgos de contraste existentes quedan documentados, no corregidos en este ID. | D | gpt-5.6-terra | Medio |
 
 <!-- markdownlint-enable MD060 -->
 
@@ -607,6 +608,57 @@ del PLAN o STATUS originales.
 - **Condición de escalamiento:** cualquier cambio de contrato público,
   pipeline/email, API Vite, dependencia, alcance autorizado o imposibilidad de
   demostrar contraste, teclado o aislamiento.
+
+### MHB-26 — Validación automatizada de accesibilidad y contraste
+
+- **Objetivo observable:** detectar problemas de contraste WCAG y de
+  accesibilidad del dashboard por texto/CLI, sin depender de revisión manual
+  en navegador.
+- **Superficies autorizadas:** `scripts/build/` (nuevos validadores),
+  `package.json` (scripts), `.github/workflows/ci.yml`, `docs/ai/AGENTS.md`
+  (solo la nota de preferencia texto/markdown sobre screenshot) y
+  `docs/implementation/`. No se modifica `design-tokens.css`, `DESIGN.md` ni
+  ningún componente de `src/web/**` para corregir hallazgos: esta tarea es la
+  herramienta, no el arreglo de lo que encuentre.
+- **Dependencias y precondiciones:** MHB-25 `Completada` (tokens Space Blue
+  estables); Puppeteer ya disponible como devDependency.
+- **Pasos técnicos:** validador de contraste de tokens (`design-tokens.css`,
+  matemática WCAG sin navegador) con pares fg/bg derivados de
+  `docs/design/DESIGN.md`; checker de accesibilidad de la dashboard con
+  axe-core inyectado vía el Puppeteer existente contra rutas fijas (`/`,
+  `/library`, `/preview?template=<válido>`) en tema claro y oscuro; ambos como
+  scripts dedicados (`lint:contrast`, `a11y-check`), fuera de la cadena de
+  `bun run lint`/`bun run build` — igual que `validate-email` hoy — más su job
+  correspondiente en CI.
+- **Criterios de aceptación:** `bun run lint:contrast` reporta ratio y
+  severidad por par fg/bg y tema, fallando si algún par no llega a su umbral
+  AA; `bun run a11y-check` reporta violaciones de axe-core por ruta/tema con
+  severidad mapeada (`critical`/`serious` bloquean); ambos corren sin
+  necesidad de abrir el Browser pane manualmente; hallazgos de contraste ya
+  existentes en los tokens actuales quedan documentados como decisión
+  pendiente del orquestador, no bloquean el cierre de este ID ni el pipeline
+  de `lint`/`build` existente.
+- **Validación automática:** `bun run lint:contrast`, `bun run a11y-check`,
+  `bun run lint`, `bun run typecheck`, `bun run test`,
+  `bun run format:check`, `bun run agents:check`.
+- **Validación manual:** correr `bun run a11y-check` una vez localmente y
+  revisar que el reporte sea legible y el proceso cierre sin dejar servidor o
+  navegador colgado.
+- **Evidencia requerida:** salida resumida de ambos validadores, resultados de
+  controles y el hallazgo de contraste documentado en `STATUS.md`.
+- **Riesgos y reversión:** falsos positivos por diferencias de renderizado
+  entre Puppeteer y navegadores reales; ajustar reglas/tags de axe si el ruido
+  es alto, sin bajar el umbral WCAG. Mantener el nuevo script fuera de
+  `bun run build`/`bun run test` por defecto para no acoplar el pipeline de
+  email a un checker de UI ni volver lenta la suite estándar.
+- **Exclusiones específicas:** no corregir el contraste/tokens que el
+  validador reporte como fallidos; no agregar un segundo motor de navegador
+  (Playwright) teniendo Puppeteer disponible.
+- **Implementador:** perfil habilitador técnico, medio. **Revisor
+  independiente:** revisor técnico distinto.
+- **Condición de escalamiento:** que el hallazgo de contraste existente
+  (`action-primary` en modo claro) requiera decidirse antes de cerrar, o que
+  se necesite ampliar rutas/temas más allá de los tres fijos.
 
 ## Fases
 

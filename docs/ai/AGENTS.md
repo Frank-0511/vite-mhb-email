@@ -52,7 +52,9 @@ asignado.
 - No abrir el Browser pane (preview, screenshots, navegación) por decisión
   propia; solo cuando el usuario lo solicite explícitamente. Verificar
   cambios por defecto con los comandos del proyecto (build, validate-email,
-  lint, typecheck, test).
+  lint, typecheck, test). Prioridad de costo/precisión al verificar (detalle
+  en `task-verification`): script determinista > lectura de texto/markdown >
+  HTML crudo > Browser pane/screenshot.
 
 ## Comandos comprobados
 
