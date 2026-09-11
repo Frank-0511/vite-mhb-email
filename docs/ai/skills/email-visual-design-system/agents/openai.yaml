@@ -1,0 +1,4 @@
+interface:
+  display_name: "Sistema visual web"
+  short_description: "Aplica el contrato Space Blue (tokens, dark/light, contraste)"
+  default_prompt: "Usa $email-visual-design-system para tokens, temas dark/light y contraste del dashboard web sin tocar la salida de email."
