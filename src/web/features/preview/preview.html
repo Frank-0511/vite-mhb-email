@@ -310,27 +310,34 @@
                 </button>
               </div>
 
-              <!-- Template Theme Toggle -->
+              <!-- Template Theme Toggle (Icon button) -->
               <button
                 id="theme-toggle-template"
-                class="p-1 px-2 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-semibold flex items-center transition-colors border border-slate-200 dark:border-slate-700 shrink-0"
-                title="Toggle Template Theme"
+                class="p-1 sm:p-1.5 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-semibold flex items-center justify-center transition-colors border border-slate-200 dark:border-slate-700 shrink-0"
+                title="Alternar tema del template (claro / oscuro)"
+                aria-label="Alternar tema del template"
               >
                 <i
                   id="template-icon-light"
                   data-lucide="sun"
-                  class="hidden w-4 h-4 mr-1 shrink-0"
+                  class="hidden w-3.5 h-3.5 shrink-0"
                 ></i>
                 <i
                   id="template-icon-dark"
                   data-lucide="moon"
-                  class="hidden w-4 h-4 mr-1 shrink-0"
+                  class="hidden w-3.5 h-3.5 shrink-0"
                 ></i>
-                <span>Template</span>
+                <span class="sr-only">Tema del template</span>
               </button>
             </div>
 
-            <!-- Grupo de controles de viewport (Fila 3 en 1280-1560px) -->
+            <!-- Divisor entre controles de render y viewport -->
+            <div
+              class="h-4 border-l border-slate-200 dark:border-slate-700 shrink-0"
+              aria-hidden="true"
+            ></div>
+
+            <!-- Grupo de controles de viewport -->
             <div
               id="preview-viewport-controls"
               class="preview-viewport-controls flex items-center gap-2"
