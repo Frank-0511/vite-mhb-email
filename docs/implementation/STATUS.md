@@ -23,8 +23,9 @@ el contrato en `PLAN.md` y el detalle reproducible en los commits y PRs.
   en `#topbar-controls` (`#view-mode-render` y `#view-mode-source`) y visor de
   código fuente (`#preview-source-container`) en `#preview-frame`. El código HTML
   se escapa de forma segura vía `textContent` sin ejecutar scripts. La
-  alternancia reutiliza el HTML en memoria sin recompilación redundante. El modo
-  persiste en `sessionStorage` (`preview-view-mode`). Suite completa con 384
+  alternancia reutiliza el HTML en memoria sin recompilación redundante y persiste
+  en `sessionStorage` (`preview-view-mode`). Ajuste responsivo de la topbar con
+  3 filas en 1280px-1560px y 2 filas en 1561px-1860px. Suite completa con 384
   pruebas en verde (10 pruebas unitarias nuevas para MHB-17) y 0 violaciones
   en `a11y-check`.
 
@@ -109,9 +110,10 @@ directo a `master`): [STATUS-HISTORY.md](STATUS-HISTORY.md).
 
 ## Handoff
 
-- Próxima acción inmediata: Implementar y validar MHB-17 en `feature/mhb-17`
-  (toggle en topbar de preview, vista pre/code escapada, persistencia en
-  `sessionStorage`, suite de tests unitarios y validación a11y/contraste).
+- Próxima acción inmediata: Revisión independiente de MHB-17 en `feature/mhb-17`
+  (toggle en topbar de preview, distribución responsiva de 3 filas en 1280px-1560px,
+  vista pre/code escapada, persistencia en `sessionStorage`, suite de tests unitarios
+  y validación a11y/contraste).
 - Criterio de cierre: Aceptado por revisor UX/API independiente (toggle
   funcional render/código sin re-render redundante, sanitización por
   textContent/escape seguro, persistencia de sesión, tests automatizados verdes
