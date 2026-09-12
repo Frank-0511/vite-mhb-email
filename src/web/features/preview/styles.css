@@ -304,16 +304,10 @@ html.dark #editor-container {
   }
 }
 
-/* 3. Compact label variant for tighter desktop widths (1280px – 1420px) */
+/* 3. Icon-only view mode for compact desktop widths (1280px – 1420px) */
 @media (width >= 1280px) and (width <= 1420px) {
-  .viewport-label-full,
-  .view-mode-label-full {
+  .view-mode-label {
     display: none;
-  }
-
-  .viewport-label-short,
-  .view-mode-label-short {
-    display: inline;
   }
 }
 

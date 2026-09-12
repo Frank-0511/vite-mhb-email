@@ -289,24 +289,30 @@
                 <button
                   id="view-mode-render"
                   type="button"
-                  class="px-2 sm:px-2.5 py-1 sm:py-1.5 text-xs font-semibold bg-sky-500 text-white hover:bg-sky-600 transition-colors shrink-0"
+                  class="px-2 sm:px-2.5 py-1 sm:py-1.5 text-xs font-semibold bg-sky-500 text-white hover:bg-sky-600 transition-colors shrink-0 flex items-center justify-center"
                   title="Vista renderizada"
                   aria-pressed="true"
+                  aria-label="Vista previa renderizada"
                 >
-                  <i data-lucide="eye" class="w-3.5 h-3.5 mr-1 inline-block shrink-0"></i>
-                  <span class="view-mode-label-full">Vista previa</span>
-                  <span class="view-mode-label-short">Render</span>
+                  <i data-lucide="eye" class="w-3.5 h-3.5 shrink-0"></i>
+                  <span class="view-mode-label ml-1">
+                    <span class="view-mode-label-full">Vista previa</span>
+                    <span class="view-mode-label-short">Render</span>
+                  </span>
                 </button>
                 <button
                   id="view-mode-source"
                   type="button"
-                  class="px-2 sm:px-2.5 py-1 sm:py-1.5 text-xs font-semibold bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border-l border-slate-200 dark:border-slate-700 shrink-0"
+                  class="px-2 sm:px-2.5 py-1 sm:py-1.5 text-xs font-semibold bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border-l border-slate-200 dark:border-slate-700 shrink-0 flex items-center justify-center"
                   title="Código fuente HTML"
                   aria-pressed="false"
+                  aria-label="Código fuente HTML"
                 >
-                  <i data-lucide="code" class="w-3.5 h-3.5 mr-1 inline-block shrink-0"></i>
-                  <span class="view-mode-label-full">Código HTML</span>
-                  <span class="view-mode-label-short">Código</span>
+                  <i data-lucide="code" class="w-3.5 h-3.5 shrink-0"></i>
+                  <span class="view-mode-label ml-1">
+                    <span class="view-mode-label-full">Código HTML</span>
+                    <span class="view-mode-label-short">Código</span>
+                  </span>
                 </button>
               </div>
 
