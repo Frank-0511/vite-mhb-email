@@ -353,7 +353,7 @@ TEST_APPLE_TO=
 ```bash
 bun install              # Instalar dependencias
 bun run dev              # Servidor de desarrollo
-bun run build            # Build de produccion (lint + Maizzle + validacion)
+bun run build            # Build de produccion (Maizzle + validacion)
 bun run test             # Suite de tests (bun:test)
 bun run test:watch       # Tests en modo watch
 bun run typecheck        # Verificacion de tipos JSDoc

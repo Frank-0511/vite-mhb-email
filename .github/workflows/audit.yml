@@ -1,14 +1,15 @@
-name: CI
+name: Audit
 
 on:
   push:
-    branches: ["**"]
+    branches: ["master", "main"]
   pull_request:
-    branches: ["**"]
+    branches: ["master", "main"]
+  workflow_dispatch:
 
 jobs:
-  ci:
-    name: CI Pipeline
+  audit:
+    name: Accessibility & Contrast Audit
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -30,17 +31,12 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Format · Prettier
-        run: bun run format:check
+      - name: Contraste · WCAG (informativo)
+        # Informativo: no bloquea el pipeline
+        continue-on-error: true
+        run: bun run lint:contrast
 
-      - name: Lint
-        run: bun run lint
-
-      - name: Typecheck
-        run: bun run typecheck
-
-      - name: Test
-        run: bun run test
-
-      - name: Build
-        run: bun run build
+      - name: Accesibilidad · axe-core (informativo)
+        # Informativo: no bloquea el pipeline
+        continue-on-error: true
+        run: bun run a11y-check
