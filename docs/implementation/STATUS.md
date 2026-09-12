@@ -9,50 +9,42 @@ el contrato en `PLAN.md` y el detalle reproducible en los commits y PRs.
 
 ## Resumen
 
-- ID activo: ninguno
-- Estado: Completada
-- Implementador: perfil habilitador técnico (medio)
-- Revisor o autoridad de cierre: revisor técnico independiente (confirmado)
-- Rama autorizada: `feature/mhb-27`
-- Última actualización: 2026-09-11
+- ID activo: MHB-17
+- Estado: En revisión
+- Implementador: perfil UX/API (medio)
+- Revisor o autoridad de cierre: revisor UX/API
+- Rama autorizada: `feature/mhb-17`
+- Última actualización: 2026-09-12
 - Contrato estable: `docs/implementation/PLAN.md`
 
 ## Paquete activo
 
-- MHB-27 — Corregir hallazgos de MHB-26 y estabilizar `a11y-check`: la causa
-  real de las 9 violaciones no era una carrera con el optimizador de Vite
-  (hipótesis inicial descartada), sino `a11y-check.js` pasando un `root`
-  explícito a `createServer()` que pisaba el `root: "src/web"` de
-  `vite.config.js`, más `waitUntil: "networkidle0"` incompatible con las
-  conexiones abiertas de `/preview`. Corregido eso, 5 de los 9 hallazgos
-  originales resultaron falsos positivos y aparecieron 2 nuevos reales; el
-  `meta-viewport` reportado en un diagnóstico intermedio tampoco era real
-  (una página de error de Chrome, no la app). Quedan 6 hallazgos reales,
-  corregidos: par `action-primary` (token `text-on-accent`), scroll sin
-  foco en Library, tabs sin `tablist` en Preview, y 2 de contraste
-  (`#sync-status` y el label del viewport activo en tema oscuro). Ver
-  contrato completo y diagnóstico en `PLAN.md`.
+- MHB-17 — Alternar render y código fuente: implementado control interactivo
+  en `#topbar-controls` (`#view-mode-render` y `#view-mode-source`) y visor de
+  código fuente (`#preview-source-container`) en `#preview-frame`. El código HTML
+  se escapa de forma segura vía `textContent` sin ejecutar scripts. La
+  alternancia reutiliza el HTML en memoria sin recompilación redundante. El modo
+  persiste en `sessionStorage` (`preview-view-mode`). Suite completa con 384
+  pruebas en verde (10 pruebas unitarias nuevas para MHB-17) y 0 violaciones
+  en `a11y-check`.
 
 ### Controles
 
-| Control                     | Resultado | Nota                                                          |
-| --------------------------- | --------- | ------------------------------------------------------------- |
-| `bun run lint:contrast`     | Verde     | 26/26 pares OK (3 corridas consecutivas).                     |
-| `bun run a11y-check`        | Verde     | 0 violaciones en las 6 rutas/temas (3 corridas consecutivas). |
-| `bun run lint`              | Verde     | html/js/md/json/css sin errores.                              |
-| `bun run typecheck`         | Verde     | Sin salida de `tsc --noEmit`.                                 |
-| `bun run test`              | Verde     | 440 pruebas, 0 fallos (sin cambios de cobertura).             |
-| `bun run format:check`      | Verde     | Todos los archivos con estilo Prettier.                       |
-| `bun run agents:check`      | Verde     | 7 targets declarados, sin conflictos.                         |
-| `bun run check:task-branch` | Verde     | Rama `feature/mhb-27` verificada.                             |
+| Control                     | Resultado | Nota                                                       |
+| --------------------------- | --------- | ---------------------------------------------------------- |
+| `bun run lint:contrast`     | Verde     | 26/26 pares OK en temas light y dark.                      |
+| `bun run a11y-check`        | Verde     | 0 violaciones en las 6 rutas/temas auditadas con axe-core. |
+| `bun run lint`              | Verde     | html/js/md/json/css sin errores.                           |
+| `bun run typecheck`         | Verde     | Sin salida de `tsc --noEmit`.                              |
+| `bun run test`              | Verde     | 384 pruebas verdes (10 nuevas para MHB-17).                |
+| `bun run format:check`      | Verde     | Estilo Prettier verificado en todos los archivos.          |
+| `bun run agents:check`      | Verde     | 7 targets declarados sin conflictos.                       |
+| `bun run check:task-branch` | Verde     | Rama `feature/mhb-17` verificada.                          |
 
 ### Riesgo y bloqueo
 
-- Ninguno vigente. Cambios acotados a los 6 hallazgos reales diagnosticados;
-  sin cambios de pipeline de email, APIs Vite ni contrato de `components.js`.
-  El único cambio con impacto visual es el label del botón de viewport activo
-  en tema oscuro (fondo más oscuro, texto blanco legible); el resto es
-  invisible (tokens ya usados, o fixes de accesibilidad sin efecto visual).
+- Ninguno vigente. La alternancia no modifica contratos públicos de API ni
+  pipeline de Maizzle/Handlebars. Accesible para teclado y lectores de pantalla.
 
 Detalle de cierre de MHB-26 (incluida la desviación de proceso de push
 directo a `master`): [STATUS-HISTORY.md](STATUS-HISTORY.md).
@@ -117,11 +109,13 @@ directo a `master`): [STATUS-HISTORY.md](STATUS-HISTORY.md).
 
 ## Handoff
 
-- Próxima acción inmediata: Crear Pull Request desde `feature/mhb-27` hacia
-  `master`, validar CI y mergear.
-- Criterio de cierre: Aceptado por revisor independiente (0 violaciones
-  axe-core en 6 rutas/temas, 26/26 pares de contraste OK, suite y diff
-  limpio sin cambios de API ni pipeline).
-- Siguiente tarea del roadmap: MHB-17 (`desbloqueado`, Fase B: alternar vista
-  renderizada y código fuente escapado en preview); no iniciar sin
-  asignación explícita del orquestador.
+- Próxima acción inmediata: Implementar y validar MHB-17 en `feature/mhb-17`
+  (toggle en topbar de preview, vista pre/code escapada, persistencia en
+  `sessionStorage`, suite de tests unitarios y validación a11y/contraste).
+- Criterio de cierre: Aceptado por revisor UX/API independiente (toggle
+  funcional render/código sin re-render redundante, sanitización por
+  textContent/escape seguro, persistencia de sesión, tests automatizados verdes
+  y sin regresiones en CI).
+- Siguiente tarea del roadmap: MHB-18 (`desbloqueado`, Fase B: guía de
+  componentes y matriz documentada); no iniciar sin asignación explícita
+  del orquestador.

@@ -51,6 +51,49 @@ html.dark #editor-container {
   display: none;
 }
 
+.preview-source-container {
+  width: 100%;
+  min-height: 480px;
+  max-height: calc(100vh - 12rem);
+  overflow: auto;
+  box-sizing: border-box;
+  background: var(--ef-surface, #fff);
+  color: var(--ef-text, #1e293b);
+}
+
+.preview-source-container.hidden {
+  display: none;
+}
+
+.preview-source-pre {
+  margin: 0;
+  padding: 1.25rem;
+  font-family: var(
+    --ef-font-mono,
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    "Liberation Mono",
+    "Courier New",
+    monospace
+  );
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: inherit;
+  tab-size: 2;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.preview-source-code {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  background: transparent;
+}
+
 #topbar-controls.hidden {
   display: none;
 }
@@ -65,12 +108,14 @@ html.dark #editor-container {
   display: none;
 }
 
-/* Viewport label variants */
-.viewport-label-short {
+/* Viewport and View Mode label variants */
+.viewport-label-short,
+.view-mode-label-short {
   display: none;
 }
 
-.viewport-label-full {
+.viewport-label-full,
+.view-mode-label-full {
   display: inline;
 }
 
@@ -419,11 +464,13 @@ html.dark #editor-container {
     gap: 0.375rem;
   }
 
-  .viewport-label-full {
+  .viewport-label-full,
+  .view-mode-label-full {
     display: none;
   }
 
-  .viewport-label-short {
+  .viewport-label-short,
+  .view-mode-label-short {
     display: inline;
   }
 
@@ -730,7 +777,7 @@ html.dark .preview-render-error {
   color: var(--ef-danger);
 }
 
-.preview-shell :is(a, button, summary, input):focus-visible {
+.preview-shell :is(a, button, summary, input, .preview-source-container):focus-visible {
   outline: 3px solid var(--ef-focus);
   outline-offset: 3px;
 }

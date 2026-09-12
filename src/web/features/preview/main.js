@@ -21,6 +21,7 @@ import { createRenderAPI } from "./render-api.js";
 import { setupResetButton, setupSaveButton } from "./save-reset.js";
 import "./styles.css";
 import { setupTemplateThemeToggle } from "./theme-manager.js";
+import { setupViewModeControls } from "./view-mode-controls.js";
 import { setupPreviewViewport } from "./viewport-controls.js";
 
 export { getTemplateNameFromUrl, markPreviewReady, renderMissingTemplateError };
@@ -64,16 +65,25 @@ export async function initializePreview() {
       previewStatus.sync(text, textColor, dotColor),
   });
 
+  // Inicializar controles de alternancia de modo de vista (Render vs Código Fuente)
+  const viewModeControls = setupViewModeControls();
+
   // Inicializar cliente de render API
   const renderAPI = createRenderAPI({
     onSuccess: (html) => {
       previewStatus.renderSuccess(html, iframeManager);
+      if (viewModeControls) {
+        viewModeControls.updateSourceHtml(html);
+      }
     },
     onValidation: (result) => previewStatus.esp(result),
     onError: (err) => {
       console.error("Render error:", err);
       previewStatus.renderError(err);
       iframeManager.hideSkeleton();
+      if (viewModeControls) {
+        viewModeControls.applyViewMode(viewModeControls.getViewMode());
+      }
       markPreviewReady();
     },
     onStatusChange: (text, textColor, dotColor) => previewStatus.sync(text, textColor, dotColor),
