@@ -25,7 +25,7 @@ el contrato en `PLAN.md` y el detalle reproducible en los commits y PRs.
   se escapa de forma segura vía `textContent` sin ejecutar scripts. La
   alternancia reutiliza el HTML en memoria sin recompilación redundante y persiste
   en `sessionStorage` (`preview-view-mode`). Diseño compacto de barra superior
-  en 2 filas para 1280px-1540px y 1 fila para >1540px, con botón de icono para
+  en 2 filas para 1280px-1700px y 1 fila para >1700px, con botón de icono para
   tema de template y etiquetas adaptativas. Suite completa con 384 pruebas en
   verde (10 pruebas unitarias nuevas para MHB-17) y 0 violaciones en
   `a11y-check`.
@@ -113,7 +113,7 @@ directo a `master`): [STATUS-HISTORY.md](STATUS-HISTORY.md).
 
 - Próxima acción inmediata: Revisión independiente de MHB-17 en `feature/mhb-17`
   (toggle en topbar de preview, distribución responsiva compacta de 2 filas en
-  1280px-1540px y 1 fila en >1540px, vista pre/code escapada, persistencia en
+  1280px-1700px y 1 fila en >1700px, vista pre/code escapada, persistencia en
   `sessionStorage`, suite de tests unitarios y validación a11y/contraste).
 - Criterio de cierre: Aceptado por revisor UX/API independiente (toggle
   funcional render/código sin re-render redundante, sanitización por
