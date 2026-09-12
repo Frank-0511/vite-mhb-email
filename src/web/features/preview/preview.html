@@ -274,58 +274,68 @@
 
           <!-- Controles del top bar -->
           <div id="topbar-controls" class="hidden items-center gap-2 sm:gap-4">
-            <!-- View Mode Selector (Render vs Código) -->
+            <!-- Grupo de controles de render y tema (Fila 2 en 1280-1560px) -->
             <div
-              id="view-mode-selector"
-              class="inline-flex overflow-hidden rounded border border-slate-200 dark:border-slate-700"
-              role="group"
-              aria-label="Modo de vista"
+              id="preview-render-controls"
+              class="preview-render-controls flex items-center gap-2 sm:gap-3"
             >
-              <button
-                id="view-mode-render"
-                type="button"
-                class="px-2 sm:px-2.5 py-1 sm:py-1.5 text-xs font-semibold bg-sky-500 text-white hover:bg-sky-600 transition-colors shrink-0"
-                title="Vista renderizada"
-                aria-pressed="true"
+              <!-- View Mode Selector (Render vs Código) -->
+              <div
+                id="view-mode-selector"
+                class="inline-flex overflow-hidden rounded border border-slate-200 dark:border-slate-700"
+                role="group"
+                aria-label="Modo de vista"
               >
-                <i data-lucide="eye" class="w-3.5 h-3.5 mr-1 inline-block shrink-0"></i>
-                <span class="view-mode-label-full">Vista previa</span>
-                <span class="view-mode-label-short">Render</span>
-              </button>
+                <button
+                  id="view-mode-render"
+                  type="button"
+                  class="px-2 sm:px-2.5 py-1 sm:py-1.5 text-xs font-semibold bg-sky-500 text-white hover:bg-sky-600 transition-colors shrink-0"
+                  title="Vista renderizada"
+                  aria-pressed="true"
+                >
+                  <i data-lucide="eye" class="w-3.5 h-3.5 mr-1 inline-block shrink-0"></i>
+                  <span class="view-mode-label-full">Vista previa</span>
+                  <span class="view-mode-label-short">Render</span>
+                </button>
+                <button
+                  id="view-mode-source"
+                  type="button"
+                  class="px-2 sm:px-2.5 py-1 sm:py-1.5 text-xs font-semibold bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border-l border-slate-200 dark:border-slate-700 shrink-0"
+                  title="Código fuente HTML"
+                  aria-pressed="false"
+                >
+                  <i data-lucide="code" class="w-3.5 h-3.5 mr-1 inline-block shrink-0"></i>
+                  <span class="view-mode-label-full">Código HTML</span>
+                  <span class="view-mode-label-short">Código</span>
+                </button>
+              </div>
+
+              <!-- Template Theme Toggle -->
               <button
-                id="view-mode-source"
-                type="button"
-                class="px-2 sm:px-2.5 py-1 sm:py-1.5 text-xs font-semibold bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border-l border-slate-200 dark:border-slate-700 shrink-0"
-                title="Código fuente HTML"
-                aria-pressed="false"
+                id="theme-toggle-template"
+                class="p-1 px-2 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-semibold flex items-center transition-colors border border-slate-200 dark:border-slate-700 shrink-0"
+                title="Toggle Template Theme"
               >
-                <i data-lucide="code" class="w-3.5 h-3.5 mr-1 inline-block shrink-0"></i>
-                <span class="view-mode-label-full">Código HTML</span>
-                <span class="view-mode-label-short">Código</span>
+                <i
+                  id="template-icon-light"
+                  data-lucide="sun"
+                  class="hidden w-4 h-4 mr-1 shrink-0"
+                ></i>
+                <i
+                  id="template-icon-dark"
+                  data-lucide="moon"
+                  class="hidden w-4 h-4 mr-1 shrink-0"
+                ></i>
+                <span>Template</span>
               </button>
             </div>
 
-            <!-- Template Theme Toggle -->
-            <button
-              id="theme-toggle-template"
-              class="p-1 px-2 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-semibold flex items-center transition-colors border border-slate-200 dark:border-slate-700 shrink-0"
-              title="Toggle Template Theme"
+            <!-- Grupo de controles de viewport (Fila 3 en 1280-1560px) -->
+            <div
+              id="preview-viewport-controls"
+              class="preview-viewport-controls flex items-center gap-2"
+              aria-label="Viewport"
             >
-              <i
-                id="template-icon-light"
-                data-lucide="sun"
-                class="hidden w-4 h-4 mr-1 shrink-0"
-              ></i>
-              <i
-                id="template-icon-dark"
-                data-lucide="moon"
-                class="hidden w-4 h-4 mr-1 shrink-0"
-              ></i>
-              <span>Template</span>
-            </button>
-
-            <!-- Viewport Toggle -->
-            <div class="flex items-center gap-2" aria-label="Viewport">
               <div
                 class="inline-flex overflow-hidden rounded border border-slate-200 dark:border-slate-700"
                 role="group"
