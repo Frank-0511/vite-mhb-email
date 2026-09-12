@@ -147,8 +147,8 @@ html.dark #editor-container {
    Breakpoints
    ========================================================================== */
 
-/* 1. Large Desktop (≥ 1541px): Single-row preview top bar */
-@media (width >= 1541px) {
+/* 1. Large Desktop (≥ 1701px): Single-row preview top bar */
+@media (width >= 1701px) {
   #left-panel {
     width: 550px;
     flex-shrink: 0;
@@ -220,8 +220,8 @@ html.dark #editor-container {
   }
 }
 
-/* 2. Compact Desktop (1280px – 1540px): Two-row preview top bar */
-@media (width >= 1280px) and (width <= 1540px) {
+/* 2. Compact Desktop (1280px – 1700px): Two-row preview top bar */
+@media (width >= 1280px) and (width <= 1700px) {
   #left-panel {
     width: 550px;
     flex-shrink: 0;
@@ -838,10 +838,10 @@ html.dark .preview-render-error {
   }
 }
 
-/* Two-row top bar (1280-1540px): the contextual row sits directly under the
+/* Two-row top bar (1280-1700px): the contextual row sits directly under the
    header row with no tab nav between them, so a raised background here reads
    as a stray panel rather than a second row of the same bar. */
-@media (width >= 1280px) and (width <= 1540px) {
+@media (width >= 1280px) and (width <= 1700px) {
   .preview-shell .preview-contextual-bar {
     background: var(--ef-surface);
     border-top-color: var(--ef-border);
