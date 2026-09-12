@@ -267,12 +267,44 @@
             class="flex items-center gap-2 sm:gap-3 animate-pulse"
             aria-hidden="true"
           >
+            <div class="h-7 w-28 sm:w-36 bg-slate-200 dark:bg-slate-700 rounded"></div>
             <div class="h-7 w-16 sm:w-20 bg-slate-200 dark:bg-slate-700 rounded"></div>
             <div class="h-7 w-36 sm:w-48 bg-slate-200 dark:bg-slate-700 rounded"></div>
           </div>
 
           <!-- Controles del top bar -->
           <div id="topbar-controls" class="hidden items-center gap-2 sm:gap-4">
+            <!-- View Mode Selector (Render vs Código) -->
+            <div
+              id="view-mode-selector"
+              class="inline-flex overflow-hidden rounded border border-slate-200 dark:border-slate-700"
+              role="group"
+              aria-label="Modo de vista"
+            >
+              <button
+                id="view-mode-render"
+                type="button"
+                class="px-2 sm:px-2.5 py-1 sm:py-1.5 text-xs font-semibold bg-sky-500 text-white hover:bg-sky-600 transition-colors shrink-0"
+                title="Vista renderizada"
+                aria-pressed="true"
+              >
+                <i data-lucide="eye" class="w-3.5 h-3.5 mr-1 inline-block shrink-0"></i>
+                <span class="view-mode-label-full">Vista previa</span>
+                <span class="view-mode-label-short">Render</span>
+              </button>
+              <button
+                id="view-mode-source"
+                type="button"
+                class="px-2 sm:px-2.5 py-1 sm:py-1.5 text-xs font-semibold bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border-l border-slate-200 dark:border-slate-700 shrink-0"
+                title="Código fuente HTML"
+                aria-pressed="false"
+              >
+                <i data-lucide="code" class="w-3.5 h-3.5 mr-1 inline-block shrink-0"></i>
+                <span class="view-mode-label-full">Código HTML</span>
+                <span class="view-mode-label-short">Código</span>
+              </button>
+            </div>
+
             <!-- Template Theme Toggle -->
             <button
               id="theme-toggle-template"
@@ -400,6 +432,20 @@
 
             <!-- Iframe donde volcaremos el HTML vivo -->
             <iframe id="preview-iframe" title="Template Preview" class="hidden"></iframe>
+
+            <!-- Visor de código fuente HTML escapado (MHB-17) -->
+            <div
+              id="preview-source-container"
+              class="preview-source-container hidden"
+              tabindex="0"
+              role="region"
+              aria-label="Código fuente HTML del template"
+            >
+              <pre
+                id="preview-source-pre"
+                class="preview-source-pre"
+              ><code id="preview-source-code" class="preview-source-code"></code></pre>
+            </div>
           </div>
         </div>
       </div>
