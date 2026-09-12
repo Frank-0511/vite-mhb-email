@@ -11,8 +11,8 @@ import { createPreviewCacheManager, createPreviewDataHash } from "./preview-cach
 import { isPathInside, isValidTemplateName } from "../../shared/path-safety.js";
 import { getProjectPaths } from "../../shared/paths.js";
 import { getRequestUrl, readJsonBody, sendJson, sendText } from "../api/http.js";
-import { validateEspVariables } from "../../email/esp-variables.js";
-import { collectTemplateSource } from "../../email/esp-sources.js";
+import { validateEspVariables } from "../../esp/esp-variables.js";
+import { collectTemplateSource } from "../../esp/esp-sources.js";
 import { normalizeRenderError as defaultNormalizeRenderError } from "./render-error.js";
 
 /**

@@ -1,8 +1,8 @@
 // @ts-check
 import fs from "fs-extra";
 import { basename, resolve } from "node:path";
-import { validateEspVariables } from "../../../email/esp-variables.js";
-import { collectTemplateSource } from "../../../email/esp-sources.js";
+import { validateEspVariables } from "../../../esp/esp-variables.js";
+import { collectTemplateSource } from "../../../esp/esp-sources.js";
 import { Severity } from "../context.js";
 
 export default {

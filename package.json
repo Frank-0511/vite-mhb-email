@@ -45,18 +45,18 @@
     "build": "bun run lint && bun scripts/build/build.js",
     "build-selective": "bun scripts/build/build-selective.js",
     "generate:email": "bun scripts/generators/generate-email.js",
-    "export:screenshot": "bun scripts/export-screenshot.js",
-    "check-size": "bun scripts/build/check-html-size.js",
-    "validate-email": "bun scripts/build/validate-email-html.js",
-    "cli": "bun scripts/cli.js",
+    "export:screenshot": "bun scripts/export/export-screenshot.js",
+    "check-size": "bun scripts/validators/check-html-size.js",
+    "validate-email": "bun scripts/validators/validate-email-html.js",
+    "cli": "bun scripts/cli/cli.js",
     "lint": "bun run lint:html && bun run lint:js && bun run lint:md && bun run lint:json && bun run lint:css",
     "lint:html": "htmlhint \"src/emails/templates/**/*.html\" \"src/emails/layouts/**/*.html\" \"src/emails/partials/**/*.html\" \"src/web/**/*.html\"",
     "lint:js": "eslint scripts/ src/web/ vite.config.js maizzle.config.js",
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\"",
-    "lint:json": "bun scripts/build/validate-json.js",
+    "lint:json": "bun scripts/validators/validate-json.js",
     "lint:css": "stylelint \"src/**/*.css\"",
-    "lint:contrast": "bun scripts/build/validate-contrast.js",
-    "a11y-check": "bun scripts/build/a11y-check.js",
+    "lint:contrast": "bun scripts/validators/validate-contrast.js",
+    "a11y-check": "bun scripts/validators/a11y-check.js",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check:task-branch": "bun scripts/ai/check-task-branch.mjs",
@@ -89,7 +89,7 @@
       "prettier --write"
     ],
     "src/emails/templates/*/data.json": [
-      "bun scripts/build/validate-json.js"
+      "bun scripts/validators/validate-json.js"
     ],
     "**/*.json": [
       "prettier --write"

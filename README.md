@@ -72,15 +72,16 @@ src/
     └── shared/
 
 scripts/
-├── build/              # Pipeline: build.js, validate-email-html.js, check-html-size.js
-├── cli/                # CLI de 8 acciones (modular)
-├── exporters/          # Export PNG con el navegador incluido de Puppeteer
+├── build/              # Compilacion: build.js, build-selective.js, build-helper.js
+├── validators/         # Quality gates: validate-email-html.js, a11y-check.js, validate-contrast.js, check-html-size.js, validate-json.js
+├── esp/                # Motor de variables ESP: esp-variables.js, esp-sources.js, esp-validator.js
+├── cli/                # CLI interactivo: cli.js, index.js, actions.js, helpers.js, ui.js
+├── export/             # Export PNG con el navegador incluido de Puppeteer: export-screenshot.js
 ├── generators/         # Generador de templates (g:email)
+├── mail/               # Transports de prueba (Mailtrap, Mailtester, Gmail)
 ├── shared/             # Utilidades: handlebars, paths, env, path-safety
-└── vite/
-    ├── api/            # Endpoints Vite: /api/render, /api/copy-html, etc.
-    ├── plugins/        # Plugins Vite custom
-    └── services/       # maizzle-compiler.js con cache por template+theme+dataHash
+├── vite/               # Servidor dev, endpoints /api/*, plugins y servicios
+└── ai/                 # Sincronizacion de agentes y comprobaciones de repositorio
 ```
 
 El pipeline principal es:
@@ -289,7 +290,7 @@ bun run cli --help
 ```bash
 bun run lint          # HTML + JS + Markdown + JSON + CSS
 bun run validate-email
-bun run typecheck     # JSDoc + checkJs (scripts/shared + scripts/build)
+bun run typecheck     # JSDoc + checkJs (scripts/shared + scripts/build + scripts/validators)
 bun run test          # bun test (*.test.js)
 bun run format:check
 ```

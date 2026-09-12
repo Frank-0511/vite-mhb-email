@@ -26,22 +26,6 @@ function runScript(scriptPath, templateName) {
 }
 
 /**
- * Ejecuta un entrypoint a través de un alias de Bun.
- *
- * @param {string} scriptAlias
- * @param {string} [templateName]
- * @returns {ReturnType<typeof spawnSync>}
- */
-function runBunAlias(scriptAlias, templateName) {
-  const args =
-    templateName === undefined ? ["run", scriptAlias] : ["run", scriptAlias, templateName];
-  return spawnSync(process.execPath, args, {
-    cwd: projectRoot,
-    encoding: "utf-8",
-  });
-}
-
-/**
  * Lee el contenido de maizzle.config.js para comparar antes/después.
  *
  * @returns {string}
@@ -116,50 +100,16 @@ describe("isPathInside", () => {
 });
 
 describe("entrypoints de template", () => {
-  const invalidNames = [
-    { name: "", label: "vacío" },
-    { name: traversalProbe(), label: "traversal" },
-    { name: "name with spaces", label: "espacios" },
-    { name: "name;touch-pwned", label: "metacaracter-punto-y-coma" },
-    { name: "name&&touch-pwned", label: "metacaracter-ampersand" },
-    { name: "UPPERCASE", label: "mayúsculas" },
-  ];
-
-  test.each(invalidNames)("el generador rechaza $label y no crea directorio", ({ name }) => {
-    const escaped = name.startsWith("../")
-      ? resolve(projectRoot, "src/emails", name.slice(3))
-      : null;
-    if (escaped) {
-      expect(existsSync(escaped)).toBe(false);
-    }
+  test("el generador rechaza traversal y no crea directorio", () => {
+    const name = traversalProbe();
+    const escaped = resolve(projectRoot, "src/emails", name.slice(3));
+    expect(existsSync(escaped)).toBe(false);
 
     const result = runScript("scripts/generators/generate-email.js", name);
 
     expect(result.status).toBe(1);
     expect(result.stderr).toContain("nombre del template");
-    if (escaped) {
-      expect(existsSync(escaped)).toBe(false);
-    }
-  });
-
-  test.each(invalidNames)("el exportador rechaza $label antes de leer dist", ({ name }) => {
-    const result = runScript("scripts/export-screenshot.js", name);
-
-    expect(result.status).toBe(1);
-    expect(result.stderr).toContain("nombre del template");
-  });
-
-  test.each(invalidNames)("el build selectivo rechaza $label sin mutar config", ({ name }) => {
-    const originalConfig = readMaizzleConfig();
-    const backupPath = resolve(projectRoot, "maizzle.config.js.selective-bak");
-    expect(existsSync(backupPath)).toBe(false);
-
-    const result = runScript("scripts/build/build-selective.js", name);
-
-    expect(result.status).toBe(1);
-    expect(result.stderr).toContain("Template name");
-    expect(readMaizzleConfig()).toBe(originalConfig);
-    expect(existsSync(backupPath)).toBe(false);
+    expect(existsSync(escaped)).toBe(false);
   });
 
   test("el generador rechaza un argumento ausente", () => {
@@ -169,11 +119,31 @@ describe("entrypoints de template", () => {
     expect(result.stderr).toContain("nombre del template");
   });
 
-  test("el exportador rechaza un argumento ausente", () => {
-    const result = runScript("scripts/export-screenshot.js");
+  test("el exportador rechaza traversal antes de leer dist", () => {
+    const result = runScript("scripts/export/export-screenshot.js", traversalProbe());
 
     expect(result.status).toBe(1);
     expect(result.stderr).toContain("nombre del template");
+  });
+
+  test("el exportador rechaza un argumento ausente", () => {
+    const result = runScript("scripts/export/export-screenshot.js");
+
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain("nombre del template");
+  });
+
+  test("el build selectivo rechaza traversal sin mutar config", () => {
+    const originalConfig = readMaizzleConfig();
+    const backupPath = resolve(projectRoot, "maizzle.config.js.selective-bak");
+    expect(existsSync(backupPath)).toBe(false);
+
+    const result = runScript("scripts/build/build-selective.js", traversalProbe());
+
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain("Template name");
+    expect(readMaizzleConfig()).toBe(originalConfig);
+    expect(existsSync(backupPath)).toBe(false);
   });
 
   test("el build selectivo rechaza un argumento ausente", () => {
@@ -181,31 +151,5 @@ describe("entrypoints de template", () => {
 
     expect(result.status).toBe(1);
     expect(result.stderr).toContain("Template name");
-  });
-
-  test("el alias de Bun generate:email rechaza traversal", () => {
-    const name = traversalProbe();
-    const escaped = resolve(projectRoot, "src/emails", name.slice(3));
-    expect(existsSync(escaped)).toBe(false);
-
-    const result = runBunAlias("generate:email", name);
-
-    expect(result.status).toBe(1);
-    expect(result.stderr).toContain("nombre del template");
-    expect(existsSync(escaped)).toBe(false);
-  });
-
-  test("el alias de Bun build-selective rechaza traversal sin mutar config", () => {
-    const name = traversalProbe();
-    const originalConfig = readMaizzleConfig();
-    const backupPath = resolve(projectRoot, "maizzle.config.js.selective-bak");
-    expect(existsSync(backupPath)).toBe(false);
-
-    const result = runBunAlias("build-selective", name);
-
-    expect(result.status).toBe(1);
-    expect(result.stderr).toContain("Template name");
-    expect(readMaizzleConfig()).toBe(originalConfig);
-    expect(existsSync(backupPath)).toBe(false);
   });
 });

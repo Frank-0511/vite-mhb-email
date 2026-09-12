@@ -1,7 +1,7 @@
 // @ts-check
 /**
  * @fileoverview Fachada pública del validador de variables ESP `{{ var }}` para EmailForge Toolkit.
- * Re-exporta utilidades modularizadas bajo submódulos especializados en scripts/email/.
+ * Re-exporta utilidades modularizadas bajo submódulos especializados en scripts/esp/.
  */
 
 export { ESP_SEVERITY, FRONTMATTER_METADATA_KEYS } from "./esp-constants.js";

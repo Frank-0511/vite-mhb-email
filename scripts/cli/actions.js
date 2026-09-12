@@ -130,7 +130,7 @@ export async function exportScreenshot(rl) {
   }
 
   console.log();
-  const code = await run("bun", ["scripts/export-screenshot.js", templateName]);
+  const code = await run("bun", ["scripts/export/export-screenshot.js", templateName]);
   if (code !== 0) {
     console.log(paint(c.red, `\n  ❌ Error al exportar la imagen (código ${code}).\n`));
   }

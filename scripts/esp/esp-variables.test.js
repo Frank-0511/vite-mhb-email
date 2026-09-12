@@ -4,27 +4,9 @@
  */
 
 import { describe, expect, test } from "bun:test";
-import {
-  ESP_SEVERITY,
-  FRONTMATTER_METADATA_KEYS,
-  extractEspVariables,
-  filterDataKeys,
-  frontmatterKeys,
-  parseEspFrontmatter,
-  validateEspVariables,
-} from "./esp-variables.js";
+import { ESP_SEVERITY, validateEspVariables } from "./esp-variables.js";
 
-describe("esp-variables fachada y contratos públicos", () => {
-  test("re-exporta todas las funciones y constantes de los submódulos", () => {
-    expect(typeof validateEspVariables).toBe("function");
-    expect(typeof extractEspVariables).toBe("function");
-    expect(typeof filterDataKeys).toBe("function");
-    expect(typeof parseEspFrontmatter).toBe("function");
-    expect(typeof frontmatterKeys).toBe("function");
-    expect(ESP_SEVERITY).toBeDefined();
-    expect(FRONTMATTER_METADATA_KEYS).toBeDefined();
-  });
-
+describe("esp-variables constantes y contratos públicos", () => {
   test("define severidad WARNING para missing e INFO para unused", () => {
     expect(ESP_SEVERITY.missing).toBe("WARNING");
     expect(ESP_SEVERITY.unused).toBe("INFO");

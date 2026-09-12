@@ -9,7 +9,7 @@ el contrato en `PLAN.md` y el detalle reproducible en los commits y PRs.
 
 ## Resumen
 
-- ID activo: MHB-27
+- ID activo: ninguno
 - Estado: Completada
 - Implementador: perfil habilitador técnico (medio)
 - Revisor o autoridad de cierre: revisor técnico independiente (confirmado)

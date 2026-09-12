@@ -9,10 +9,10 @@
  *   yarn cli --help   — Muestra la ayuda y sale
  */
 
-import { main } from "./cli/index.js";
+import { main } from "./index.js";
 
 main().catch(async (err) => {
-  const { c, paint } = await import("./shared/console.js");
+  const { c, paint } = await import("../shared/console.js");
   console.error(paint(c.red, `\n  ❌ Error inesperado: ${err.message}\n`));
   process.exit(1);
 });

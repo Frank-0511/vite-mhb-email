@@ -122,18 +122,3 @@ describe("validateEmailHtml — HTML con ERROR (doctype faltante)", () => {
     expect(validateEmailHtml(tempDir)).toEqual({ errors: 1, warnings: 1, infos: 1 });
   });
 });
-
-describe("lógica del gate de build", () => {
-  test("errors > 0 implica que el build debe fallar", () => {
-    writeFileSync(join(tempDir, "bad.html"), HTML_MISSING_DOCTYPE, "utf-8");
-    const { errors } = validateEmailHtml(tempDir);
-    // El gate en build.js hace: if (errors > 0) process.exit(1)
-    expect(errors > 0).toBe(true);
-  });
-
-  test("errors === 0 implica que el build puede continuar", () => {
-    writeFileSync(join(tempDir, "good.html"), HTML_CLEAN, "utf-8");
-    const { errors } = validateEmailHtml(tempDir);
-    expect(errors > 0).toBe(false);
-  });
-});

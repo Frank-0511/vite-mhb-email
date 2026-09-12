@@ -37,7 +37,7 @@
    *   Solo scripts/shared/** y scripts/build/**.
    *   Se amplía carpeta a carpeta en F2-T1 (D2, R3).
    */
-  "include": ["scripts/shared/**/*.js", "scripts/build/**/*.js"],
+  "include": ["scripts/shared/**/*.js", "scripts/build/**/*.js", "scripts/validators/**/*.js"],
 
   /*
    * Excluir node_modules y dist siempre.

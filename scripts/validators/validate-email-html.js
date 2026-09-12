@@ -4,8 +4,8 @@
 import fs from "fs-extra";
 import { globSync } from "glob";
 import { resolve } from "node:path";
-import { projectRoot, Severity } from "./email-validation/context.js";
-import { rules, runRules } from "./email-validation/rules/index.js";
+import { projectRoot, Severity } from "./email-rules/context.js";
+import { rules, runRules } from "./email-rules/rules/index.js";
 
 const colors = {
   reset: "\x1b[0m",
@@ -38,7 +38,7 @@ function validateFile(filePath) {
   return { file, issues };
 }
 
-/** @param {{ file: string, issues: import("./email-validation/context.js").Issue[] }} result */
+/** @param {{ file: string, issues: import("./email-rules/context.js").Issue[] }} result */
 function printFileReport({ file, issues }) {
   console.log(paint(colors.bold + colors.white, `\n📋 Email Compatibility Report: ${file}\n`));
   if (issues.length === 0) {
@@ -64,7 +64,7 @@ function printFileReport({ file, issues }) {
   );
 }
 
-/** @param {{ file: string, issues: import("./email-validation/context.js").Issue[] }[]} results */
+/** @param {{ file: string, issues: import("./email-rules/context.js").Issue[] }[]} results */
 function printSummary(results) {
   const issues = results.flatMap((result) => result.issues);
   const errors = issues.filter((issue) => issue.severity === Severity.ERROR).length;
