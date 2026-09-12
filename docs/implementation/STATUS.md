@@ -10,9 +10,9 @@ el contrato en `PLAN.md` y el detalle reproducible en los commits y PRs.
 ## Resumen
 
 - ID activo: MHB-27
-- Estado: En revisión
+- Estado: Completada
 - Implementador: perfil habilitador técnico (medio)
-- Revisor o autoridad de cierre: revisor técnico independiente
+- Revisor o autoridad de cierre: revisor técnico independiente (confirmado)
 - Rama autorizada: `feature/mhb-27`
 - Última actualización: 2026-09-11
 - Contrato estable: `docs/implementation/PLAN.md`
@@ -59,6 +59,9 @@ directo a `master`): [STATUS-HISTORY.md](STATUS-HISTORY.md).
 
 ## Últimas entregas
 
+- MHB-27: `Completada` el 2026-09-11; corrección de 6 hallazgos reales de
+  accesibilidad/contraste y estabilización de `a11y-check.js`; 0 violaciones
+  y 26/26 pares WCAG en verde; commit `b6c8bea` en `feature/mhb-27`.
 - MHB-26: `Completada` el 2026-09-11; validador de contraste WCAG y checker
   de accesibilidad (axe-core + Puppeteer) agregados como scripts dedicados;
   ambos detectan deuda real (contraste de `action-primary`, 9 violaciones
@@ -83,14 +86,14 @@ directo a `master`): [STATUS-HISTORY.md](STATUS-HISTORY.md).
 
 ## Ejecuciones delegadas relevantes
 
-| Ámbito               | Estado      | Propiedad                                     | Handoff                                          |
-| -------------------- | ----------- | --------------------------------------------- | ------------------------------------------------ |
-| MHB-27               | En revisión | Corrección de hallazgos MHB-26 y `a11y-check` | Pendiente de revisor técnico independiente.      |
-| MHB-26               | Completada  | Validadores de contraste y accesibilidad      | Revisión independiente post-hoc el 2026-09-11.   |
-| MHB-21               | Completada  | `logoUrl` en welcome, links de producto       | Aceptación manual del orquestador el 2026-09-11. |
-| MHB-25               | Completada  | Tokens Space Blue, skeletons de Library       | Aceptación manual del orquestador el 2026-09-11. |
-| MHB-09               | Completada  | Catálogo, dashboard, tests y documentación    | Cierre autorizado el 2026-09-09.                 |
-| MHB-10/MHB-11/MHB-12 | Completada  | Templates y pruebas de catálogo/ESP           | Aceptación manual del usuario el 2026-09-09.     |
+| Ámbito               | Estado     | Propiedad                                     | Handoff                                          |
+| -------------------- | ---------- | --------------------------------------------- | ------------------------------------------------ |
+| MHB-27               | Completada | Corrección de hallazgos MHB-26 y `a11y-check` | Revisión independiente completada el 2026-09-11. |
+| MHB-26               | Completada | Validadores de contraste y accesibilidad      | Revisión independiente post-hoc el 2026-09-11.   |
+| MHB-21               | Completada | `logoUrl` en welcome, links de producto       | Aceptación manual del orquestador el 2026-09-11. |
+| MHB-25               | Completada | Tokens Space Blue, skeletons de Library       | Aceptación manual del orquestador el 2026-09-11. |
+| MHB-09               | Completada | Catálogo, dashboard, tests y documentación    | Cierre autorizado el 2026-09-09.                 |
+| MHB-10/MHB-11/MHB-12 | Completada | Templates y pruebas de catálogo/ESP           | Aceptación manual del usuario el 2026-09-09.     |
 
 ## Decisiones y desviaciones vigentes
 
@@ -114,15 +117,11 @@ directo a `master`): [STATUS-HISTORY.md](STATUS-HISTORY.md).
 
 ## Handoff
 
-- Próxima acción inmediata: MHB-27 está `En revisión` en `feature/mhb-27`,
-  sin commitear; falta revisión técnica independiente y decidir
-  commit/PR/merge.
-- Criterio de cierre: pendiente de confirmación del revisor técnico
-  independiente (diff, controles y ausencia de desviaciones); el contrato
-  fue ampliado a mitad de tarea con acuerdo explícito del orquestador (ver
-  «Paquete activo» y `PLAN.md`), documentado como desviación autorizada, no
-  como incidente.
-- Siguiente tarea del roadmap: no hay otro ID `Requerida` pendiente en
-  `PLAN.md` tras MHB-21/MHB-25/MHB-26/MHB-27; solo queda MHB-23
-  (`Opcional`, ampliar biblioteca de componentes), `bloqueado` hasta
+- Próxima acción inmediata: Crear Pull Request desde `feature/mhb-27` hacia
+  `master`, validar CI y mergear.
+- Criterio de cierre: Aceptado por revisor independiente (0 violaciones
+  axe-core en 6 rutas/temas, 26/26 pares de contraste OK, suite y diff
+  limpio sin cambios de API ni pipeline).
+- Siguiente tarea del roadmap: MHB-17 (`desbloqueado`, Fase B: alternar vista
+  renderizada y código fuente escapado en preview); no iniciar sin
   asignación explícita del orquestador.
