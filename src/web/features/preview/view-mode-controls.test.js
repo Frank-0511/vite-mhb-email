@@ -297,6 +297,38 @@ describe("view-mode-controls (MHB-17)", () => {
     }).not.toThrow();
   });
 
+  test("aplica clase is-source-mode a previewFrame y data-view-mode en shell al alternar a source", () => {
+    const previewFrame = createMockElement([]);
+    const shell = createMockElement([]);
+
+    const controller = initViewModeControls(
+      {
+        renderBtn: /** @type {any} */ (renderBtn),
+        sourceBtn: /** @type {any} */ (sourceBtn),
+        iframe: /** @type {any} */ (iframe),
+        sourceContainer: /** @type {any} */ (sourceContainer),
+        sourceCode: /** @type {any} */ (sourceCode),
+        skeleton: /** @type {any} */ (skeleton),
+        previewFrame: /** @type {any} */ (previewFrame),
+        shell: /** @type {any} */ (shell),
+      },
+      mockStorage,
+    );
+
+    expect(previewFrame.classList.contains("is-source-mode")).toBe(false);
+    expect(shell.getAttribute("data-view-mode")).toBe("render");
+
+    controller.applyViewMode(VIEW_MODE_SOURCE);
+
+    expect(previewFrame.classList.contains("is-source-mode")).toBe(true);
+    expect(shell.getAttribute("data-view-mode")).toBe("source");
+
+    controller.applyViewMode(VIEW_MODE_RENDER);
+
+    expect(previewFrame.classList.contains("is-source-mode")).toBe(false);
+    expect(shell.getAttribute("data-view-mode")).toBe("render");
+  });
+
   describe("setupViewModeControls", () => {
     test("retorna null si dom es null o no contiene getElementById", () => {
       expect(setupViewModeControls(null)).toBeNull();

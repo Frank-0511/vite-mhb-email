@@ -23,16 +23,17 @@ validar y exportar templates HTML de email. Todo cambio debe preservar:
 
 ## Skills locales obligatorias
 
-| Trabajo                                            | Skill                        |
-| -------------------------------------------------- | ---------------------------- |
-| Stack, rutas, Bun, Vite, Maizzle, Handlebars o CLI | `email-project-stack`        |
-| Seguridad, JSDoc, errores, tests o validación      | `email-quality-gates`        |
-| Templates, layouts, CSS email o validadores        | `email-compatibility`        |
-| Preview, dashboard, biblioteca o API Vite          | `email-preview-dashboard`    |
-| Tokens, temas dark/light o contraste del web       | `email-visual-design-system` |
-| Refactor, modularización o tipado gradual          | `email-refactor-type-safety` |
-| Evidencias, ramas, commits o cierre                | `task-verification`          |
-| Actualizar `docs/implementation/STATUS.md`         | `task-status-management`     |
+| Trabajo                                                  | Skill                        |
+| -------------------------------------------------------- | ---------------------------- |
+| Stack, rutas, Bun, Vite, Maizzle, Handlebars o CLI       | `email-project-stack`        |
+| Seguridad, JSDoc, errores, tests o validación            | `email-quality-gates`        |
+| Templates, layouts, CSS email o validadores              | `email-compatibility`        |
+| Preview, dashboard, biblioteca o API Vite                | `email-preview-dashboard`    |
+| Tokens, temas dark/light o contraste del web             | `email-visual-design-system` |
+| Layout responsive web, Grid, Flexbox o container queries | `email-responsive-web-ui`    |
+| Refactor, modularización o tipado gradual                | `email-refactor-type-safety` |
+| Evidencias, ramas, commits o cierre                      | `task-verification`          |
+| Actualizar `docs/implementation/STATUS.md`               | `task-status-management`     |
 
 Leer solo las skills aplicables antes de modificar archivos. Cada una conserva
 `agents/openai.yaml` con metadata de interfaz; no duplica instrucciones. No

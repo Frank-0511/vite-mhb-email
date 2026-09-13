@@ -1,0 +1,4 @@
+interface:
+  display_name: "Responsive web UI"
+  short_description: "Resuelve layouts responsive del dashboard"
+  default_prompt: "Usa $email-responsive-web-ui para ajustar un layout responsive de src/web sin tocar HTML de email."
