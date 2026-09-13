@@ -17,6 +17,8 @@ export const VIEW_MODE_SOURCE = "source";
  * @property {HTMLElement} sourceContainer - Contenedor del visor de código fuente.
  * @property {HTMLElement} sourceCode - Elemento <code> que contiene el HTML escapado.
  * @property {HTMLElement | null} [skeleton] - Elemento DOM del skeleton inicial.
+ * @property {HTMLElement | null} [previewFrame] - Elemento contenedor de previsualización / código.
+ * @property {HTMLElement | null} [shell] - Elemento raíz o shell que contiene data-view-mode.
  */
 
 /**
@@ -81,7 +83,16 @@ function setSelected(button, isSelected) {
  * @returns {ViewModeController}
  */
 export function initViewModeControls(elements, storage = memoryFallbackStorage) {
-  const { renderBtn, sourceBtn, iframe, sourceContainer, sourceCode, skeleton } = elements;
+  const {
+    renderBtn,
+    sourceBtn,
+    iframe,
+    sourceContainer,
+    sourceCode,
+    skeleton,
+    previewFrame,
+    shell,
+  } = elements;
   let currentMode = VIEW_MODE_RENDER;
   let lastHtml = "";
 
@@ -125,6 +136,22 @@ export function initViewModeControls(elements, storage = memoryFallbackStorage) 
 
     setSelected(renderBtn, resolvedMode === VIEW_MODE_RENDER);
     setSelected(sourceBtn, resolvedMode === VIEW_MODE_SOURCE);
+
+    if (previewFrame?.classList && typeof previewFrame.classList.toggle === "function") {
+      previewFrame.classList.toggle("is-source-mode", resolvedMode === VIEW_MODE_SOURCE);
+    }
+
+    const targetShell =
+      shell ||
+      (typeof document !== "undefined"
+        ? (typeof document.querySelector === "function" &&
+            document.querySelector(".preview-shell")) ||
+          document.body
+        : null);
+
+    if (targetShell && typeof targetShell.setAttribute === "function") {
+      targetShell.setAttribute("data-view-mode", resolvedMode);
+    }
 
     syncVisibility(resolvedMode);
 
@@ -202,6 +229,10 @@ export function setupViewModeControls(
   );
   const sourceCode = /** @type {HTMLElement | null} */ (dom.getElementById("preview-source-code"));
   const skeleton = /** @type {HTMLElement | null} */ (dom.getElementById("preview-skeleton"));
+  const previewFrame = /** @type {HTMLElement | null} */ (dom.getElementById("preview-frame"));
+  const shell = /** @type {HTMLElement | null} */ (
+    typeof dom.querySelector === "function" ? dom.querySelector(".preview-shell") : null
+  );
 
   if (renderBtn && sourceBtn && iframe && sourceContainer && sourceCode) {
     return initViewModeControls(
@@ -212,6 +243,8 @@ export function setupViewModeControls(
         sourceContainer,
         sourceCode,
         skeleton,
+        previewFrame: previewFrame ?? undefined,
+        shell: shell ?? undefined,
       },
       storage,
     );

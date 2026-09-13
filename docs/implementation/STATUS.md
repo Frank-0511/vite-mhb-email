@@ -24,11 +24,12 @@ el contrato en `PLAN.md` y el detalle reproducible en los commits y PRs.
   código fuente (`#preview-source-container`) en `#preview-frame`. El código HTML
   se escapa de forma segura vía `textContent` sin ejecutar scripts. La
   alternancia reutiliza el HTML en memoria sin recompilación redundante y persiste
-  en `sessionStorage` (`preview-view-mode`). Diseño compacto de barra superior
-  en 2 filas para 1280px-1700px y 1 fila para >1700px, con botón de icono para
-  tema de template y etiquetas adaptativas. Suite completa con 384 pruebas en
-  verde (10 pruebas unitarias nuevas para MHB-17) y 0 violaciones en
-  `a11y-check`.
+  en `sessionStorage` (`preview-view-mode`). Barra superior responsiva compacta de
+  2 filas para 1260px-1700px y 1 fila para >1700px, con selector de modo solo icono
+  en anchos ≤1400px y texto completo en >1400px. En modo código HTML, el visor
+  ocupa el 90% del espacio disponible y aísla las reglas de medida (600px, 375px, custom)
+  y sus controles exclusivamente a la vista previa. Suite completa con 385 pruebas
+  en verde (11 pruebas unitarias para MHB-17) y 0 violaciones en `a11y-check`.
 
 ### Controles
 
@@ -38,7 +39,7 @@ el contrato en `PLAN.md` y el detalle reproducible en los commits y PRs.
 | `bun run a11y-check`        | Verde     | 0 violaciones en las 6 rutas/temas auditadas con axe-core. |
 | `bun run lint`              | Verde     | html/js/md/json/css sin errores.                           |
 | `bun run typecheck`         | Verde     | Sin salida de `tsc --noEmit`.                              |
-| `bun run test`              | Verde     | 384 pruebas verdes (10 nuevas para MHB-17).                |
+| `bun run test`              | Verde     | 385 pruebas verdes (11 nuevas para MHB-17).                |
 | `bun run format:check`      | Verde     | Estilo Prettier verificado en todos los archivos.          |
 | `bun run agents:check`      | Verde     | 7 targets declarados sin conflictos.                       |
 | `bun run check:task-branch` | Verde     | Rama `feature/mhb-17` verificada.                          |
@@ -113,7 +114,7 @@ directo a `master`): [STATUS-HISTORY.md](STATUS-HISTORY.md).
 
 - Próxima acción inmediata: Revisión independiente de MHB-17 en `feature/mhb-17`
   (toggle en topbar de preview, distribución responsiva compacta de 2 filas en
-  1280px-1700px y 1 fila en >1700px, vista pre/code escapada, persistencia en
+  1260px-1700px y 1 fila en >1700px, vista pre/code escapada, persistencia en
   `sessionStorage`, suite de tests unitarios y validación a11y/contraste).
 - Criterio de cierre: Aceptado por revisor UX/API independiente (toggle
   funcional render/código sin re-render redundante, sanitización por

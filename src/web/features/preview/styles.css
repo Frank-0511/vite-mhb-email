@@ -51,6 +51,18 @@ html.dark #editor-container {
   display: none;
 }
 
+/* Modo código HTML: ocupa el 90% del espacio disponible y aísla las reglas de medidas a vista previa */
+#preview-frame.is-source-mode,
+.preview-shell[data-view-mode="source"] #preview-frame {
+  width: 90% !important;
+  max-width: 90% !important;
+}
+
+.preview-shell[data-view-mode="source"] #preview-viewport-controls,
+.preview-shell[data-view-mode="source"] #preview-viewport-divider {
+  display: none !important;
+}
+
 .preview-source-container {
   width: 100%;
   min-height: 480px;
@@ -103,7 +115,7 @@ html.dark #editor-container {
   display: none;
 }
 
-/* Preview header back button (only visible in single-column tab mode ≤ 1279px) */
+/* Preview header back button (only visible in single-column tab mode ≤ 1259px) */
 .preview-back-btn {
   display: none;
 }
@@ -220,8 +232,8 @@ html.dark #editor-container {
   }
 }
 
-/* 2. Compact Desktop (1280px – 1700px): Two-row preview top bar */
-@media (width >= 1280px) and (width <= 1700px) {
+/* 2. Compact Desktop (1260px – 1700px): Two-row preview top bar */
+@media (width >= 1260px) and (width <= 1700px) {
   #left-panel {
     width: 550px;
     flex-shrink: 0;
@@ -304,15 +316,15 @@ html.dark #editor-container {
   }
 }
 
-/* 3. Icon-only view mode for compact desktop widths (1280px – 1420px) */
-@media (width >= 1280px) and (width <= 1420px) {
+/* Modo solo icono para selector de vista en anchos ≤ 1400px */
+@media (width <= 1400px) {
   .view-mode-label {
     display: none;
   }
 }
 
-/* 3. Tablet & Mobile (≤ 1279px): Single-column experience with tabs */
-@media (width <= 1279px) {
+/* 3. Tablet & Mobile (≤ 1259px): Single-column experience with tabs */
+@media (width <= 1259px) {
   body {
     flex-direction: column !important;
   }
@@ -825,17 +837,17 @@ html.dark .preview-render-error {
   --jse-panel-background: var(--ef-surface-raised);
 }
 
-@media (width <= 1279px) {
+@media (width <= 1259px) {
   .preview-shell .mobile-tab-bar {
     background: var(--ef-surface);
     border-color: var(--ef-border);
   }
 }
 
-/* Two-row top bar (1280-1700px): the contextual row sits directly under the
+/* Two-row top bar (1260-1700px): the contextual row sits directly under the
    header row with no tab nav between them, so a raised background here reads
    as a stray panel rather than a second row of the same bar. */
-@media (width >= 1280px) and (width <= 1700px) {
+@media (width >= 1260px) and (width <= 1700px) {
   .preview-shell .preview-contextual-bar {
     background: var(--ef-surface);
     border-top-color: var(--ef-border);
