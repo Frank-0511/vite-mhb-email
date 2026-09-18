@@ -10,14 +10,11 @@ el contrato en `PLAN.md` y el detalle reproducible en los commits y PRs.
 ## Resumen
 
 - ID activo: Ninguno
-- Estado: Fase B cerrada; `v1.2.0` preparada para publicación remota
+- Estado: Fase B cerrada; `v1.2.0` publicada
 - Última rama: `feature/mhb-18` (rebasada sobre `master` con MHB-19 ya
   integrada)
 - Última actualización: 2026-09-18
 - Contrato estable: `docs/implementation/PLAN.md`
-
-La publicación remota de `v1.2.0` requiere reautenticar GitHub: el token local
-vigente fue rechazado antes de intentar enviar cambios.
 
 ## Último cierre
 
@@ -71,9 +68,9 @@ directo a `master`) y controles completos: [STATUS-HISTORY.md](STATUS-HISTORY.md
 
 ## Últimas entregas
 
-- Release `v1.2.0`: cierre local de la Fase B el 2026-09-18; versión,
-  CHANGELOG, README y línea base alineados. Pendiente únicamente de publicar
-  el commit, el tag anotado y la release remota tras reautenticar GitHub.
+- Release `v1.2.0`: cierre de la Fase B publicado el 2026-09-18; versión,
+  CHANGELOG, README, tag anotado y release remota alineados:
+  <https://github.com/Frank-0511/vite-mhb-email/releases/tag/v1.2.0>.
 - MHB-18: `Completada` el 2026-09-18 por aceptación manual del usuario;
   guía/matriz reproducibles, corrección de props booleanas en el despachador de
   preview y ejercicio temporal sin errores, warnings ni info; 494 pruebas,
@@ -164,13 +161,12 @@ directo a `master`) y controles completos: [STATUS-HISTORY.md](STATUS-HISTORY.md
   alcance de MHB-27, documentado para decisión futura del orquestador.
 - Las variables ESP `{{ }}` deben preservarse en el HTML final; `[[ page.* ]]`
   sigue reservado para Maizzle.
-- La publicación de `v1.2.0` fue autorizada por el usuario; permanece bloqueada
-  solo por el token inválido de GitHub hasta su reautenticación.
+- La autenticación de GitHub CLI se revalidó mediante el Llavero de macOS; los
+  siguientes tags y releases deben usar esa sesión OAuth, no un PAT manual.
 
 ## Handoff
 
-- Próxima acción inmediata: publicar el commit, tag anotado y release remota
-  `v1.2.0` después de reautenticar GitHub.
+- Próxima acción inmediata: asignar MHB-20 o mantener el roadmap sin ID activo.
 - Siguiente tarea del roadmap: MHB-20 (`desbloqueado`, Fase C: integración
   build, render, caché y exportación; dependencias MHB-07, MHB-10, MHB-11 y
   MHB-12 `Completada`); no iniciar sin asignación explícita del orquestador.
