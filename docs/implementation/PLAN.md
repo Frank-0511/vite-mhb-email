@@ -7,19 +7,41 @@ publicado es `v1.2.0`; los artefactos de Git conservan la trazabilidad previa.
 
 Cerrar la puerta de calidad del producto con evidencia reproducible de
 integración, tipos/rendimiento, accesibilidad en clientes reales y narrativa de
-portafolio. Después se evaluarán las mejoras de evolución y mantenibilidad.
+portafolio. Después se completará la migración gradual de todo el código
+JavaScript propio a TypeScript estricto antes de preparar la siguiente release.
+
+## Matriz de reestructuración del plan
+
+| Ítem anterior | Decisión   | Tratamiento vigente                                                                              |
+| ------------- | ---------- | ------------------------------------------------------------------------------------------------ |
+| MHB-20        | Conservar  | Mantiene prioridad inmediata y produce el baseline de integración previo a tipos.                |
+| MHB-13        | Reemplazar | Pasa de cierre parcial de `checkJs` a baseline completo que prepara la conversión por capas.     |
+| MHB-14        | Conservar  | Su evidencia manual sigue siendo independiente de la migración de lenguaje.                      |
+| MHB-15        | Reemplazar | La release posterior dependerá del cierre total de TypeScript, además de MHB-14.                 |
+| MHB-16        | Reemplazar | La demo candidata dependerá de MHB-15, que ya incorpora el gate total de migración.              |
+| MHB-23        | Conservar  | Sigue opcional y no se mezcla con la conversión de lenguaje.                                     |
+| MHB-28        | Conservar  | Conserva su alcance JavaScript y se ejecuta antes de migrar `src/web/**` para evitar doble diff. |
+
+No se reabre ni descarta ninguna tarea completada. La migración total se divide
+en MHB-29 a MHB-34; cada ID conserva una rama, revisión y cierre independientes.
 
 ## Backlog activo
 
 | ID     | Entregable                                     | Estado    | Dependencia vigente                               |
 | ------ | ---------------------------------------------- | --------- | ------------------------------------------------- |
 | MHB-20 | Integración build, render, caché y exportación | Pendiente | Prerequisitos funcionales satisfechos en `v1.2.0` |
-| MHB-13 | Cobertura de tipos y rendimiento               | Pendiente | MHB-20                                            |
+| MHB-13 | Baseline completo de tipos y rendimiento       | Pendiente | MHB-20                                            |
 | MHB-14 | Evidencia de uso y compatibilidad              | Pendiente | Flujo de producto publicado                       |
-| MHB-15 | Documentación, capturas y release posterior    | Pendiente | MHB-13 y MHB-14                                   |
-| MHB-16 | Demo candidata pre-renderizada                 | Opcional  | MHB-13, MHB-14 y MHB-15                           |
+| MHB-15 | Documentación, capturas y release posterior    | Pendiente | MHB-14 y MHB-34                                   |
+| MHB-16 | Demo candidata pre-renderizada                 | Opcional  | MHB-15                                            |
 | MHB-23 | Ampliar biblioteca de componentes              | Opcional  | MHB-20                                            |
-| MHB-28 | Modularización de superficies web              | Pendiente | Baseline visual y validadores actuales            |
+| MHB-28 | Modularización de superficies web              | Pendiente | MHB-20                                            |
+| MHB-29 | Base de ejecución TypeScript                   | Pendiente | MHB-13                                            |
+| MHB-30 | Núcleo y validadores en TypeScript             | Pendiente | MHB-29                                            |
+| MHB-31 | CLI, exportación y correo en TypeScript        | Pendiente | MHB-30                                            |
+| MHB-32 | Servidor Vite y APIs en TypeScript             | Pendiente | MHB-31                                            |
+| MHB-33 | Dashboard web en TypeScript                    | Pendiente | MHB-28 y MHB-32                                   |
+| MHB-34 | Cierre total y modo estricto TypeScript        | Pendiente | MHB-33                                            |
 
 ## MHB-20 — Integración build, render, caché y exportación
 
@@ -37,21 +59,21 @@ portafolio. Después se evaluarán las mejoras de evolución y mantenibilidad.
 - **Revisor independiente:** revisor técnico alto.
 - **Condición de escalamiento:** tests que requieran binarios externos o modifiquen comportamiento de producción.
 
-## MHB-13 — Cobertura de tipos y rendimiento
+## MHB-13 — Baseline completo de tipos y rendimiento
 
-- **Objetivo observable:** ampliar `checkJs` gradualmente y documentar mediciones repetibles.
-- **Superficies autorizadas:** configuración de typecheck, scripts relevantes, tests/medición y documentación técnica.
-- **Dependencias y precondiciones:** MHB-20 completada y cobertura unitaria existente; conservar compatibilidad JavaScript sin migración global.
-- **Pasos técnicos:** seleccionar scripts de mayor riesgo, corregir tipos progresivamente y medir con Bun, Node, SO y método declarados.
-- **Criterios de aceptación:** `checkJs` cubre scripts relevantes sin migración global y las mediciones son repetibles y contextualizadas.
-- **Validación automática:** typecheck ampliado, suite y script de medición reproducible.
-- **Validación manual:** revisar entorno, repeticiones y variabilidad.
-- **Evidencia requerida:** tabla Bun/Node/SO, comandos, repeticiones y resultados.
-- **Riesgos y reversión:** scope creep a TypeScript o métricas engañosas; limitar archivos y conservar baseline.
-- **Exclusiones específicas:** no fijar budget CI ni migrar todo a TypeScript.
+- **Objetivo observable:** lograr un baseline `checkJs` verde para todo el código JavaScript propio y documentar mediciones repetibles antes de renombrar archivos.
+- **Superficies autorizadas:** `tsconfig*.json`, declaraciones ambientales, código bajo `scripts/**` y `src/**`, configuraciones raíz, tests/medición y documentación técnica.
+- **Dependencias y precondiciones:** MHB-20 completada y cobertura unitaria existente; mantener extensiones `.js`/`.mjs` durante este ID.
+- **Pasos técnicos:** inventariar el alcance y sus importadores; incorporar producción, tests y configuraciones al typecheck; declarar CSS, `import.meta.hot`, editor CDN y demás límites externos; corregir tipos JSDoc sin alterar comportamiento; medir con Bun, Node, SO y método declarados; registrar el orden de conversión MHB-29 a MHB-34.
+- **Criterios de aceptación:** todo archivo JavaScript propio queda inventariado y cubierto por un typecheck verde; no hay `@ts-ignore` nuevo; la suite no cambia de comportamiento y las mediciones son repetibles y contextualizadas.
+- **Validación automática:** typecheck ampliado, suite global, lint, formato y script de medición reproducible.
+- **Validación manual:** revisar inventario, límites ambientales, entorno, repeticiones y variabilidad.
+- **Evidencia requerida:** inventario inicial por directorio, lista de declaraciones externas, tabla Bun/Node/SO, comandos, repeticiones y resultados.
+- **Riesgos y reversión:** confundir diagnósticos de librerías con defectos de runtime o introducir cambios funcionales; separar anotaciones, declaraciones y correcciones, conservando el baseline.
+- **Exclusiones específicas:** no renombrar archivos a `.ts`, no activar todavía `strict` global ni fijar un budget CI.
 - **Implementador:** perfil de tipos/rendimiento, alto.
 - **Revisor independiente:** revisor técnico.
-- **Condición de escalamiento:** exigir migración global, presupuesto CI o métricas de producción.
+- **Condición de escalamiento:** un diagnóstico exige cambio de comportamiento, contrato público o dependencia nueva.
 
 ## MHB-14 — Evidencia de uso y compatibilidad
 
@@ -73,7 +95,7 @@ portafolio. Después se evaluarán las mejoras de evolución y mantenibilidad.
 
 - **Objetivo observable:** dejar README, CHANGELOG, versión, tag y release posterior coherentes y sustentados.
 - **Superficies autorizadas:** README, CHANGELOG, versión/package metadata, capturas, notas de release y documentación relacionada.
-- **Dependencias y precondiciones:** MHB-13, MHB-14 y una decisión explícita antes de publicar o etiquetar; preservar el baseline publicado.
+- **Dependencias y precondiciones:** MHB-14 y MHB-34 completadas, además de una decisión explícita antes de publicar o etiquetar; preservar el baseline publicado.
 - **Pasos técnicos:** reconciliar narrativa/evidencia, actualizar versión y changelog del alcance real, preparar tag/release solo tras revisión.
 - **Criterios de aceptación:** documentación, versión, tag y release posterior coinciden; las capturas son actuales y los límites no se presentan como hechos no probados.
 - **Validación automática:** lint Markdown, suite, build y comprobación de consistencia de versión.
@@ -91,7 +113,7 @@ portafolio. Después se evaluarán las mejoras de evolución y mantenibilidad.
 
 - **Objetivo observable:** decidir y probar una demo solo lectura sin divergencia frente al HTML compilado.
 - **Superficies autorizadas:** build estático, configuración de demo/despliegue aprobada, rutas de navegación y documentación de evidencia.
-- **Dependencias y precondiciones:** MHB-13, MHB-14 y MHB-15; aprobación explícita de proveedor/credenciales si fueran necesarios.
+- **Dependencias y precondiciones:** MHB-15 completada; aprobación explícita de proveedor/credenciales si fueran necesarios.
 - **Pasos técnicos:** comparar output, configurar demo mínima, ejecutar smoke y registrar SHA desplegado.
 - **Criterios de aceptación:** demo candidata coincide con HTML compilado, funciona en desktop/móvil y se enlaza para verificación.
 - **Validación automática:** smoke de build estático, enlaces y checks aplicables.
@@ -177,25 +199,144 @@ Cada bloque es un commit propio y recuperable. El orden es obligatorio: F1 prece
   - La especificidad por ID puede invertir un ganador silenciosamente; el gate es `a11y-check`/`lint:contrast` más el recorrido manual, no solo inspección de diff.
   - `<ef-skeleton>` puede causar FOUC o salto de layout; conservar semántica de `hidden`/`flex` y el `initLucideIcons()` final.
   - Cada bloque se revierte independientemente; F5 se puede descartar entero sin afectar el cierre.
-- **Exclusiones específicas:** no Handlebars en `src/web`; no shadow DOM en `<ef-skeleton>`; no frameworks, dependencias ni fuentes remotas; no rediseño; no renombrar IDs o clases consumidas por CSS, JS o `a11y-check`; no TypeScript ni ampliación de `tsconfig`; no tocar email, Maizzle, variables ESP, validadores o APIs Vite. `readBuiltTemplate` (`scripts/shared/built-templates.js`) queda fuera y requiere un ID propio.
+- **Exclusiones específicas:** no Handlebars en `src/web`; no shadow DOM en `<ef-skeleton>`; no frameworks, dependencias ni fuentes remotas; no rediseño; no renombrar IDs o clases consumidas por CSS, JS o `a11y-check`; no TypeScript ni ampliación de `tsconfig` dentro de MHB-28, porque `src/web/**` se migra después en MHB-33; no tocar email, Maizzle, variables ESP, validadores o APIs Vite. `readBuiltTemplate` (`scripts/shared/built-templates.js`) queda fuera y requiere un ID propio.
 - **Implementador:** perfil UI/web con propiedad exclusiva de las superficies, esfuerzo alto. **Revisor independiente:** revisor UI distinto, responsable de ejecutar el recorrido manual completo y verificar hashes de `dist/`.
 - **Condición de escalamiento:** un bloque exige cambio visual, renombrar IDs o tocar una superficie no autorizada; `dist/` cambia; o dividir CSS exige reordenar reglas para conservar el comportamiento.
+
+## Migración gradual y completa a TypeScript
+
+El alcance final comprende todo archivo JavaScript o MJS propio bajo
+`scripts/**`, `src/**` y las configuraciones raíz. Se excluyen dependencias,
+outputs generados, `dist/**` y material sincronizado de solo lectura. Durante
+MHB-29 a MHB-33 se permite convivencia `.js`/`.mjs`/`.ts`; MHB-34 elimina esa
+compatibilidad transitoria. Cambiar extensión no autoriza cambios funcionales,
+rediseños ni alteraciones de los contratos CLI, filesystem, email o ESP.
+
+### MHB-29 — Base de ejecución TypeScript
+
+- **Objetivo observable:** establecer una configuración mixta reproducible que permita ejecutar, probar, lintar y compilar módulos `.ts` junto a los `.js` existentes.
+- **Superficies autorizadas:** `tsconfig*.json`, `package.json`, lockfile solo si hace falta una dependencia directa justificada, ESLint/lint-staged, declaraciones ambientales, script de inventario y documentación técnica.
+- **Dependencias y precondiciones:** MHB-13 completada con inventario y typecheck verde en JavaScript.
+- **Pasos técnicos:** separar configuraciones Node, browser y tests si sus libs difieren; activar `strict` para archivos nuevos `.ts`; declarar imports CSS, Vite HMR y el editor remoto; verificar ejecución TypeScript con Bun, Node 24, Vite, Maizzle, Tailwind, PostCSS y ESLint; añadir un control determinista que cuente archivos `.js`/`.mjs` restantes por capa.
+- **Criterios de aceptación:** un módulo y test piloto `.ts` pasan typecheck/lint/test sin transpilar artefactos al repositorio; los entrypoints actuales conservan comandos y salida; el inventario inicial queda versionado como baseline decreciente.
+- **Validación automática:** typecheck Node/browser/tests, test piloto, lint, formato, build, validación email y control de inventario.
+- **Validación manual:** revisar resolución ESM, sourcemaps/errores accionables y compatibilidad de cada cargador de configuración.
+- **Evidencia requerida:** matriz herramienta→forma de cargar TypeScript, comandos ejecutados, conteo inicial por capa y diff de configuración.
+- **Riesgos y reversión:** loaders incompatibles o dependencia transitoria implícita; declarar dependencias directas necesarias y revertir el piloto sin tocar lógica de producto.
+- **Exclusiones específicas:** no migrar aún una capa completa, no activar JSX/React y no emitir JavaScript versionado.
+- **Implementador:** perfil TypeScript/tooling, alto.
+- **Revisor independiente:** revisor técnico distinto.
+- **Condición de escalamiento:** una herramienta no puede cargar TypeScript sin cambiar un comando público o añadir una dependencia de runtime.
+
+### MHB-30 — Núcleo y validadores en TypeScript
+
+- **Objetivo observable:** convertir a TypeScript estricto el núcleo compartido, build, ESP y validadores con sus pruebas, manteniendo idénticos contratos y output.
+- **Superficies autorizadas:** `scripts/shared/**`, `scripts/build/**`, `scripts/esp/**`, `scripts/validators/**`, el test de partial bajo `src/emails/**`, imports consumidores y documentación de rutas afectada.
+- **Dependencias y precondiciones:** MHB-29 completada; baseline de MHB-20 disponible para comparar build/render/exportación.
+- **Pasos técnicos:** migrar una carpeta por vez junto con sus tests; reemplazar typedefs locales por tipos exportados solo cuando haya dos o más consumidores; conservar validación runtime en límites JSON/filesystem; actualizar imports y scripts; comparar hashes y validaciones del HTML final tras cada carpeta.
+- **Criterios de aceptación:** no quedan `.js`/`.mjs` propios en las superficies autorizadas; `strict` pasa sin `any` explícito injustificado ni `@ts-ignore`; build selectivo/completo, ESP y validadores conservan resultados.
+- **Validación automática:** typecheck estricto, tests focalizados y globales, lint, formato, build, `validate-email` y hashes de `dist/*.html`.
+- **Validación manual:** revisar mensajes de error y un output transaccional y marketing frente al baseline.
+- **Evidencia requerida:** inventario antes/después, hashes, tabla contrato→test y diagnósticos corregidos por carpeta.
+- **Riesgos y reversión:** inferencias que cambien coerciones o manejo de `unknown`; tipar sin retirar guards runtime y cerrar cada carpeta en commit independiente.
+- **Exclusiones específicas:** no tocar UI, servidor Vite, CLI ni semántica de reglas email.
+- **Implementador:** perfil TypeScript/backend, alto.
+- **Revisor independiente:** revisor de build/compatibilidad.
+- **Condición de escalamiento:** cambia HTML, severidad de validación, delimitadores o contrato público de build.
+
+### MHB-31 — CLI, exportación y correo en TypeScript
+
+- **Objetivo observable:** convertir los entrypoints operativos y sus helpers a TypeScript estricto sin cambiar comandos, prompts, códigos de salida ni efectos de filesystem.
+- **Superficies autorizadas:** `scripts/cli/**`, `scripts/export/**`, `scripts/generators/**`, `scripts/mail/**`, sus tests, scripts de `package.json`, imports y documentación de comandos.
+- **Dependencias y precondiciones:** MHB-30 completada y APIs tipadas del núcleo disponibles.
+- **Pasos técnicos:** migrar helpers antes que entrypoints; tipar argumentos, procesos hijos, errores, prompts, rutas y resultados de Puppeteer/Nodemailer; actualizar comandos conservando nombres y argumentos; ejecutar casos felices y negativos sin shell ni credenciales reales.
+- **Criterios de aceptación:** no quedan `.js`/`.mjs` propios en las superficies autorizadas; todos los comandos documentados conservan nombre, argumentos, código de salida y mensajes accionables; no se expone ningún secreto.
+- **Validación automática:** typecheck estricto, tests focalizados/globales, lint, formato, generación en temporal, build selectivo y smoke seguro de exportación/correo sin envío real.
+- **Validación manual:** recorrer ayuda/prompts y revisar fallos de template inexistente, navegador ausente y configuración de correo incompleta.
+- **Evidencia requerida:** matriz comando→casos, salidas/códigos, inventario antes/después y ausencia de artefactos.
+- **Riesgos y reversión:** alterar resolución de entrypoints o interacción CLI; migrar helper y consumidor juntos y conservar fixtures temporales.
+- **Exclusiones específicas:** no enviar correo real, no abrir navegador y no rediseñar la CLI.
+- **Implementador:** perfil TypeScript/CLI, alto.
+- **Revisor independiente:** revisor técnico de CLI/filesystem.
+- **Condición de escalamiento:** cambia un comando público, requiere credenciales o modifica el comportamiento de exportación.
+
+### MHB-32 — Servidor Vite y APIs en TypeScript
+
+- **Objetivo observable:** convertir plugins, APIs y servicios Vite a TypeScript estricto preservando rutas, payloads, caché y render.
+- **Superficies autorizadas:** `scripts/vite/**`, `vite.config.*`, tests, declaraciones/imports y documentación de endpoints.
+- **Dependencias y precondiciones:** MHB-31 completada y contratos TypeScript del núcleo disponibles.
+- **Pasos técnicos:** migrar librerías y servicios antes que APIs/plugins; modelar request/response, payloads versionados, dependencias inyectadas, caché y errores como uniones discriminadas; mantener validación runtime de entradas; actualizar Vite config y cada importador; probar endpoints con temporales.
+- **Criterios de aceptación:** no quedan `.js`/`.mjs` propios en `scripts/vite/**` ni en la configuración Vite; rutas, status, headers y payloads permanecen compatibles; caché y render producen el mismo output.
+- **Validación automática:** typecheck estricto, tests Vite/API, suite global, lint, formato, build, validación email y integración MHB-20.
+- **Validación manual:** revisar errores 4xx/5xx, invalidación de caché y render de un template y un componente.
+- **Evidencia requerida:** inventario antes/después, tabla endpoint→contrato→test, comparación de payloads y hashes de output.
+- **Riesgos y reversión:** hacer confiable por tipos un payload externo no validado o romper middleware; conservar guards y migrar por cadena servicio→API→plugin.
+- **Exclusiones específicas:** no cambiar rutas, esquema público, estrategia de caché ni UI.
+- **Implementador:** perfil TypeScript/Vite, alto.
+- **Revisor independiente:** revisor backend/Vite.
+- **Condición de escalamiento:** exige versionar un endpoint, cambiar payload o alterar el pipeline Maizzle/Handlebars.
+
+### MHB-33 — Dashboard web en TypeScript
+
+- **Objetivo observable:** convertir Home, Preview, Library y utilidades compartidas a TypeScript estricto sin cambio visual ni funcional.
+- **Superficies autorizadas:** `src/web/**`, tests, HTML que referencia entrypoints, declaraciones browser y documentación de rutas; solo imports necesarios en plugins ya migrados.
+- **Dependencias y precondiciones:** MHB-28 y MHB-32 completadas; superficies web modularizadas y contratos API tipados.
+- **Pasos técnicos:** migrar shared/Home, luego Library y finalmente Preview; tipar elementos DOM con helpers genéricos, eventos, storage, iframes, estados de render, editor CDN, HMR y respuestas API; convertir tests junto con cada módulo; actualizar entrypoints HTML sin renombrar IDs/clases/ARIA.
+- **Criterios de aceptación:** no quedan `.js`/`.mjs` propios bajo `src/web/**`; `strict` pasa sin `@ts-ignore`; Home, Preview y Library mantienen comportamiento, accesibilidad, temas, responsive e aislamiento de iframe.
+- **Validación automática:** typecheck browser/tests, suite global, lint, formato, build, validación email, `lint:contrast`, `a11y-check`, hashes de `dist/*.html` y control de inventario.
+- **Validación manual:** recorrer Home/Preview/Library en 375, 768 y 1440 px, dark/light; verificar editor, HMR, render/source, viewport, save/reset, copy/download, búsqueda y preview de componentes.
+- **Evidencia requerida:** inventario antes/después, matriz flujo→test/recorrido, hashes, capturas de los seis tamaños/temas y lista de contratos DOM preservados.
+- **Riesgos y reversión:** casts DOM que oculten nodos ausentes o divergencia visual; usar helpers que fallen de forma accionable y migrar por feature en commits recuperables.
+- **Exclusiones específicas:** no introducir React/JSX, no rediseñar, no cambiar IDs/clases/ARIA ni tocar HTML de email dentro de iframes.
+- **Implementador:** perfil TypeScript/frontend, alto.
+- **Revisor independiente:** revisor UI distinto con recorrido manual completo.
+- **Condición de escalamiento:** requiere framework, cambio visual, endpoint nuevo o modificación del output email.
+
+### MHB-34 — Cierre total y modo estricto TypeScript
+
+- **Objetivo observable:** eliminar la compatibilidad JavaScript transitoria y dejar el repositorio propio completamente migrado a TypeScript estricto.
+- **Superficies autorizadas:** `scripts/ai/**`, configuraciones raíz restantes, tests/imports residuales, `package.json`, `tsconfig*.json`, ESLint/lint-staged, documentación y control de inventario.
+- **Dependencias y precondiciones:** MHB-33 completada y conteo residual limitado a esta superficie.
+- **Pasos técnicos:** migrar automatizaciones AI y configuraciones raíz restantes; actualizar todas las referencias documentales y comandos; eliminar `allowJs`/`checkJs`; activar `strict`, `noImplicitAny` y `strictNullChecks` como gate global; hacer fallar CI/local si aparece un `.js`/`.mjs` propio nuevo; ejecutar la matriz completa desde instalación congelada.
+- **Criterios de aceptación:** `rg --files -g '*.js' -g '*.mjs'` no devuelve código propio dentro del alcance; no existen imports rotos ni extensiones antiguas documentadas; el typecheck global estricto, suite, build, validadores y sincronización de agentes quedan verdes.
+- **Validación automática:** `bun install --frozen-lockfile`, lint, typecheck estricto, test, formato, build, `validate-email`, `lint:contrast`, `a11y-check`, `agents:check`, guard de cero JavaScript y `git diff --check`.
+- **Validación manual:** revisar comandos públicos, configuración de cada herramienta, recorridos UI de MHB-33 y output transaccional/marketing.
+- **Evidencia requerida:** inventario final cero, matriz completa de gates, hashes finales, lista de comandos/documentos actualizados y diff acumulado por ID.
+- **Riesgos y reversión:** cerrar prematuramente con excepciones ocultas o romper tooling auxiliar; ninguna excepción cuenta como cierre y cada ID previo permanece revertible por separado.
+- **Exclusiones específicas:** no introducir React, no cambiar comportamiento de producto y no publicar versión/tag/release dentro de este ID.
+- **Implementador:** perfil TypeScript/tooling transversal, alto.
+- **Revisor independiente:** revisor técnico final distinto de los implementadores.
+- **Condición de escalamiento:** queda cualquier excepción JavaScript, falla un gate global o una herramienta exige conservar wrapper no TypeScript.
 
 ## Fases
 
 ### Fase C — Evidencia para la puerta de calidad
 
-- **Hallazgos que resuelve:** cobertura/tipos/rendimiento, accesibilidad, clientes reales y narrativa/release.
-- **IDs incluidos:** MHB-13, MHB-14, MHB-15, MHB-19 y MHB-20.
-- **Entregables:** mediciones reproducibles, matriz de pruebas manuales y una release posterior plenamente trazable.
+- **Hallazgos que resuelve:** integración, baseline de tipos/rendimiento, accesibilidad y clientes reales.
+- **IDs incluidos:** MHB-13, MHB-14, MHB-19 y MHB-20.
+- **Entregables:** integración reproducible, baseline completo de tipos, mediciones y matriz de pruebas manuales.
 - **Riesgos:** afirmar evidencia de clientes sin pruebas; incluir secretos en capturas o documentación.
-- **Criterio de salida:** evidencia enlazable en `progress.md`; todos los bloqueadores de auditoría resueltos o explícitamente reevaluados.
+- **Criterio de salida:** MHB-20, MHB-13 y MHB-14 están cerradas con evidencia enlazable; el repositorio está preparado para convertir capas sin diagnósticos heredados.
 
 ### Fase D — Evolución opcional y mantenimiento
 
-- **IDs incluidos:** MHB-16 y MHB-23 son opcionales; MHB-28 es requerido. MHB-26 y MHB-27 se ejecutaron en esta fase y están `Completada`.
+- **IDs incluidos:** MHB-23 es opcional; MHB-28 es requerido. MHB-26 y MHB-27 se ejecutaron en esta fase y están `Completada`.
 - **Nota de alcance:** no es una fase solo opcional. La validación automatizada de accesibilidad/contraste y la mantenibilidad del código web son requeridas: no añaden producto, pero sostienen un dashboard verificable y mantenible.
 - **Criterio de salida:** cada opcional aprobado cumple su propia aceptación; una demo accesible permite verificación, pero no equivale a publicar el caso como destacado. Los IDs requeridos cumplen su aceptación completa, sin excepción por ser trabajo interno.
+
+### Fase E — Migración completa a TypeScript
+
+- **IDs incluidos:** MHB-29, MHB-30, MHB-31, MHB-32, MHB-33 y MHB-34.
+- **Entregables:** tooling mixto temporal, núcleo, CLI, servidor y web convertidos por capas; cierre global estricto sin JavaScript propio residual.
+- **Riesgos:** mezclar renombres con cambios funcionales, perder compatibilidad de loaders o ocultar límites runtime con tipos estáticos.
+- **Criterio de salida:** MHB-34 confirma inventario JavaScript propio en cero, typecheck estricto y matriz global verde.
+
+### Fase F — Release y demostración
+
+- **IDs incluidos:** MHB-15 y, si se aprueba, MHB-16.
+- **Entregables:** documentación y release posterior coherentes con la migración completada; demo candidata opcional y verificable.
+- **Riesgos:** publicar antes del cierre total o presentar evidencia no sustentada.
+- **Criterio de salida:** MHB-15 está cerrada; MHB-16 cumple su aceptación cuando sea requerida o aprobada.
 
 ## Contrato obligatorio de cierre
 
@@ -221,12 +362,18 @@ Cada elemento debe conservar en el contrato transferido objetivo, archivos, paso
 | MHB-16 | Smoke del build estático y enlaces.                                    | Navegar demo solo lectura en desktop/móvil.                                               | URL candidata, SHA desplegado y checklist.                                               |
 | MHB-23 | Tests y validadores aplicables por componente.                         | Aparición y edición en `/library`.                                                        | Schema, captura y build verde.                                                           |
 | MHB-28 | Suite completa, `lint:contrast`, `a11y-check` y test de `ef-skeleton`. | Seis combinaciones ancho×tema en Home/Preview/Library; skeletons, tabs y viewport activo. | Tabla de líneas, hashes `dist/` iguales, diff por bloque y recuento de `!important`/IDs. |
+| MHB-29 | Typecheck mixto Node/browser/tests y piloto `.ts`.                     | Revisar resolución ESM y loaders de herramientas.                                         | Matriz herramienta→loader y conteo inicial por capa.                                     |
+| MHB-30 | Typecheck estricto, tests de núcleo, build y validadores.              | Comparar outputs transaccional y marketing.                                               | Inventario por carpeta, hashes y tabla contrato→test.                                    |
+| MHB-31 | Tests CLI/export/mail y smokes seguros sin credenciales.               | Recorrer prompts, ayuda y fallos accionables.                                             | Matriz comando→casos, códigos de salida e inventario.                                    |
+| MHB-32 | Tests Vite/API e integración MHB-20.                                   | Revisar endpoints, caché y render.                                                        | Tabla endpoint→contrato→test y comparación de payloads.                                  |
+| MHB-33 | Typecheck web, suite, contraste, accesibilidad y hashes.               | Home/Preview/Library en seis combinaciones ancho×tema.                                    | Matriz flujo→evidencia, capturas e inventario web cero.                                  |
+| MHB-34 | Gate de cero `.js`/`.mjs`, typecheck estricto y matriz global.         | Revisar comandos, tooling, UI y outputs finales.                                          | Inventario final cero, gates completos y referencias actualizadas.                       |
 
 ### Gates globales
 
 - Todos los cambios: `bun run format:check` y `git diff --check`.
 - Markdown: `bun run lint:md`.
-- JavaScript/configuración: `bun run lint` y `bun run typecheck` según alcance.
+- JavaScript/TypeScript/configuración: `bun run lint` y `bun run typecheck` según alcance.
 - Templates/layouts/CSS/build: `bun run build` y `bun run validate-email`; ERROR bloquea y WARNING/INFO no se ocultan.
 - UI/API: pruebas automatizadas más `bun run dev` y recorrido manual cuando corresponda.
 - Antes de cerrar una fase: instalación congelada, lint, typecheck, test, build y formato verdes en la versión de Bun fijada por el proyecto.
@@ -234,10 +381,12 @@ Cada elemento debe conservar en el contrato transferido objetivo, archivos, paso
 
 ## Orden de ejecución
 
-1. Completar la evidencia de integración pendiente y registrar el cierre de Fase C antes de iniciar trabajo dependiente.
-2. Ejecutar MHB-13 y MHB-14; solo entonces preparar MHB-15 y decidir una release posterior.
-3. Decidir si MHB-16 o MHB-23 aportan valor suficiente y priorizar MHB-28 tras MHB-20.
-4. Someter el producto a revisión final independiente antes de declararlo listo para presentarse como caso de portafolio.
+1. Completar MHB-20; luego ejecutar MHB-13 y MHB-14 para cerrar la evidencia base de Fase C.
+2. Ejecutar MHB-28 después de MHB-20 y antes de MHB-33; MHB-23 permanece opcional y separado.
+3. Ejecutar secuencialmente MHB-29, MHB-30, MHB-31 y MHB-32; MHB-33 espera además el cierre de MHB-28.
+4. Cerrar la migración con MHB-34; ninguna excepción `.js`/`.mjs` permite avanzar a release.
+5. Preparar MHB-15 solo tras MHB-14 y MHB-34; decidir MHB-16 después de esa release candidata.
+6. Someter el producto a revisión final independiente antes de declararlo listo para presentarse como caso de portafolio.
 
 ### Política de ramas y versiones conservada
 
@@ -249,6 +398,7 @@ Cada elemento debe conservar en el contrato transferido objetivo, archivos, paso
 ## Criterios para estar listo para portafolio
 
 - CI cubre las rutas relevantes; lint, typecheck, pruebas, build y formato están verdes en la matriz declarada.
+- Todo el código propio del alcance está en TypeScript estricto y el guard de inventario impide reintroducir `.js`/`.mjs`.
 - Los templates de producto, preview seguro y descarga de HTML funcionan y están verificados.
 - Hay evidencia fechada de accesibilidad, rendimiento y clientes de correo.
 - La documentación, versión, tag y release posterior concuerdan; existe una demostración candidata o instrucciones reproducibles para el flujo.
@@ -265,19 +415,35 @@ Las skills son contratos de procedimiento; los subagentes son ejecuciones tempor
 
 ### Fase C — Calidad y evidencia
 
-| Línea                    | Skills obligatorias                               | Implementador y propiedad            | Revisor                       | Controles                                          | Escalar cuando                                                    |
-| ------------------------ | ------------------------------------------------- | ------------------------------------ | ----------------------------- | -------------------------------------------------- | ----------------------------------------------------------------- |
-| MHB-19/MHB-20 pruebas    | `task-verification`, skills del dominio probado   | Perfil alto; tests y fixtures        | Revisor técnico independiente | Inventario de cobertura e integración temporal     | Requiera binarios externos o cambios productivos para testear.    |
-| MHB-13 tipos/rendimiento | `email-refactor-type-safety`, `task-verification` | Perfil alto; tipos/config/mediciones | Revisor técnico               | Typecheck y protocolo reproducible                 | Amplíe alcance a TypeScript o budget CI.                          |
-| MHB-14 evidencia manual  | `email-compatibility`, `email-preview-dashboard`  | Perfil alto; matriz/capturas         | Orquestador                   | Protocolo fechado, clientes reales y accesibilidad | No haya acceso a cliente/dispositivo o aparezcan datos sensibles. |
-| MHB-15 release           | `task-verification`                               | Perfil medio; docs/version/changelog | Orquestador                   | Suite completa, tag y release coherentes           | Antes de publicación o cambio de versión.                         |
+| Línea                   | Skills obligatorias                               | Implementador y propiedad            | Revisor                       | Controles                                          | Escalar cuando                                                    |
+| ----------------------- | ------------------------------------------------- | ------------------------------------ | ----------------------------- | -------------------------------------------------- | ----------------------------------------------------------------- |
+| MHB-19/MHB-20 pruebas   | `task-verification`, skills del dominio probado   | Perfil alto; tests y fixtures        | Revisor técnico independiente | Inventario de cobertura e integración temporal     | Requiera binarios externos o cambios productivos para testear.    |
+| MHB-13 baseline tipos   | `email-refactor-type-safety`, `task-verification` | Perfil alto; JSDoc/config/mediciones | Revisor técnico               | Typecheck JS completo y protocolo reproducible     | Exija cambio funcional, contrato público o dependencia nueva.     |
+| MHB-14 evidencia manual | `email-compatibility`, `email-preview-dashboard`  | Perfil alto; matriz/capturas         | Orquestador                   | Protocolo fechado, clientes reales y accesibilidad | No haya acceso a cliente/dispositivo o aparezcan datos sensibles. |
 
 ### Fase D — Evolución y mantenimiento
 
-| Línea                 | Skills obligatorias                                                                           | Implementador y propiedad                     | Revisor                  | Controles                                            | Escalar cuando                                                               |
-| --------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------- | ------------------------ | ---------------------------------------------------- | ---------------------------------------------------------------------------- |
-| MHB-16 demo           | `email-project-stack`, `email-preview-dashboard`, skill de despliegue si se aprueba proveedor | Perfil alto; build estático/config de deploy  | Orquestador              | Smoke, URL, SHA y ausencia de divergencia            | Requiera proveedor, credenciales o publicación externa.                      |
-| MHB-23 componentes    | `email-compatibility`, `email-preview-dashboard`                                              | Perfil medio; partials/schemas/library        | Revisor email/UI         | Build, schema, library y visual                      | Amplíe el alcance hacia un builder.                                          |
-| MHB-28 mantenibilidad | `email-refactor-type-safety`, `email-preview-dashboard`, `task-verification`                  | Perfil alto; superficies exclusivas de MHB-28 | Revisor UI independiente | Gates, hashes de `dist/` y recorrido visual completo | Exija cambio visual, afecte `dist/` o toque una superficie fuera de alcance. |
+| Línea                 | Skills obligatorias                                                          | Implementador y propiedad                     | Revisor                  | Controles                                            | Escalar cuando                                                               |
+| --------------------- | ---------------------------------------------------------------------------- | --------------------------------------------- | ------------------------ | ---------------------------------------------------- | ---------------------------------------------------------------------------- |
+| MHB-23 componentes    | `email-compatibility`, `email-preview-dashboard`                             | Perfil medio; partials/schemas/library        | Revisor email/UI         | Build, schema, library y visual                      | Amplíe el alcance hacia un builder.                                          |
+| MHB-28 mantenibilidad | `email-refactor-type-safety`, `email-preview-dashboard`, `task-verification` | Perfil alto; superficies exclusivas de MHB-28 | Revisor UI independiente | Gates, hashes de `dist/` y recorrido visual completo | Exija cambio visual, afecte `dist/` o toque una superficie fuera de alcance. |
+
+### Fase E — Migración TypeScript
+
+| Línea            | Skills obligatorias                                                            | Implementador y propiedad                     | Revisor                  | Controles                                          | Escalar cuando                                              |
+| ---------------- | ------------------------------------------------------------------------------ | --------------------------------------------- | ------------------------ | -------------------------------------------------- | ----------------------------------------------------------- |
+| MHB-29 base TS   | `email-project-stack`, `email-refactor-type-safety`, `task-verification`       | Perfil alto; configs/tooling/declaraciones    | Revisor técnico          | Piloto mixto, loaders e inventario                 | Un loader exige cambiar CLI o añadir dependencia runtime.   |
+| MHB-30 núcleo TS | `email-project-stack`, `email-compatibility`, `email-refactor-type-safety`     | Perfil alto; shared/build/ESP/validators      | Revisor build/email      | Strict, tests, build, validadores y hashes         | Cambia HTML, delimitadores o severidad de validación.       |
+| MHB-31 CLI TS    | `email-project-stack`, `email-quality-gates`, `email-refactor-type-safety`     | Perfil alto; CLI/export/generators/mail       | Revisor CLI/filesystem   | Comandos, códigos, temporales y smokes seguros     | Cambia CLI pública, requiere credenciales o abre navegador. |
+| MHB-32 Vite TS   | `email-project-stack`, `email-preview-dashboard`, `email-refactor-type-safety` | Perfil alto; Vite APIs/services/plugins       | Revisor backend/Vite     | Endpoints, caché, integración y payloads           | Exige versionar API o alterar Maizzle/Handlebars.           |
+| MHB-33 web TS    | `email-preview-dashboard`, `email-refactor-type-safety`, `task-verification`   | Perfil alto; `src/web/**`                     | Revisor UI independiente | Strict, suite, a11y, contraste, hashes y recorrido | Exige React, cambio visual, endpoint o cambio de email.     |
+| MHB-34 cierre TS | `email-project-stack`, `email-quality-gates`, `task-verification`              | Perfil alto; AI/configs/gates/docs residuales | Revisor técnico final    | Inventario cero, strict global y matriz completa   | Queda una excepción JS/MJS o falla cualquier gate global.   |
+
+### Fase F — Release y demo
+
+| Línea          | Skills obligatorias                                                                           | Implementador y propiedad            | Revisor     | Controles                                 | Escalar cuando                                          |
+| -------------- | --------------------------------------------------------------------------------------------- | ------------------------------------ | ----------- | ----------------------------------------- | ------------------------------------------------------- |
+| MHB-15 release | `task-verification`                                                                           | Perfil medio; docs/version/changelog | Orquestador | Suite, inventario TS, tag y release       | Antes de publicación, tag o cambio de versión.          |
+| MHB-16 demo    | `email-project-stack`, `email-preview-dashboard`, skill de despliegue si se aprueba proveedor | Perfil alto; build/config de deploy  | Orquestador | Smoke, URL, SHA y ausencia de divergencia | Requiera proveedor, credenciales o publicación externa. |
 
 El orquestador conserva integración, decisiones transversales, cambios destructivos, versiones, releases y veredictos. Solo paraleliza líneas con archivos exclusivos y al menos dos ámbitos realmente independientes.

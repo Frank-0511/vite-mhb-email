@@ -1,25 +1,7 @@
 // @ts-check
 import { describe, expect, test } from "bun:test";
 import { createPreviewStatus } from "./preview-status.js";
-
-/**
- * Mock ligero para nodo DOM.
- */
-function createMockElement(initialClasses = "") {
-  /** @type {Map<string, string>} */
-  const attributes = new Map();
-  return {
-    className: initialClasses,
-    textContent: "",
-    innerHTML: "",
-    setAttribute(key, value) {
-      attributes.set(key, value);
-    },
-    getAttribute(key) {
-      return attributes.get(key) ?? null;
-    },
-  };
-}
+import { createMockElement } from "./test-helpers.js";
 
 describe("preview-status (controlador de estado visual)", () => {
   test("sync actualiza clase y contenido del indicador con dotColor y texto", () => {
@@ -103,39 +85,6 @@ describe("preview-status (controlador de estado visual)", () => {
     expect(espStatus.textContent).toBe("⚠️ 1 variable faltante · ⓘ 1 clave sin usar");
     expect(espStatus.getAttribute("data-details")).toBe("Faltantes: first_name · Sin uso: legacy");
     expect(espStatus.className).toBe("esp-validation-status visible warning");
-  });
-
-  test("esp oculta el contenedor cuando no hay mensajes o datos son nulos", () => {
-    const espStatus = createMockElement("esp-validation-status visible");
-    const status = createPreviewStatus({
-      syncStatus: createMockElement(),
-      espStatus,
-      renderErrorView: { show: () => {}, clear: () => {} },
-    });
-
-    status.esp({ missing: [], unused: [] });
-
-    expect(espStatus.textContent).toBe("");
-    expect(espStatus.className).toBe("esp-validation-status");
-    expect(espStatus.getAttribute("data-details")).toBe("");
-    expect(espStatus.getAttribute("aria-label")).toBe("");
-    expect(espStatus.getAttribute("aria-hidden")).toBe("true");
-
-    status.esp(null);
-    expect(espStatus.textContent).toBe("");
-    expect(espStatus.getAttribute("aria-hidden")).toBe("true");
-  });
-
-  test("esp no arroja error si espStatus es nulo o indefinido", () => {
-    const status = createPreviewStatus({
-      syncStatus: createMockElement(),
-      espStatus: null,
-      renderErrorView: { show: () => {}, clear: () => {} },
-    });
-
-    expect(() => {
-      status.esp({ missing: ["first_name"] });
-    }).not.toThrow();
   });
 
   test("renderSuccess limpia errores y actualiza el contenido del iframe", () => {

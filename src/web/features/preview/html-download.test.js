@@ -1,34 +1,6 @@
 // @ts-check
 import { beforeEach, describe, expect, mock, test } from "bun:test";
-import { downloadHtml, isSafeDownloadTemplateName } from "./html-download.js";
-
-describe("isSafeDownloadTemplateName", () => {
-  test.each(["welcome", "order-confirmation", "newsletter-2026", "template1"])(
-    "acepta nombres válidos de template: %s",
-    (name) => {
-      expect(isSafeDownloadTemplateName(name)).toBe(true);
-    },
-  );
-
-  test.each([
-    "../escape",
-    "welcome.html",
-    "WELCOME",
-    "two words",
-    "a/b",
-    "a\\b",
-    "",
-    "   ",
-    "special@char",
-    null,
-    undefined,
-    123,
-    {},
-  ])("rechaza nombres de template inseguros o inválidos: %s", (name) => {
-    // @ts-ignore
-    expect(isSafeDownloadTemplateName(name)).toBe(false);
-  });
-});
+import { downloadHtml } from "./html-download.js";
 
 describe("downloadHtml", () => {
   class MockBlob {

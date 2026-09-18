@@ -27,12 +27,17 @@ description: Verificar tareas, ejecutar comandos permitidos, preparar ramas o co
   no reescribir historial ni revertir cambios ajenos.
 - Entregar el ID a `En revisión`; un revisor independiente confirma aceptación,
   diff, pruebas y ausencia de desviaciones antes de `Completada`.
-- Al confirmar el usuario que la tarea quedó correcta, eliminar los planes,
-  specs y demás archivos auxiliares creados solo para trabajarla (borradores,
-  notas de análisis, specs temporales). No borrar documentación oficial del
-  repo (`docs/implementation/PLAN.md`, `docs/implementation/STATUS.md`, etc.);
-  ante la duda de si un archivo es oficial o de trabajo, confirmar antes de
-  borrar. Rutas conocidas donde buscar este tipo de material por ID:
+- Al confirmar el usuario que la tarea quedó completa, eliminar, antes de
+  preparar la PR, los planes, specs y demás archivos auxiliares creados solo
+  para trabajarla (borradores, notas de análisis, specs temporales). No borrar
+  documentación oficial del repo (`docs/implementation/PLAN.md`,
+  `docs/implementation/STATUS.md`, etc.); ante la duda de si un archivo es
+  oficial o de trabajo, confirmar antes de borrar.
+- `docs/superpowers/` es exclusivamente un área temporal: antes de entregar la
+  PR debe quedar vacía y `master` debe permanecer vacío allí. Verificarlo de
+  forma explícita antes de declarar el cierre, sin borrar artefactos de otras
+  tareas que aún no hayan sido confirmadas como completas.
+- Rutas conocidas donde buscar este tipo de material por ID:
   - `docs/superpowers/plans/<fecha>-<id-en-minusculas>-*.md`
   - `docs/superpowers/specs/<fecha>-<id-en-minusculas>-*.md`
   - `.superpowers/sdd/<fecha>-<id-en-minusculas>-*/` (brief, progress, report,

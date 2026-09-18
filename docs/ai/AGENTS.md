@@ -49,6 +49,10 @@ asignado.
   ocultar errores.
 - El implementador entrega a `En revisión`; un revisor distinto confirma
   `Completada` con aceptación, diff y evidencia.
+- Los planes y artefactos auxiliares de una tarea pueden existir solo de forma
+  temporal bajo `docs/superpowers/`. Al confirmar el usuario que la tarea está
+  completa, eliminarlos antes de preparar la PR; la rama entregable y `master`
+  deben conservar `docs/superpowers/` vacía.
 - Una desviación de alcance detiene el ID hasta acordar su tratamiento.
 - No abrir el Browser pane (preview, screenshots, navegación) por decisión
   propia; solo cuando el usuario lo solicite explícitamente. Verificar

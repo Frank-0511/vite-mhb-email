@@ -1,9 +1,9 @@
 // @ts-check
 import { afterEach, describe, expect, test } from "bun:test";
-import { EventEmitter } from "node:events";
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { simulateRequest as request } from "../test-helpers.js";
 import { setupComponentsApi } from "./components.js";
 
 /** @type {string[]} */
@@ -43,34 +43,6 @@ function getComponentsMiddleware(rootDir) {
   );
 
   return middleware;
-}
-
-function request(middleware, { method, url, body }) {
-  const req = /** @type {import("http").IncomingMessage} */ (
-    Object.assign(new EventEmitter(), { method, url, headers: { host: "localhost" } })
-  );
-  const headers = new Map();
-  return new Promise((resolve, reject) => {
-    const res = /** @type {import("http").ServerResponse} */ ({
-      statusCode: 200,
-      setHeader(name, value) {
-        headers.set(name, value);
-      },
-      end(responseBody) {
-        resolve({ status: this.statusCode, body: String(responseBody ?? ""), headers });
-      },
-    });
-    middleware(req, res, () => {
-      res.statusCode = 404;
-      res.end("Not found");
-    }).catch(reject);
-    if (body !== undefined) {
-      queueMicrotask(() => {
-        req.emit("data", Buffer.from(body));
-        req.emit("end");
-      });
-    }
-  });
 }
 
 describe("components API", () => {

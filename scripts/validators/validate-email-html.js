@@ -26,15 +26,23 @@ const severityColor = {
   [Severity.INFO]: colors.blue,
 };
 
-/** @param {string} filePath */
-function validateFile(filePath) {
+/**
+ * @param {string} filePath
+ * @param {string} [projectRootOverride]
+ */
+function validateFile(filePath, projectRootOverride) {
   const html = fs.readFileSync(filePath, "utf-8");
   const file = filePath.split("/").pop() ?? filePath;
-  const issues = runRules(html, { filePath, projectRoot }, rules, (rule, error) => {
-    console.error(
-      paint(colors.red, `  Error ejecutando regla "${rule.id}" en ${file}: ${error.message}`),
-    );
-  });
+  const issues = runRules(
+    html,
+    { filePath, projectRoot: projectRootOverride ?? projectRoot },
+    rules,
+    (rule, error) => {
+      console.error(
+        paint(colors.red, `  Error ejecutando regla "${rule.id}" en ${file}: ${error.message}`),
+      );
+    },
+  );
   return { file, issues };
 }
 
@@ -91,17 +99,19 @@ function printSummary(results) {
  * Valida todos los HTML de dist y devuelve conteos por severidad.
  * Solo ERROR bloquea a los consumidores del resultado.
  * @param {string} [distDirOverride]
+ * @param {string} [projectRootOverride]
  * @returns {{ errors: number, warnings: number, infos: number }}
  */
-export function validateEmailHtml(distDirOverride) {
-  const distDir = distDirOverride ?? resolve(projectRoot, "dist");
+export function validateEmailHtml(distDirOverride, projectRootOverride) {
+  const root = projectRootOverride ?? projectRoot;
+  const distDir = distDirOverride ?? resolve(root, "dist");
   const htmlFiles = globSync("**/*.html", { cwd: distDir });
   if (htmlFiles.length === 0) {
-    console.log("\n⚠️  No HTML files found in dist/\n");
+    console.log(`\n⚠️  No HTML files found in ${distDir}\n`);
     return { errors: 0, warnings: 0, infos: 0 };
   }
   console.log(paint(colors.cyan + colors.bold, "🔍 Validando compatibilidad email...\n"));
-  const results = htmlFiles.map((file) => validateFile(resolve(distDir, file)));
+  const results = htmlFiles.map((file) => validateFile(resolve(distDir, file), root));
   results.forEach(printFileReport);
   printSummary(results);
   const issues = results.flatMap((result) => result.issues);

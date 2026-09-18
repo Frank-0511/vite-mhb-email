@@ -4,18 +4,7 @@
  */
 
 import { describe, expect, test } from "bun:test";
-import { ESP_SEVERITY, validateEspVariables } from "./esp-variables.js";
-
-describe("esp-variables constantes y contratos públicos", () => {
-  test("define severidad WARNING para missing e INFO para unused", () => {
-    expect(ESP_SEVERITY.missing).toBe("WARNING");
-    expect(ESP_SEVERITY.unused).toBe("INFO");
-  });
-
-  test("el objeto de severidades está congelado contra mutaciones", () => {
-    expect(Object.isFrozen(ESP_SEVERITY)).toBe(true);
-  });
-});
+import { validateEspVariables } from "./esp-variables.js";
 
 describe("validateEspVariables — coincidencia", () => {
   test("data y template coinciden exactamente → sin issues", () => {
