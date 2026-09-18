@@ -1,5 +1,19 @@
 // List renderer module
-import { ArrowLeft, Box, Building, createIcons, Dna, List, Moon, Package, Sun } from "lucide";
+import {
+  ArrowLeft,
+  Box,
+  Building,
+  Component,
+  createIcons,
+  Dna,
+  FileText,
+  Layers,
+  List,
+  Moon,
+  Package,
+  Puzzle,
+  Sun,
+} from "lucide";
 
 export const listRenderer = {
   container: null,
@@ -66,7 +80,7 @@ export const listRenderer = {
         item.type = "button";
 
         const compIcon = document.createElement("i");
-        compIcon.setAttribute("data-lucide", this.mapIconName(comp.icon || "box"));
+        compIcon.setAttribute("data-lucide", this.mapIconName(group.itemIcon));
         compIcon.className = "component-item-icon";
 
         item.appendChild(compIcon);
@@ -112,6 +126,10 @@ export const listRenderer = {
         Sun,
         Moon,
         Package,
+        Layers,
+        Puzzle,
+        Component,
+        FileText,
       },
     });
   },
