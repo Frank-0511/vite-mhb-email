@@ -9,21 +9,45 @@ el contrato en `PLAN.md` y el detalle reproducible en los commits y PRs.
 
 ## Resumen
 
-- ID activo: Ninguno
-- Estado: N/A — sin ID en progreso ni en revisión
-- Rama autorizada: Ninguna asignada
+- ID activo: MHB-19
+- Estado: `En revisión` — implementación entregada, pendiente revisor técnico
+- Rama autorizada: `feature/mhb-19`
 - Última actualización: 2026-09-18
 - Contrato estable: `docs/implementation/PLAN.md`
 
 ## Paquete activo
 
-- Ninguno. MHB-17 cerró `Completada` (ver Últimas entregas y
-  [STATUS-HISTORY.md](STATUS-HISTORY.md)); no hay ID en progreso ni en
-  revisión. No iniciar MHB-18 sin asignación explícita del orquestador.
+- MHB-19 (`En revisión`, Fase C): unit tests de helpers y reglas.
+  - Las 13 reglas de compatibilidad conservan su par positivo/negativo y suman
+    casos borde por regla (límites inclusivos, mensajes distinguibles,
+    exenciones y falsos positivos que no deben dispararse).
+  - Siete helpers críticos sin cobertura propia la reciben: `paths`,
+    `built-templates`, `component-folders`, `env`, `esp-frontmatter`,
+    `esp-data-filter` y `email-rules/context`; `handlebars.test.js` se amplía a
+    `applyHandlebars` y `getTemplateData`.
+  - Evidencia: [TEST-INVENTORY.md](TEST-INVENTORY.md) con el mapa
+    `regla → tests` y `helper → tests`, lo preexistente y lo excluido.
+  - Solo se agregan tests, fixtures aislados y documentación; ningún cambio
+    productivo. Sin porcentaje global de cobertura, por exclusión del contrato.
+  - Implementador: esta sesión. Revisor pendiente: revisor técnico alto,
+    distinto del implementador.
+
+| Control                  | Resultado                                          |
+| ------------------------ | -------------------------------------------------- |
+| `bun run test`           | Verde — 477 pruebas / 51 archivos (antes 385 / 44) |
+| `bun run typecheck`      | Verde                                              |
+| `bun run lint`           | Verde                                              |
+| `bun run format:check`   | Verde                                              |
+| `bun run build`          | Verde — 2 warnings preexistentes, no bloquean      |
+| `bun run validate-email` | Verde — 0 errores, 2 warnings preexistentes        |
 
 ### Riesgo y bloqueo
 
-- Ninguno vigente.
+- Sin bloqueo. Riesgo residual detectado y no tratado por estar fuera del
+  alcance de MHB-19: `readBuiltTemplate` (`scripts/shared/built-templates.js`)
+  resuelve el nombre de archivo contra `dist/` sin pasar por `path-safety.js`,
+  de modo que un `../` escaparía del directorio. Requiere ID propio; no se fijó
+  ese comportamiento con un test para no consolidarlo.
 
 Detalle de cierre de MHB-17, MHB-26 (incluida la desviación de proceso de push
 directo a `master`) y controles completos: [STATUS-HISTORY.md](STATUS-HISTORY.md).
@@ -116,9 +140,11 @@ directo a `master`) y controles completos: [STATUS-HISTORY.md](STATUS-HISTORY.md
 
 ## Handoff
 
-- Próxima acción inmediata: Ninguna pendiente. MHB-17 y el fix de íconos de
-  biblioteca cerraron `Completada` el 2026-09-18 por aceptación manual del
-  usuario.
-- Siguiente tarea del roadmap: MHB-18 (`desbloqueado`, Fase B: guía de
-  componentes y matriz documentada); no iniciar sin asignación explícita
-  del orquestador.
+- Próxima acción inmediata: revisar MHB-19 en `feature/mhb-19` (worktree
+  `.claude/worktrees/mhb-19`). Revisor técnico alto distinto del implementador;
+  confirmar que los casos prueban comportamiento observable y no detalles de
+  implementación antes de `Completada`.
+- Siguiente tarea del roadmap: MHB-20 (`desbloqueado`, Fase C: integración
+  build, render, caché y exportación); MHB-18 sigue `desbloqueado` en Fase B y
+  se trabaja en otra sesión. No iniciar ninguno sin asignación explícita del
+  orquestador.
