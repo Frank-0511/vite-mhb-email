@@ -38,6 +38,8 @@ html.dark #editor-container {
   flex-direction: column;
   flex: 1;
   overflow: hidden;
+  container: preview-panel / inline-size;
+  min-width: 0;
 }
 
 #preview-iframe {
@@ -120,14 +122,16 @@ html.dark #editor-container {
   display: none;
 }
 
-/* Viewport and View Mode label variants */
+/* Viewport, View Mode and Export label variants */
 .viewport-label-short,
-.view-mode-label-short {
+.view-mode-label-short,
+.export-label-short {
   display: none;
 }
 
 .viewport-label-full,
-.view-mode-label-full {
+.view-mode-label-full,
+.export-label-full {
   display: inline;
 }
 
@@ -159,8 +163,8 @@ html.dark #editor-container {
    Breakpoints
    ========================================================================== */
 
-/* 1. Large Desktop (≥ 1701px): Single-row preview top bar */
-@media (width >= 1701px) {
+/* Desktop panel sizing (≥ 1260px): editor at fixed width, preview flexes */
+@media (width >= 1260px) {
   #left-panel {
     width: 550px;
     flex-shrink: 0;
@@ -169,14 +173,68 @@ html.dark #editor-container {
   #right-panel {
     flex: 1;
     width: auto;
-    min-width: 0;
   }
+}
 
+/* Preview header density: governed by the inline size of #right-panel,
+   independent of application viewport mode. */
+.preview-top-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  gap: 0.5rem;
+}
+
+.preview-header-bar,
+.preview-contextual-bar,
+#topbar-controls,
+.preview-render-controls,
+.preview-viewport-controls,
+.preview-status-wrap,
+.preview-copy-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.preview-header-bar,
+.preview-contextual-bar {
+  justify-content: space-between;
+  width: 100%;
+}
+
+.preview-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.preview-status-wrap,
+.preview-contextual-bar,
+#topbar-controls {
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.preview-render-controls,
+.preview-viewport-controls {
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.preview-copy-wrap {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+@container preview-panel (width >= 1260px) {
   .preview-top-container {
-    display: flex;
-    justify-content: space-between;
+    flex-direction: row;
     align-items: center;
+    justify-content: space-between;
     padding: 0.75rem 1.5rem;
+    gap: 0;
   }
 
   .preview-header-bar,
@@ -186,139 +244,84 @@ html.dark #editor-container {
 
   .preview-title-wrap {
     order: 1;
-    display: flex;
-    align-items: center;
     gap: 1rem;
   }
 
-  #topbar-skeleton {
-    order: 2;
-    margin-left: 1rem;
-  }
-
+  #topbar-skeleton,
   #topbar-controls {
     order: 2;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
     margin-left: 1rem;
-  }
-
-  .preview-render-controls {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .preview-viewport-controls {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
   }
 
   .preview-status-wrap {
     order: 3;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
     margin-left: auto;
   }
 
   .preview-copy-wrap {
     order: 4;
-    display: flex;
-    align-items: center;
     margin-left: 0.75rem;
   }
 }
 
-/* 2. Compact Desktop (1260px – 1700px): Two-row preview top bar */
-@media (width >= 1260px) and (width <= 1700px) {
-  #left-panel {
-    width: 550px;
-    flex-shrink: 0;
-  }
-
-  #right-panel {
-    flex: 1;
-    width: auto;
-    min-width: 0;
-  }
-
+@container preview-panel (710px <= width < 1260px) {
   .preview-top-container {
-    display: flex;
-    flex-direction: column;
     padding: 0.625rem 1.25rem;
-    gap: 0.5rem;
   }
 
-  .preview-header-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-  }
-
-  .preview-title-wrap {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    min-width: 0;
-  }
-
-  .preview-status-wrap {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    flex-shrink: 0;
+  .preview-header-bar,
+  .preview-contextual-bar {
+    flex-wrap: nowrap;
   }
 
   .preview-contextual-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
     padding-top: 0.5rem;
-    border-top: 1px solid #f1f5f9;
+    border-top: 1px solid var(--ef-border);
     gap: 0.75rem;
   }
 
-  html.dark .preview-contextual-bar {
-    border-top-color: #1e293b;
-  }
-
-  #topbar-controls {
-    display: flex;
-    align-items: center;
+  #topbar-controls,
+  .preview-status-wrap {
     gap: 0.75rem;
-    min-width: 0;
-  }
-
-  .preview-render-controls {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-shrink: 0;
-  }
-
-  .preview-viewport-controls {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-shrink: 0;
-  }
-
-  .preview-copy-wrap {
-    display: flex;
-    align-items: center;
-    margin-left: auto;
-    flex-shrink: 0;
   }
 }
 
-/* Modo solo icono para selector de vista en anchos ≤ 1400px */
-@media (width <= 1400px) {
-  .view-mode-label {
+@container preview-panel (width < 710px) {
+  .preview-header-bar {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .preview-title-wrap,
+  .preview-status-wrap {
+    flex-basis: 100%;
+  }
+
+  .preview-contextual-bar,
+  #topbar-controls {
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+}
+
+@container preview-panel (width <= 850px) {
+  :is(.viewport-label-full, .view-mode-label-full, .export-label-full) {
+    display: none;
+  }
+
+  :is(.viewport-label-short, .view-mode-label-short, .export-label-short) {
+    display: inline;
+  }
+}
+
+@container preview-panel (width <= 550px) {
+  :is(
+    .viewport-label-full,
+    .viewport-label-short,
+    .viewport-custom-label,
+    .view-mode-label,
+    .export-label
+  ) {
     display: none;
   }
 }
@@ -418,107 +421,17 @@ html.dark #editor-container {
     display: flex !important;
   }
 
-  /* Top bar and contextual bar in Preview */
-  .preview-top-container {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .preview-header-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.5rem 0.75rem;
-    border-bottom: 1px solid #f1f5f9;
-  }
-
-  html.dark .preview-header-bar {
-    border-bottom-color: #1e293b;
-  }
-
-  .preview-title-wrap {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    min-width: 0;
-  }
-
-  .preview-status-wrap {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  /* Contextual bar under preview header */
-  .preview-contextual-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.5rem 0.75rem;
-    background: #f8fafc;
-    border-bottom: 1px solid #e2e8f0;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-  }
-
-  html.dark .preview-contextual-bar {
-    background: #090d16;
-    border-bottom-color: #1e293b;
-  }
-
-  #topbar-controls {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-  }
-
-  .preview-copy-wrap {
-    display: flex;
-    align-items: center;
-  }
-
   /* Full-width responsive iframe */
   #preview-frame {
     max-width: 100% !important;
   }
 }
 
-/* 4. Small Mobile (< 480px): Compact header and dropdown menu */
+/* 4. Small Mobile (< 480px): editor header and dropdown menu (app-wide,
+   unrelated to the #right-panel container) */
 @media (width <= 479px) {
   .editor-header {
     padding: 0.5rem 0.75rem !important;
-  }
-
-  .preview-header-bar {
-    align-items: flex-start;
-    flex-wrap: wrap;
-    padding: 0.375rem 0.625rem;
-  }
-
-  .preview-title-wrap,
-  .preview-status-wrap {
-    flex-basis: 100%;
-  }
-
-  .preview-status-wrap {
-    flex-wrap: wrap;
-  }
-
-  .preview-contextual-bar {
-    padding: 0.375rem 0.625rem;
-    gap: 0.375rem;
-  }
-
-  .viewport-label-full,
-  .view-mode-label-full {
-    display: none;
-  }
-
-  .viewport-label-short,
-  .view-mode-label-short {
-    display: inline;
   }
 
   /* Menu "⋯" dropdown */
@@ -844,10 +757,11 @@ html.dark .preview-render-error {
   }
 }
 
-/* Two-row top bar (1260-1700px): the contextual row sits directly under the
-   header row with no tab nav between them, so a raised background here reads
-   as a stray panel rather than a second row of the same bar. */
-@media (width >= 1260px) and (width <= 1700px) {
+/* Two-row header state (710px <= width < 1260px): the contextual row sits
+   directly under the header row with no tab nav between them, so a raised
+   background here reads as a stray panel rather than a second row of the
+   same bar. */
+@container preview-panel (710px <= width < 1260px) {
   .preview-shell .preview-contextual-bar {
     background: var(--ef-surface);
     border-top-color: var(--ef-border);
