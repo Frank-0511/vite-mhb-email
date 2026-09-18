@@ -30,10 +30,10 @@ export const componentsManager = {
 
   groupByType(components) {
     const groups = {
-      atoms: { name: "Atoms", icon: "building-columns", items: [] },
-      molecules: { name: "Molecules", icon: "molecule2", items: [] },
-      organisms: { name: "Organisms", icon: "dna", items: [] },
-      templates: { name: "Templates", icon: "package", items: [] },
+      atoms: { name: "Atoms", icon: "building-columns", itemIcon: "box", items: [] },
+      molecules: { name: "Molecules", icon: "molecule2", itemIcon: "puzzle", items: [] },
+      organisms: { name: "Organisms", icon: "layers", itemIcon: "component", items: [] },
+      templates: { name: "Templates", icon: "package", itemIcon: "file-text", items: [] },
     };
 
     for (const comp of components) {
