@@ -24,11 +24,29 @@ function createMockResponse(status, body, headers = {}) {
   });
 }
 
+/**
+ * Silencia el `console.error` que `render-api` emite en sus rutas de fallo y
+ * devuelve lo registrado. Sin esto, los casos que ejercitan errores a propósito
+ * imprimen el stack completo y entierran el resultado de la suite.
+ *
+ * @returns {unknown[][]} Argumentos de cada llamada capturada.
+ */
+function captureConsoleError() {
+  /** @type {unknown[][]} */
+  const calls = [];
+  console.error = (...args) => {
+    calls.push(args);
+  };
+  return calls;
+}
+
 describe("render-api (cliente de render y re-exports)", () => {
   const originalFetch = globalThis.fetch;
+  const originalConsoleError = console.error;
 
   afterEach(() => {
     globalThis.fetch = originalFetch;
+    console.error = originalConsoleError;
   });
 
   test("re-exporta RenderApiError y parseRenderErrorResponse", () => {
@@ -123,8 +141,11 @@ describe("render-api (cliente de render y re-exports)", () => {
         ),
       );
 
+    const loggedErrors = captureConsoleError();
     await api.render("welcome", {});
 
+    expect(loggedErrors).toHaveLength(1);
+    expect(loggedErrors[0][0]).toBe("Render API error:");
     expect(capturedErrors.length).toBe(1);
     expect(capturedErrors[0]).toBeInstanceOf(RenderApiError);
     expect(capturedErrors[0].status).toBe(422);
@@ -146,8 +167,11 @@ describe("render-api (cliente de render y re-exports)", () => {
 
     globalThis.fetch = () => Promise.reject(new TypeError("Network error"));
 
+    const loggedErrors = captureConsoleError();
     await api.render("welcome", {});
 
+    expect(loggedErrors).toHaveLength(1);
+    expect(loggedErrors[0][0]).toBe("Render API network error:");
     expect(capturedErrors.length).toBe(1);
     expect(capturedErrors[0].status).toBe(0);
     expect(capturedErrors[0].message).toBe("No se pudo conectar con el servidor de render.");

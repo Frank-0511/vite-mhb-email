@@ -1,9 +1,29 @@
 // @ts-check
-import { describe, expect, test } from "bun:test";
+import { afterAll, describe, expect, test } from "bun:test";
 import { EventEmitter } from "node:events";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRenderRequestHandler } from "./render-request-handler.js";
+
+const originalConsole = {
+  log: console.log,
+  info: console.info,
+  warn: console.warn,
+  error: console.error,
+};
+
+// El handler informa caché, variables ESP y errores por consola; los tests
+// comprueban la respuesta HTTP, así que se silencia para no ensuciar la suite.
+// Se hace a nivel de módulo porque parte de esos avisos se emiten en promesas
+// que resuelven después del test que las disparó.
+console.log = () => {};
+console.info = () => {};
+console.warn = () => {};
+console.error = () => {};
+
+afterAll(() => {
+  Object.assign(console, originalConsole);
+});
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 
