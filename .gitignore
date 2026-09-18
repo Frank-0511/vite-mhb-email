@@ -25,6 +25,9 @@ node_modules
 # Local cache (copy-html renders, preview hydration — never commit)
 .cache/
 
+# Worktrees locales de Claude Code (scratch de la herramienta, no del proyecto)
+.claude/worktrees/
+
 # BEGIN agents:sync managed
 AGENTS.md
 CLAUDE.md
