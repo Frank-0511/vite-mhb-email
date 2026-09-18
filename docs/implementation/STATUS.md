@@ -9,51 +9,33 @@ el contrato en `PLAN.md` y el detalle reproducible en los commits y PRs.
 
 ## Resumen
 
-- ID activo: MHB-17
-- Estado: En revisión
-- Implementador: perfil UX/API (medio)
-- Revisor o autoridad de cierre: revisor UX/API
-- Rama autorizada: `feature/mhb-17`
-- Última actualización: 2026-09-12
+- ID activo: Ninguno
+- Estado: N/A — sin ID en progreso ni en revisión
+- Rama autorizada: Ninguna asignada
+- Última actualización: 2026-09-18
 - Contrato estable: `docs/implementation/PLAN.md`
 
 ## Paquete activo
 
-- MHB-17 — Alternar render y código fuente: implementado control interactivo
-  en `#topbar-controls` (`#view-mode-render` y `#view-mode-source`) y visor de
-  código fuente (`#preview-source-container`) en `#preview-frame`. El código HTML
-  se escapa de forma segura vía `textContent` sin ejecutar scripts. La
-  alternancia reutiliza el HTML en memoria sin recompilación redundante y persiste
-  en `sessionStorage` (`preview-view-mode`). Barra superior responsiva compacta de
-  2 filas para 1260px-1700px y 1 fila para >1700px, con selector de modo solo icono
-  en anchos ≤1400px y texto completo en >1400px. En modo código HTML, el visor
-  ocupa el 90% del espacio disponible y aísla las reglas de medida (600px, 375px, custom)
-  y sus controles exclusivamente a la vista previa. Suite completa con 385 pruebas
-  en verde (11 pruebas unitarias para MHB-17) y 0 violaciones en `a11y-check`.
-
-### Controles
-
-| Control                     | Resultado | Nota                                                       |
-| --------------------------- | --------- | ---------------------------------------------------------- |
-| `bun run lint:contrast`     | Verde     | 26/26 pares OK en temas light y dark.                      |
-| `bun run a11y-check`        | Verde     | 0 violaciones en las 6 rutas/temas auditadas con axe-core. |
-| `bun run lint`              | Verde     | html/js/md/json/css sin errores.                           |
-| `bun run typecheck`         | Verde     | Sin salida de `tsc --noEmit`.                              |
-| `bun run test`              | Verde     | 385 pruebas verdes (11 nuevas para MHB-17).                |
-| `bun run format:check`      | Verde     | Estilo Prettier verificado en todos los archivos.          |
-| `bun run agents:check`      | Verde     | 7 targets declarados sin conflictos.                       |
-| `bun run check:task-branch` | Verde     | Rama `feature/mhb-17` verificada.                          |
+- Ninguno. MHB-17 cerró `Completada` (ver Últimas entregas y
+  [STATUS-HISTORY.md](STATUS-HISTORY.md)); no hay ID en progreso ni en
+  revisión. No iniciar MHB-18 sin asignación explícita del orquestador.
 
 ### Riesgo y bloqueo
 
-- Ninguno vigente. La alternancia no modifica contratos públicos de API ni
-  pipeline de Maizzle/Handlebars. Accesible para teclado y lectores de pantalla.
+- Ninguno vigente.
 
-Detalle de cierre de MHB-26 (incluida la desviación de proceso de push
-directo a `master`): [STATUS-HISTORY.md](STATUS-HISTORY.md).
+Detalle de cierre de MHB-17, MHB-26 (incluida la desviación de proceso de push
+directo a `master`) y controles completos: [STATUS-HISTORY.md](STATUS-HISTORY.md).
 
 ## Últimas entregas
 
+- MHB-17: `Completada` el 2026-09-18; toggle render/código en preview
+  (`#view-mode-render`/`#view-mode-source`), visor de código con escape seguro
+  por `textContent`, persistencia en `sessionStorage`, barra superior
+  responsiva de 2 filas (1260-1700px) y 1 fila (>1700px); 385 pruebas, 0
+  violaciones `a11y-check`, 26/26 pares `lint:contrast`; commit `b8346f1` en
+  `feature/mhb-17`; aceptación manual del usuario.
 - Fix de íconos de biblioteca (fuera de MHB-17): `Completada` el 2026-09-18;
   cada categoría (Atoms/Molecules/Organisms/Templates) usa un único ícono
   compartido por todos sus componentes (`box`/`puzzle`/`component`/`file-text`),
@@ -92,6 +74,7 @@ directo a `master`): [STATUS-HISTORY.md](STATUS-HISTORY.md).
 
 | Ámbito                | Estado     | Propiedad                                     | Handoff                                          |
 | --------------------- | ---------- | --------------------------------------------- | ------------------------------------------------ |
+| MHB-17                | Completada | Toggle render/código en preview               | Aceptación manual del usuario el 2026-09-18.     |
 | Fix íconos biblioteca | Completada | Ícono único por categoría en Library (sin ID) | Aceptación manual del usuario el 2026-09-18.     |
 | MHB-27                | Completada | Corrección de hallazgos MHB-26 y `a11y-check` | Revisión independiente completada el 2026-09-11. |
 | MHB-26                | Completada | Validadores de contraste y accesibilidad      | Revisión independiente post-hoc el 2026-09-11.   |
@@ -102,6 +85,10 @@ directo a `master`): [STATUS-HISTORY.md](STATUS-HISTORY.md).
 
 ## Decisiones y desviaciones vigentes
 
+- MHB-17 cerró por aceptación manual del usuario en chat, sin un revisor
+  UX/API distinto que confirmara `Completada` como establece el criterio de
+  cierre original; queda documentado como desviación de proceso, sin bloquear
+  el cierre (mismo patrón ya usado en MHB-21/MHB-25).
 - Fix de íconos de biblioteca: se ejecutó dentro de `feature/mhb-17` sin ID
   propio en `PLAN.md`, a pedido explícito del usuario en chat (desviación de
   alcance de MHB-17 aceptada directamente en vez de detenerse a asignar ID).
@@ -129,14 +116,9 @@ directo a `master`): [STATUS-HISTORY.md](STATUS-HISTORY.md).
 
 ## Handoff
 
-- Próxima acción inmediata: Revisión independiente de MHB-17 en `feature/mhb-17`
-  (toggle en topbar de preview, distribución responsiva compacta de 2 filas en
-  1260px-1700px y 1 fila en >1700px, vista pre/code escapada, persistencia en
-  `sessionStorage`, suite de tests unitarios y validación a11y/contraste).
-- Criterio de cierre: Aceptado por revisor UX/API independiente (toggle
-  funcional render/código sin re-render redundante, sanitización por
-  textContent/escape seguro, persistencia de sesión, tests automatizados verdes
-  y sin regresiones en CI).
+- Próxima acción inmediata: Ninguna pendiente. MHB-17 y el fix de íconos de
+  biblioteca cerraron `Completada` el 2026-09-18 por aceptación manual del
+  usuario.
 - Siguiente tarea del roadmap: MHB-18 (`desbloqueado`, Fase B: guía de
   componentes y matriz documentada); no iniciar sin asignación explícita
   del orquestador.
