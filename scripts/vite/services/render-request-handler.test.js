@@ -1,8 +1,8 @@
 // @ts-check
 import { afterAll, describe, expect, test } from "bun:test";
-import { EventEmitter } from "node:events";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { simulateRequest as request } from "../test-helpers.js";
 import { createRenderRequestHandler } from "./render-request-handler.js";
 
 const originalConsole = {
@@ -26,63 +26,6 @@ afterAll(() => {
 });
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
-
-/**
- * Simula una petición HTTP sobre un middleware sin abrir puertos TCP.
- *
- * @param {(req: import("http").IncomingMessage, res: import("http").ServerResponse, next: () => void) => Promise<void> | void} middleware
- * @param {{ method?: string, url: string, body?: string }} options
- * @returns {Promise<{ status: number, body: string, headers: Map<string, string> }>}
- */
-function request(middleware, { method = "GET", url, body }) {
-  const req = /** @type {import("http").IncomingMessage} */ (
-    Object.assign(new EventEmitter(), {
-      method,
-      url,
-      headers: { host: "localhost" },
-    })
-  );
-  const headers = new Map();
-
-  return new Promise((resolve, reject) => {
-    const res = /** @type {import("http").ServerResponse} */ ({
-      statusCode: 200,
-      setHeader(name, value) {
-        headers.set(name, String(value));
-      },
-      end(responseBody) {
-        resolve({
-          status: this.statusCode,
-          body: String(responseBody ?? ""),
-          headers,
-        });
-      },
-    });
-
-    try {
-      const maybePromise = middleware(req, res, () => {
-        res.statusCode = 404;
-        res.end("Not found");
-      });
-      if (maybePromise && typeof maybePromise.catch === "function") {
-        maybePromise.catch(reject);
-      }
-    } catch (error) {
-      reject(error);
-    }
-
-    if (body !== undefined) {
-      queueMicrotask(() => {
-        req.emit("data", Buffer.from(body));
-        req.emit("end");
-      });
-    } else {
-      queueMicrotask(() => {
-        req.emit("end");
-      });
-    }
-  });
-}
 
 describe("render-request-handler (caracterización)", () => {
   test("conserva 200 text/html y X-ESP-Validation al renderizar", async () => {

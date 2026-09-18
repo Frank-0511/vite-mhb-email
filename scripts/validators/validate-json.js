@@ -25,7 +25,6 @@ for (const file of files) {
   try {
     const raw = fs.readFileSync(path.resolve(file), "utf-8");
     JSON.parse(raw);
-    console.log(`  ✅ ${file}`);
   } catch (err) {
     const message = err instanceof SyntaxError ? err.message : String(err);
     console.error(`  ❌ ${file}: ${message}`);
@@ -37,5 +36,7 @@ if (hasErrors) {
   console.error("\n  ❌ Algunos data.json tienen errores de sintaxis.\n");
   process.exit(1);
 } else {
-  console.log("\n  ✅ Todos los data.json son válidos.\n");
+  console.log(
+    `✅ ${files.length} archivo${files.length !== 1 ? "s" : ""} data.json validado${files.length !== 1 ? "s" : ""}.`,
+  );
 }

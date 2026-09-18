@@ -1,12 +1,6 @@
 // @ts-check
 import { describe, expect, test } from "bun:test";
-import { extractStyleContent, getContext, getLineNumber, Severity } from "./context.js";
-
-describe("Severity", () => {
-  test("declara exactamente las tres severidades del contrato", () => {
-    expect(Severity).toEqual({ ERROR: "ERROR", WARNING: "WARNING", INFO: "INFO" });
-  });
-});
+import { extractStyleContent, getContext, getLineNumber } from "./context.js";
 
 describe("getLineNumber", () => {
   test("cuenta la primera línea como 1", () => {

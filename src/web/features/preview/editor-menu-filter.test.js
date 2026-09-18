@@ -8,59 +8,42 @@ import {
 
 describe("editor-menu-filter", () => {
   describe("isTransformMenuItem", () => {
-    test("detects transform item by title", () => {
-      expect(isTransformMenuItem({ title: "Transform" })).toBe(true);
-      expect(isTransformMenuItem({ title: "transform data" })).toBe(true);
-    });
-
-    test("detects transform item by text", () => {
-      expect(isTransformMenuItem({ text: "Transform" })).toBe(true);
-      expect(isTransformMenuItem({ text: "transform" })).toBe(true);
-    });
-
-    test("detects transform item by className", () => {
-      expect(isTransformMenuItem({ className: "jse-transform" })).toBe(true);
-      expect(isTransformMenuItem({ className: "btn-transform-action" })).toBe(true);
-    });
-
-    test("detects transform item by filter icon", () => {
-      expect(isTransformMenuItem({ icon: { iconName: "filter" } })).toBe(true);
-    });
-
-    test("detects transform item by value or id", () => {
-      expect(isTransformMenuItem({ value: "transform" })).toBe(true);
-      expect(isTransformMenuItem({ id: "transform" })).toBe(true);
-    });
-
-    test("returns false for non-transform items", () => {
-      expect(isTransformMenuItem({ text: "Format", title: "Format JSON" })).toBe(false);
-      expect(isTransformMenuItem({ text: "Compact", title: "Compact JSON" })).toBe(false);
-      expect(isTransformMenuItem({ icon: { iconName: "undo" } })).toBe(false);
-      expect(isTransformMenuItem({ icon: { iconName: "redo" } })).toBe(false);
-      expect(isTransformMenuItem(null)).toBe(false);
-      expect(isTransformMenuItem(undefined)).toBe(false);
+    test.each([
+      [{ title: "Transform" }, true],
+      [{ title: "transform data" }, true],
+      [{ text: "Transform" }, true],
+      [{ text: "transform" }, true],
+      [{ className: "jse-transform" }, true],
+      [{ className: "btn-transform-action" }, true],
+      [{ icon: { iconName: "filter" } }, true],
+      [{ value: "transform" }, true],
+      [{ id: "transform" }, true],
+      [{ text: "Format", title: "Format JSON" }, false],
+      [{ text: "Compact", title: "Compact JSON" }, false],
+      [{ icon: { iconName: "undo" } }, false],
+      [{ icon: { iconName: "redo" } }, false],
+      [null, false],
+      [undefined, false],
+    ])("evaluates item (%j)", (item, expected) => {
+      expect(isTransformMenuItem(item)).toBe(expected);
     });
   });
 
   describe("isTreeOrTableMenuItem", () => {
-    test("detects tree mode item by text, value, title, or id", () => {
-      expect(isTreeOrTableMenuItem({ text: "tree" })).toBe(true);
-      expect(isTreeOrTableMenuItem({ value: "tree" })).toBe(true);
-      expect(isTreeOrTableMenuItem({ title: "tree" })).toBe(true);
-      expect(isTreeOrTableMenuItem({ id: "tree" })).toBe(true);
-    });
-
-    test("detects table mode item by text, value, title, or id", () => {
-      expect(isTreeOrTableMenuItem({ text: "table" })).toBe(true);
-      expect(isTreeOrTableMenuItem({ value: "table" })).toBe(true);
-      expect(isTreeOrTableMenuItem({ title: "table" })).toBe(true);
-      expect(isTreeOrTableMenuItem({ id: "table" })).toBe(true);
-    });
-
-    test("returns false for text mode or other items", () => {
-      expect(isTreeOrTableMenuItem({ text: "text", value: "text" })).toBe(false);
-      expect(isTreeOrTableMenuItem({ text: "Format" })).toBe(false);
-      expect(isTreeOrTableMenuItem(null)).toBe(false);
+    test.each([
+      [{ text: "tree" }, true],
+      [{ value: "tree" }, true],
+      [{ title: "tree" }, true],
+      [{ id: "tree" }, true],
+      [{ text: "table" }, true],
+      [{ value: "table" }, true],
+      [{ title: "table" }, true],
+      [{ id: "table" }, true],
+      [{ text: "text", value: "text" }, false],
+      [{ text: "Format" }, false],
+      [null, false],
+    ])("evaluates item (%j)", (item, expected) => {
+      expect(isTreeOrTableMenuItem(item)).toBe(expected);
     });
   });
 

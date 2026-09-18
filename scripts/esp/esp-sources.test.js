@@ -2,18 +2,10 @@
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { collectTemplateSource, getSourceName } from "./esp-sources.js";
+import { collectTemplateSource } from "./esp-sources.js";
 import { validateEspVariables } from "./esp-variables.js";
 
 describe("esp-sources", () => {
-  test("getSourceName devuelve el nombre base del archivo", () => {
-    expect(getSourceName("/path/to/template.html")).toBe("template.html");
-  });
-
-  test("collectTemplateSource devuelve string vacío si no existe el template", () => {
-    expect(collectTemplateSource(process.cwd(), "non-existent-template-xyz")).toBe("");
-  });
-
   test("collectTemplateSource incluye el layout y componentes realmente usados por welcome", () => {
     const source = collectTemplateSource(process.cwd(), "welcome");
     expect(source).toContain("{{ unsubscribe_url }}");

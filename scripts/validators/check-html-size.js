@@ -7,13 +7,19 @@ const rootDir = process.cwd();
 const GMAIL_LIMIT = 102 * 1024; // 102KB
 const WARNING_THRESHOLD = 100 * 1024; // 100KB
 
-export function checkHtmlSize() {
-  const distDir = resolve(rootDir, "dist");
+/**
+ * Verifica el tamaño de los archivos HTML generados frente al límite de Gmail (102 KB).
+ *
+ * @param {string} [distDirOverride] Directorio opcional para buscar archivos HTML.
+ * @returns {boolean} `true` si algún archivo excede límites o tiene warnings, `false` en caso contrario.
+ */
+export function checkHtmlSize(distDirOverride) {
+  const distDir = distDirOverride ?? resolve(rootDir, "dist");
   const htmlFiles = globSync("**/*.html", { cwd: distDir });
 
   if (htmlFiles.length === 0) {
-    console.log("\n⚠️  No HTML files found in dist/");
-    return;
+    console.log(`\n⚠️  No HTML files found in ${distDir}`);
+    return false;
   }
 
   console.log("\n📊 HTML Size Check for Gmail Compatibility:\n");

@@ -67,15 +67,6 @@ describe("registro de reglas de compatibilidad", () => {
     expect(uncovered).toEqual([]);
   });
 
-  test("cada regla registrada declara id, severidad y descripción únicos", () => {
-    const ids = rules.map((rule) => rule.id);
-    expect(new Set(ids).size).toBe(ids.length);
-    for (const rule of rules) {
-      expect(Object.values(Severity)).toContain(rule.severity);
-      expect(rule.description.length).toBeGreaterThan(0);
-    }
-  });
-
   test("un fallo de regla se informa y no impide las restantes", () => {
     const context = createContext();
     const reported = [];

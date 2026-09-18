@@ -1,44 +1,9 @@
 // @ts-check
 import { describe, expect, test } from "bun:test";
 import { createRenderErrorView } from "./render-error-view.js";
+import { createMockElement } from "./test-helpers.js";
 
-/**
- * Crea un nodo DOM simulado ligero para probar la vista de error sin browser.
- *
- * @param {string} [id]
- */
-function createMockDomElement(id = "") {
-  /** @type {Map<string, string>} */
-  const attributes = new Map();
-
-  return {
-    id,
-    className: "",
-    textContent: "",
-    hidden: true,
-    /** @type {any} */
-    innerHTML: undefined,
-    /**
-     * @param {string} key
-     * @param {string} value
-     */
-    setAttribute(key, value) {
-      attributes.set(key, value);
-    },
-    /**
-     * @param {string} key
-     */
-    getAttribute(key) {
-      return attributes.get(key) ?? null;
-    },
-    /**
-     * @param {string} key
-     */
-    removeAttribute(key) {
-      attributes.delete(key);
-    },
-  };
-}
+const createMockDomElement = (id = "") => createMockElement([], { id, hidden: true });
 
 describe("render-error-view (vista accesible de errores)", () => {
   test("muestra mensaje, causa y ubicación mediante textContent", () => {

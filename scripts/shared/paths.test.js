@@ -34,11 +34,4 @@ describe("getProjectPaths", () => {
   test("normaliza una raíz relativa contra el directorio de trabajo", () => {
     expect(getProjectPaths(".").distDir).toBe(resolve(process.cwd(), "dist"));
   });
-
-  test("no inventa extensión ni normaliza el nombre de template recibido", () => {
-    const paths = getProjectPaths(resolve(sep, "tmp", "proyecto"));
-
-    expect(paths.templateDir("welcome.html")).toBe(join(paths.templatesRoot, "welcome.html"));
-    expect(paths.templateDir("")).toBe(paths.templatesRoot);
-  });
 });

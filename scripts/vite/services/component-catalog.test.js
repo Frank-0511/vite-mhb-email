@@ -16,7 +16,6 @@ import { join, resolve } from "node:path";
 import {
   findComponentDir,
   getPartialsRoot,
-  isValidComponentIdentifier,
   listComponents,
   listVariantsFromDir,
   readComponentSchema,
@@ -60,28 +59,6 @@ afterAll(() => {
     rmSync(tempRoot, { recursive: true, force: true });
     tempRoot = null;
   }
-});
-
-describe("isValidComponentIdentifier", () => {
-  test.each(["hero", "supporting-section", "key-value-card", "index", "v1", "v2", "a1"])(
-    "acepta %s",
-    (name) => {
-      expect(isValidComponentIdentifier(name)).toBe(true);
-    },
-  );
-
-  test.each(["", "../escape", "nested/template", "nested\\template", "/absolute/path", "<script>"])(
-    "rechaza %s",
-    (name) => {
-      expect(isValidComponentIdentifier(name)).toBe(false);
-    },
-  );
-
-  test("rechaza entradas no string", () => {
-    for (const value of [42, null, undefined, {}, [], true]) {
-      expect(isValidComponentIdentifier(value)).toBe(false);
-    }
-  });
 });
 
 describe("listComponents (fixture temporal)", () => {

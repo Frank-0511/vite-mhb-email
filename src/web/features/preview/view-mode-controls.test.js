@@ -1,6 +1,7 @@
 // @ts-check
 import { beforeEach, describe, expect, mock, test } from "bun:test";
 
+import { createMockElement, createMockStorage } from "./test-helpers.js";
 import {
   initViewModeControls,
   setupViewModeControls,
@@ -8,80 +9,6 @@ import {
   VIEW_MODE_RENDER,
   VIEW_MODE_SOURCE,
 } from "./view-mode-controls.js";
-
-/**
- * Crea un mock de elemento DOM para testing de clases y eventos.
- *
- * @param {string[]} [initialClasses]
- * @param {Record<string, string>} [attributes]
- */
-function createMockElement(initialClasses = [], attributes = {}) {
-  const classes = new Set(initialClasses);
-  const attrs = { ...attributes };
-  /** @type {Record<string, Function[]>} */
-  const listeners = {};
-
-  return {
-    classList: {
-      add: mock((/** @type {string[]} */ ...clsList) => {
-        clsList.forEach((cls) => classes.add(cls));
-      }),
-      remove: mock((/** @type {string[]} */ ...clsList) => {
-        clsList.forEach((cls) => classes.delete(cls));
-      }),
-      contains: mock((/** @type {string} */ cls) => classes.has(cls)),
-      toggle: mock((/** @type {string} */ cls, /** @type {boolean} */ force) => {
-        if (force !== undefined) {
-          if (force) classes.add(cls);
-          else classes.delete(cls);
-        } else if (classes.has(cls)) {
-          classes.delete(cls);
-        } else {
-          classes.add(cls);
-        }
-      }),
-    },
-    textContent: "",
-    setAttribute: mock((/** @type {string} */ name, /** @type {string} */ val) => {
-      attrs[name] = String(val);
-    }),
-    getAttribute: mock((/** @type {string} */ name) => attrs[name] ?? null),
-    hasAttribute: mock((/** @type {string} */ name) => name in attrs),
-    addEventListener: mock((/** @type {string} */ evt, /** @type {Function} */ fn) => {
-      if (!listeners[evt]) listeners[evt] = [];
-      listeners[evt].push(fn);
-    }),
-    /**
-     * Dispara un evento simulado.
-     * @param {string} evt
-     */
-    trigger(evt) {
-      listeners[evt]?.forEach((fn) => fn());
-    },
-    style: {},
-  };
-}
-
-/**
- * Crea un almacenamiento simulado (SessionStorage mock).
- *
- * @param {Record<string, string>} [initialState]
- */
-function createMockStorage(initialState = {}) {
-  const store = { ...initialState };
-  return {
-    getItem: mock((/** @type {string} */ key) => store[key] ?? null),
-    setItem: mock((/** @type {string} */ key, /** @type {string} */ val) => {
-      store[key] = String(val);
-    }),
-    removeItem: mock((/** @type {string} */ key) => {
-      delete store[key];
-    }),
-    clear: mock(() => {
-      Object.keys(store).forEach((k) => delete store[k]);
-    }),
-  };
-}
 
 describe("view-mode-controls (MHB-17)", () => {
   /** @type {ReturnType<typeof createMockStorage>} */
@@ -109,18 +36,24 @@ describe("view-mode-controls (MHB-17)", () => {
     skeleton = createMockElement(["hidden"]);
   });
 
+  function createDefaultElements(overrides = {}) {
+    return {
+      renderBtn: /** @type {any} */ (renderBtn),
+      sourceBtn: /** @type {any} */ (sourceBtn),
+      iframe: /** @type {any} */ (iframe),
+      sourceContainer: /** @type {any} */ (sourceContainer),
+      sourceCode: /** @type {any} */ (sourceCode),
+      skeleton: /** @type {any} */ (skeleton),
+      ...overrides,
+    };
+  }
+
+  function initDefault(overrides = {}, storage = mockStorage) {
+    return initViewModeControls(createDefaultElements(overrides), storage);
+  }
+
   test("inicia por defecto en modo render cuando el almacenamiento de sesión está vacío", () => {
-    const controller = initViewModeControls(
-      {
-        renderBtn: /** @type {any} */ (renderBtn),
-        sourceBtn: /** @type {any} */ (sourceBtn),
-        iframe: /** @type {any} */ (iframe),
-        sourceContainer: /** @type {any} */ (sourceContainer),
-        sourceCode: /** @type {any} */ (sourceCode),
-        skeleton: /** @type {any} */ (skeleton),
-      },
-      mockStorage,
-    );
+    const controller = initDefault();
 
     expect(controller.getViewMode()).toBe(VIEW_MODE_RENDER);
     expect(renderBtn.getAttribute("aria-pressed")).toBe("true");
@@ -134,17 +67,7 @@ describe("view-mode-controls (MHB-17)", () => {
   test("restaura modo source si fue previamente guardado en la sesión activa", () => {
     mockStorage.setItem(VIEW_MODE_KEY, VIEW_MODE_SOURCE);
 
-    const controller = initViewModeControls(
-      {
-        renderBtn: /** @type {any} */ (renderBtn),
-        sourceBtn: /** @type {any} */ (sourceBtn),
-        iframe: /** @type {any} */ (iframe),
-        sourceContainer: /** @type {any} */ (sourceContainer),
-        sourceCode: /** @type {any} */ (sourceCode),
-        skeleton: /** @type {any} */ (skeleton),
-      },
-      mockStorage,
-    );
+    const controller = initDefault();
 
     expect(controller.getViewMode()).toBe(VIEW_MODE_SOURCE);
     expect(renderBtn.getAttribute("aria-pressed")).toBe("false");
@@ -156,17 +79,7 @@ describe("view-mode-controls (MHB-17)", () => {
   });
 
   test("alterna al hacer clic en los botones y persiste en sessionStorage", () => {
-    const controller = initViewModeControls(
-      {
-        renderBtn: /** @type {any} */ (renderBtn),
-        sourceBtn: /** @type {any} */ (sourceBtn),
-        iframe: /** @type {any} */ (iframe),
-        sourceContainer: /** @type {any} */ (sourceContainer),
-        sourceCode: /** @type {any} */ (sourceCode),
-        skeleton: /** @type {any} */ (skeleton),
-      },
-      mockStorage,
-    );
+    const controller = initDefault();
 
     // Clic en botón Código Fuente
     sourceBtn.trigger("click");
@@ -190,17 +103,7 @@ describe("view-mode-controls (MHB-17)", () => {
   });
 
   test("updateSourceHtml sanitiza y escapa código HTML sin evaluarlo ni ejecutar scripts", () => {
-    const controller = initViewModeControls(
-      {
-        renderBtn: /** @type {any} */ (renderBtn),
-        sourceBtn: /** @type {any} */ (sourceBtn),
-        iframe: /** @type {any} */ (iframe),
-        sourceContainer: /** @type {any} */ (sourceContainer),
-        sourceCode: /** @type {any} */ (sourceCode),
-        skeleton: /** @type {any} */ (skeleton),
-      },
-      mockStorage,
-    );
+    const controller = initDefault();
 
     const maliciousHtml =
       '<!doctype html><html><body onload="alert(1)"><script>alert("xss")</script><a href="javascript:void(0)">Link</a></body></html>';
@@ -218,17 +121,7 @@ describe("view-mode-controls (MHB-17)", () => {
     globalThis.fetch = mockFetch;
 
     try {
-      const controller = initViewModeControls(
-        {
-          renderBtn: /** @type {any} */ (renderBtn),
-          sourceBtn: /** @type {any} */ (sourceBtn),
-          iframe: /** @type {any} */ (iframe),
-          sourceContainer: /** @type {any} */ (sourceContainer),
-          sourceCode: /** @type {any} */ (sourceCode),
-          skeleton: /** @type {any} */ (skeleton),
-        },
-        mockStorage,
-      );
+      const controller = initDefault();
 
       controller.updateSourceHtml("<div>Compiled Template</div>");
 
@@ -250,17 +143,7 @@ describe("view-mode-controls (MHB-17)", () => {
     // Skeleton activo (no tiene 'hidden')
     skeleton = createMockElement([]);
 
-    const controller = initViewModeControls(
-      {
-        renderBtn: /** @type {any} */ (renderBtn),
-        sourceBtn: /** @type {any} */ (sourceBtn),
-        iframe: /** @type {any} */ (iframe),
-        sourceContainer: /** @type {any} */ (sourceContainer),
-        sourceCode: /** @type {any} */ (sourceCode),
-        skeleton: /** @type {any} */ (skeleton),
-      },
-      mockStorage,
-    );
+    const controller = initDefault();
 
     controller.applyViewMode(VIEW_MODE_SOURCE);
 
@@ -279,17 +162,7 @@ describe("view-mode-controls (MHB-17)", () => {
     };
 
     expect(() => {
-      const controller = initViewModeControls(
-        {
-          renderBtn: /** @type {any} */ (renderBtn),
-          sourceBtn: /** @type {any} */ (sourceBtn),
-          iframe: /** @type {any} */ (iframe),
-          sourceContainer: /** @type {any} */ (sourceContainer),
-          sourceCode: /** @type {any} */ (sourceCode),
-          skeleton: /** @type {any} */ (skeleton),
-        },
-        errorStorage,
-      );
+      const controller = initDefault({}, errorStorage);
 
       // No debe lanzar excepción al cambiar de modo
       controller.applyViewMode(VIEW_MODE_SOURCE);
@@ -301,19 +174,10 @@ describe("view-mode-controls (MHB-17)", () => {
     const previewFrame = createMockElement([]);
     const shell = createMockElement([]);
 
-    const controller = initViewModeControls(
-      {
-        renderBtn: /** @type {any} */ (renderBtn),
-        sourceBtn: /** @type {any} */ (sourceBtn),
-        iframe: /** @type {any} */ (iframe),
-        sourceContainer: /** @type {any} */ (sourceContainer),
-        sourceCode: /** @type {any} */ (sourceCode),
-        skeleton: /** @type {any} */ (skeleton),
-        previewFrame: /** @type {any} */ (previewFrame),
-        shell: /** @type {any} */ (shell),
-      },
-      mockStorage,
-    );
+    const controller = initDefault({
+      previewFrame: /** @type {any} */ (previewFrame),
+      shell: /** @type {any} */ (shell),
+    });
 
     expect(previewFrame.classList.contains("is-source-mode")).toBe(false);
     expect(shell.getAttribute("data-view-mode")).toBe("render");

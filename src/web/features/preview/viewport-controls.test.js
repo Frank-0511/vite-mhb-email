@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
+import { createViewportMockElements } from "./test-helpers.js";
 import {
   getCommittedCustomViewportWidth,
   getLiveCustomViewportWidth,
@@ -35,32 +36,7 @@ describe("viewport custom width controls", () => {
     });
 
     test("inicializa y retorna controlador con applyViewport si los elementos existen", () => {
-      /** @type {Record<string, any>} */
-      const elements = {
-        "viewport-desktop": {
-          addEventListener: () => {},
-          classList: { add: () => {}, remove: () => {}, toggle: () => {} },
-        },
-        "viewport-mobile": {
-          addEventListener: () => {},
-          classList: { add: () => {}, remove: () => {}, toggle: () => {} },
-        },
-        "viewport-custom": {
-          addEventListener: () => {},
-          classList: { add: () => {}, remove: () => {}, toggle: () => {} },
-        },
-        "viewport-custom-input-wrap": {
-          classList: { add: () => {}, remove: () => {}, toggle: () => {} },
-        },
-        "viewport-custom-input": {
-          addEventListener: () => {},
-          value: "600",
-          focus: () => {},
-          blur: () => {},
-        },
-        "preview-frame": { style: {} },
-        "viewport-width-indicator": { textContent: "" },
-      };
+      const elements = createViewportMockElements();
 
       const mockDom = {
         getElementById: (id) => elements[id] ?? null,
@@ -72,31 +48,7 @@ describe("viewport custom width controls", () => {
     });
 
     test("inicializa exitosamente sin viewport-width-indicator tras eliminar la barra redundante", () => {
-      /** @type {Record<string, any>} */
-      const elements = {
-        "viewport-desktop": {
-          addEventListener: () => {},
-          classList: { add: () => {}, remove: () => {}, toggle: () => {} },
-        },
-        "viewport-mobile": {
-          addEventListener: () => {},
-          classList: { add: () => {}, remove: () => {}, toggle: () => {} },
-        },
-        "viewport-custom": {
-          addEventListener: () => {},
-          classList: { add: () => {}, remove: () => {}, toggle: () => {} },
-        },
-        "viewport-custom-input-wrap": {
-          classList: { add: () => {}, remove: () => {}, toggle: () => {} },
-        },
-        "viewport-custom-input": {
-          addEventListener: () => {},
-          value: "600",
-          focus: () => {},
-          blur: () => {},
-        },
-        "preview-frame": { style: {} },
-      };
+      const elements = createViewportMockElements(false);
 
       const mockDom = {
         getElementById: (id) => elements[id] ?? null,

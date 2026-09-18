@@ -1,69 +1,7 @@
 // @ts-check
-import { afterEach, beforeEach, describe, expect, mock, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { createIframeManager } from "./iframe-manager.js";
-
-/**
- * Mock DOM para simular un elemento con classList.
- * @param {string[]} [initialClasses]
- */
-function createMockElement(initialClasses = []) {
-  const classes = new Set(initialClasses);
-  return {
-    classList: {
-      add: mock((/** @type {string} */ cls) => classes.add(cls)),
-      remove: mock((/** @type {string} */ cls) => classes.delete(cls)),
-      contains: (/** @type {string} */ cls) => classes.has(cls),
-      toggle: mock((/** @type {string} */ cls, /** @type {boolean} */ force) => {
-        if (force !== undefined) {
-          if (force) classes.add(cls);
-          else classes.delete(cls);
-        } else if (classes.has(cls)) {
-          classes.delete(cls);
-        } else {
-          classes.add(cls);
-        }
-      }),
-    },
-    style: {},
-  };
-}
-
-/**
- * Mock para un elemento iframe con contentWindow y document.
- */
-function createMockIframe() {
-  /** @type {string[]} */
-  const written = [];
-  const docElement = createMockElement();
-  const bodyElement = createMockElement();
-  const iframeEl = createMockElement(["hidden"]);
-
-  const mockDoc = {
-    open: mock(() => {}),
-    write: mock((/** @type {string} */ html) => written.push(html)),
-    close: mock(() => {}),
-    documentElement: docElement,
-    body: bodyElement,
-    getElementById: mock(() => null),
-    createElement: mock(() => createMockElement()),
-    head: {
-      appendChild: mock(() => {}),
-    },
-  };
-
-  return {
-    iframe: {
-      ...iframeEl,
-      src: "",
-      onload: null,
-      contentWindow: {
-        document: mockDoc,
-      },
-    },
-    written,
-    mockDoc,
-  };
-}
+import { createMockElement, createMockIframe } from "./test-helpers.js";
 
 describe("iframe-manager", () => {
   /** @type {Record<string, string>} */
