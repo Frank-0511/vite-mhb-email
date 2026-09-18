@@ -1,5 +1,17 @@
-import { describe, expect, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { createPuppeteerRenderer } from "./renderers.js";
+
+const originalConsoleLog = console.log;
+
+// El renderer informa su progreso por consola; los tests solo comprueban el
+// resultado, así que se silencia para no ensuciar la suite.
+beforeEach(() => {
+  console.log = () => {};
+});
+
+afterEach(() => {
+  console.log = originalConsoleLog;
+});
 
 describe("createPuppeteerRenderer", () => {
   test("devuelve false cuando el navegador no inicia, sin lanzar un navegador real", async () => {

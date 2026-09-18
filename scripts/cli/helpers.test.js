@@ -2,11 +2,12 @@
 /** @fileoverview Regresiones para la ejecución segura de procesos del CLI. */
 
 import { EventEmitter } from "node:events";
-import { beforeEach, describe, expect, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { askArchetype, askCreationMode, askSelectArchetype, run } from "./helpers.js";
 
 const spawnCalls = [];
 const children = [];
+const originalConsoleLog = console.log;
 
 function spawnMock(...args) {
   const child = new EventEmitter();
@@ -18,6 +19,13 @@ function spawnMock(...args) {
 beforeEach(() => {
   spawnCalls.length = 0;
   children.length = 0;
+  // Los prompts del CLI imprimen sus menús por diseño; aquí solo interesa el
+  // valor que devuelven, así que se silencian para no ensuciar la suite.
+  console.log = () => {};
+});
+
+afterEach(() => {
+  console.log = originalConsoleLog;
 });
 
 describe("run", () => {
