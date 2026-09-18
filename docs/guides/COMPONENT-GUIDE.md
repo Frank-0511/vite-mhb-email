@@ -60,7 +60,7 @@ final**.
   module.exports = {
     title: props.title || "Nota",
     text: props.text || "Texto de la nota.",
-    showTitle: props["show-title"] !== "false",
+    showTitle: props["show-title"] !== false,
   };
 </script>
 ```
@@ -69,9 +69,11 @@ Reglas que se derivan del pipeline:
 
 - Los atributos HTML llegan en kebab-case. `show-title="false"` se lee como
   `props["show-title"]`, no como `props.showTitle`.
-- Todo atributo llega como **string**. Un booleano se resuelve comparando
-  contra `"false"`, como hacen `hero` y `note-callout`; `props.showTitle` sin
-  comparación sería `true` incluso con `show-title="false"`.
+- El motor de componentes **convierte el valor del atributo**: `"true"` y
+  `"false"` llegan como booleanos, los numéricos como number y el resto como
+  string; un prop ausente llega como `undefined`. Por eso un booleano se
+  compara contra `false` (`props["show-title"] !== false`) y no contra la
+  cadena `"false"`, que nunca coincide.
 - Todo prop necesita un default; el componente debe renderizar sin props.
 
 ### Markup
@@ -207,7 +209,7 @@ props a los componentes hijos:
     variant: props.variant || "info",
     title: props.title || "Nota",
     text: props.text || "Texto de la nota.",
-    showTitle: props["show-title"] !== "false",
+    showTitle: props["show-title"] !== false,
   };
 </script>
 
@@ -221,9 +223,10 @@ props a los componentes hijos:
 ```
 
 Omitir un atributo en el despachador no rompe el build: el hijo usa su propio
-default y el prop del padre se pierde en silencio. `organisms/hero/index.html`
-reenvía `show-button` pero no `title` ni `subtitle`, y por eso un
-`<x-hero title="…" />` no cambia el título.
+default y el prop del padre se pierde en silencio. `organisms/hero` es el
+ejemplo vivo de este contrato y su test hermano
+(`src/emails/partials/organisms/hero/index.test.js`) lo fija para ambas
+variantes.
 
 ## Usar el componente en un template
 
@@ -263,20 +266,24 @@ elimina el `<script props>`, traduce `[[ x ]]` → `{{ x }}` y `<if>`/`<each>` a
 Handlebars, pasa el resultado por Maizzle y lo compila con Handlebars usando los
 fixtures de `component-preview-fixtures.js`.
 
-Limitaciones conocidas del preview (verificadas, no corregidas en esta guía):
+La traducción de condicionales soporta paths (`showTitle`), negación
+(`!showTitle`), comparaciones (`===`, `!==`, `==`, `!=`, `>`, `<`, `>=`, `<=`)
+contra literales o paths, y los operadores `&&` y `||`. La cadena
+`<if>` / `<elseif>` / `<else>` se traduce a un único bloque Handlebars, así que
+un `index.html` despachador también se puede previsualizar.
 
-- **Condicionales con comparación rompen el preview.** Una condición como
-  `variant === 'warning'` se traduce a `{{#if variant === 'warning'}}`, que
-  Handlebars no sabe parsear, y la respuesta es 500. Por eso un `index.html` despachador
-  **no debe declararse como variante** en `schema.json`; se declaran solo las
-  variantes concretas. Reproducible hoy pidiendo la variante `index` de
-  `organisms/hero`.
-- En el preview, `<if>` solo funciona con un identificador simple
-  (`<if condition="showTitle">`). En el build de email la comparación sí se
-  evalúa con normalidad.
+Limitaciones conocidas del preview:
+
+- Una condición fuera de esa gramática (por ejemplo una llamada a función) se
+  evalúa como **falsa** en el preview en vez de romper el render; en el build
+  de email sí se evalúa con normalidad.
 - Como el `<script props>` se elimina, los defaults del preview vienen de
   `buildHandlebarsData`, no del componente: un prop no declarado en el schema ni
   en esos fixtures se renderiza vacío.
+- Los booleanos no se comportan igual en ambos caminos: el preview recibe los
+  props como JSON (booleano real) y el build los recibe como atributo HTML
+  convertido. Un componente que siga la regla de comparar contra `false`
+  funciona en los dos.
 
 ## Checklist de creación
 
@@ -285,8 +292,7 @@ Limitaciones conocidas del preview (verificadas, no corregidas en esta guía):
 3. Añadir archivos de variante si hacen falta, y reenviar los props desde el
    despachador.
 4. Escribir `schema.json` con `name`, `description`, `variants` y `props`.
-5. Declarar en `variants` solo ids que resuelvan a archivo, y nunca el
-   despachador con comparaciones.
+5. Declarar en `variants` solo ids que resuelvan a un archivo en disco.
 6. `bun run lint:html` y `bun run lint:json` → sintaxis de markup y schema.
 7. `bun run dev` y revisar el componente en `/library`: todas las variantes y
    cada prop del formulario.
@@ -329,25 +335,25 @@ Resultado observado el 2026-09-18 en `feature/mhb-18`:
   `note-callout@src/emails/partials/atoms/note-callout`, categoría `Atoms`, sin
   ningún registro manual.
 - `_availableVariants` devuelve los tres nombres de archivo (`index`,
-  `note-callout-warning`, `note-callout-info`); las variantes `info` y
-  `warning` renderizan, y la variante `index` falla por la limitación de
-  condicionales descrita arriba.
-- `show-title="false"` oculta el título en el render, confirmando la conversión
-  de booleanos por string.
+  `note-callout-warning`, `note-callout-info`) y las variantes `info` y
+  `warning` renderizan. El despachador `index` también renderiza desde que la
+  traducción de condicionales soporta comparaciones; verificado además con
+  `organisms/hero` en sus variantes `index`, `v1` y `v2`.
+- `show-title="false"` oculta el título en el render.
 - `dist/mhb18-fixture.html` compila con **0 errores, 0 warnings y 0 info**, con
   `{{ first_name }}` y `{{ dashboard_url }}` intactos y ambos tonos presentes.
 
 ## Errores frecuentes
 
-| Síntoma                                          | Causa                                                                                      |
-| ------------------------------------------------ | ------------------------------------------------------------------------------------------ |
-| El componente no aparece en `/library`           | Falta `schema.json`, o una carpeta padre ya tiene uno y corta la búsqueda.                 |
-| El preview responde 404 `VARIANT_NOT_FOUND`      | El `id` de la variante no resuelve a `<id>.html` ni `<componente>-<id>.html`.              |
-| El preview responde 500 en una variante concreta | Condicional con comparación (`===`) en el archivo de esa variante.                         |
-| Un prop pasado desde el template no tiene efecto | El despachador no lo reenvía, o se leyó `props.showTitle` en vez de `props["show-title"]`. |
-| Un booleano en `false` se comporta como `true`   | Se usó el valor crudo en vez de comparar contra el string `"false"`.                       |
-| El build falla con `css-unsupported-props`       | CSS moderno (flex, grid, `gap`, `transform`, `calc()`, `var()`) en `<style>`.              |
-| Las variables `{{ }}` desaparecen del HTML final | Se usaron `{{ }}` para props del componente en lugar de `[[ ]]`.                           |
+| Síntoma                                             | Causa                                                                                      |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| El componente no aparece en `/library`              | Falta `schema.json`, o una carpeta padre ya tiene uno y corta la búsqueda.                 |
+| El preview responde 404 `VARIANT_NOT_FOUND`         | El `id` de la variante no resuelve a `<id>.html` ni `<componente>-<id>.html`.              |
+| Una rama condicional nunca se muestra en el preview | La condición está fuera de la gramática traducible y el preview la evalúa como falsa.      |
+| Un prop pasado desde el template no tiene efecto    | El despachador no lo reenvía, o se leyó `props.showTitle` en vez de `props["show-title"]`. |
+| Un booleano en `false` se comporta como `true`      | Se comparó contra la cadena `"false"`; el atributo ya llega convertido a booleano.         |
+| El build falla con `css-unsupported-props`          | CSS moderno (flex, grid, `gap`, `transform`, `calc()`, `var()`) en `<style>`.              |
+| Las variables `{{ }}` desaparecen del HTML final    | Se usaron `{{ }}` para props del componente en lugar de `[[ ]]`.                           |
 
 ## Límites de esta guía
 
