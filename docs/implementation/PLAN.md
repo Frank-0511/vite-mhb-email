@@ -181,22 +181,103 @@ Cada bloque es un commit propio y recuperable. El orden es obligatorio: F1 prece
 - **Implementador:** perfil UI/web con propiedad exclusiva de las superficies, esfuerzo alto. **Revisor independiente:** revisor UI distinto, responsable de ejecutar el recorrido manual completo y verificar hashes de `dist/`.
 - **Condición de escalamiento:** un bloque exige cambio visual, renombrar IDs o tocar una superficie no autorizada; `dist/` cambia; o dividir CSS exige reordenar reglas para conservar el comportamiento.
 
-## Gates globales
+## Fases
+
+### Fase C — Evidencia para la puerta de calidad
+
+- **Hallazgos que resuelve:** cobertura/tipos/rendimiento, accesibilidad, clientes reales y narrativa/release.
+- **IDs incluidos:** MHB-13, MHB-14, MHB-15, MHB-19 y MHB-20.
+- **Entregables:** mediciones reproducibles, matriz de pruebas manuales y una release posterior plenamente trazable.
+- **Riesgos:** afirmar evidencia de clientes sin pruebas; incluir secretos en capturas o documentación.
+- **Criterio de salida:** evidencia enlazable en `progress.md`; todos los bloqueadores de auditoría resueltos o explícitamente reevaluados.
+
+### Fase D — Evolución opcional y mantenimiento
+
+- **IDs incluidos:** MHB-16 y MHB-23 son opcionales; MHB-28 es requerido. MHB-26 y MHB-27 se ejecutaron en esta fase y están `Completada`.
+- **Nota de alcance:** no es una fase solo opcional. La validación automatizada de accesibilidad/contraste y la mantenibilidad del código web son requeridas: no añaden producto, pero sostienen un dashboard verificable y mantenible.
+- **Criterio de salida:** cada opcional aprobado cumple su propia aceptación; una demo accesible permite verificación, pero no equivale a publicar el caso como destacado. Los IDs requeridos cumplen su aceptación completa, sin excepción por ser trabajo interno.
+
+## Contrato obligatorio de cierre
+
+Cada elemento debe conservar en el contrato transferido objetivo, archivos, pasos, dependencias, aceptación, pruebas automáticas, validación manual, riesgos, exclusiones y evidencia esperada. Una skill puede añadir controles, pero no sustituir esos campos ni rebajar su aceptación.
+
+### Estados y revisión independiente
+
+1. `Pendiente`: dependencias o autorización todavía no satisfechas.
+2. `En progreso`: implementador asignado y propiedad de archivos registrada.
+3. `En revisión`: implementación terminada; se registran diff, comandos, resultados, desviaciones y riesgos. El implementador no puede marcarla `Completada`.
+4. `Bloqueada`: un control obligatorio falla o falta evidencia; no se inicia la tarea dependiente.
+5. `Completada`: un revisor independiente confirma aceptación, diff, pruebas, lint, typecheck/build cuando correspondan y ausencia de cambios fuera de alcance; el orquestador dicta el veredicto.
+
+### Matriz mínima de comprobación
+
+| IDs    | Prueba automática mínima                                               | Validación manual                                                                         | Evidencia de cierre                                                                      |
+| ------ | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| MHB-19 | Positivo/negativo por regla y casos felices/borde por helper crítico.  | Revisar que las fixtures no prueben implementación interna irrelevante.                   | Inventario regla/helper→tests.                                                           |
+| MHB-20 | Integración temporal de build, render, caché y exportación HTML.       | Revisar output final de un caso transaccional y uno marketing.                            | Resultados de flatten, delimitadores, gate y caché.                                      |
+| MHB-13 | Typecheck ampliado y medición repetida.                                | Revisar entorno y variabilidad.                                                           | Tabla Bun/Node/SO, comando, repeticiones y resultados.                                   |
+| MHB-14 | Validadores disponibles; no sustituyen pruebas reales.                 | Teclado/lector y Gmail/Outlook/Apple Mail con protocolo fechado.                          | Matriz por cliente/criterio, capturas sin secretos y limitaciones.                       |
+| MHB-15 | Lint, suite, build y consistencia de versión.                          | Revisar README, capturas, changelog y release antes de publicar.                          | SHA, tag, URL de release y diff final.                                                   |
+| MHB-16 | Smoke del build estático y enlaces.                                    | Navegar demo solo lectura en desktop/móvil.                                               | URL candidata, SHA desplegado y checklist.                                               |
+| MHB-23 | Tests y validadores aplicables por componente.                         | Aparición y edición en `/library`.                                                        | Schema, captura y build verde.                                                           |
+| MHB-28 | Suite completa, `lint:contrast`, `a11y-check` y test de `ef-skeleton`. | Seis combinaciones ancho×tema en Home/Preview/Library; skeletons, tabs y viewport activo. | Tabla de líneas, hashes `dist/` iguales, diff por bloque y recuento de `!important`/IDs. |
+
+### Gates globales
 
 - Todos los cambios: `bun run format:check` y `git diff --check`.
 - Markdown: `bun run lint:md`.
 - JavaScript/configuración: `bun run lint` y `bun run typecheck` según alcance.
-- Templates/layouts/CSS/build: `bun run build` y `bun run validate-email`.
-  ERROR bloquea; WARNING e INFO quedan visibles.
-- UI/API: pruebas automatizadas más recorrido manual cuando la aceptación lo
-  requiera.
+- Templates/layouts/CSS/build: `bun run build` y `bun run validate-email`; ERROR bloquea y WARNING/INFO no se ocultan.
+- UI/API: pruebas automatizadas más `bun run dev` y recorrido manual cuando corresponda.
+- Antes de cerrar una fase: instalación congelada, lint, typecheck, test, build y formato verdes en la versión de Bun fijada por el proyecto.
+- Un control obligatorio `Fallido` o `No ejecutado` impide `Completada`, salvo excepción explícita aprobada por el orquestador con riesgo y nueva acción.
 
-## Política operativa
+## Orden de ejecución
 
-- Una tarea por rama `feature/<id-en-minusculas>` y PR directo a `master`.
-- El implementador entrega `En revisión`; un revisor independiente confirma
-  aceptación, diff y evidencia antes de `Completada`.
-- `dist/` permanece versionado. Las variables ESP `{{ }}` deben preservarse y
-  `[[ page.* ]]` sigue reservado para Maizzle.
-- El orquestador conserva decisiones sobre versiones, releases, permisos,
-  cambios destructivos y alcance transversal.
+1. Completar la evidencia de integración pendiente y registrar el cierre de Fase C antes de iniciar trabajo dependiente.
+2. Ejecutar MHB-13 y MHB-14; solo entonces preparar MHB-15 y decidir una release posterior.
+3. Decidir si MHB-16 o MHB-23 aportan valor suficiente y priorizar MHB-28 tras MHB-20.
+4. Someter el producto a revisión final independiente antes de declararlo listo para presentarse como caso de portafolio.
+
+### Política de ramas y versiones conservada
+
+- Una tarea por rama `feature/<id-en-minusculas>` y PR directo a `master`; no se mezclan tareas ni se incrementa versión por cada una.
+- `v1.2.0` es el baseline publicado. Cualquier versión, tag o release posterior requiere evidencia de su alcance y aprobación explícita del orquestador.
+- Tag, CHANGELOG, versión y release deben apuntar al mismo alcance. Ningún subagente publica o mueve referencias sin aprobación del orquestador.
+- `dist/` permanece versionado; las capturas son entregables documentales. `task-verification` debe evitar commits accidentales fuera de tarea.
+
+## Criterios para estar listo para portafolio
+
+- CI cubre las rutas relevantes; lint, typecheck, pruebas, build y formato están verdes en la matriz declarada.
+- Los templates de producto, preview seguro y descarga de HTML funcionan y están verificados.
+- Hay evidencia fechada de accesibilidad, rendimiento y clientes de correo.
+- La documentación, versión, tag y release posterior concuerdan; existe una demostración candidata o instrucciones reproducibles para el flujo.
+- MHB-16 sigue opcional solo si la puerta final acepta la demostración local reproducible; si esa evidencia es insuficiente, pasa a requerida antes de `Listo para portafolio`.
+- La verificación final aprueba el caso. Publicarlo en una superficie externa del portafolio es una acción posterior y separada.
+
+## Impacto de nombre o combinación de repositorios
+
+No se cambia el repositorio ni se combina con otro caso. `EmailForge Toolkit` es el nombre de producto; `vite-mhb-email` conserva su slug, URL y paquete históricos. Toda release posterior usa ambos nombres de forma coherente.
+
+## Diseño de orquestación
+
+Las skills son contratos de procedimiento; los subagentes son ejecuciones temporales. Cada subagente recibe IDs, skills obligatorias, archivos exclusivos, controles y condición de escalamiento. Ninguna identidad se persiste como agente permanente.
+
+### Fase C — Calidad y evidencia
+
+| Línea                    | Skills obligatorias                               | Implementador y propiedad            | Revisor                       | Controles                                          | Escalar cuando                                                    |
+| ------------------------ | ------------------------------------------------- | ------------------------------------ | ----------------------------- | -------------------------------------------------- | ----------------------------------------------------------------- |
+| MHB-19/MHB-20 pruebas    | `task-verification`, skills del dominio probado   | Perfil alto; tests y fixtures        | Revisor técnico independiente | Inventario de cobertura e integración temporal     | Requiera binarios externos o cambios productivos para testear.    |
+| MHB-13 tipos/rendimiento | `email-refactor-type-safety`, `task-verification` | Perfil alto; tipos/config/mediciones | Revisor técnico               | Typecheck y protocolo reproducible                 | Amplíe alcance a TypeScript o budget CI.                          |
+| MHB-14 evidencia manual  | `email-compatibility`, `email-preview-dashboard`  | Perfil alto; matriz/capturas         | Orquestador                   | Protocolo fechado, clientes reales y accesibilidad | No haya acceso a cliente/dispositivo o aparezcan datos sensibles. |
+| MHB-15 release           | `task-verification`                               | Perfil medio; docs/version/changelog | Orquestador                   | Suite completa, tag y release coherentes           | Antes de publicación o cambio de versión.                         |
+
+### Fase D — Evolución y mantenimiento
+
+| Línea                 | Skills obligatorias                                                                           | Implementador y propiedad                     | Revisor                  | Controles                                            | Escalar cuando                                                               |
+| --------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------- | ------------------------ | ---------------------------------------------------- | ---------------------------------------------------------------------------- |
+| MHB-16 demo           | `email-project-stack`, `email-preview-dashboard`, skill de despliegue si se aprueba proveedor | Perfil alto; build estático/config de deploy  | Orquestador              | Smoke, URL, SHA y ausencia de divergencia            | Requiera proveedor, credenciales o publicación externa.                      |
+| MHB-23 componentes    | `email-compatibility`, `email-preview-dashboard`                                              | Perfil medio; partials/schemas/library        | Revisor email/UI         | Build, schema, library y visual                      | Amplíe el alcance hacia un builder.                                          |
+| MHB-28 mantenibilidad | `email-refactor-type-safety`, `email-preview-dashboard`, `task-verification`                  | Perfil alto; superficies exclusivas de MHB-28 | Revisor UI independiente | Gates, hashes de `dist/` y recorrido visual completo | Exija cambio visual, afecte `dist/` o toque una superficie fuera de alcance. |
+
+El orquestador conserva integración, decisiones transversales, cambios destructivos, versiones, releases y veredictos. Solo paraleliza líneas con archivos exclusivos y al menos dos ámbitos realmente independientes.
