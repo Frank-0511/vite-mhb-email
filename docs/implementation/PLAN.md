@@ -87,6 +87,7 @@ del PLAN o STATUS originales.
 | MHB-25 | Feature | Upgrade del sistema visual web | Home, Preview y Library necesitan una identidad visual coherente, accesible y responsive sin alterar el pipeline de email. | Requerida | MHB-24 | Tokens Space Blue en Home, Preview y Library; gates por fase en dark/light y móvil/desktop; sin cambios de email, APIs Vite ni pipeline. | B | gpt-5.6-terra | Alto |
 | MHB-26 | Habilitador técnico | Validación automatizada de accesibilidad y contraste | La verificación de contraste WCAG y accesibilidad del dashboard dependía de revisión manual en navegador. | Requerida | MHB-25 | Un validador de contraste por tokens y un checker de accesibilidad (axe-core sobre el Puppeteer existente) reportan hallazgos por texto sin abrir el navegador; hallazgos de contraste existentes quedan documentados, no corregidos en este ID. | D | gpt-5.6-terra | Medio |
 | MHB-27 | Habilitador técnico | Corregir hallazgos de MHB-26 y estabilizar `a11y-check` | `lint:contrast` reporta `action-primary` bajo AA; `a11y-check` reportaba 9 violaciones que resultaron ser falsos positivos por una carrera con el optimizador de dependencias de Vite, que enmascaraban un hallazgo real (`meta-viewport`/zoom deshabilitado). | Requerida | MHB-26 | `lint:contrast` y `a11y-check` corren en verde; `a11y-check.js` espera de forma determinista el full-reload del optimizador de Vite antes de auditar, sin falsos positivos reproducibles; el contrato de `action-primary` en `DESIGN.md` coincide con el componente real; el viewport permite zoom táctil. | D | gpt-5.6-terra | Medio |
+| MHB-28 | Habilitador técnico | Modularización de superficies web sobredimensionadas | `src/web/features/preview/` concentra 7.150 líneas (~72 % del código web) en archivos que ya no son mantenibles: `styles.css` (776 líneas, 9 dominios, 112 selectores por ID, 20 `!important`), `preview.html` (666 líneas con ~180 de skeletons y 52 de JS embebido) y `copy-html-modal.css` (476). `preview-ready.js` repite siete veces el par oculta-skeleton/muestra-contenido. Además hay `styles.css` cargado dos veces, una regla CSS muerta y cinco fragmentos HTML huérfanos de un intento de componentización abandonado. | Requerida | MHB-24, MHB-25, MHB-27 | Ningún archivo no-test de `src/web/**` supera 300 líneas; `preview.html` no contiene lógica JS; los skeletons se declaran con un Web Component en light DOM y `preview-ready.js` deja de enumerar pares de IDs a mano; cero cambio visual comprobado por `a11y-check`/`lint:contrast` y recorrido dark/light; `dist/` idéntico byte a byte antes y después. | D | gpt-5.6-terra | Alto |
 
 <!-- markdownlint-enable MD060 -->
 
@@ -760,6 +761,195 @@ del PLAN o STATUS originales.
 - **Condición de escalamiento:** que corregir el label del viewport oscuro
   requiera un cambio de token más amplio que el acotado al propio label.
 
+### MHB-28 — Modularización de superficies web sobredimensionadas
+
+- **Objetivo observable:** ningún archivo no-test de `src/web/**` supera 300
+  líneas, `preview.html` queda sin lógica JavaScript y los skeletons se
+  declaran como componente reutilizable, sin un solo cambio visual ni alteración
+  del pipeline de email.
+- **Motivación:** `src/web/features/preview/` concentra 7.150 líneas, ~72 % del
+  código web del proyecto, en archivos que mezclan dominios. La deuda ya produjo
+  bugs documentados en el propio código: los comentarios de
+  `styles.css:647-666` describen cómo un selector por ID ganó silenciosamente
+  sobre una utilidad Tailwind y el estado "seleccionado" del viewport dejó de
+  mostrarse. El riesgo no es estético, es de regresión silenciosa.
+
+#### Inventario del hallazgo (2026-09-18, medido sobre `master`)
+
+| Archivo                                          | Líneas  | Diagnóstico                                                                   |
+| ------------------------------------------------ | ------- | ----------------------------------------------------------------------------- |
+| `src/web/features/preview/styles.css`            | **776** | 9 dominios en un archivo; 112 selectores con `#`, 20 `!important`             |
+| `src/web/features/preview/preview.html`          | **666** | ~180 líneas de skeletons + `<script>` embebido de 52 líneas (610-661)         |
+| `src/web/features/preview/copy-html-modal.css`   | **476** | CSS de un único diálogo; incluye bloque "legado" con una regla muerta         |
+| `src/web/features/library/styles/library.css`    | 331     | Bajo umbral, pero repite el bloque de scrollbars light/dark cuatro veces      |
+| `src/web/features/preview/view-mode-controls.js` | 254     | En el límite; mezcla toggle de vista con escapado de HTML fuente              |
+| `src/web/features/library/main.js`               | 232     | Un objeto `app` monolítico: estado, storage, debounce, filtrado y DOM         |
+| `scripts/vite/plugins/dashboard.js`              | 209     | Solo 2 funciones: casi todo es un template string con HTML + CSS + `<script>` |
+| `src/web/features/preview/preview-ready.js`      | 98      | Siete repeticiones a mano del par oculta-skeleton/muestra-contenido           |
+
+Defectos puntuales confirmados, independientes del tamaño:
+
+1. `styles.css` se carga dos veces: `<link>` en `preview.html:9` **y**
+   `import "./styles.css"` en `main.js:22`. `home` y `library` solo usan el
+   import; el `<link>` es el sobrante.
+2. JavaScript embebido fuera de bootstrap, contra la regla de
+   `email-refactor-type-safety`: `preview.html:610-661` (tabs móviles y cierre
+   del menú `⋯`) y el `<script>` dentro del template string de `dashboard.js`.
+3. Regla CSS muerta: `.btn-build-copy` en `copy-html-modal.css:473`. Solo
+   `.btn-copy-existing` tiene consumidor (`copy-html-dialog.js:34`).
+4. `src/web/features/library/components/` son **cinco fragmentos HTML
+   huérfanos** (59 líneas): no hay `fetch()` de `.html` ni mecanismo de include
+   en todo `src/web`, y sus clases BEM (`library-sidebar__header`) no coinciden
+   con las de la página viva (`library-sidebar-header`, inline en
+   `components-library.html`). Entraron en `432d731` y quedaron abandonados.
+
+- **Decisión de arquitectura previa (acordada con el orquestador el
+  2026-09-18):** Handlebars queda reservado a `src/emails/**` y no se introduce
+  en `src/web`. La componentización del dashboard usa **Web Components
+  nativos**, el único patrón vivo del proyecto (`theme-toggle` en
+  `src/web/shared/utils/theme-toggle-component.js`, el único
+  `customElements.define` de todo `src/web`). La vía de fragmentos HTML ya se
+  intentó y quedó muerta (punto 4 del inventario); no se retoma.
+- **Restricción técnica del componente de skeleton:** `<ef-skeleton>` debe usar
+  **light DOM, nunca shadow DOM**, al contrario que `theme-toggle`. Dos razones
+  verificadas: (a) los skeletons se pintan con utilidades Tailwind
+  (`animate-pulse`, `bg-slate-200`) y `styles.css:625-636` los alcanza desde
+  fuera por ID (`.preview-shell #preview-skeleton`, `#editor-skeleton`,
+  `#actions-skeleton`); (b) `preview-ready.js` los resuelve con
+  `doc.getElementById`. Shadow DOM rompería ambas cosas.
+- **Superficies autorizadas:**
+  - Bloques obligatorios: `src/web/features/preview/styles.css` y el nuevo
+    directorio `src/web/features/preview/styles/`; `preview.html`; `main.js`
+    (solo imports y bootstrap); `preview-ready.js` y su test;
+    `copy-html-modal.css`; nuevos `src/web/features/preview/mobile-tabs.js` y
+    `src/web/shared/components/ef-skeleton.js` con sus tests; borrado de
+    `src/web/features/library/components/**`.
+  - Bloque opcional (solo con autorización explícita, ver Fases):
+    `scripts/vite/plugins/dashboard.js` y su test;
+    `src/web/features/library/styles/library.css`;
+    `src/web/features/library/main.js` y sus módulos;
+    `src/web/features/preview/view-mode-controls.js` y su test.
+  - No se modifica `src/emails/**`, Maizzle, Handlebars, variables ESP,
+    validadores, APIs Vite, `scripts/shared/**` ni el HTML dentro de iframes.
+- **Dependencias y precondiciones:** MHB-24, MHB-25 y MHB-27 `Completada`;
+  rama `feature/mhb-28` con `bun run check:task-branch` en verde antes de
+  editar; `feature/mhb-18` integrada o cerrada, para no competir por
+  `src/web/features/library/**`. No iniciar sin asignación explícita del
+  orquestador: en el orden del roadmap MHB-20 sigue primero.
+
+#### Fases y pasos técnicos
+
+Cada bloque es un commit propio y revertible por separado. El orden no es
+negociable: F1 antes de F3, porque aislar `shell-theme.css` deja a la vista las
+reglas por ID de las líneas 625-636 que F3 va a mover.
+
+- **F0 — Limpieza sin riesgo (obligatorio).**
+  1. Eliminar el `<link>` de `styles.css` en `preview.html:9` y conservar solo
+     el `import` de `main.js:22`.
+  2. Borrar la regla muerta `.btn-build-copy` de `copy-html-modal.css:473`.
+  3. Borrar los cinco fragmentos huérfanos de
+     `src/web/features/library/components/`.
+- **F1 — División de `styles.css` (obligatorio).** Cortar por las fronteras que
+  ya marcan sus propios comentarios de sección, sin reordenar reglas:
+  `layout.css` (1-114: base y modo código), `header-responsive.css` (115-328:
+  variantes de etiqueta y container queries del header), `responsive.css`
+  (329-491: tablet, móvil y móvil pequeño), `jsoneditor-theme.css` (492-584:
+  validación, errores y temas de Vanilla JSONEditor) y `shell-theme.css`
+  (585-776: shell Space Blue, selector de viewport y overrides de contraste).
+  `styles.css` queda como índice de `@import` y conserva su ruta, para no
+  romper el punto de entrada. El orden de los `@import` replica el orden
+  original: la cascada depende de él.
+- **F2 — Extracción del JavaScript embebido (obligatorio).** Mover
+  `preview.html:610-661` a `mobile-tabs.js` (tabs móviles) e integrar el cierre
+  del menú `⋯` en el `more-menu.js` existente, que ya cubre ese
+  comportamiento. `preview.html` queda solo con
+  `<script type="module" src="…/main.js">`.
+- **F3 — Componente `<ef-skeleton>` (obligatorio).** Declarar cada par
+  skeleton/contenido en el markup, por ejemplo
+  `<ef-skeleton for="topbar-controls" reveal-display="flex">`, conservando
+  intactas las clases Tailwind del skeleton actual. `markPreviewReady()` pasa a
+  recorrer los componentes y llamar `reveal()`, en vez de enumerar siete pares
+  de IDs. Dos de los siete pares no son uniformes y el componente debe
+  absorberlo de forma explícita: `template-name-skeleton` se **elimina** con
+  `.remove()` en vez de ocultarse (`preview-ready.js:34`), y el par de acciones
+  además hace `saveBtn.disabled = false` — ese `disabled` se queda fuera del
+  componente, en `main.js`. Los IDs del DOM existentes no se renombran: los
+  consumen JS, CSS y `a11y-check`.
+- **F4 — `dashboard.js` (obligatorio, riesgo bajo).** Sacar el HTML, CSS y
+  `<script>` del template string a un archivo de plantilla, dejando el plugin
+  con la lógica de `getTemplates` y el ensamblado. El markup de tarjetas Home
+  ya fue superficie autorizada de MHB-25; aquí no cambia su apariencia.
+- **F5 — Bloque opcional, solo con autorización explícita.** Dedup del bloque
+  de scrollbars light/dark en `library.css`; división de `library/main.js` en
+  `state.js` + `controller.js`; extracción del escapado de HTML fuente de
+  `view-mode-controls.js`. Ninguno de los tres es causa de bug conocido; entran
+  si el orquestador los aprueba, y su ausencia no bloquea el cierre del ID.
+
+- **Criterios de aceptación:**
+  - Ningún archivo no-test bajo `src/web/**` supera 300 líneas, y `styles.css`,
+    `preview.html` y `copy-html-modal.css` quedan por debajo del umbral.
+  - `preview.html` no contiene ningún `<script>` con lógica; solo el módulo de
+    bootstrap.
+  - `preview-ready.js` no enumera pares de IDs a mano y cubre los siete pares
+    con el componente, incluidos los dos casos no uniformes.
+  - `<ef-skeleton>` está registrado con `customElements.define`, usa light DOM
+    y tiene test propio (revelado, `reveal-mode="hide|remove"` y ausencia de
+    `for`).
+  - **Cero cambio visual:** `bun run a11y-check` y `bun run lint:contrast`
+    devuelven el mismo resultado verde que antes del ID, y el recuento de
+    `!important` y de selectores por ID no aumenta respecto al inventario.
+  - **Cero cambio en la salida de email:** `dist/*.html` idéntico byte a byte
+    antes y después del refactor.
+  - `src/web/features/library/components/` queda eliminado.
+- **Validación automática:** `bun run lint`, `bun run typecheck`,
+  `bun run test`, `bun run format:check`, `bun run build`,
+  `bun run validate-email`, `bun run lint:contrast`, `bun run a11y-check`,
+  `bun run agents:check` y `git diff --check`. Gate específico del ID:
+  capturar el hash de cada `dist/*.html` antes de empezar y compararlo al
+  cerrar; cualquier diferencia detiene el ID.
+- **Validación manual:** `bun run dev` en 375px, 768px y 1440px, en dark y
+  light, sobre las tres páginas (Home, Preview, Library). Comprobar
+  explícitamente: transición skeleton→contenido sin destello ni salto de
+  layout, tabs móviles, menú `⋯` en <480px, estado activo del selector de
+  viewport (el bug que ya documentó `styles.css:647-666`), toggle
+  render/código y modal de copiar HTML.
+- **Evidencia requerida:** tabla archivo→líneas antes y después; diff por
+  bloque (F0 a F4 en commits separados); salida de los gates; hashes de
+  `dist/*.html` antes y después; recuento de `!important` y selectores por ID
+  antes y después; recorrido manual fechado con las seis combinaciones de
+  ancho y tema.
+- **Riesgos y reversión:**
+  - Romper el orden de cascada al dividir el CSS. Mitigación: no reordenar
+    reglas dentro de un bloque y replicar el orden original en los `@import`.
+  - Especificidad: `styles.css` gana por ID sobre utilidades Tailwind en varios
+    puntos. Mover reglas puede invertir un ganador silenciosamente; por eso el
+    gate visual es `a11y-check`/`lint:contrast` más el recorrido manual, no la
+    inspección del diff.
+  - Destello de contenido (FOUC) o salto de layout si `<ef-skeleton>` altera el
+    momento del revelado. Mitigación: conservar la semántica actual de
+    `hidden`/`flex` y el `initLucideIcons()` final.
+  - Reversión: cada bloque es un commit independiente; F5 puede descartarse
+    entero sin afectar el cierre.
+- **Exclusiones específicas:**
+  - No introducir Handlebars en `src/web`: queda reservado a `src/emails/**`.
+  - No usar shadow DOM en `<ef-skeleton>`.
+  - No incorporar framework ni dependencias nuevas (React, Vue, Lit, ningún
+    framework CSS adicional) ni fuentes remotas.
+  - No rediseñar UI: el ID no tiene presupuesto de cambio visual.
+  - No renombrar IDs del DOM ni clases consumidas por CSS, JS o `a11y-check`.
+  - No migrar a TypeScript ni ampliar `tsconfig`.
+  - No tocar `src/emails/**`, Maizzle, variables ESP, validadores ni APIs Vite.
+  - No abordar `readBuiltTemplate` (`scripts/shared/built-templates.js`): es el
+    riesgo residual heredado de MHB-19 y requiere su propio ID.
+- **Implementador:** perfil UI/web con propiedad exclusiva de las superficies
+  listadas; esfuerzo alto. **Revisor independiente:** revisor UI distinto del
+  implementador, que debe ejecutar el recorrido manual completo y verificar los
+  hashes de `dist/`.
+- **Condición de escalamiento:** que un bloque no pueda cumplirse sin cambio
+  visual, sin renombrar IDs o sin tocar una superficie fuera de la lista; que
+  `dist/` cambie; o que dividir el CSS exija reordenar reglas para conservar el
+  comportamiento actual.
+
 ## Fases
 
 ### Fase A — Seguridad y trazabilidad
@@ -801,12 +991,18 @@ del PLAN o STATUS originales.
 - **Criterio de salida:** evidencia enlazable en `progress.md`; todos los
   bloqueadores de auditoría resueltos o explícitamente reevaluados.
 
-### Fase D — Evolución opcional
+### Fase D — Evolución opcional y mantenimiento
 
-- **IDs incluidos:** MHB-16, MHB-23.
+- **IDs incluidos:** MHB-16, MHB-23 (opcionales) y MHB-28 (requerido). MHB-26 y
+  MHB-27 se ejecutaron en esta fase y están `Completada`.
+- **Nota de alcance:** la fase dejó de ser solo opcional. MHB-26/MHB-27
+  (validación automatizada de accesibilidad y contraste) y MHB-28
+  (mantenibilidad del código web) son `Requerida`: no añaden producto, pero sin
+  ellos el dashboard no es verificable ni mantenible.
 - **Criterio de salida:** cada opcional aprobado cumple su propia aceptación;
   una demo accesible es apta para verificación, pero no equivale a publicar el
-  caso como destacado.
+  caso como destacado. Los IDs requeridos de la fase cumplen su aceptación
+  completa, sin excepción por ser trabajo interno.
 
 ## Contrato obligatorio de cierre
 
@@ -830,24 +1026,25 @@ pero no sustituir esos campos ni rebajar su aceptación.
 
 ### Matriz mínima de comprobación
 
-| IDs                    | Prueba automática mínima                                                    | Validación manual                                                       | Evidencia de cierre                                                |
-| ---------------------- | --------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| MHB-01/MHB-02          | Casos válidos, traversal, metacaracteres, códigos de salida y restauración. | Ejecutar acciones CLI afectadas sin shell.                              | Tests, diff de procesos y demostración de que no se escribe fuera. |
-| MHB-03/MHB-22          | Lint Markdown y comprobación de enlaces/metadata.                           | Comparar HEAD, tag, CHANGELOG, STATUS, workflow y licencia.             | Matriz de reconciliación y enlaces a evidencia.                    |
-| MHB-04                 | Validación de sintaxis y matriz de rutas; suite local completa.             | Confirmar CI remoto para cambios de workflow, layouts y HTML web.       | URL de run y tabla ruta→job.                                       |
-| MHB-05                 | Suite de regresión de comandos y filesystem.                                | Revisar mensajes y recuperación ante fallo.                             | Casos cubiertos y salida resumida.                                 |
-| MHB-06                 | Fixtures faltante, sobrante, helper y variable ESP intencional.             | Verificar aviso en preview y antes de exportar/build.                   | Captura/payload y test del gate.                                   |
-| MHB-07                 | Handler 422, payload, sanitización y cliente de error.                      | Provocar error real en preview.                                         | Captura sin rutas absolutas y tests.                               |
-| MHB-08/MHB-17          | Utilidades de descarga y estado del toggle.                                 | Descargar/abrir HTML; alternar sin recompilación redundante.            | Archivo comparado, captura y prueba de estado.                     |
-| MHB-09 a MHB-12/MHB-21 | Build y validadores sobre los cuatro templates.                             | Desktop/móvil y revisión de contenido/link/unsubscribe.                 | `dist/`, resultados por template y capturas actuales.              |
-| MHB-18                 | Lint de documentación y comprobación de snippets.                           | Crear un componente siguiendo solo la guía.                             | Componente de prueba descartable y checklist.                      |
-| MHB-19                 | Positivo/negativo por regla y casos felices/borde por helper crítico.       | Revisar que las fixtures no prueben implementación interna irrelevante. | Inventario regla/helper→tests.                                     |
-| MHB-20                 | Integración temporal de build, render, caché y exportación HTML.            | Revisar output final de un caso transaccional y uno marketing.          | Resultados de flatten, delimitadores, gate y caché.                |
-| MHB-13                 | Typecheck ampliado y medición repetida.                                     | Revisar entorno y variabilidad.                                         | Tabla con Bun/Node/SO, comando, repeticiones y resultados.         |
-| MHB-14                 | Validadores disponibles; no sustituyen pruebas reales.                      | Teclado/lector y Gmail/Outlook/Apple Mail con protocolo fechado.        | Matriz por cliente/criterio, capturas sin secretos y limitaciones. |
-| MHB-15                 | Lint, suite, build y consistencia de versión.                               | Revisar README, capturas, changelog y release antes de publicar.        | SHA, tag, URL de release y diff final.                             |
-| MHB-16                 | Smoke del build estático y enlaces.                                         | Navegar demo solo lectura en desktop/móvil.                             | URL candidata, SHA desplegado y checklist.                         |
-| MHB-23                 | Tests/validadores aplicables por componente.                                | Aparición y edición en `/library`.                                      | Schema, captura y build verde.                                     |
+| IDs                    | Prueba automática mínima                                                      | Validación manual                                                                                 | Evidencia de cierre                                                                                    |
+| ---------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| MHB-01/MHB-02          | Casos válidos, traversal, metacaracteres, códigos de salida y restauración.   | Ejecutar acciones CLI afectadas sin shell.                                                        | Tests, diff de procesos y demostración de que no se escribe fuera.                                     |
+| MHB-03/MHB-22          | Lint Markdown y comprobación de enlaces/metadata.                             | Comparar HEAD, tag, CHANGELOG, STATUS, workflow y licencia.                                       | Matriz de reconciliación y enlaces a evidencia.                                                        |
+| MHB-04                 | Validación de sintaxis y matriz de rutas; suite local completa.               | Confirmar CI remoto para cambios de workflow, layouts y HTML web.                                 | URL de run y tabla ruta→job.                                                                           |
+| MHB-05                 | Suite de regresión de comandos y filesystem.                                  | Revisar mensajes y recuperación ante fallo.                                                       | Casos cubiertos y salida resumida.                                                                     |
+| MHB-06                 | Fixtures faltante, sobrante, helper y variable ESP intencional.               | Verificar aviso en preview y antes de exportar/build.                                             | Captura/payload y test del gate.                                                                       |
+| MHB-07                 | Handler 422, payload, sanitización y cliente de error.                        | Provocar error real en preview.                                                                   | Captura sin rutas absolutas y tests.                                                                   |
+| MHB-08/MHB-17          | Utilidades de descarga y estado del toggle.                                   | Descargar/abrir HTML; alternar sin recompilación redundante.                                      | Archivo comparado, captura y prueba de estado.                                                         |
+| MHB-09 a MHB-12/MHB-21 | Build y validadores sobre los cuatro templates.                               | Desktop/móvil y revisión de contenido/link/unsubscribe.                                           | `dist/`, resultados por template y capturas actuales.                                                  |
+| MHB-18                 | Lint de documentación y comprobación de snippets.                             | Crear un componente siguiendo solo la guía.                                                       | Componente de prueba descartable y checklist.                                                          |
+| MHB-19                 | Positivo/negativo por regla y casos felices/borde por helper crítico.         | Revisar que las fixtures no prueben implementación interna irrelevante.                           | Inventario regla/helper→tests.                                                                         |
+| MHB-20                 | Integración temporal de build, render, caché y exportación HTML.              | Revisar output final de un caso transaccional y uno marketing.                                    | Resultados de flatten, delimitadores, gate y caché.                                                    |
+| MHB-13                 | Typecheck ampliado y medición repetida.                                       | Revisar entorno y variabilidad.                                                                   | Tabla con Bun/Node/SO, comando, repeticiones y resultados.                                             |
+| MHB-14                 | Validadores disponibles; no sustituyen pruebas reales.                        | Teclado/lector y Gmail/Outlook/Apple Mail con protocolo fechado.                                  | Matriz por cliente/criterio, capturas sin secretos y limitaciones.                                     |
+| MHB-15                 | Lint, suite, build y consistencia de versión.                                 | Revisar README, capturas, changelog y release antes de publicar.                                  | SHA, tag, URL de release y diff final.                                                                 |
+| MHB-16                 | Smoke del build estático y enlaces.                                           | Navegar demo solo lectura en desktop/móvil.                                                       | URL candidata, SHA desplegado y checklist.                                                             |
+| MHB-23                 | Tests/validadores aplicables por componente.                                  | Aparición y edición en `/library`.                                                                | Schema, captura y build verde.                                                                         |
+| MHB-28                 | Suite completa, `lint:contrast`, `a11y-check` y test propio de `ef-skeleton`. | Seis combinaciones ancho×tema en Home/Preview/Library; skeletons, tabs móviles y viewport activo. | Tabla líneas antes/después, hashes de `dist/` iguales, diff por bloque y recuento de `!important`/IDs. |
 
 ### Gates globales
 
