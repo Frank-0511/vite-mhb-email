@@ -29,19 +29,27 @@ el contrato en `PLAN.md` y el detalle reproducible en los commits y PRs.
 - Ejercicio desde cero con el fixture descartable `atoms/note-callout` +
   template `mhb18-fixture`: descubrimiento automático, ambas variantes
   renderizadas y `dist/mhb18-fixture.html` con 0 errores/warnings/info y `{{ }}`
-  intactas. Fixture y `dist` temporal eliminados; árbol sin residuos. Sin skill
-  nueva, sin builder y sin cambios en producto, validadores ni pipeline.
+  intactas. Fixture y `dist` temporal eliminados; árbol sin residuos.
+- Desviación de alcance aceptada por el usuario en chat: corregir los hallazgos
+  en vez de documentarlos. (1) El preview traduce la cadena
+  `<if>/<elseif>/<else>` a un único bloque Handlebars y soporta comparaciones,
+  negación y `&&`/`||` con helpers propios en una instancia aislada. (2)
+  `organisms/hero` reenvía `title`, `subtitle` y `button-text` a sus variantes.
+  (3) El motor convierte `"false"`/`"true"` a booleanos, así que el idiom
+  `props["x"] !== "false"` nunca era falso y `show-button="false"` no ocultaba
+  el CTA: corregido en `hero/index`, `hero-v1`, `hero-v2` y en la guía, que lo
+  documentaba mal. Tests hermanos nuevos; `dist/` no cambia.
 
 ### Controles
 
-| Control                   | Resultado                                              |
-| ------------------------- | ------------------------------------------------------ |
-| `bun run lint`            | Verde (HTML, JS, Markdown, JSON, CSS)                  |
-| `bun run format:check`    | Verde                                                  |
-| `bun run test`            | Verde — 478 pruebas, 0 fallos (tras rebase)            |
-| `bun run validate-email`  | Verde — 6 archivos, 0 errores, 2 warnings, 1 info      |
-| `bun run build-selective` | Verde durante el ejercicio; artefacto temporal borrado |
-| `bun run typecheck`       | No ejecutado — entrega solo documental                 |
+| Control                  | Resultado                                         |
+| ------------------------ | ------------------------------------------------- |
+| `bun run lint`           | Verde (HTML, JS, Markdown, JSON, CSS)             |
+| `bun run format:check`   | Verde                                             |
+| `bun run test`           | Verde — 493 pruebas, 0 fallos (478 antes del fix) |
+| `bun run typecheck`      | Verde                                             |
+| `bun run validate-email` | Verde — 6 archivos, 0 errores, 2 warnings, 1 info |
+| `bun run build`          | Verde — `dist/` idéntico tras corregir `hero`     |
 
 ### Riesgo y bloqueo
 
@@ -71,15 +79,9 @@ directo a `master`) y controles completos: [STATUS-HISTORY.md](STATUS-HISTORY.md
   escape por `textContent`, persistencia en `sessionStorage` y barra superior
   responsiva; 385 pruebas, `a11y-check` y `lint:contrast` en verde; commit
   `b8346f1` en `feature/mhb-17`; aceptación manual del usuario.
-- Fix de íconos de biblioteca (fuera de MHB-17): `Completada` el 2026-09-18;
-  cada categoría (Atoms/Molecules/Organisms/Templates) usa un único ícono
-  compartido por todos sus componentes (`box`/`puzzle`/`component`/`file-text`),
-  distinto del ícono de su propia categoría; corrige íconos de plantilla que no
-  renderizaban por faltar en el registro de `createIcons` y una colisión entre
-  categorías (Molecules/Organisms compartían `dna`); 385 pruebas, lint,
-  typecheck, `validate-email` y `format:check` en verde; commit `528816b` en
-  `feature/mhb-17`; desviación de alcance de MHB-17 aceptada manualmente por
-  el usuario en chat, sin ID de `PLAN.md` asignado.
+- Fix de íconos de biblioteca (desviación aceptada dentro de MHB-17, sin ID
+  propio): `Completada` el 2026-09-18; un ícono por categoría atomic design,
+  commit `528816b`; detalle en [STATUS-HISTORY.md](STATUS-HISTORY.md).
 - MHB-27: `Completada` el 2026-09-11; corrección de 6 hallazgos reales de
   accesibilidad/contraste y estabilización de `a11y-check.js`; 0 violaciones
   y 26/26 pares WCAG en verde; commit `b6c8bea` en `feature/mhb-27`.
@@ -110,14 +112,15 @@ directo a `master`) y controles completos: [STATUS-HISTORY.md](STATUS-HISTORY.md
   de cuatro tests (`render-api`, `cli/helpers`, `export/renderers`,
   `render-request-handler`) e ignorar `.claude/worktrees/` en `.gitignore`,
   fuera del bloque gestionado por `agents:sync`.
-- Hallazgos de MHB-18 documentados, no corregidos (entrega documental): el
-  preview de `/library` traduce `<if condition="...">` a `{{#if}}` de
-  Handlebars, por lo que una condición con comparación (`variant === 'v2'`)
-  devuelve 500; por eso un `index.html` despachador no debe declararse como
-  variante en `schema.json` (reproducible hoy con la variante `index` de
-  `organisms/hero`). Además, un despachador debe reenviar cada prop de forma
-  explícita: `organisms/hero/index.html` reenvía `show-button` pero no `title`
-  ni `subtitle`. Ambos puntos quedan como candidatos a un ID futuro.
+- MHB-18 incluye una desviación de alcance aceptada por el usuario en chat:
+  corregir en la misma rama los tres hallazgos del preview y de `hero` en lugar
+  de dejarlos documentados para un ID futuro. El alcance tocado son
+  `component-preview-transforms.js`, `component-preview-renderer.js` y el
+  componente `hero`, con tests hermanos nuevos; no cambia el contrato de la API
+  de componentes, el pipeline de build ni `dist/`.
+- Una condición fuera de la gramática traducible (llamadas a función, aritmética)
+  se evalúa como falsa en el preview en vez de romper el render. Es una decisión
+  de degradación consciente: el build sí la evalúa con normalidad.
 - `README.md` conserva imprecisiones fuera del alcance de MHB-18: el árbol de
   arquitectura ubica `key-value-card` en `organisms` (está en `molecules`) y el
   catálogo marca `password-reset`, `receipt` y `newsletter` como "En roadmap"

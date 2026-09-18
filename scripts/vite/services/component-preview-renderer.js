@@ -22,9 +22,16 @@ import { buildHandlebarsData } from "./component-preview-fixtures.js";
 import {
   convertMaizzleConditionals,
   convertMaizzleDelimiters,
+  registerConditionHelpers,
   stripPropsScript,
   wrapTableFragment,
 } from "./component-preview-transforms.js";
+
+/**
+ * Instancia aislada de Handlebars para el preview: registra los helpers de
+ * comparación sin contaminar el Handlebars global que usan build y templates.
+ */
+const previewHandlebars = registerConditionHelpers(Handlebars.create());
 
 /**
  * @typedef {Object} RenderComponentPreviewOptions
@@ -147,6 +154,6 @@ export async function renderComponentPreview(options) {
   });
 
   const cleanHtml = convertMaizzleDelimiters(maizzleHtml);
-  const template = Handlebars.compile(cleanHtml);
+  const template = previewHandlebars.compile(cleanHtml);
   return template(buildHandlebarsData(props));
 }
