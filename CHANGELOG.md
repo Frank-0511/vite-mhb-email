@@ -7,10 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Después de v1.1.0
+## [1.2.0] - 2026-09-18
+
+### Añadido
 
 - Añadidos alias de Bun para generar templates y exportar capturas sin depender
   del menú interactivo.
+- Validación de variables ESP en preview, build y exportación, junto con
+  mensajes de error estructurados y seguros en el preview.
+- Descarga del HTML compilado y alternancia persistente entre el render y el
+  código fuente escapado.
+- Templates de producto `password-reset`, `receipt` y `newsletter`, además de
+  enlaces verificables y `logoUrl` en `welcome`.
+- Guía reproducible de componentes, matriz de compatibilidad y cobertura de
+  reglas y helpers críticos.
+- Validadores automatizados de contraste y accesibilidad para el dashboard.
+
+### Cambiado
+
+- Modularizada la validación de emails, la API de componentes y las superficies
+  de preview sin cambiar los contratos de build, preview ni exportación.
+- Actualizada la interfaz Home, Library y Preview con tokens Space Blue,
+  skeletons y una cabecera responsive para la previsualización.
+
+### Corregido
+
 - La exportación PNG usa el navegador administrado por Puppeteer en lugar de
   binarios globales, y la instalación documenta Node.js 20 y Bun 1.3.13 como
   entorno reproducible.
@@ -71,5 +92,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - El renderizador de iconos escapa `&`, `<`, `>` y comillas en atributos antes
   de generar el SVG inline.
 
-[Unreleased]: https://github.com/Frank-0511/vite-mhb-email/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/Frank-0511/vite-mhb-email/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/Frank-0511/vite-mhb-email/releases/tag/v1.2.0
 [1.1.0]: https://github.com/Frank-0511/vite-mhb-email/releases/tag/v1.1.0
