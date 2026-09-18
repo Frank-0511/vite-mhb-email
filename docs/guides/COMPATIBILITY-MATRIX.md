@@ -95,8 +95,7 @@ se ejecute el protocolo E3.
 
 ## Estado por template
 
-Salida de `bun run validate-email` sobre `dist/` el 2026-09-18 (rama
-`feature/mhb-18`, 6 templates):
+Salida de `bun run validate-email` sobre `dist/` el 2026-09-18 (6 templates):
 
 | Template         | Errores | Warnings | Info | Detalle                                                         |
 | ---------------- | ------- | -------- | ---- | --------------------------------------------------------------- |
@@ -107,8 +106,8 @@ Salida de `bun run validate-email` sobre `dist/` el 2026-09-18 (rama
 | `example`        | 0       | 1        | 0    | `link-targets`: fixture con `href="#"` (excepción documentada). |
 | `user-created`   | 0       | 1        | 0    | `link-targets`: fixture con `href="#"` (excepción documentada). |
 
-`example` y `user-created` no son templates de producto; su warning es la
-excepción de fixture registrada al cerrar MHB-21.
+`example` y `user-created` no son templates de producto; sus warnings se
+limitan a fixtures internos.
 
 ## Elevar evidencia a E3
 

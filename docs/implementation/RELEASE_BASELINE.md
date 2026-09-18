@@ -3,8 +3,8 @@
 ## Propósito
 
 Este documento conserva la trazabilidad entre el snapshot inmutable `v1.1.0` y
-el cierre de producto `v1.2.0` de la Fase B. No autoriza publicar, mover tags,
-editar releases remotas ni incrementar versiones posteriores.
+el baseline funcional `v1.2.0`. No autoriza publicar, mover tags, editar
+releases remotas ni incrementar versiones posteriores.
 
 ## Referencias verificadas localmente
 
@@ -14,8 +14,8 @@ editar releases remotas ni incrementar versiones posteriores.
 | Línea base documental | `ce708cf178dcbb426d9aaa2cb5b8d2bd3b0b825c` | 2026-08-10 | Punto de partida definido por `PLAN.md` |
 | HEAD al reconciliar   | `c192ce31dc5b6f487821951b61e999d7b0f62a7f` | 2026-08-13 | Estado de trabajo, no una release       |
 
-`v1.1.0` es ancestro de `ce708cf` y de `v1.2.0`. El tag `v1.2.0` agrupa los
-cambios de las tareas MHB-05 a MHB-12, MHB-17, MHB-18, MHB-21, MHB-24 y MHB-25.
+`v1.1.0` es ancestro de `ce708cf` y de `v1.2.0`. El tag `v1.2.0` identifica el
+baseline funcional actual.
 El tag anotado `v1.2.0` apunta al commit de release que contiene este documento.
 
 ## Matriz de reconciliación
@@ -32,8 +32,7 @@ El tag anotado `v1.2.0` apunta al commit de release que contiene este documento.
 
 ## Política de corrección
 
-- El bloque `1.1.0` del CHANGELOG describe solo el contenido verificable del
-  tag; el bloque `1.2.0` documenta el cierre de Fase B.
+- Cada bloque del CHANGELOG describe solo el contenido verificable de su tag.
 - Todo cambio posterior se documenta bajo `Unreleased` y requiere una nueva
   decisión de versión, tag y release coherentes.
 - La presencia o contenido de una release remota debe verificarse antes de

@@ -9,8 +9,8 @@ generar archivos finales planos en `dist/<template>.html`.
 
 ## Estado de release
 
-El tag `v1.2.0` corresponde al cierre de la Fase B publicado el 2026-09-18.
-La trazabilidad entre ese cierre, el snapshot anterior y la línea base está en
+El tag `v1.2.0` es el baseline funcional publicado el 2026-09-18. La
+trazabilidad entre el snapshot y la línea base está en
 [la línea base de release](docs/implementation/RELEASE_BASELINE.md).
 
 ---
@@ -164,12 +164,12 @@ Vite abre el dashboard local en `http://localhost:5173`. Desde ahi puedes:
 
 EmailForge Toolkit define cuatro templates en su catálogo canónico:
 
-| Template         | Categoría     | Estado              | Descripción                                       |
-| ---------------- | ------------- | ------------------- | ------------------------------------------------- |
-| `welcome`        | Onboarding    | Disponible          | Email de bienvenida con credenciales y checklist  |
-| `password-reset` | Transaccional | En roadmap (MHB-10) | Recuperación de contraseña con token y expiración |
-| `receipt`        | Transaccional | En roadmap (MHB-11) | Recibo de compra con desglose de ítems y totales  |
-| `newsletter`     | Marketing     | En roadmap (MHB-12) | Boletín editorial con desuscripción obligatoria   |
+| Template         | Categoría     | Estado     | Descripción                                       |
+| ---------------- | ------------- | ---------- | ------------------------------------------------- |
+| `welcome`        | Onboarding    | Disponible | Email de bienvenida con credenciales y checklist  |
+| `password-reset` | Transaccional | Disponible | Recuperación de contraseña con token y expiración |
+| `receipt`        | Transaccional | Disponible | Recibo de compra con desglose de ítems y totales  |
+| `newsletter`     | Marketing     | Disponible | Boletín editorial con desuscripción obligatoria   |
 
 ---
 

@@ -18,8 +18,8 @@ validar y exportar templates HTML de email. Todo cambio debe preservar:
 
 - Roadmap completo y contrato por feature: `docs/implementation/PLAN.md`.
 - Estado mutable, validaciones, bloqueos y handoff: `docs/implementation/STATUS.md`.
-- El plan contiene todas las features MHB-01 a MHB-23. Ejecutar solo el ID que
-  se asigne, respetar sus dependencias y no alterar los demás sin acuerdo.
+- El plan contiene únicamente los IDs pendientes. Ejecutar solo el ID que se
+  asigne, respetar sus dependencias vigentes y no alterar los demás sin acuerdo.
 
 ## Skills locales obligatorias
 

@@ -232,9 +232,9 @@ variantes.
 
 ```html
 ---
-title: "Fixture MHB-18"
+title: "Fixture de componente"
 previewText: "Verificacion de la guia de componentes"
-titleTemplate: "Fixture MHB-18"
+titleTemplate: "Fixture de componente"
 logoUrl: "https://example.com"
 ---
 
@@ -314,8 +314,8 @@ Limitaciones conocidas del preview:
 
 ## Ejercicio reproducible
 
-Ejercicio ejecutado para validar esta guía (MHB-18). Crea un componente
-desechable, lo verifica y lo elimina.
+Ejercicio reproducible para validar esta guía. Crea un componente desechable,
+lo verifica y lo elimina.
 
 ```bash
 # 1. Componente
@@ -328,19 +328,19 @@ bun run lint:html
 bun run lint:json
 
 # 3. Template de prueba que lo consume
-mkdir -p src/emails/templates/mhb18-fixture
+mkdir -p src/emails/templates/component-fixture
 # crear index.html con <x-note-callout ... /> y data.json con las claves ESP
 
 # 4. Build y validación de compatibilidad
-bun run build-selective mhb18-fixture
+bun run build-selective component-fixture
 bun run validate-email
 
 # 5. Limpieza
-rm -rf src/emails/partials/atoms/note-callout src/emails/templates/mhb18-fixture
-rm -f dist/mhb18-fixture.html
+rm -rf src/emails/partials/atoms/note-callout src/emails/templates/component-fixture
+rm -f dist/component-fixture.html
 ```
 
-Resultado observado el 2026-09-18 en `feature/mhb-18`:
+Resultado esperado del ejercicio:
 
 - El componente aparece en el catálogo como
   `note-callout@src/emails/partials/atoms/note-callout`, categoría `Atoms`, sin
@@ -351,7 +351,7 @@ Resultado observado el 2026-09-18 en `feature/mhb-18`:
   traducción de condicionales soporta comparaciones; verificado además con
   `organisms/hero` en sus variantes `index`, `v1` y `v2`.
 - `show-title="false"` oculta el título en el render.
-- `dist/mhb18-fixture.html` compila con **0 errores, 0 warnings y 0 info**, con
+- `dist/component-fixture.html` compila con **0 errores, 0 warnings y 0 info**, con
   `{{ first_name }}` y `{{ dashboard_url }}` intactos y ambos tonos presentes.
 
 ## Errores frecuentes
