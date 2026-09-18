@@ -54,6 +54,15 @@ directo a `master`): [STATUS-HISTORY.md](STATUS-HISTORY.md).
 
 ## Últimas entregas
 
+- Fix de íconos de biblioteca (fuera de MHB-17): `Completada` el 2026-09-18;
+  cada categoría (Atoms/Molecules/Organisms/Templates) usa un único ícono
+  compartido por todos sus componentes (`box`/`puzzle`/`component`/`file-text`),
+  distinto del ícono de su propia categoría; corrige íconos de plantilla que no
+  renderizaban por faltar en el registro de `createIcons` y una colisión entre
+  categorías (Molecules/Organisms compartían `dna`); 385 pruebas, lint,
+  typecheck, `validate-email` y `format:check` en verde; commit `528816b` en
+  `feature/mhb-17`; desviación de alcance de MHB-17 aceptada manualmente por
+  el usuario en chat, sin ID de `PLAN.md` asignado.
 - MHB-27: `Completada` el 2026-09-11; corrección de 6 hallazgos reales de
   accesibilidad/contraste y estabilización de `a11y-check.js`; 0 violaciones
   y 26/26 pares WCAG en verde; commit `b6c8bea` en `feature/mhb-27`.
@@ -81,17 +90,25 @@ directo a `master`): [STATUS-HISTORY.md](STATUS-HISTORY.md).
 
 ## Ejecuciones delegadas relevantes
 
-| Ámbito               | Estado     | Propiedad                                     | Handoff                                          |
-| -------------------- | ---------- | --------------------------------------------- | ------------------------------------------------ |
-| MHB-27               | Completada | Corrección de hallazgos MHB-26 y `a11y-check` | Revisión independiente completada el 2026-09-11. |
-| MHB-26               | Completada | Validadores de contraste y accesibilidad      | Revisión independiente post-hoc el 2026-09-11.   |
-| MHB-21               | Completada | `logoUrl` en welcome, links de producto       | Aceptación manual del orquestador el 2026-09-11. |
-| MHB-25               | Completada | Tokens Space Blue, skeletons de Library       | Aceptación manual del orquestador el 2026-09-11. |
-| MHB-09               | Completada | Catálogo, dashboard, tests y documentación    | Cierre autorizado el 2026-09-09.                 |
-| MHB-10/MHB-11/MHB-12 | Completada | Templates y pruebas de catálogo/ESP           | Aceptación manual del usuario el 2026-09-09.     |
+| Ámbito                | Estado     | Propiedad                                     | Handoff                                          |
+| --------------------- | ---------- | --------------------------------------------- | ------------------------------------------------ |
+| Fix íconos biblioteca | Completada | Ícono único por categoría en Library (sin ID) | Aceptación manual del usuario el 2026-09-18.     |
+| MHB-27                | Completada | Corrección de hallazgos MHB-26 y `a11y-check` | Revisión independiente completada el 2026-09-11. |
+| MHB-26                | Completada | Validadores de contraste y accesibilidad      | Revisión independiente post-hoc el 2026-09-11.   |
+| MHB-21                | Completada | `logoUrl` en welcome, links de producto       | Aceptación manual del orquestador el 2026-09-11. |
+| MHB-25                | Completada | Tokens Space Blue, skeletons de Library       | Aceptación manual del orquestador el 2026-09-11. |
+| MHB-09                | Completada | Catálogo, dashboard, tests y documentación    | Cierre autorizado el 2026-09-09.                 |
+| MHB-10/MHB-11/MHB-12  | Completada | Templates y pruebas de catálogo/ESP           | Aceptación manual del usuario el 2026-09-09.     |
 
 ## Decisiones y desviaciones vigentes
 
+- Fix de íconos de biblioteca: se ejecutó dentro de `feature/mhb-17` sin ID
+  propio en `PLAN.md`, a pedido explícito del usuario en chat (desviación de
+  alcance de MHB-17 aceptada directamente en vez de detenerse a asignar ID).
+  El campo `icon` de `schema.json` por componente queda sin usarse en el
+  renderizado de la lista de biblioteca (se preserva por si otro consumidor lo
+  necesita); el ícono real que se muestra por componente es fijo por
+  categoría (`itemIcon` en `groupByType`).
 - Excepción de fixture (MHB-21): `example` y `user-created` no son
   templates de producto y conservan `href="#"`; no requieren corrección para
   cerrar MHB-21.
