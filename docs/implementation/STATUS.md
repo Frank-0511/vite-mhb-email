@@ -9,51 +9,39 @@ el contrato en `PLAN.md` y el detalle reproducible en los commits y PRs.
 
 ## Resumen
 
-- ID activo: MHB-19
-- Estado: `En revisión` — implementación entregada, pendiente revisor técnico
-- Rama autorizada: `feature/mhb-19`
+- ID activo: Ninguno
+- Estado: N/A — sin ID en progreso ni en revisión
+- Rama autorizada: Ninguna asignada (`feature/mhb-19` cerrada, sin merge)
 - Última actualización: 2026-09-18
 - Contrato estable: `docs/implementation/PLAN.md`
 
 ## Paquete activo
 
-- MHB-19 (`En revisión`, Fase C): unit tests de helpers y reglas.
-  - Las 13 reglas de compatibilidad conservan su par positivo/negativo y suman
-    casos borde por regla (límites inclusivos, mensajes distinguibles,
-    exenciones y falsos positivos que no deben dispararse).
-  - Siete helpers críticos sin cobertura propia la reciben: `paths`,
-    `built-templates`, `component-folders`, `env`, `esp-frontmatter`,
-    `esp-data-filter` y `email-rules/context`; `handlebars.test.js` se amplía a
-    `applyHandlebars` y `getTemplateData`.
-  - Evidencia: [TEST-INVENTORY.md](TEST-INVENTORY.md) con el mapa
-    `regla → tests` y `helper → tests`, lo preexistente y lo excluido.
-  - Solo se agregan tests, fixtures aislados y documentación; ningún cambio
-    productivo. Sin porcentaje global de cobertura, por exclusión del contrato.
-  - Implementador: esta sesión. Revisor pendiente: revisor técnico alto,
-    distinto del implementador.
-
-| Control                  | Resultado                                          |
-| ------------------------ | -------------------------------------------------- |
-| `bun run test`           | Verde — 477 pruebas / 51 archivos (antes 385 / 44) |
-| `bun run typecheck`      | Verde                                              |
-| `bun run lint`           | Verde                                              |
-| `bun run format:check`   | Verde                                              |
-| `bun run build`          | Verde — 2 warnings preexistentes, no bloquean      |
-| `bun run validate-email` | Verde — 0 errores, 2 warnings preexistentes        |
+- Ninguno. MHB-19 cerró `Completada` el 2026-09-18 (ver Últimas entregas); no
+  hay ID en progreso ni en revisión. Fase B conserva MHB-18 abierta en otra
+  sesión; no iniciar MHB-20 sin asignación explícita del orquestador.
 
 ### Riesgo y bloqueo
 
-- Sin bloqueo. Riesgo residual detectado y no tratado por estar fuera del
-  alcance de MHB-19: `readBuiltTemplate` (`scripts/shared/built-templates.js`)
-  resuelve el nombre de archivo contra `dist/` sin pasar por `path-safety.js`,
-  de modo que un `../` escaparía del directorio. Requiere ID propio; no se fijó
-  ese comportamiento con un test para no consolidarlo.
+- Sin bloqueo. Riesgo residual abierto, heredado de MHB-19 y sin ID asignado:
+  `readBuiltTemplate` (`scripts/shared/built-templates.js`) resuelve el nombre
+  de archivo contra `dist/` sin pasar por `path-safety.js`, de modo que un
+  `../` escaparía del directorio. No se fijó ese comportamiento con un test
+  para no consolidarlo; requiere ID propio.
 
 Detalle de cierre de MHB-17, MHB-26 (incluida la desviación de proceso de push
 directo a `master`) y controles completos: [STATUS-HISTORY.md](STATUS-HISTORY.md).
 
 ## Últimas entregas
 
+- MHB-19: `Completada` el 2026-09-18; cobertura unitaria de reglas y helpers
+  críticos: casos borde por regla sobre los pares positivo/negativo, tests
+  hermanos en `rules/<regla>.test.js`, guard que rompe la suite si una regla
+  registrada queda sin par, y tests propios para siete helpers sin cobertura;
+  inventario en [TEST-INVENTORY.md](TEST-INVENTORY.md); 478 pruebas / 61
+  archivos (antes 385 / 44), lint, typecheck, build, `validate-email` y
+  `format:check` en verde; commits `46a9800`, `fde39e6`, `1890a14` y `51e1f18`
+  en `feature/mhb-19`; aceptación manual del usuario, sin merge.
 - MHB-17: `Completada` el 2026-09-18; toggle render/código en preview
   (`#view-mode-render`/`#view-mode-source`), visor de código con escape seguro
   por `textContent`, persistencia en `sessionStorage`, barra superior
@@ -98,6 +86,7 @@ directo a `master`) y controles completos: [STATUS-HISTORY.md](STATUS-HISTORY.md
 
 | Ámbito                | Estado     | Propiedad                                     | Handoff                                          |
 | --------------------- | ---------- | --------------------------------------------- | ------------------------------------------------ |
+| MHB-19                | Completada | Unit tests de reglas y helpers críticos       | Aceptación manual del usuario el 2026-09-18.     |
 | MHB-17                | Completada | Toggle render/código en preview               | Aceptación manual del usuario el 2026-09-18.     |
 | Fix íconos biblioteca | Completada | Ícono único por categoría en Library (sin ID) | Aceptación manual del usuario el 2026-09-18.     |
 | MHB-27                | Completada | Corrección de hallazgos MHB-26 y `a11y-check` | Revisión independiente completada el 2026-09-11. |
@@ -109,6 +98,16 @@ directo a `master`) y controles completos: [STATUS-HISTORY.md](STATUS-HISTORY.md
 
 ## Decisiones y desviaciones vigentes
 
+- MHB-19 cerró por aceptación manual del usuario en chat, sin el revisor
+  técnico alto e independiente que pide el contrato; misma desviación de
+  proceso ya documentada para MHB-17/MHB-21/MHB-25, sin bloquear el cierre.
+- Desvíos de alcance aceptados dentro de MHB-19, a pedido explícito del usuario
+  en chat: silenciar la salida esperada de cuatro tests (`render-api`,
+  `cli/helpers`, `export/renderers`, `render-request-handler`), que toca
+  `src/web/` y `scripts/` fuera de la superficie del ID, e ignorar
+  `.claude/worktrees/` en `.gitignore`. Ninguno cambia comportamiento de
+  runtime. La entrada del `.gitignore` va fuera del bloque `agents:sync`
+  gestionado para que una sincronización no la sobrescriba.
 - MHB-17 cerró por aceptación manual del usuario en chat, sin un revisor
   UX/API distinto que confirmara `Completada` como establece el criterio de
   cierre original; queda documentado como desviación de proceso, sin bloquear
@@ -140,10 +139,9 @@ directo a `master`) y controles completos: [STATUS-HISTORY.md](STATUS-HISTORY.md
 
 ## Handoff
 
-- Próxima acción inmediata: revisar MHB-19 en `feature/mhb-19` (worktree
-  `.claude/worktrees/mhb-19`). Revisor técnico alto distinto del implementador;
-  confirmar que los casos prueban comportamiento observable y no detalles de
-  implementación antes de `Completada`.
+- Próxima acción inmediata: decidir el merge de `feature/mhb-19` a `master`
+  (cuatro commits, sin push ni PR). MHB-19 ya cerró `Completada`; el merge es
+  decisión del orquestador y no bloquea otros IDs.
 - Siguiente tarea del roadmap: MHB-20 (`desbloqueado`, Fase C: integración
   build, render, caché y exportación); MHB-18 sigue `desbloqueado` en Fase B y
   se trabaja en otra sesión. No iniciar ninguno sin asignación explícita del
