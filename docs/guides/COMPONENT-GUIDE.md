@@ -235,6 +235,7 @@ variantes.
 title: "Fixture MHB-18"
 previewText: "Verificacion de la guia de componentes"
 titleTemplate: "Fixture MHB-18"
+logoUrl: "https://example.com"
 ---
 
 <x-main>
@@ -242,6 +243,16 @@ titleTemplate: "Fixture MHB-18"
 
   <x-note-callout variant="info" title="Nota informativa" text="Creado siguiendo la guia." />
 </x-main>
+```
+
+`data.json` debe declarar las variables ESP del contenido y del layout:
+
+```json
+{
+  "first_name": "Ana",
+  "dashboard_url": "https://example.com/dashboard",
+  "unsubscribe_url": "https://example.com/unsubscribe"
+}
 ```
 
 - El tag es `x-` + nombre de la carpeta del componente.

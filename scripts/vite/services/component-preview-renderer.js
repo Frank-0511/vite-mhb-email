@@ -139,6 +139,10 @@ export async function renderComponentPreview(options) {
   componentHtml = stripPropsScript(componentHtml);
   componentHtml = convertMaizzleDelimiters(componentHtml);
   componentHtml = convertMaizzleConditionals(componentHtml);
+  const previewData = buildHandlebarsData(props);
+  // Materializa las props antes de que Maizzle expanda un despachador hacia sus
+  // hijos; así los booleanos llegan como atributos reales y no como "{{...}}".
+  componentHtml = previewHandlebars.compile(componentHtml)(previewData);
   const layoutHtml = wrapTableFragment(componentHtml);
 
   const { html: maizzleHtml } = await render(buildPreviewDocument(layoutHtml), {
@@ -155,5 +159,5 @@ export async function renderComponentPreview(options) {
 
   const cleanHtml = convertMaizzleDelimiters(maizzleHtml);
   const template = previewHandlebars.compile(cleanHtml);
-  return template(buildHandlebarsData(props));
+  return template(previewData);
 }

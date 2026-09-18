@@ -9,16 +9,16 @@ el contrato en `PLAN.md` y el detalle reproducible en los commits y PRs.
 
 ## Resumen
 
-- ID activo: MHB-18
-- Estado: En revisión
-- Rama autorizada: `feature/mhb-18` (rebasada sobre `master` con MHB-19 ya
+- ID activo: Ninguno
+- Estado: MHB-18 `Completada` por aceptación manual del usuario
+- Última rama: `feature/mhb-18` (rebasada sobre `master` con MHB-19 ya
   integrada)
 - Última actualización: 2026-09-18
 - Contrato estable: `docs/implementation/PLAN.md`
 
-## Paquete activo
+## Último cierre
 
-- MHB-18 (`En revisión`): guía de componentes y matriz de compatibilidad
+- MHB-18 (`Completada`): guía de componentes y matriz de compatibilidad
   documentada. Asignación explícita del orquestador (usuario) el 2026-09-18;
   dependencias MHB-10/MHB-11/MHB-12 `Completada`. Rama `feature/mhb-18`.
 - Entregables: `docs/guides/COMPONENT-GUIDE.md` (estructura, `schema.json`,
@@ -26,10 +26,11 @@ el contrato en `PLAN.md` y el detalle reproducible en los commits y PRs.
   `docs/guides/COMPATIBILITY-MATRIX.md` (niveles E0–E3, 13 reglas estáticas,
   matriz por cliente y protocolo para elevar a E3). `README.md` los enlaza y
   completa la tabla de reglas de 10 a 13 entradas.
-- Ejercicio desde cero con el fixture descartable `atoms/note-callout` +
-  template `mhb18-fixture`: descubrimiento automático, ambas variantes
-  renderizadas y `dist/mhb18-fixture.html` con 0 errores/warnings/info y `{{ }}`
-  intactas. Fixture y `dist` temporal eliminados; árbol sin residuos.
+- Ejercicio independiente desde cero con el fixture descartable
+  `atoms/note-callout` + template `mhb18-fixture`: descubrimiento automático,
+  ambas variantes y el despachador `index` renderizados; `showTitle: false`
+  preservado en preview y `dist/mhb18-fixture.html` con 0 errores/warnings/info.
+  Fixture y `dist` temporal eliminados; árbol sin residuos.
 - Desviación de alcance aceptada por el usuario en chat: corregir los hallazgos
   en vez de documentarlos. (1) El preview traduce la cadena
   `<if>/<elseif>/<else>` a un único bloque Handlebars y soporta comparaciones,
@@ -46,7 +47,7 @@ el contrato en `PLAN.md` y el detalle reproducible en los commits y PRs.
 | ------------------------ | ------------------------------------------------- |
 | `bun run lint`           | Verde (HTML, JS, Markdown, JSON, CSS)             |
 | `bun run format:check`   | Verde                                             |
-| `bun run test`           | Verde — 493 pruebas, 0 fallos (478 antes del fix) |
+| `bun run test`           | Verde — 494 pruebas, 0 fallos (478 antes del fix) |
 | `bun run typecheck`      | Verde                                             |
 | `bun run validate-email` | Verde — 6 archivos, 0 errores, 2 warnings, 1 info |
 | `bun run build`          | Verde — `dist/` idéntico tras corregir `hero`     |
@@ -67,6 +68,10 @@ directo a `master`) y controles completos: [STATUS-HISTORY.md](STATUS-HISTORY.md
 
 ## Últimas entregas
 
+- MHB-18: `Completada` el 2026-09-18 por aceptación manual del usuario;
+  guía/matriz reproducibles, corrección de props booleanas en el despachador de
+  preview y ejercicio temporal sin errores, warnings ni info; 494 pruebas,
+  lint, typecheck, build, `validate-email` y formato en verde.
 - MHB-19: `Completada` el 2026-09-18; cobertura unitaria de reglas y helpers
   críticos: casos borde por regla sobre los pares positivo/negativo, tests
   hermanos en `rules/<regla>.test.js`, guard que rompe la suite si una regla
@@ -90,18 +95,18 @@ directo a `master`) y controles completos: [STATUS-HISTORY.md](STATUS-HISTORY.md
 
 ## Ejecuciones delegadas relevantes
 
-| Ámbito                | Estado      | Propiedad                                      | Handoff                                           |
-| --------------------- | ----------- | ---------------------------------------------- | ------------------------------------------------- |
-| MHB-18                | En revisión | Guía de componentes y matriz de compatibilidad | Pendiente de revisor que siga la guía desde cero. |
-| MHB-19                | Completada  | Unit tests de reglas y helpers críticos        | Aceptación manual del usuario el 2026-09-18.      |
-| MHB-17                | Completada  | Toggle render/código en preview                | Aceptación manual del usuario el 2026-09-18.      |
-| Fix íconos biblioteca | Completada  | Ícono único por categoría en Library (sin ID)  | Aceptación manual del usuario el 2026-09-18.      |
-| MHB-27                | Completada  | Corrección de hallazgos MHB-26 y `a11y-check`  | Revisión independiente completada el 2026-09-11.  |
-| MHB-26                | Completada  | Validadores de contraste y accesibilidad       | Revisión independiente post-hoc el 2026-09-11.    |
-| MHB-21                | Completada  | `logoUrl` en welcome, links de producto        | Aceptación manual del orquestador el 2026-09-11.  |
-| MHB-25                | Completada  | Tokens Space Blue, skeletons de Library        | Aceptación manual del orquestador el 2026-09-11.  |
-| MHB-09                | Completada  | Catálogo, dashboard, tests y documentación     | Cierre autorizado el 2026-09-09.                  |
-| MHB-10/MHB-11/MHB-12  | Completada  | Templates y pruebas de catálogo/ESP            | Aceptación manual del usuario el 2026-09-09.      |
+| Ámbito                | Estado     | Propiedad                                      | Handoff                                          |
+| --------------------- | ---------- | ---------------------------------------------- | ------------------------------------------------ |
+| MHB-18                | Completada | Guía de componentes y matriz de compatibilidad | Aceptación manual del usuario el 2026-09-18.     |
+| MHB-19                | Completada | Unit tests de reglas y helpers críticos        | Aceptación manual del usuario el 2026-09-18.     |
+| MHB-17                | Completada | Toggle render/código en preview                | Aceptación manual del usuario el 2026-09-18.     |
+| Fix íconos biblioteca | Completada | Ícono único por categoría en Library (sin ID)  | Aceptación manual del usuario el 2026-09-18.     |
+| MHB-27                | Completada | Corrección de hallazgos MHB-26 y `a11y-check`  | Revisión independiente completada el 2026-09-11. |
+| MHB-26                | Completada | Validadores de contraste y accesibilidad       | Revisión independiente post-hoc el 2026-09-11.   |
+| MHB-21                | Completada | `logoUrl` en welcome, links de producto        | Aceptación manual del orquestador el 2026-09-11. |
+| MHB-25                | Completada | Tokens Space Blue, skeletons de Library        | Aceptación manual del orquestador el 2026-09-11. |
+| MHB-09                | Completada | Catálogo, dashboard, tests y documentación     | Cierre autorizado el 2026-09-09.                 |
+| MHB-10/MHB-11/MHB-12  | Completada | Templates y pruebas de catálogo/ESP            | Aceptación manual del usuario el 2026-09-09.     |
 
 ## Decisiones y desviaciones vigentes
 
@@ -157,9 +162,7 @@ directo a `master`) y controles completos: [STATUS-HISTORY.md](STATUS-HISTORY.md
 
 ## Handoff
 
-- Próxima acción inmediata: revisar MHB-18 en `feature/mhb-18`. El revisor debe
-  ser distinto del implementador y crear un componente siguiendo solo
-  `docs/guides/COMPONENT-GUIDE.md`, sin contexto adicional del repositorio.
+- Próxima acción inmediata: asignar MHB-20 o mantener el roadmap sin ID activo.
 - Siguiente tarea del roadmap: MHB-20 (`desbloqueado`, Fase C: integración
   build, render, caché y exportación; dependencias MHB-07, MHB-10, MHB-11 y
   MHB-12 `Completada`); no iniciar sin asignación explícita del orquestador.

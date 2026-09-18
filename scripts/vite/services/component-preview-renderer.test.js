@@ -105,4 +105,14 @@ describe("renderComponentPreview — render válido", () => {
     });
     expect(html).toContain("Descubre todo lo que podemos hacer por ti");
   });
+
+  test("respeta showButton=false al renderizar el despachador index", async () => {
+    const html = await renderComponentPreview({
+      rootDir: process.cwd(),
+      componentName: "hero",
+      variant: "index",
+      props: { showButton: false, buttonText: "CTA que no debe aparecer" },
+    });
+    expect(html).not.toContain("CTA que no debe aparecer");
+  });
 });
