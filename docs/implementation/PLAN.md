@@ -119,10 +119,10 @@ portafolio. Después se evaluarán las mejoras de evolución y mantenibilidad.
 - **Revisor independiente:** revisor de email/UI.
 - **Condición de escalamiento:** el alcance se amplía hacia un builder o requiere nueva arquitectura.
 
-### MHB-28 — Modularización de superficies web
+### MHB-28 — Modularización de superficies web sobredimensionadas
 
 - **Objetivo observable:** ningún archivo no-test de `src/web/**` supera 300 líneas, `preview.html` queda sin lógica JavaScript y los skeletons se declaran como componente reutilizable, sin cambio visual ni alteración del pipeline de email.
-- **Motivación:** `src/web/features/preview/` concentra 7.150 líneas, cerca del 72 % del código web, en archivos que mezclan dominios. El propio código documenta un selector por ID que ganó silenciosamente sobre una utilidad y ocultó el estado seleccionado del viewport: el riesgo es una regresión silenciosa, no solo tamaño.
+- **Motivación:** `src/web/features/preview/` concentra 7.150 líneas, cerca del 72 % del código web, en archivos que mezclan dominios. Los comentarios de `styles.css:647-666` documentan cómo un selector por ID ganó silenciosamente sobre una utilidad Tailwind y el estado seleccionado del viewport dejó de mostrarse. El riesgo no es estético: es una regresión silenciosa.
 
 #### Inventario inicial (2026-09-18, sobre `master`)
 
@@ -137,38 +137,49 @@ portafolio. Después se evaluarán las mejoras de evolución y mantenibilidad.
 | `scripts/vite/plugins/dashboard.js`              |    209 | Casi todo es un template string con HTML, CSS y script.   |
 | `src/web/features/preview/preview-ready.js`      |     98 | Repite a mano siete pares skeleton/contenido.             |
 
-- **Defectos confirmados:** `styles.css` se carga por `<link>` e `import`; hay JavaScript embebido fuera de bootstrap; `.btn-build-copy` no tiene consumidor; y los cinco fragmentos en `src/web/features/library/components/` no se cargan ni coinciden con el markup vivo.
-- **Decisión de arquitectura:** Handlebars queda reservado a `src/emails/**`. El dashboard usa Web Components nativos, siguiendo `theme-toggle`; no se retoma la vía de fragmentos HTML abandonada.
-- **Restricción del skeleton:** `<ef-skeleton>` usa light DOM, nunca shadow DOM: conserva las utilidades Tailwind, los selectores existentes y el acceso actual por `getElementById`.
-- **Superficies autorizadas:** `preview/styles.css` y el nuevo directorio `preview/styles/`; `preview.html`; `main.js` solo para imports/bootstrap; `preview-ready.js` y su test; `copy-html-modal.css`; nuevos `mobile-tabs.js` y `shared/components/ef-skeleton.js` con tests; y borrado de `src/web/features/library/components/**`.
-- **Superficies opcionales, solo con autorización explícita:** `scripts/vite/plugins/dashboard.js` y test; `library.css`; `library/main.js` y módulos; `view-mode-controls.js` y test.
-- **Exclusiones de superficie:** no se modifica `src/emails/**`, Maizzle, Handlebars, variables ESP, validadores, APIs Vite, `scripts/shared/**` ni el HTML de iframes.
-- **Dependencias y precondiciones:** baseline visual y validadores de `v1.2.0` confirmados, sin edición concurrente de estas superficies; abrir una rama dedicada y ejecutar `bun run check:task-branch`. MHB-20 conserva prioridad inmediata sobre este ID.
+Defectos puntuales confirmados, independientes del tamaño:
+
+1. `styles.css` se carga dos veces: `<link>` en `preview.html:9` e `import "./styles.css"` en `main.js:22`. Home y Library usan solo el import; el `<link>` es sobrante.
+2. Hay JavaScript embebido fuera de bootstrap: `preview.html:610-661` (tabs móviles y cierre del menú `⋯`) y el `<script>` dentro del template string de `dashboard.js`.
+3. La regla CSS `.btn-build-copy` en `copy-html-modal.css:473` está muerta; solo `.btn-copy-existing` tiene consumidor (`copy-html-dialog.js:34`).
+4. `src/web/features/library/components/` contiene cinco fragmentos HTML huérfanos (59 líneas): no existe `fetch()` de `.html` ni include en `src/web`; sus clases BEM (`library-sidebar__header`) difieren de las de la página viva (`library-sidebar-header`, inline en `components-library.html`).
+
+- **Decisión de arquitectura:** Handlebars queda reservado a `src/emails/**`; no se introduce en `src/web`. La componentización del dashboard usa Web Components nativos, el patrón vivo `theme-toggle` de `src/web/shared/utils/theme-toggle-component.js`, único `customElements.define` actual. No se retoma la vía de fragmentos HTML.
+- **Restricción técnica del componente de skeleton:** `<ef-skeleton>` usa **light DOM, nunca shadow DOM**. Los skeletons se pintan con utilidades Tailwind (`animate-pulse`, `bg-slate-200`) y `styles.css:625-636` los alcanza desde fuera por ID (`.preview-shell #preview-skeleton`, `#editor-skeleton`, `#actions-skeleton`); `preview-ready.js` los resuelve con `doc.getElementById`. Shadow DOM rompería ambos contratos.
+- **Superficies autorizadas:**
+  - Obligatorias: `src/web/features/preview/styles.css` y el nuevo directorio `src/web/features/preview/styles/`; `preview.html`; `main.js` solo para imports y bootstrap; `preview-ready.js` y test; `copy-html-modal.css`; nuevos `src/web/features/preview/mobile-tabs.js` y `src/web/shared/components/ef-skeleton.js` con tests; borrado de `src/web/features/library/components/**`.
+  - Opcionales, solo con autorización explícita: `scripts/vite/plugins/dashboard.js` y test; `src/web/features/library/styles/library.css`; `src/web/features/library/main.js` y módulos; `src/web/features/preview/view-mode-controls.js` y test.
+  - Fuera de alcance: `src/emails/**`, Maizzle, Handlebars, variables ESP, validadores, APIs Vite, `scripts/shared/**` y HTML dentro de iframes.
+- **Dependencias y precondiciones:** baseline visual y validadores de `v1.2.0` confirmados; ninguna edición concurrente de estas superficies; rama `feature/mhb-28` con `bun run check:task-branch` verde antes de editar. MHB-20 conserva prioridad inmediata.
 
 #### Fases y pasos técnicos
 
-Cada bloque obligatorio es un commit propio y recuperable. F1 precede a F3: aislar `shell-theme.css` revela las reglas por ID que F3 mueve.
+Cada bloque es un commit propio y recuperable. El orden es obligatorio: F1 precede a F3 porque aislar `shell-theme.css` deja visibles las reglas por ID de las líneas 625-636 que F3 mueve.
 
-- **F0 — Limpieza sin riesgo:** quitar el `<link>` redundante de `styles.css`, borrar `.btn-build-copy` y borrar los cinco fragmentos huérfanos.
-- **F1 — División de `styles.css`:** cortar sin reordenar reglas en `layout.css`, `header-responsive.css`, `responsive.css`, `jsoneditor-theme.css` y `shell-theme.css`. `styles.css` queda como índice de `@import`; su orden replica exactamente la cascada original.
-- **F2 — JavaScript embebido:** mover tabs móviles a `mobile-tabs.js` e integrar el cierre del menú `⋯` en `more-menu.js`. `preview.html` conserva solo el módulo de bootstrap.
-- **F3 — `<ef-skeleton>`:** declarar pares skeleton/contenido con `<ef-skeleton for="..." reveal-display="flex">` conservando sus clases. `markPreviewReady()` recorre componentes y llama `reveal()`. Mantener IDs: `template-name-skeleton` se elimina con `.remove()` y el `disabled` de acciones queda explícitamente en `main.js`.
-- **F4 — Dashboard:** extraer HTML, CSS y script del template string a una plantilla, dejando el plugin con `getTemplates` y ensamblado; no se cambia la apariencia de Home.
-- **F5 — Opcional con autorización:** deduplicar scrollbars de library, separar `library/main.js` en estado/controlador y extraer escapado de HTML fuente. Su ausencia no bloquea el cierre.
+- **F0 — Limpieza sin riesgo (obligatoria):** eliminar el `<link>` de `styles.css` en `preview.html:9` y conservar el import de `main.js:22`; borrar `.btn-build-copy` de `copy-html-modal.css:473`; borrar los cinco fragmentos de `src/web/features/library/components/`.
+- **F1 — División de `styles.css` (obligatoria):** cortar por las fronteras de sus comentarios sin reordenar reglas: `layout.css` (1-114: base/modo código), `header-responsive.css` (115-328: etiquetas y container queries), `responsive.css` (329-491: tablet/móvil), `jsoneditor-theme.css` (492-584: validación/temas) y `shell-theme.css` (585-776: shell, viewport y contraste). `styles.css` conserva ruta y queda como índice de `@import` en el orden original.
+- **F2 — Extracción de JavaScript embebido (obligatoria):** mover `preview.html:610-661` a `mobile-tabs.js` e integrar el cierre de `⋯` en el `more-menu.js` existente. `preview.html` queda solo con `<script type="module" src="…/main.js">`.
+- **F3 — Componente `<ef-skeleton>` (obligatoria):** declarar cada par, por ejemplo `<ef-skeleton for="topbar-controls" reveal-display="flex">`, conservando clases Tailwind. `markPreviewReady()` recorre componentes y llama `reveal()` en vez de enumerar siete pares. Manejar explícitamente las dos excepciones: `template-name-skeleton` se elimina con `.remove()` y `saveBtn.disabled = false` queda fuera del componente en `main.js`. No renombrar IDs consumidos por JS, CSS y `a11y-check`.
+- **F4 — `dashboard.js` (obligatoria, bajo riesgo):** sacar HTML, CSS y `<script>` del template string a un archivo de plantilla; el plugin conserva `getTemplates` y ensamblado. La apariencia de las tarjetas Home no cambia.
+- **F5 — Bloque opcional, con autorización explícita:** deduplicar scrollbars light/dark en `library.css`; dividir `library/main.js` en `state.js` y `controller.js`; extraer el escapado de HTML fuente de `view-mode-controls.js`. Ninguno resuelve un bug conocido; su ausencia no bloquea el cierre.
 
 - **Criterios de aceptación:**
-  - Ningún no-test de `src/web/**` supera 300 líneas; `styles.css`, `preview.html` y `copy-html-modal.css` quedan bajo el umbral.
-  - `preview.html` no contiene lógica en `<script>` y `preview-ready.js` no enumera pares de IDs a mano; cubre los siete pares y sus dos excepciones.
-  - `<ef-skeleton>` está registrado con `customElements.define`, usa light DOM y tiene test de revelado, `hide|remove` y ausencia de `for`.
-  - Cero cambio visual: `a11y-check` y `lint:contrast` conservan resultado verde; no aumenta el número de `!important` ni selectores por ID.
-  - Cero cambio en email: `dist/*.html` es idéntico byte a byte antes y después y se elimina `src/web/features/library/components/`.
-- **Validación automática:** `bun run lint`, `bun run typecheck`, `bun run test`, `bun run format:check`, `bun run build`, `bun run validate-email`, `bun run lint:contrast`, `bun run a11y-check`, `bun run agents:check` y `git diff --check`. Antes de editar, capturar hashes de `dist/*.html` y compararlos al cierre: toda diferencia bloquea el ID.
-- **Validación manual:** con `bun run dev`, recorrer Home, Preview y Library a 375px, 768px y 1440px, en tema dark/light. Revisar skeleton→contenido, tabs móviles, menú `⋯` menor a 480px, selector de viewport, toggle render/código y modal de copiar HTML.
-- **Evidencia requerida:** tabla archivo→líneas antes/después; diff por F0–F4 en commits separados; gates; hashes de `dist`; recuento de `!important` y selectores por ID; recorrido manual fechado de ancho/tema.
-- **Riesgos y reversión:** la cascada y especificidad pueden cambiar sin una diferencia obvia; no reordenar reglas y confirmar visualmente. Un skeleton puede causar FOUC o salto de layout; conservar semántica de `hidden`/`flex` e inicialización final. Cada fase se revierte independientemente; F5 se puede descartar entero.
-- **Exclusiones específicas:** no Handlebars en `src/web`, no shadow DOM en `<ef-skeleton>`, frameworks/dependencias/fuentes remotas, rediseño, cambio de IDs o clases consumidas, TypeScript/`tsconfig`, ni cambios en email, Maizzle, variables ESP, validadores o APIs Vite. El helper de lectura de templates compilados queda fuera por requerir un ID propio.
-- **Implementador:** perfil UI/web, alto, con propiedad exclusiva de las superficies. **Revisor independiente:** revisor UI distinto, responsable del recorrido manual y de verificar hashes de `dist/`.
-- **Condición de escalamiento:** el bloque exige cambio visual, renombrar IDs, tocar una superficie fuera de lista, cambia `dist/` o requiere reordenar CSS para conservar el comportamiento.
+  - Ningún archivo no-test bajo `src/web/**` supera 300 líneas; `styles.css`, `preview.html` y `copy-html-modal.css` quedan bajo el umbral.
+  - `preview.html` no contiene `<script>` con lógica: solo el módulo de bootstrap. `preview-ready.js` no enumera pares de IDs a mano y cubre los siete pares, incluidos los dos no uniformes.
+  - `<ef-skeleton>` está registrado con `customElements.define`, usa light DOM y tiene test propio de revelado, `reveal-mode="hide|remove"` y ausencia de `for`.
+  - **Cero cambio visual:** `bun run a11y-check` y `bun run lint:contrast` devuelven el mismo resultado verde previo; el recuento de `!important` y selectores por ID no aumenta respecto al inventario.
+  - **Cero cambio en salida de email:** `dist/*.html` es idéntico byte a byte antes y después y `src/web/features/library/components/` queda eliminado.
+- **Validación automática:** `bun run lint`, `bun run typecheck`, `bun run test`, `bun run format:check`, `bun run build`, `bun run validate-email`, `bun run lint:contrast`, `bun run a11y-check`, `bun run agents:check` y `git diff --check`. Gate específico: capturar hash de cada `dist/*.html` antes de empezar y compararlo al cierre; cualquier diferencia detiene el ID.
+- **Validación manual:** ejecutar `bun run dev` a 375px, 768px y 1440px, en dark y light, sobre Home, Preview y Library. Comprobar explícitamente transición skeleton→contenido sin destello/salto de layout, tabs móviles, menú `⋯` bajo 480px, estado activo del selector de viewport, toggle render/código y modal de copiar HTML.
+- **Evidencia requerida:** tabla archivo→líneas antes/después; diff por F0–F4 en commits separados; salida de gates; hashes de `dist/*.html`; recuento de `!important` y selectores por ID antes/después; recorrido manual fechado con las seis combinaciones ancho/tema.
+- **Riesgos y reversión:**
+  - Romper la cascada al dividir CSS. Mitigación: no reordenar reglas de un bloque y replicar el orden original de `@import`.
+  - La especificidad por ID puede invertir un ganador silenciosamente; el gate es `a11y-check`/`lint:contrast` más el recorrido manual, no solo inspección de diff.
+  - `<ef-skeleton>` puede causar FOUC o salto de layout; conservar semántica de `hidden`/`flex` y el `initLucideIcons()` final.
+  - Cada bloque se revierte independientemente; F5 se puede descartar entero sin afectar el cierre.
+- **Exclusiones específicas:** no Handlebars en `src/web`; no shadow DOM en `<ef-skeleton>`; no frameworks, dependencias ni fuentes remotas; no rediseño; no renombrar IDs o clases consumidas por CSS, JS o `a11y-check`; no TypeScript ni ampliación de `tsconfig`; no tocar email, Maizzle, variables ESP, validadores o APIs Vite. `readBuiltTemplate` (`scripts/shared/built-templates.js`) queda fuera y requiere un ID propio.
+- **Implementador:** perfil UI/web con propiedad exclusiva de las superficies, esfuerzo alto. **Revisor independiente:** revisor UI distinto, responsable de ejecutar el recorrido manual completo y verificar hashes de `dist/`.
+- **Condición de escalamiento:** un bloque exige cambio visual, renombrar IDs o tocar una superficie no autorizada; `dist/` cambia; o dividir CSS exige reordenar reglas para conservar el comportamiento.
 
 ## Gates globales
 
