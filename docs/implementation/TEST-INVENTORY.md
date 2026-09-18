@@ -12,26 +12,36 @@ Suite de referencia: `bun run test` → 477 pruebas en 51 archivos, 0 fallos.
 ## Reglas de compatibilidad
 
 Fuente: `scripts/validators/email-rules/rules/`.
-Tests: `scripts/validators/email-rules/rules.test.js`.
 
-| Regla                   | Severidad | Positivo + negativo                             | Casos borde                                                                                          |
-| ----------------------- | --------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `img-dimensions`        | ERROR     | tabla `cases` (`%s conserva el caso positivo…`) | atributo ausente nombrado individualmente; una incidencia por imagen; comillas simples               |
-| `img-alt`               | WARNING   | tabla `cases`                                   | `alt` ausente vs `alt=""` vs `alt` en blanco                                                         |
-| `css-unsupported-props` | ERROR     | tabla `cases`                                   | una incidencia por propiedad y por función; ignora inline fuera de `<style>` y prefijos `-webkit-`   |
-| `doctype-present`       | ERROR     | tabla `cases`                                   | espacios previos y mayúsculas aceptados; doctype XHTML rechazado                                     |
-| `meta-charset`          | WARNING   | tabla `cases`                                   | `UTF-8`, `utf8`; rechaza `iso-8859-1`                                                                |
-| `link-targets`          | WARNING   | tabla `cases`                                   | omite `{{ }}`, merge tags Mailchimp y `mailto:`; distingue `href=""` de `href="#"`                   |
-| `max-width-check`       | WARNING   | tabla `cases`                                   | límite inclusivo 700px y 43.75rem; 701px y 44rem reportan; sin clase `.max-w-*` no opina             |
-| `color-scheme-meta`     | INFO      | tabla `cases`                                   | dark mode declarado con meta no reporta; selector `.dark-` lo dispara                                |
-| `unsubscribe-link`      | WARNING   | tabla `cases`                                   | template `emailType: transactional` exento; variantes en español; marketing sin baja reporta         |
-| `no-js-in-email`        | ERROR     | tabla `cases`                                   | una incidencia por `<script>` con su línea; `<noscript>` no confunde                                 |
-| `nested-tables-depth`   | INFO      | tabla `cases`                                   | 4 niveles admitidos, 5 reportan; tablas hermanas no acumulan profundidad                             |
-| `css-class-vs-inline`   | INFO      | tabla `cases`                                   | calla con inline presente y pocas reglas; >20 reglas con <5 inline reporta; sin `<style>` no opina   |
-| `esp-variables`         | WARNING   | `…faltantes como WARNING y sobrantes como INFO` | sin template fuente no opina; `data.json` ilegible = datos vacíos; template y datos alineados callan |
+Organización de los tests, siguiendo la convención sibling del repo:
 
-Transversal: `runRules` aísla el fallo de una regla sin frenar las restantes, y
-el registro declara `id`, severidad válida y descripción únicos por regla.
+- `rules/<regla>.test.js` — casos borde de esa regla, junto a su módulo.
+  `document.js` agrupa cuatro reglas, así que `document.test.js` las cubre a
+  las cuatro.
+- `rules.test.js` — lo que es propiedad del registro, no de una regla: la tabla
+  `cases` de pares positivo/negativo, la comprobación de que ninguna regla
+  registrada quede fuera de esa tabla, la unicidad de `id`/severidad/descripción
+  y el aislamiento de fallos de `runRules`.
+- `test-fixtures.js` — `cleanHtml`, contextos temporales y escritura de
+  templates fuente, compartidos por ambos niveles.
+
+| Regla                   | Severidad | Positivo + negativo                               | Casos borde                                                                                          |
+| ----------------------- | --------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `img-dimensions`        | ERROR     | tabla `cases` en `rules.test.js`                  | atributo ausente nombrado individualmente; una incidencia por imagen; comillas simples               |
+| `img-alt`               | WARNING   | tabla `cases` en `rules.test.js`                  | `alt` ausente vs `alt=""` vs `alt` en blanco                                                         |
+| `css-unsupported-props` | ERROR     | tabla `cases` en `rules.test.js`                  | una incidencia por propiedad y por función; ignora inline fuera de `<style>` y prefijos `-webkit-`   |
+| `doctype-present`       | ERROR     | tabla `cases` en `rules.test.js`                  | espacios previos y mayúsculas aceptados; doctype XHTML rechazado                                     |
+| `meta-charset`          | WARNING   | tabla `cases` en `rules.test.js`                  | `UTF-8`, `utf8`; rechaza `iso-8859-1`                                                                |
+| `link-targets`          | WARNING   | tabla `cases` en `rules.test.js`                  | omite `{{ }}`, merge tags Mailchimp y `mailto:`; distingue `href=""` de `href="#"`                   |
+| `max-width-check`       | WARNING   | tabla `cases` en `rules.test.js`                  | límite inclusivo 700px y 43.75rem; 701px y 44rem reportan; sin clase `.max-w-*` no opina             |
+| `color-scheme-meta`     | INFO      | tabla `cases` en `rules.test.js`                  | dark mode declarado con meta no reporta; selector `.dark-` lo dispara                                |
+| `unsubscribe-link`      | WARNING   | tabla `cases` en `rules.test.js`                  | template `emailType: transactional` exento; variantes en español; marketing sin baja reporta         |
+| `no-js-in-email`        | ERROR     | tabla `cases` en `rules.test.js`                  | una incidencia por `<script>` con su línea; `<noscript>` no confunde                                 |
+| `nested-tables-depth`   | INFO      | tabla `cases` en `rules.test.js`                  | 4 niveles admitidos, 5 reportan; tablas hermanas no acumulan profundidad                             |
+| `css-class-vs-inline`   | INFO      | tabla `cases` en `rules.test.js`                  | calla con inline presente y pocas reglas; >20 reglas con <5 inline reporta; sin `<style>` no opina   |
+| `esp-variables`         | WARNING   | en `rules/esp-variables.test.js` (necesita disco) | sin template fuente no opina; `data.json` ilegible = datos vacíos; template y datos alineados callan |
+
+Los casos borde de la última columna viven en el test hermano de cada regla.
 
 ## Helpers críticos
 
