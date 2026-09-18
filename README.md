@@ -262,6 +262,8 @@ bun scripts/generators/generate-email.js --list
 
 Desde el menú interactivo (`bun run cli` opción `[3]`), el CLI consulta si se desea crear desde cero o basarse en un arquetipo, listando todas las plantillas descubiertas dinámicamente.
 
+Para crear un componente nuevo (`index.html` + `schema.json`), variantes, props del editor y su checklist de validación: [docs/guides/COMPONENT-GUIDE.md](docs/guides/COMPONENT-GUIDE.md).
+
 ---
 
 ## CLI
@@ -297,20 +299,28 @@ bun run format:check
 
 ### Reglas de compatibilidad email
 
-| Severidad | Regla                   | Valida                                    |
-| --------- | ----------------------- | ----------------------------------------- |
-| Error     | `img-dimensions`        | Imagenes con `width` y `height` HTML      |
-| Error     | `css-unsupported-props` | CSS problematico en clientes de email     |
-| Error     | `doctype-present`       | Presencia de `<!doctype html>`            |
-| Error     | `no-js-in-email`        | Ausencia de `<script>` en el output final |
-| Warning   | `img-alt`               | Texto alternativo en imagenes             |
-| Warning   | `link-targets`          | Links reales en vez de `href="#"`         |
-| Warning   | `max-width-check`       | Ancho razonable para email                |
-| Warning   | `unsubscribe-link`      | Link de desuscripcion                     |
-| Info      | `color-scheme-meta`     | Metadata de color scheme                  |
-| Info      | `nested-tables-depth`   | Profundidad de tablas anidadas            |
+| Severidad      | Regla                   | Valida                                              |
+| -------------- | ----------------------- | --------------------------------------------------- |
+| Error          | `img-dimensions`        | Imagenes con `width` y `height` HTML                |
+| Error          | `css-unsupported-props` | CSS problematico en clientes de email               |
+| Error          | `doctype-present`       | Presencia de `<!doctype html>`                      |
+| Error          | `no-js-in-email`        | Ausencia de `<script>` en el output final           |
+| Warning        | `img-alt`               | Texto alternativo en imagenes                       |
+| Warning        | `meta-charset`          | Presencia de `<meta charset="utf-8">`               |
+| Warning        | `link-targets`          | Links reales en vez de `href="#"`                   |
+| Warning        | `max-width-check`       | Ancho razonable para email                          |
+| Warning        | `unsubscribe-link`      | Link de desuscripcion                               |
+| Warning / Info | `esp-variables`         | Variables `{{ }}` declaradas en `data.json`         |
+| Info           | `color-scheme-meta`     | Metadata de color scheme                            |
+| Info           | `nested-tables-depth`   | Profundidad de tablas anidadas                      |
+| Info           | `css-class-vs-inline`   | Relacion entre reglas en `<style>` y estilos inline |
 
 Los errores bloquean el build. Los warnings son informativos.
+
+Estas reglas son validacion estatica sobre `dist/`: no prueban el
+comportamiento real en Gmail, Outlook o Apple Mail. El alcance exacto de cada
+nivel de evidencia esta en
+[docs/guides/COMPATIBILITY-MATRIX.md](docs/guides/COMPATIBILITY-MATRIX.md).
 
 ---
 
