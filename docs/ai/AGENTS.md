@@ -54,6 +54,21 @@ asignado.
   completa, eliminarlos antes de preparar la PR; la rama entregable y `master`
   deben conservar `docs/superpowers/` vacía.
 - Una desviación de alcance detiene el ID hasta acordar su tratamiento.
+- Refactor integrado y análisis de mantenibilidad: cada tarea contempla
+  refactorizar su alcance mientras avanza; no crear tareas de refactor aisladas.
+  Cada plan incluye análisis de mantenibilidad obligatorio (inventario de líneas,
+  responsabilidad única por archivo, duplicación detectada y estructura de carpetas).
+- Límites de archivo y carpeta: ningún archivo fuente no-test supera 250 líneas
+  (tests hasta 400 líneas). Ningún directorio contiene más de 8 archivos fuente
+  sin estructurarse en subdirectorios por dominio.
+- Shared first: buscar helpers y constantes en `scripts/shared/` o
+  `src/web/shared/utils/` antes de escribir utilidades nuevas. No hardcodear
+  claves de almacenamiento (`storage-keys.js`), breakpoints, encabezados o magic numbers.
+  En frontend usar helpers centrales (`queryRequired`, `fetchJSON`, `debounce`) en vez
+  de llamadas directas al DOM o `fetch()`.
+- Menos es más: preferir eliminar código muerto o simplificar antes que agregar
+  abstracciones preventivas. Un helper se justifica con ≥2 consumidores reales o
+  manejo de error no trivial.
 - No abrir el Browser pane (preview, screenshots, navegación) por decisión
   propia; solo cuando el usuario lo solicite explícitamente. Verificar
   cambios por defecto con los comandos del proyecto (build, validate-email,

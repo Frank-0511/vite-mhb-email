@@ -2,11 +2,11 @@
 
 ## Resumen
 
-- ID activo: MHB-28
-- Estado: Completada
+- ID activo: ninguno
+- Estado: Completada (MHB-28)
 - Implementador: Perfil UI/web
 - Revisor: Revisor UI / Usuario
-- Rama: `feature/mhb-28`
+- Rama: `master`
 - Última actualización: 2026-09-21
 - Contrato activo: `docs/implementation/PLAN.md`
 
@@ -68,10 +68,12 @@
 - **Eliminación de componentes huérfanos:** Los 5 fragmentos HTML en `src/web/features/library/components/` se eliminan al no tener referencias en runtime.
 - **Estructuración en subcarpetas de `preview/modules/`:** 40+ archivos planos organizados en subcarpetas cohesivas por dominio (`controls`, `copy-html`, `editor`, `render`, `runtime`) alineando preview con la estructura modular de `library/modules/`.
 - **Sincronización de baseline de inventario:** Tras modularizar legítimamente superficies en capas 3 y 4 (nuevos submódulos y tests JS), se actualizó el baseline en `inventory-baseline.json` a 201 archivos JS para mantener el control estricto decreciente hacia MHB-30 y MHB-33.
+- **Política de refactor integrado y límites cuantitativos:** Se acuerda no crear más tareas de refactor aisladas; todo trabajo debe refactorizar mientras avanza respetando límites estrictos (≤250 líneas archivo fuente, ≤8 archivos por carpeta). Se añade MHB-35 para consolidar `shared/` y eliminar duplicación antes de la conversión a TypeScript.
 
 ## Handoff
 
-- Próxima acción inmediata: Preparación de PR y merge de `feature/mhb-28` a `master`.
+- Próxima acción inmediata: Iniciar MHB-35 en rama `feature/mhb-35`.
 - Siguiente tarea del roadmap:
-  - MHB-30 (`desbloqueado`): Núcleo y validadores en TypeScript (prerrequisito MHB-29 completado).
+  - MHB-35 (`desbloqueado`): Consolidación de shared y deduplicación (prerrequisitos MHB-20 y MHB-28 completados).
+  - MHB-30 (`bloqueado por MHB-35`): Núcleo y validadores en TypeScript.
   - MHB-14 (`desbloqueado`): Evidencia de uso y compatibilidad.
