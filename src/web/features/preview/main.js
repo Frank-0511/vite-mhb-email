@@ -7,6 +7,7 @@
 import { queryRequired } from "../../shared/utils/dom-helpers.js";
 import { fetchJSON } from "../../shared/utils/http-helpers.js";
 import { initLucideIcons } from "../../shared/utils/lucide-setup.js";
+import "../../shared/components/ef-skeleton.js";
 import "../../shared/utils/theme-toggle-component.js";
 
 import { initCopyHtmlModal } from "./copy-html-modal.js";
