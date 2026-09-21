@@ -48,6 +48,7 @@
     "export:screenshot": "bun scripts/export/export-screenshot.js",
     "check-size": "bun scripts/validators/check-html-size.js",
     "validate-email": "bun scripts/validators/validate-email-html.js",
+    "benchmark": "bun scripts/perf/measure-benchmarks.js",
     "cli": "bun scripts/cli/cli.js",
     "lint": "bun run lint:html && bun run lint:js && bun run lint:md && bun run lint:json && bun run lint:css",
     "lint:html": "htmlhint \"src/**/*.html\"",
