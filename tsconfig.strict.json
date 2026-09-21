@@ -5,7 +5,8 @@
     /* ── Rigor estricto para archivos TypeScript (MHB-29 a MHB-33) ── */
     "strict": true,
     "noImplicitAny": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "checkJs": false
   },
   "include": ["types/**/*.d.ts", "scripts/**/*.ts", "src/**/*.ts"],
   "exclude": ["node_modules", "dist"]

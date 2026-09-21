@@ -31,6 +31,9 @@ const IGNORED_DIRECTORIES = new Set([
   ".codex",
   ".github",
   ".gemini",
+  ".cache",
+  ".temp-screenshots",
+  ".superpowers",
   "types",
 ]);
 

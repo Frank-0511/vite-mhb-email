@@ -18,23 +18,13 @@ export default [
   // Entorno Node.js — define process, console, __dirname, etc.
   {
     files: [
-      "scripts/**/*.js",
-      "scripts/**/*.ts",
+      "scripts/**/*.{js,mjs,ts}",
+      "src/emails/**/*.{js,ts}",
       "vite.config.js",
       "vite.config.ts",
       "maizzle.config.js",
       "maizzle.config.ts",
     ],
-    languageOptions: {
-      globals: {
-        ...globals.node,
-      },
-    },
-  },
-
-  // Scripts de sincronización de agentes — CLIs ESM con salida de diagnóstico.
-  {
-    files: ["scripts/ai/*.mjs"],
     languageOptions: {
       globals: {
         ...globals.node,

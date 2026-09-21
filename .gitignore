@@ -27,6 +27,7 @@ node_modules
 
 # Worktrees locales de Claude Code (scratch de la herramienta, no del proyecto)
 .claude/worktrees/
+.claude/*.local.json
 
 # BEGIN agents:sync managed
 AGENTS.md
