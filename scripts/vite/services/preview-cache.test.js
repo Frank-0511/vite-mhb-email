@@ -125,6 +125,27 @@ describe("PreviewCacheManager & createPreviewDataHash", () => {
 
       expect(cacheManager.isCacheValid("welcome", { theme: "light" })).toBe(false);
     });
+
+    test("ignora cambios de mtime en directorios si los archivos no cambiaron", async () => {
+      const templateDir = resolve(tempDir, "src/emails/templates/welcome");
+      const templateFile = resolve(templateDir, "index.html");
+      await fs.ensureDir(templateDir);
+      await fs.writeFile(templateFile, "<h1>Source</h1>", "utf-8");
+
+      const pastTime = (Date.now() - 50000) / 1000;
+      utimesSync(templateFile, pastTime, pastTime);
+
+      await cacheManager.saveToCache("welcome", "<p>Cached</p>", { theme: "light" });
+      expect(cacheManager.isCacheValid("welcome", { theme: "light" })).toBe(true);
+
+      // Simular cambio de timestamp solo en el directorio contenedor
+      const futureTime = (Date.now() + 10000) / 1000;
+      utimesSync(templateDir, futureTime, futureTime);
+      utimesSync(resolve(tempDir, "src/emails/templates"), futureTime, futureTime);
+
+      // La caché debe seguir siendo válida porque los archivos fuente no cambiaron
+      expect(cacheManager.isCacheValid("welcome", { theme: "light" })).toBe(true);
+    });
   });
 
   describe("invalidación de caché", () => {
