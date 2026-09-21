@@ -12,11 +12,13 @@
  * encapsular los IDs consumidos por scripts, pruebas y accesibilidad.
  */
 
-const BaseElement = typeof HTMLElement !== "undefined" ? HTMLElement : class {};
+/** @type {typeof HTMLElement} */
+const BaseElement =
+  typeof HTMLElement !== "undefined" ? HTMLElement : /** @type {any} */ (class {});
 
 /**
  * @class EfSkeleton
- * @extends {HTMLElement}
+ * @extends {BaseElement}
  */
 export class EfSkeleton extends BaseElement {
   /**

@@ -30,13 +30,13 @@
     "layer-3-vite": {
       "name": "Servidor Vite y APIs",
       "targetTask": "MHB-32",
-      "baselineJsCount": 33,
+      "baselineJsCount": 34,
       "patterns": ["scripts/vite/**/*.{js,mjs}", "vite.config.js"]
     },
     "layer-4-web": {
       "name": "Dashboard web",
       "targetTask": "MHB-33",
-      "baselineJsCount": 51,
+      "baselineJsCount": 57,
       "patterns": ["src/web/**/*.{js,mjs}"]
     },
     "layer-5-tooling": {
@@ -51,5 +51,5 @@
       ]
     }
   },
-  "totalBaselineJsCount": 194
+  "totalBaselineJsCount": 201
 }

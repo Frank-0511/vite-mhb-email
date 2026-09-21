@@ -25,7 +25,7 @@ export function markPreviewReady(
 
   if (hasCustomSkeletons) {
     for (const skeleton of skeletons) {
-      if (typeof /** @type {any} */ (skeleton).reveal === "function") {
+      if (typeof (/** @type {any} */ (skeleton).reveal) === "function") {
         /** @type {any} */ (skeleton).reveal(doc);
       } else {
         const forId = skeleton.getAttribute ? skeleton.getAttribute("for") : null;
