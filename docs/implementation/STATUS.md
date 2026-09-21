@@ -21,6 +21,7 @@
 ## Entrega activa (MHB-28: Modularización de superficies web sobredimensionadas)
 
 - **División modular de estilos:** `styles.css` (6 líneas) dividido en 5 subhojas temáticas en `styles/` y `copy-html-modal.css` (3 líneas) desacoplado en 2 subhojas, todos estrictamente bajo el umbral de 300 líneas.
+- **Estructuración modular por carpetas:** módulos de preview agrupados en subcarpetas cohesivas por dominio bajo `modules/` (`controls`, `copy-html`, `editor`, `render`, `runtime`), dejando la raíz limpia con solo los puntos de entrada.
 - **JavaScript embebido extraído:** lógica inline de `preview.html` delegada a `mobile-tabs.js` y `more-menu.js` (con tests unitarios).
 - **Web Component `<ef-skeleton>`:** implementación declarativa en Light DOM y desacoplamiento de `preview-ready.js` cubierto con tests unitarios.
 - **Desacoplamiento de plantillas y scrollbars:** HTML/scripts extraídos de `dashboard.js` a `dashboard-templates.js` (110 líneas) y scrollbars deduplicados en `library.css` (299 líneas).
@@ -63,6 +64,7 @@
 - **Light DOM en `<ef-skeleton>`:** Obligatorio para permitir que las utilidades Tailwind (`animate-pulse`) alcancen los elementos internos y no ocultar los IDs consumidos por scripts y tests.
 - **División de `copy-html-modal.css`:** Dividido en `styles/modal-dialog.css` y `styles/modal-cards.css` para respetar el umbral de 300 líneas sin alterar ninguna regla ni valor de especificidad.
 - **Eliminación de componentes huérfanos:** Los 5 fragmentos HTML en `src/web/features/library/components/` se eliminan al no tener referencias en runtime.
+- **Estructuración en subcarpetas de `preview/modules/`:** 40+ archivos planos organizados en subcarpetas cohesivas por dominio (`controls`, `copy-html`, `editor`, `render`, `runtime`) alineando preview con la estructura modular de `library/modules/`.
 - **Sincronización de baseline de inventario:** Tras modularizar legítimamente superficies en capas 3 y 4 (nuevos submódulos y tests JS), se actualizó el baseline en `inventory-baseline.json` a 201 archivos JS para mantener el control estricto decreciente hacia MHB-30 y MHB-33.
 
 ## Handoff
