@@ -1,0 +1,192 @@
+/* Space Blue shell. These rules intentionally stop at the iframe boundary. */
+.preview-shell {
+  color: var(--ef-text);
+  background: var(--ef-canvas);
+}
+
+.preview-shell #left-panel,
+.preview-shell #editor-container,
+.preview-shell .editor-header,
+.preview-shell #preview-top-container {
+  background: var(--ef-surface);
+  border-color: var(--ef-border);
+}
+
+.preview-shell #right-panel,
+.preview-shell .preview-content-area {
+  background: var(--ef-canvas);
+}
+
+.preview-shell #left-panel,
+.preview-shell .editor-header,
+.preview-shell #preview-top-container,
+.preview-shell .preview-contextual-bar,
+.preview-shell #preview-frame,
+.preview-shell .menu-more-dropdown .menu-dropdown-body {
+  border-color: var(--ef-border);
+}
+
+.preview-shell .preview-contextual-bar,
+.preview-shell #preview-frame,
+.preview-shell .menu-more-dropdown .menu-dropdown-body {
+  background: var(--ef-surface-raised);
+}
+
+.preview-shell #preview-frame {
+  border: 1px solid var(--ef-border);
+  border-radius: 0.875rem;
+  box-shadow: 0 12px 28px rgb(7 17 31 / 18%);
+}
+
+.preview-shell #preview-skeleton,
+.preview-shell #editor-skeleton,
+.preview-shell #actions-skeleton {
+  background: var(--ef-surface);
+}
+
+.preview-shell :is(#editor-skeleton, #preview-skeleton, #actions-skeleton) .bg-slate-200,
+.preview-shell
+  :is(#editor-skeleton, #preview-skeleton, #actions-skeleton)
+  [class~="dark:bg-slate-700"] {
+  background-color: var(--ef-border);
+}
+
+.preview-shell :is(#btn-save, #btn-reset, #theme-toggle-template, #btn-copy-html),
+.preview-shell #topbar-controls button,
+.preview-shell #editor-more-menu summary,
+.preview-shell #viewport-custom-input {
+  border-color: var(--ef-border);
+  color: var(--ef-text);
+  background: var(--ef-surface-raised);
+}
+
+/* Viewport selector (Desktop/Mobile/Custom): viewport-controls.js marks the
+   active button with the bg-sky-500 utility classes. The rule above has
+   higher specificity (ID selector) than that plain class and was silently
+   winning, so the "selected" state never showed. */
+.preview-shell #topbar-controls button.bg-sky-500 {
+  border-color: var(--ef-accent-strong);
+  background: var(--ef-accent-strong);
+  color: var(--ef-text-on-accent);
+}
+
+.preview-shell #topbar-controls button.bg-sky-500:hover {
+  border-color: var(--ef-accent);
+  background: var(--ef-accent);
+  color: var(--ef-text-on-accent);
+}
+
+/* The dark-theme --ef-accent-strong (#2587f5) gives white 12px text only
+   3.58:1, under the 4.5:1 WCAG AA text minimum (axe-core color-contrast).
+   Scoped to this small-text button only, not the shared token, to avoid
+   changing every other accent-strong usage (borders, hover states). */
+.dark .preview-shell #topbar-controls button.bg-sky-500 {
+  border-color: #126ac2;
+  background: #126ac2;
+}
+
+.preview-shell #btn-save {
+  border: 1px solid var(--ef-accent-strong);
+  background: var(--ef-accent-strong);
+  color: var(--ef-text-on-accent);
+}
+
+.preview-shell #btn-save:hover {
+  border-color: var(--ef-accent);
+  background: var(--ef-accent);
+}
+
+.preview-shell
+  :is(
+    #btn-reset,
+    #theme-toggle-template,
+    #btn-copy-html,
+    #topbar-controls button,
+    #editor-more-menu summary
+  ):hover {
+  border-color: var(--ef-accent);
+  background: var(--ef-surface-hover, var(--ef-surface-raised));
+  color: var(--ef-text);
+}
+
+.preview-shell
+  :is(
+    .tab-btn,
+    .dropdown-item-label,
+    #header-left-content h1,
+    #preview-title,
+    #viewport-custom-input
+  ) {
+  color: var(--ef-text);
+}
+
+.preview-shell :is(#btn-back, .preview-back-btn) {
+  color: var(--ef-accent);
+}
+
+.preview-shell .tab-btn.active {
+  border-color: var(--ef-border);
+  background: var(--ef-surface-raised);
+  color: var(--ef-accent);
+  box-shadow: none;
+}
+
+.preview-shell .preview-header-bar,
+.preview-shell .preview-contextual-bar {
+  border-color: var(--ef-border);
+}
+
+.preview-shell .esp-validation-status,
+.preview-shell .esp-validation-status.warning {
+  color: var(--ef-warning);
+}
+
+.preview-shell .esp-validation-status:is(:hover, :focus-visible)::after {
+  border-color: var(--ef-border);
+  background: var(--ef-surface-raised);
+  color: var(--ef-text);
+}
+
+.preview-shell .preview-render-error {
+  border-color: var(--ef-danger);
+  background: color-mix(in srgb, var(--ef-danger) 12%, var(--ef-surface));
+  color: var(--ef-danger);
+}
+
+.preview-shell :is(a, button, summary, input, .preview-source-container):focus-visible {
+  outline: 3px solid var(--ef-focus);
+  outline-offset: 3px;
+}
+
+.preview-shell .jse-theme-default,
+.preview-shell .jse-theme-dark {
+  --jse-theme-color: var(--ef-accent);
+  --jse-theme-color-highlight: var(--ef-accent-strong);
+  --jse-background-color: var(--ef-surface);
+  --jse-panel-background: var(--ef-surface-raised);
+}
+
+@media (width <= 1259px) {
+  .preview-shell .mobile-tab-bar {
+    background: var(--ef-surface);
+    border-color: var(--ef-border);
+  }
+}
+
+/* Two-row header state (710px <= width < 1260px): the contextual row sits
+   directly under the header row with no tab nav between them, so a raised
+   background here reads as a stray panel rather than a second row of the
+   same bar. */
+@container preview-panel (710px <= width < 1260px) {
+  .preview-shell .preview-contextual-bar {
+    background: var(--ef-surface);
+    border-top-color: var(--ef-border);
+  }
+}
+
+/* Tailwind's text-green-600 falls under 4.5:1 against --ef-surface; the
+   design-token success color passes WCAG AA in both themes. */
+.sync-status-ok {
+  color: var(--ef-success);
+  font-weight: 500;
+}

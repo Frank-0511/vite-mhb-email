@@ -1,0 +1,213 @@
+/* Mobile Tab Navigation Bar */
+.mobile-tab-bar {
+  display: none;
+}
+
+/* Preview header back button (only visible in single-column tab mode ≤ 1259px) */
+.preview-back-btn {
+  display: none;
+}
+
+/* Viewport, View Mode and Export label variants */
+.viewport-label-short,
+.view-mode-label-short,
+.export-label-short {
+  display: none;
+}
+
+.viewport-label-full,
+.view-mode-label-full,
+.export-label-full {
+  display: inline;
+}
+
+/* Dropdown styling for secondary menu */
+.menu-more-dropdown {
+  display: inline-block;
+}
+
+.menu-more-dropdown summary {
+  display: none !important;
+}
+
+.menu-more-dropdown .menu-dropdown-body {
+  display: inline-block;
+}
+
+/* theme-toggle sizes itself via shadow DOM only (no host-level width/height) */
+#app-theme-toggle {
+  width: 2.25rem;
+  height: 2.25rem;
+  flex-shrink: 0;
+}
+
+.dropdown-item-label {
+  display: none;
+}
+
+/* ==========================================================================
+   Breakpoints
+   ========================================================================== */
+
+/* Desktop panel sizing (≥ 1260px): editor at fixed width, preview flexes */
+@media (width >= 1260px) {
+  #left-panel {
+    width: 550px;
+    flex-shrink: 0;
+  }
+
+  #right-panel {
+    flex: 1;
+    width: auto;
+  }
+}
+
+/* Preview header density: governed by the inline size of #right-panel,
+   independent of application viewport mode. */
+.preview-top-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  gap: 0.5rem;
+}
+
+.preview-header-bar,
+.preview-contextual-bar,
+#topbar-controls,
+.preview-render-controls,
+.preview-viewport-controls,
+.preview-status-wrap,
+.preview-copy-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.preview-header-bar,
+.preview-contextual-bar {
+  justify-content: space-between;
+  width: 100%;
+}
+
+.preview-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.preview-status-wrap,
+.preview-contextual-bar,
+#topbar-controls {
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.preview-render-controls,
+.preview-viewport-controls {
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.preview-copy-wrap {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+@container preview-panel (width >= 1260px) {
+  .preview-top-container {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.5rem;
+    gap: 0;
+  }
+
+  .preview-header-bar,
+  .preview-contextual-bar {
+    display: contents;
+  }
+
+  .preview-title-wrap {
+    order: 1;
+    gap: 1rem;
+  }
+
+  #topbar-skeleton,
+  #topbar-controls {
+    order: 2;
+    margin-left: 1rem;
+  }
+
+  .preview-status-wrap {
+    order: 3;
+    margin-left: auto;
+  }
+
+  .preview-copy-wrap {
+    order: 4;
+    margin-left: 0.75rem;
+  }
+}
+
+@container preview-panel (710px <= width < 1260px) {
+  .preview-top-container {
+    padding: 0.625rem 1.25rem;
+  }
+
+  .preview-header-bar,
+  .preview-contextual-bar {
+    flex-wrap: nowrap;
+  }
+
+  .preview-contextual-bar {
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--ef-border);
+    gap: 0.75rem;
+  }
+
+  #topbar-controls,
+  .preview-status-wrap {
+    gap: 0.75rem;
+  }
+}
+
+@container preview-panel (width < 710px) {
+  .preview-header-bar {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .preview-title-wrap,
+  .preview-status-wrap {
+    flex-basis: 100%;
+  }
+
+  .preview-contextual-bar,
+  #topbar-controls {
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+}
+
+@container preview-panel (width <= 850px) {
+  :is(.viewport-label-full, .view-mode-label-full, .export-label-full) {
+    display: none;
+  }
+
+  :is(.viewport-label-short, .view-mode-label-short, .export-label-short) {
+    display: inline;
+  }
+}
+
+@container preview-panel (width <= 550px) {
+  :is(
+    .viewport-label-full,
+    .viewport-label-short,
+    .viewport-custom-label,
+    .view-mode-label,
+    .export-label
+  ) {
+    display: none;
+  }
+}

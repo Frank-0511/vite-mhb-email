@@ -1,0 +1,113 @@
+/* Preview Feature Styles */
+
+/* Base Layout */
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+}
+
+#left-panel {
+  width: 550px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-right: 1px solid #e2e8f0;
+}
+
+html.dark #left-panel {
+  background: #0f172a;
+  border-right-color: #334155;
+}
+
+#editor-container {
+  flex: 1;
+  overflow: hidden;
+  background: #fff;
+}
+
+html.dark #editor-container {
+  background: #0f172a;
+}
+
+#right-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  container: preview-panel / inline-size;
+  min-width: 0;
+}
+
+#preview-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+#preview-iframe.hidden {
+  display: none;
+}
+
+/* Modo código HTML: ocupa el 90% del espacio disponible y aísla las reglas de medidas a vista previa */
+#preview-frame.is-source-mode,
+.preview-shell[data-view-mode="source"] #preview-frame {
+  width: 90% !important;
+  max-width: 90% !important;
+}
+
+.preview-shell[data-view-mode="source"] #preview-viewport-controls,
+.preview-shell[data-view-mode="source"] #preview-viewport-divider {
+  display: none !important;
+}
+
+.preview-source-container {
+  width: 100%;
+  min-height: 480px;
+  max-height: calc(100vh - 12rem);
+  overflow: auto;
+  box-sizing: border-box;
+  background: var(--ef-surface, #fff);
+  color: var(--ef-text, #1e293b);
+}
+
+.preview-source-container.hidden {
+  display: none;
+}
+
+.preview-source-pre {
+  margin: 0;
+  padding: 1.25rem;
+  font-family: var(
+    --ef-font-mono,
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    "Liberation Mono",
+    "Courier New",
+    monospace
+  );
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: inherit;
+  tab-size: 2;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.preview-source-code {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  background: transparent;
+}
+
+#topbar-controls.hidden {
+  display: none;
+}
