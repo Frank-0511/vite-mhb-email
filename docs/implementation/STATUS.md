@@ -3,7 +3,7 @@
 ## Resumen
 
 - ID activo: MHB-28
-- Estado: En progreso
+- Estado: En revisión
 - Implementador: Perfil UI/web
 - Revisor: Revisor UI
 - Rama: `feature/mhb-28`
@@ -20,25 +20,27 @@
 
 ## Entrega activa (MHB-28: Modularización de superficies web sobredimensionadas)
 
-- **División modular de estilos:** `styles.css` dividido en 5 subhojas temáticas en `styles/` y `copy-html-modal.css` desacoplado bajo el umbral de 300 líneas.
-- **JavaScript embebido extraído:** eliminación de scripts inline en `preview.html`, delegando a `mobile-tabs.js` y `more-menu.js`.
-- **Web Component `<ef-skeleton>`:** implementación nativa en Light DOM con API declarativa y refactorización desacoplada de `preview-ready.js`.
-- **Limpieza de superficie:** eliminación de fragmentos HTML huérfanos en `src/web/features/library/components/` y reglas CSS obsoletas.
-- **Cero regresión:** integridad garantizada de diseño visual y de templates compilados (`dist/*.html`) sin alteración byte a byte.
+- **División modular de estilos:** `styles.css` (6 líneas) dividido en 5 subhojas temáticas en `styles/` y `copy-html-modal.css` (3 líneas) desacoplado en 2 subhojas, todos estrictamente bajo el umbral de 300 líneas.
+- **JavaScript embebido extraído:** lógica inline de `preview.html` delegada a `mobile-tabs.js` y `more-menu.js` (con tests unitarios).
+- **Web Component `<ef-skeleton>`:** implementación declarativa en Light DOM y desacoplamiento de `preview-ready.js` cubierto con tests unitarios.
+- **Desacoplamiento de plantillas y scrollbars:** HTML/scripts extraídos de `dashboard.js` a `dashboard-templates.js` (110 líneas) y scrollbars deduplicados en `library.css` (299 líneas).
+- **Cero regresión:** hashes SHA-256 de `dist/*.html` 100% idénticos byte a byte respecto al baseline previo; gates de contraste y a11y 100% verdes.
 
 ### Controles de Calidad
 
-| Control                                       | Comando                                | Resultado   |
-| :-------------------------------------------- | :------------------------------------- | :---------- |
-| Comprobación de rama                          | `bun scripts/ai/check-task-branch.mjs` | Verde       |
-| Typecheck unificado + estricto                | `bun run typecheck`                    | En progreso |
-| Pruebas unitarias/integración                 | `bun test`                             | En progreso |
-| Linting completo (html, js/ts, md, json, css) | `bun run lint`                         | En progreso |
-| Formato de código                             | `bun run format:check`                 | En progreso |
-| Build pipeline                                | `bun run build`                        | En progreso |
-| Validador HTML email                          | `bun run validate-email`               | En progreso |
-| Verificación a11y y contraste                 | `bun run a11y-check`                   | En progreso |
-| Sincronización de agentes                     | `bun run agents:check`                 | En progreso |
+| Control                                       | Comando                                | Resultado |
+| :-------------------------------------------- | :------------------------------------- | :-------- |
+| Comprobación de rama                          | `bun scripts/ai/check-task-branch.mjs` | Verde     |
+| Typecheck unificado + estricto                | `bun run typecheck`                    | Verde     |
+| Pruebas unitarias/integración (504 tests)     | `bun test`                             | Verde     |
+| Linting completo (html, js/ts, md, json, css) | `bun run lint`                         | Verde     |
+| Formato de código                             | `bun run format:check`                 | Verde     |
+| Build pipeline                                | `bun run build`                        | Verde     |
+| Validador HTML email                          | `bun run validate-email`               | Verde     |
+| Verificación a11y y contraste                 | `bun run a11y-check`                   | Verde     |
+| Contraste WCAG (light & dark)                 | `bun run lint:contrast`                | Verde     |
+| Control de inventario TypeScript              | `bun run check:inventory`              | Verde     |
+| Sincronización de agentes                     | `bun run agents:check`                 | Verde     |
 
 ## Últimas entregas
 
@@ -49,21 +51,23 @@
 
 ## Ejecuciones delegadas relevantes
 
-| Ámbito | Estado     | Propiedad                              | Handoff                                               |
-| :----- | :--------- | :------------------------------------- | :---------------------------------------------------- |
-| MHB-29 | Completada | Base de ejecución TypeScript           | Aprobación técnica y merge a `master` (`5e18515`).    |
-| MHB-13 | Completada | Baseline tipos y mediciones            | Verificación completa y merge a `master` (`5fe448a`). |
-| MHB-20 | Completada | Tests integración, caché y exportación | Aceptación y merge a `master` en commit `619a425`.    |
+| Ámbito | Estado      | Propiedad                              | Handoff                                                 |
+| :----- | :---------- | :------------------------------------- | :------------------------------------------------------ |
+| MHB-28 | En revisión | Modularización web sobredimensionada   | Entregado a revisión independiente en `feature/mhb-28`. |
+| MHB-29 | Completada  | Base de ejecución TypeScript           | Aprobación técnica y merge a `master` (`5e18515`).      |
+| MHB-13 | Completada  | Baseline tipos y mediciones            | Verificación completa y merge a `master` (`5fe448a`).   |
+| MHB-20 | Completada  | Tests integración, caché y exportación | Aceptación y merge a `master` en commit `619a425`.      |
 
 ## Decisiones y desviaciones vigentes
 
 - **Light DOM en `<ef-skeleton>`:** Obligatorio para permitir que las utilidades Tailwind (`animate-pulse`) alcancen los elementos internos y no ocultar los IDs consumidos por scripts y tests.
 - **División de `copy-html-modal.css`:** Dividido en `styles/modal-dialog.css` y `styles/modal-cards.css` para respetar el umbral de 300 líneas sin alterar ninguna regla ni valor de especificidad.
 - **Eliminación de componentes huérfanos:** Los 5 fragmentos HTML en `src/web/features/library/components/` se eliminan al no tener referencias en runtime.
+- **Sincronización de baseline de inventario:** Tras modularizar legítimamente superficies en capas 3 y 4 (nuevos submódulos y tests JS), se actualizó el baseline en `inventory-baseline.json` a 201 archivos JS para mantener el control estricto decreciente hacia MHB-30 y MHB-33.
 
 ## Handoff
 
-- Próxima acción inmediata: Implementación modular de fases F0 a F5 en `feature/mhb-28`.
+- Próxima acción inmediata: Revisión técnica independiente de MHB-28 y validación visual manual a diferentes resoluciones (375px, 768px, 1440px) y temas (light/dark).
 - Siguiente tarea del roadmap:
   - MHB-30 (`desbloqueado`): Núcleo y validadores en TypeScript (prerrequisito MHB-29 completado).
   - MHB-14 (`desbloqueado`): Evidencia de uso y compatibilidad.
