@@ -205,7 +205,7 @@ export function initViewModeControls(elements, storage = memoryFallbackStorage) 
 /**
  * Inicializa los controles de modo de vista a partir de un árbol DOM y almacenamiento.
  *
- * @param {Document | { getElementById: (id: string) => any } | null} [dom]
+ * @param {Document | { getElementById: (id: string) => any, querySelector?: (sel: string) => any } | null} [dom]
  * @param {ViewModeStorage} [storage]
  * @returns {ViewModeController | null}
  */
@@ -231,7 +231,9 @@ export function setupViewModeControls(
   const skeleton = /** @type {HTMLElement | null} */ (dom.getElementById("preview-skeleton"));
   const previewFrame = /** @type {HTMLElement | null} */ (dom.getElementById("preview-frame"));
   const shell = /** @type {HTMLElement | null} */ (
-    typeof dom.querySelector === "function" ? dom.querySelector(".preview-shell") : null
+    "querySelector" in dom && typeof dom.querySelector === "function"
+      ? dom.querySelector(".preview-shell")
+      : null
   );
 
   if (renderBtn && sourceBtn && iframe && sourceContainer && sourceCode) {

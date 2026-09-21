@@ -79,7 +79,11 @@ export function createCopyHtmlModalController({
         });
       const downloadResult = downloadHtmlFn({ templateName, html: result.html });
       if (!downloadResult.ok)
-        return transition("error", { message: formatErrorMessage(downloadResult.error) });
+        return transition("error", {
+          message: formatErrorMessage(
+            "error" in downloadResult ? downloadResult.error : "Error desconocido",
+          ),
+        });
       transition("success", { message: formatDownloadSuccessMessage(build, result.validation) });
     } catch (error) {
       transition("error", { message: formatErrorMessage(error) });

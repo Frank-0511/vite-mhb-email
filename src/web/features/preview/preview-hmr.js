@@ -78,23 +78,23 @@ export function isCurrentTemplateDataFile(changedFile, templateName) {
 
 /**
  * @typedef {Object} ViteHot
- * @property {(event: string, cb: (payload?: { file?: string }) => void | Promise<void>) => void} on
+ * @property {(event: string, cb: (payload?: { file?: string }) => void | Promise<void>) => void} [on]
  */
 
 /**
  * @typedef {Object} PreviewHmrDependencies
- * @property {string} templateName
+ * @property {string} [templateName]
  * @property {ViteHot | null | undefined} [hot]
- * @property {(templateName: string) => Promise<unknown>} fetchLatestData
- * @property {EditorAPI} editorAPI
- * @property {RenderAPI} renderAPI
- * @property {() => Promise<void>} renderCurrentTemplate
+ * @property {((templateName: string) => Promise<unknown>)} [fetchLatestData]
+ * @property {EditorAPI} [editorAPI]
+ * @property {RenderAPI} [renderAPI]
+ * @property {(() => Promise<void>)} [renderCurrentTemplate]
  */
 
 /**
  * Sets up HMR event listener for live reloading email preview.
  *
- * @param {PreviewHmrDependencies} dependencies
+ * @param {PreviewHmrDependencies | null | undefined} [dependencies]
  * @returns {((payload?: { file?: string }) => Promise<void>) | null} Handler function or null if hot is unavailable
  */
 export function setupPreviewHmr(dependencies) {

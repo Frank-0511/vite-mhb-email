@@ -76,11 +76,13 @@ describe("previewManager", () => {
   test("render with showLoading shows the skeleton during the fetch and hides it after success", async () => {
     /** @type {(value?: unknown) => void} */
     let resolveFetch = () => {};
-    globalThis.fetch = mock(
-      () =>
-        new Promise((resolve) => {
-          resolveFetch = resolve;
-        }),
+    globalThis.fetch = /** @type {any} */ (
+      mock(
+        () =>
+          new Promise((resolve) => {
+            resolveFetch = resolve;
+          }),
+      )
     );
 
     const renderPromise = previewManager.render("hero-section", "v1", {}, { showLoading: true });
@@ -97,7 +99,7 @@ describe("previewManager", () => {
   });
 
   test("render with showLoading forwards the atomic design type to the skeleton", () => {
-    globalThis.fetch = mock(() => new Promise(() => {}));
+    globalThis.fetch = /** @type {any} */ (mock(() => new Promise(() => {})));
 
     previewManager.render("cta-button", "v1", {}, { showLoading: true, type: "atoms" });
 
@@ -105,7 +107,9 @@ describe("previewManager", () => {
   });
 
   test("render without showLoading never touches the skeleton", async () => {
-    globalThis.fetch = mock(() => Promise.resolve({ text: () => Promise.resolve("<p>ok</p>") }));
+    globalThis.fetch = /** @type {any} */ (
+      mock(() => Promise.resolve(/** @type {any} */ ({ text: () => Promise.resolve("<p>ok</p>") })))
+    );
 
     await previewManager.render("hero-section", "v1", {});
 
@@ -114,7 +118,7 @@ describe("previewManager", () => {
   });
 
   test("render with showLoading hides the skeleton even when the fetch fails", async () => {
-    globalThis.fetch = mock(() => Promise.reject(new Error("network down")));
+    globalThis.fetch = /** @type {any} */ (mock(() => Promise.reject(new Error("network down"))));
     const originalConsoleError = console.error;
     console.error = mock(() => {});
 

@@ -179,10 +179,11 @@ class ComponentLibraryApp {
     const componentId = this.currentComponent._id || this.currentComponent.id;
     const allItems = document.querySelectorAll("[data-component-id]");
     allItems.forEach((item) => {
-      if (item.dataset.componentId === componentId) {
-        item.classList.add("selected");
+      const el = /** @type {HTMLElement} */ (item);
+      if (el.dataset.componentId === componentId) {
+        el.classList.add("selected");
       } else {
-        item.classList.remove("selected");
+        el.classList.remove("selected");
       }
     });
   }

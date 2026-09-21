@@ -9,11 +9,11 @@ import { postJSON } from "../../shared/utils/http-helpers.js";
 /**
  * @typedef {Object} SaveResetConfig
  * @property {string} templateName
- * @property {Function} getEditorContent - Get current editor content
- * @property {Function} setInitialData - Update initial data in editor
- * @property {Function} resetEditor - Reset editor to initial state
- * @property {Function} resetIframe - Reset iframe to initial template
- * @property {Function} onStatusChange - Callback for status updates
+ * @property {Function} [getEditorContent] - Get current editor content
+ * @property {Function} [setInitialData] - Update initial data in editor
+ * @property {Function} [resetEditor] - Reset editor to initial state
+ * @property {Function} [resetIframe] - Reset iframe to initial template
+ * @property {Function} [onStatusChange] - Callback for status updates
  */
 
 /**
@@ -22,9 +22,9 @@ import { postJSON } from "../../shared/utils/http-helpers.js";
  * @returns {void}
  */
 export function setupSaveButton(config) {
-  const { templateName, getEditorContent, setInitialData } = config;
+  const { templateName, getEditorContent = () => ({}), setInitialData = () => {} } = config;
 
-  const saveBtn = queryRequired("btn-save", "Save-Reset Module");
+  const saveBtn = /** @type {HTMLButtonElement} */ (queryRequired("btn-save", "Save-Reset Module"));
 
   saveBtn.addEventListener("click", async () => {
     const currentContent = getEditorContent();

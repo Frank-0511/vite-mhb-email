@@ -194,7 +194,7 @@ describe("downloadHtml", () => {
     });
 
     expect(result.ok).toBe(false);
-    if (!result.ok) {
+    if ("error" in result) {
       expect(result.error).not.toContain("SUPER_SECRET_PAYLOAD");
     }
   });

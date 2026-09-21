@@ -37,7 +37,7 @@ function formatLocation(location) {
 /**
  * Crea una vista accesible para el contenedor de errores de render.
  *
- * @param {{ textContent: string, hidden: boolean } | null | undefined} element
+ * @param {HTMLElement | { textContent: string, hidden: boolean } | null | undefined} element
  * @returns {RenderErrorView}
  */
 export function createRenderErrorView(element) {
