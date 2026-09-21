@@ -60,8 +60,10 @@
         class="editor-header px-4 py-3 sm:px-6 sm:py-5 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 flex justify-between items-center"
       >
         <!-- Skeleton del Header Izquierdo (botón volver, separador, icono y título) -->
-        <div
+        <ef-skeleton
           id="header-left-skeleton"
+          for="header-left-content"
+          reveal-display="flex"
           class="flex items-center gap-2 sm:gap-3 animate-pulse min-w-0"
           aria-hidden="true"
         >
@@ -77,7 +79,7 @@
               class="h-5 w-20 sm:w-24 bg-slate-200 dark:bg-slate-700 rounded"
             ></div>
           </div>
-        </div>
+        </ef-skeleton>
 
         <!-- Contenido Real del Header Izquierdo -->
         <div id="header-left-content" class="hidden items-center gap-2 sm:gap-3 min-w-0">
@@ -104,11 +106,12 @@
         <!-- Acciones del Header Izquierdo -->
         <div class="flex items-center gap-2 shrink-0">
           <!-- Skeleton del App Theme Toggle -->
-          <div
+          <ef-skeleton
             id="theme-toggle-skeleton"
+            for="app-theme-toggle"
             class="w-9 h-9 rounded-md bg-slate-200 dark:bg-slate-700 animate-pulse shrink-0"
             aria-hidden="true"
-          ></div>
+          ></ef-skeleton>
 
           <!-- App Theme Toggle envuelto en menú desplegable ⋯ en <480px, directo en ≥480px -->
           <details id="editor-more-menu" class="menu-more-dropdown" open>
@@ -139,7 +142,7 @@
       <!-- Contenedor del Editor -->
       <div id="editor-container" class="flex-1 overflow-hidden relative bg-white dark:bg-slate-900">
         <!-- Skeleton mientras carga el editor y los datos -->
-        <div
+        <ef-skeleton
           id="editor-skeleton"
           class="p-6 space-y-4 animate-pulse bg-white dark:bg-slate-900"
           aria-hidden="true"
@@ -156,7 +159,7 @@
             <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-4/5"></div>
             <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-3/5"></div>
           </div>
-        </div>
+        </ef-skeleton>
       </div>
 
       <!-- Acciones Inferiores -->
@@ -164,10 +167,16 @@
         class="px-6 py-5 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex flex-col gap-3"
       >
         <!-- Skeleton mientras carga -->
-        <div id="actions-skeleton" class="flex flex-col gap-3 animate-pulse" aria-hidden="true">
+        <ef-skeleton
+          id="actions-skeleton"
+          for="actions-buttons"
+          reveal-display="flex"
+          class="flex flex-col gap-3 animate-pulse"
+          aria-hidden="true"
+        >
           <div class="h-12 bg-slate-200 dark:bg-slate-700 rounded-lg w-full"></div>
           <div class="h-9 bg-slate-200 dark:bg-slate-700 rounded-lg w-full"></div>
-        </div>
+        </ef-skeleton>
 
         <div id="actions-buttons" class="hidden flex-col gap-3">
           <button
@@ -210,14 +219,16 @@
               <i data-lucide="arrow-left" class="w-5 h-5 shrink-0"></i>
             </a>
             <!-- Skeleton de Vista previa en vivo (icono y texto) -->
-            <div
+            <ef-skeleton
               id="preview-title-skeleton"
+              for="preview-title"
+              reveal-display="flex"
               class="flex items-center gap-2 animate-pulse shrink-0"
               aria-hidden="true"
             >
               <div class="w-4 h-4 rounded bg-slate-200 dark:bg-slate-700 shrink-0"></div>
               <div class="h-4 w-32 bg-slate-200 dark:bg-slate-700 rounded"></div>
-            </div>
+            </ef-skeleton>
             <span
               id="preview-title"
               class="hidden font-medium text-slate-700 dark:text-slate-200 items-center gap-2 shrink-0 text-base"
@@ -229,11 +240,13 @@
 
           <div class="preview-status-wrap">
             <!-- Skeleton de estado de sincronización -->
-            <div
+            <ef-skeleton
               id="sync-status-skeleton"
+              for="sync-status"
+              reveal-display="flex"
               class="h-5 w-20 sm:w-24 bg-slate-200 dark:bg-slate-700 rounded animate-pulse"
               aria-hidden="true"
-            ></div>
+            ></ef-skeleton>
             <span
               id="sync-status"
               class="hidden text-green-600 font-medium text-xs sm:text-sm items-center gap-1 shrink-0"
@@ -261,15 +274,17 @@
         <!-- Fila 2: Barra contextual (Viewport, Tema de Template y Copiar HTML) -->
         <div id="preview-contextual-bar" class="preview-contextual-bar">
           <!-- Skeleton de controles del topbar -->
-          <div
+          <ef-skeleton
             id="topbar-skeleton"
+            for="topbar-controls"
+            reveal-display="flex"
             class="flex items-center gap-2 sm:gap-3 animate-pulse"
             aria-hidden="true"
           >
             <div class="h-7 w-28 sm:w-36 bg-slate-200 dark:bg-slate-700 rounded"></div>
             <div class="h-7 w-16 sm:w-20 bg-slate-200 dark:bg-slate-700 rounded"></div>
             <div class="h-7 w-36 sm:w-48 bg-slate-200 dark:bg-slate-700 rounded"></div>
-          </div>
+          </ef-skeleton>
 
           <!-- Controles del top bar -->
           <div id="topbar-controls" class="hidden items-center gap-2 sm:gap-4">
@@ -407,11 +422,13 @@
           <!-- Copiar HTML -->
           <div class="preview-copy-wrap">
             <!-- Skeleton de Copiar HTML -->
-            <div
+            <ef-skeleton
               id="copy-html-skeleton"
+              for="btn-copy-html"
+              reveal-display="flex"
               class="h-7 w-20 sm:w-24 bg-slate-200 dark:bg-slate-700 rounded animate-pulse"
               aria-hidden="true"
-            ></div>
+            ></ef-skeleton>
             <button
               id="btn-copy-html"
               type="button"
@@ -438,7 +455,11 @@
             style="width: 600px"
           >
             <!-- Skeleton mientras se compila y carga el primer render -->
-            <div id="preview-skeleton" class="p-8 space-y-6 animate-pulse" aria-hidden="true">
+            <ef-skeleton
+              id="preview-skeleton"
+              class="p-8 space-y-6 animate-pulse"
+              aria-hidden="true"
+            >
               <div
                 class="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-800"
               >
@@ -461,7 +482,7 @@
                 <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-16"></div>
                 <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-16"></div>
               </div>
-            </div>
+            </ef-skeleton>
 
             <!-- Iframe donde volcaremos el HTML vivo -->
             <iframe id="preview-iframe" title="Template Preview" class="hidden"></iframe>

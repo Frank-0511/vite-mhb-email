@@ -4,6 +4,7 @@
  */
 
 import { initLucideIcons } from "../../shared/utils/lucide-setup.js";
+import "../../shared/components/ef-skeleton.js";
 
 /**
  * Revela los controles interactivos y oculta los skeletons correspondientes
@@ -17,82 +18,89 @@ export function markPreviewReady(
 ) {
   if (!doc) return;
 
-  // 1. Cabecera del editor: botón atrás, icono y título del template
-  const headerLeftSkeleton = doc.getElementById("header-left-skeleton");
-  const headerLeftContent = doc.getElementById("header-left-content");
-  const templateNameEl = doc.getElementById("template-name");
-  const templateNameSkeleton = doc.getElementById("template-name-skeleton");
-  const backBtnSkeleton = doc.getElementById("back-btn-skeleton");
-  const backBtn = doc.getElementById("btn-back");
+  // 1. Procesar componentes Web Component <ef-skeleton>
+  /** @type {NodeListOf<Element> | Element[]} */
+  const skeletons = doc.querySelectorAll ? doc.querySelectorAll("ef-skeleton") : [];
+  const hasCustomSkeletons = Boolean(skeletons && skeletons.length > 0);
 
-  if (headerLeftSkeleton) headerLeftSkeleton.classList.add("hidden");
-  if (headerLeftContent) {
-    headerLeftContent.classList.remove("hidden");
-    headerLeftContent.classList.add("flex");
+  if (hasCustomSkeletons) {
+    for (const skeleton of skeletons) {
+      if (typeof /** @type {any} */ (skeleton).reveal === "function") {
+        /** @type {any} */ (skeleton).reveal(doc);
+      } else {
+        const forId = skeleton.getAttribute ? skeleton.getAttribute("for") : null;
+        const display = skeleton.getAttribute
+          ? skeleton.getAttribute("reveal-display") || "block"
+          : "block";
+        const mode = skeleton.getAttribute
+          ? skeleton.getAttribute("reveal-mode") || "hide"
+          : "hide";
+
+        if (forId) {
+          const target = doc.getElementById(forId);
+          if (target) {
+            target.classList.remove("hidden");
+            if (display !== "block") target.classList.add(display);
+          }
+        }
+        if (mode === "remove" && typeof skeleton.remove === "function") {
+          skeleton.remove();
+        } else {
+          skeleton.classList.add("hidden");
+        }
+      }
+    }
+  } else {
+    // Fallback de compatibilidad si aún existen skeletons como divs tradicionales
+    const fallbackHideIds = [
+      "header-left-skeleton",
+      "back-btn-skeleton",
+      "theme-toggle-skeleton",
+      "actions-skeleton",
+      "preview-title-skeleton",
+      "topbar-skeleton",
+      "sync-status-skeleton",
+      "copy-html-skeleton",
+    ];
+    for (const id of fallbackHideIds) {
+      const el = doc.getElementById(id);
+      if (el) el.classList.add("hidden");
+    }
+
+    const fallbackReveals = [
+      { id: "header-left-content", display: "flex" },
+      { id: "template-name", display: null },
+      { id: "btn-back", display: "inline-flex" },
+      { id: "app-theme-toggle", display: null },
+      { id: "actions-buttons", display: "flex" },
+      { id: "preview-title", display: "flex" },
+      { id: "topbar-controls", display: "flex" },
+      { id: "sync-status", display: "flex" },
+      { id: "btn-copy-html", display: "flex" },
+    ];
+    for (const { id, display } of fallbackReveals) {
+      const el = doc.getElementById(id);
+      if (el) {
+        el.classList.remove("hidden");
+        if (display) el.classList.add(display);
+      }
+    }
   }
-  if (templateNameEl) templateNameEl.classList.remove("hidden");
+
+  // 2. Excepción 1: template-name-skeleton se elimina del DOM si aún persiste
+  const templateNameSkeleton = doc.getElementById("template-name-skeleton");
   if (templateNameSkeleton && typeof templateNameSkeleton.remove === "function") {
     templateNameSkeleton.remove();
   }
-  if (backBtnSkeleton) backBtnSkeleton.classList.add("hidden");
-  if (backBtn) {
-    backBtn.classList.remove("hidden");
-    backBtn.classList.add("inline-flex");
-  }
 
-  // 2. Cabecera del editor: toggle de tema de la app
-  const themeToggleSkeleton = doc.getElementById("theme-toggle-skeleton");
-  const appThemeToggle = doc.getElementById("app-theme-toggle");
-  if (themeToggleSkeleton) themeToggleSkeleton.classList.add("hidden");
-  if (appThemeToggle) appThemeToggle.classList.remove("hidden");
-
-  // 3. Acciones del editor (botones guardar y descartar)
-  const actionsSkeleton = doc.getElementById("actions-skeleton");
-  const actionsButtons = doc.getElementById("actions-buttons");
+  // 3. Excepción 2: Desbloqueo de botones de acción de guardado y descarte
   const saveBtn = /** @type {HTMLButtonElement | null} */ (doc.getElementById("btn-save"));
   const resetBtn = /** @type {HTMLButtonElement | null} */ (doc.getElementById("btn-reset"));
-  if (actionsSkeleton) actionsSkeleton.classList.add("hidden");
-  if (actionsButtons) {
-    actionsButtons.classList.remove("hidden");
-    actionsButtons.classList.add("flex");
-  }
   if (saveBtn) saveBtn.disabled = false;
   if (resetBtn) resetBtn.disabled = false;
 
-  // 4. Controles superiores (título de preview, viewport, theme template, estado de sincronización y copiar html)
-  const previewTitleSkeleton = doc.getElementById("preview-title-skeleton");
-  const previewTitle = doc.getElementById("preview-title");
-  const topbarSkeleton = doc.getElementById("topbar-skeleton");
-  const topbarControls = doc.getElementById("topbar-controls");
-  const syncStatusSkeleton = doc.getElementById("sync-status-skeleton");
-  const syncStatus = doc.getElementById("sync-status");
-  const copyHtmlSkeleton = doc.getElementById("copy-html-skeleton");
-  const copyHtmlBtn = doc.getElementById("btn-copy-html");
-
-  if (previewTitleSkeleton) previewTitleSkeleton.classList.add("hidden");
-  if (previewTitle) {
-    previewTitle.classList.remove("hidden");
-    previewTitle.classList.add("flex");
+  // 4. Refrescar iconos Lucide inyectados solo en entorno con document global
+  if (typeof document !== "undefined") {
+    initLucideIcons();
   }
-
-  if (topbarSkeleton) topbarSkeleton.classList.add("hidden");
-  if (topbarControls) {
-    topbarControls.classList.remove("hidden");
-    topbarControls.classList.add("flex");
-  }
-
-  if (syncStatusSkeleton) syncStatusSkeleton.classList.add("hidden");
-  if (syncStatus) {
-    syncStatus.classList.remove("hidden");
-    syncStatus.classList.add("flex");
-  }
-
-  if (copyHtmlSkeleton) copyHtmlSkeleton.classList.add("hidden");
-  if (copyHtmlBtn) {
-    copyHtmlBtn.classList.remove("hidden");
-    copyHtmlBtn.classList.add("flex");
-  }
-
-  // Refrescar iconos Lucide inyectados
-  initLucideIcons();
 }
