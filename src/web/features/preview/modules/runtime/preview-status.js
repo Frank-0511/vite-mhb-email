@@ -3,8 +3,8 @@
  * @fileoverview Controlador del estado visual del preview (sincronización, variables ESP y errores).
  */
 
-import { queryRequired, querySafe } from "../../shared/utils/dom-helpers.js";
-import { createRenderErrorView } from "./render-error-view.js";
+import { queryRequired, querySafe } from "../../../../shared/utils/dom-helpers.js";
+import { createRenderErrorView } from "../render/render-error-view.js";
 
 /**
  * @typedef {Object} ESPValidationData
@@ -16,7 +16,7 @@ import { createRenderErrorView } from "./render-error-view.js";
  * @typedef {Object} PreviewStatusElements
  * @property {any} [syncStatus] - Elemento DOM para el estado de sincronización.
  * @property {any} [espStatus] - Elemento DOM para el aviso de variables ESP.
- * @property {import("./render-error-view.js").RenderErrorView} [renderErrorView] - Vista accesible de errores de render.
+ * @property {import("../render/render-error-view.js").RenderErrorView} [renderErrorView] - Vista accesible de errores de render.
  */
 
 /**

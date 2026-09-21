@@ -1,7 +1,7 @@
 // @ts-check
 import { describe, expect, it } from "bun:test";
 import { initMobileTabs } from "./mobile-tabs.js";
-import { createMockElement } from "./test-helpers.js";
+import { createMockElement } from "../runtime/test-helpers.js";
 
 describe("mobile-tabs", () => {
   function setupTestDom(initialBodyAttrs = {}) {

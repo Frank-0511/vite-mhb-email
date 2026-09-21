@@ -1,7 +1,7 @@
 // @ts-check
 import { describe, expect, test } from "bun:test";
 import { createRenderErrorView } from "./render-error-view.js";
-import { createMockElement } from "./test-helpers.js";
+import { createMockElement } from "../runtime/test-helpers.js";
 
 const createMockDomElement = (id = "") => createMockElement([], { id, hidden: true });
 

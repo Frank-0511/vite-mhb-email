@@ -10,21 +10,24 @@ import { initLucideIcons } from "../../shared/utils/lucide-setup.js";
 import "../../shared/components/ef-skeleton.js";
 import "../../shared/utils/theme-toggle-component.js";
 
-import { initCopyHtmlModal } from "./copy-html-modal.js";
-import { initializeEditor } from "./editor.js";
-import { createIframeManager } from "./iframe-manager.js";
-import { setupPreviewHmr } from "./preview-hmr.js";
-import { getTemplateNameFromUrl, renderMissingTemplateError } from "./preview-params.js";
-import { initMobileTabs } from "./mobile-tabs.js";
-import { setupMoreMenu } from "./more-menu.js";
-import { markPreviewReady } from "./preview-ready.js";
-import { createPreviewStatus } from "./preview-status.js";
-import { createRenderAPI } from "./render-api.js";
-import { setupResetButton, setupSaveButton } from "./save-reset.js";
+import { initCopyHtmlModal } from "./modules/copy-html/copy-html-modal.js";
+import { initializeEditor } from "./modules/editor/editor.js";
+import { createIframeManager } from "./modules/runtime/iframe-manager.js";
+import { setupPreviewHmr } from "./modules/runtime/preview-hmr.js";
+import {
+  getTemplateNameFromUrl,
+  renderMissingTemplateError,
+} from "./modules/runtime/preview-params.js";
+import { initMobileTabs } from "./modules/controls/mobile-tabs.js";
+import { setupMoreMenu } from "./modules/controls/more-menu.js";
+import { markPreviewReady } from "./modules/runtime/preview-ready.js";
+import { createPreviewStatus } from "./modules/runtime/preview-status.js";
+import { createRenderAPI } from "./modules/render/render-api.js";
+import { setupResetButton, setupSaveButton } from "./modules/editor/save-reset.js";
 import "./styles.css";
-import { setupTemplateThemeToggle } from "./theme-manager.js";
-import { setupViewModeControls } from "./view-mode-controls.js";
-import { setupPreviewViewport } from "./viewport-controls.js";
+import { setupTemplateThemeToggle } from "./modules/controls/theme-manager.js";
+import { setupViewModeControls } from "./modules/controls/view-mode-controls.js";
+import { setupPreviewViewport } from "./modules/controls/viewport-controls.js";
 
 export { getTemplateNameFromUrl, markPreviewReady, renderMissingTemplateError };
 

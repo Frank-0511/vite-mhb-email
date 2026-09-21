@@ -41,7 +41,9 @@ describe("check-migration-inventory (MHB-29)", () => {
 
     it("clasifica correctamente rutas del dashboard web (layer-4-web)", () => {
       expect(matchesLayer("src/web/features/home/main.js", "layer-4-web")).toBe(true);
-      expect(matchesLayer("src/web/features/preview/editor.js", "layer-4-web")).toBe(true);
+      expect(matchesLayer("src/web/features/preview/modules/editor/editor.js", "layer-4-web")).toBe(
+        true,
+      );
       expect(matchesLayer("src/web/shared/utils/dom.js", "layer-4-web")).toBe(true);
       expect(matchesLayer("scripts/ai/agents-sync.mjs", "layer-4-web")).toBe(false);
     });

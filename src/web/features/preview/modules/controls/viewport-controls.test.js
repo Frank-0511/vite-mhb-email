@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { createViewportMockElements } from "./test-helpers.js";
+import { createViewportMockElements } from "../runtime/test-helpers.js";
 import {
   getCommittedCustomViewportWidth,
   getLiveCustomViewportWidth,

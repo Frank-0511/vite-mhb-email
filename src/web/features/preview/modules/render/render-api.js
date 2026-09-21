@@ -4,7 +4,7 @@
  * Orquesta peticiones de renderizado, invalidación de caché y debounce de cambios.
  */
 
-import { createDebounceTimer, fetchText } from "../../shared/utils/http-helpers.js";
+import { createDebounceTimer, fetchText } from "../../../../shared/utils/http-helpers.js";
 import { parseRenderErrorResponse, RenderApiError } from "./render-error-parser.js";
 
 export { parseRenderErrorResponse, RenderApiError };
