@@ -2,11 +2,11 @@
 
 ## Resumen
 
-- ID activo: MHB-13
-- Estado: Completada
-- Implementador: Perfil tipos/rendimiento
+- ID activo: MHB-29
+- Estado: En revisión
+- Implementador: Perfil TypeScript/tooling
 - Revisor: Revisor técnico
-- Rama: `feature/mhb-13`
+- Rama: `feature/mhb-29`
 - Última actualización: 2026-09-20
 - Contrato activo: `docs/implementation/PLAN.md`
 
@@ -14,39 +14,42 @@
 
 - La release [v1.2.0](https://github.com/Frank-0511/vite-mhb-email/releases/tag/v1.2.0) es el baseline funcional publicado.
 - MHB-20 mergeada a `master` (commits `4cc964f` y `619a425`).
+- MHB-13 completada y mergeada a `master` (commit `5fe448a`).
 - Las variables ESP `{{ }}` se preservan en el HTML final; `[[ page.* ]]` queda reservado para Maizzle.
 
-## Entrega activa (MHB-13: Baseline completo de tipos y rendimiento)
+## Entrega activa (MHB-29: Base de ejecución TypeScript)
 
-- **Inventario exhaustivo:** 190 archivos JS/MJS cubiertos en 23 directorios (root, scripts, src/web, tests).
-- **Límites ambientales:** declaraciones en `types/` (`assets.d.ts`, `bun-test.d.ts`, `cdn.d.ts`, `vite-env.d.ts`).
-- **Typecheck JS verde:** `tsc --noEmit` completó con 0 errores; cero directivas `@ts-ignore` introducidas.
-- **Rendimiento medido:** script `scripts/perf/measure-benchmarks.js` reproducible (con tests unitarios).
-- **Rendimiento comparativo:** Bun (1.3.13) vs Node.js (v24.3.0) medido en Darwin arm64 (Apple M1 Pro).
+- **Configuración TS consolidada (2 archivos):** `tsconfig.json` (canónico unificado para todo el proyecto) y `tsconfig.strict.json` (auditoría estricta para archivos `.ts`), activando `strict: true` en `.ts` sin alterar el baseline de los `.js` existentes.
+- **Soporte ESLint 10:** integración de `typescript-eslint` en `eslint.config.js` y actualización de `lint-staged` para linting de archivos `.ts`.
+- **Módulo y test piloto TS:** `scripts/shared/pilot.ts` y `scripts/shared/pilot.test.ts` escritos en TypeScript estricto, ejecutados nativamente por `bun test` sin emitir artefactos.
+- **Control determinista de inventario:** `scripts/inventory/check-migration-inventory.js` y `inventory-baseline.json` con control decreciente de 194 archivos JS/MJS y 2 TS distribuidos en las 5 capas de migración.
+- **Cero artefactos transpiled y cero regresión:** build de email (`bun run build`), validación HTML y suite completa 100% verdes.
 
-### Mediciones de Rendimiento (Darwin arm64, commit `619a425`, 3 iteraciones)
+### Matriz Herramienta → Carga de TypeScript
 
-| Tarea / Comando     | Runtime | Comando Ejecutado                                 | Mediana (ms) | Rango [Min - Max] (ms) |
-| :------------------ | :------ | :------------------------------------------------ | :----------: | :--------------------: |
-| **Typecheck (tsc)** | Bun     | `bun ./node_modules/typescript/bin/tsc --noEmit`  |   1431 ms    |    [1402 - 1433] ms    |
-| **Typecheck (tsc)** | Node.js | `node ./node_modules/typescript/bin/tsc --noEmit` |   1474 ms    |    [1431 - 1482] ms    |
-| **Build Pipeline**  | Bun     | `bun scripts/build/build.js`                      |   4119 ms    |    [4103 - 4141] ms    |
-| **Build Pipeline**  | Node.js | `node scripts/build/build.js`                     |   4155 ms    |    [4093 - 4183] ms    |
-| **Email Validator** | Bun     | `bun scripts/validators/validate-email-html.js`   |    63 ms     |      [63 - 64] ms      |
-| **Email Validator** | Node.js | `node scripts/validators/validate-email-html.js`  |    81 ms     |      [81 - 82] ms      |
-| **Unit Test Suite** | Bun     | `bun test`                                        |   5975 ms    |    [5974 - 5989] ms    |
+| Herramienta      | Versión | Forma de cargar TypeScript                                            | Estado        |
+| :--------------- | :------ | :-------------------------------------------------------------------- | :------------ |
+| **Bun**          | 1.3.13  | Nativo (`bun <file.ts>`, `bun test <file.test.ts>`) sin transpilación | 🟢 Verificado |
+| **Node.js**      | v22/v24 | Nativo (`--experimental-strip-types` en Node 22, sin flag en Node 24) | 🟢 Verificado |
+| **Vite**         | 8.0.10  | Nativo vía esbuild integrado para módulos y scripts `.ts`             | 🟢 Verificado |
+| **Maizzle**      | 1.1.0   | Ejecución sobre Bun/Node consumiendo configs y compilación PostCSS    | 🟢 Verificado |
+| **Tailwind CSS** | 3.4.19  | Configurado con globs en `content` que incluyen ficheros `.ts`        | 🟢 Verificado |
+| **PostCSS**      | 8.5.12  | Plugins compatibles ejecutados en el flujo de Maizzle/Tailwind        | 🟢 Verificado |
+| **ESLint**       | 10.2.1  | Flat config con parser y reglas recomendadas de `typescript-eslint`   | 🟢 Verificado |
 
 ### Controles de Calidad
 
-| Control                                    | Comando                                           | Resultado                         |
-| :----------------------------------------- | :------------------------------------------------ | :-------------------------------- |
-| Typecheck JS completo                      | `./node_modules/.bin/tsc --noEmit`                | Verde (0 errores en 190 archivos) |
-| Pruebas unitarias/integración              | `bun test`                                        | Verde (472 pasados, 0 fallos)     |
-| Linting completo (html, js, md, json, css) | `eslint`, `htmlhint`, `markdownlint`, `stylelint` | Verde (0 errores, 0 warnings)     |
-| Formato de código                          | `./node_modules/.bin/prettier --check .`          | Verde (100% formateado)           |
-| Build pipeline                             | `bun scripts/build/build.js`                      | Verde (6 templates compilados)    |
-| Validador HTML email                       | `bun scripts/validators/validate-email-html.js`   | Verde (0 errores)                 |
-| Comprobación de rama                       | `bun scripts/ai/check-task-branch.mjs`            | Verde (`feature/mhb-13`)          |
+| Control                                       | Comando                                | Resultado                                       |
+| :-------------------------------------------- | :------------------------------------- | :---------------------------------------------- |
+| Typecheck unificado + estricto                | `bun run typecheck`                    | Verde (0 errores en tsconfig y tsconfig.strict) |
+| Pruebas unitarias/integración                 | `bun test`                             | Verde (484 pasados, 0 fallos en 65 archivos)    |
+| Linting completo (html, js/ts, md, json, css) | `bun run lint`                         | Verde (0 errores, 0 warnings)                   |
+| Control de inventario de migración            | `bun run check:inventory`              | Verde (194 JS / 2 TS conforme)                  |
+| Formato de código                             | `bun run format:check`                 | Verde (100% formateado)                         |
+| Build pipeline                                | `bun run build`                        | Verde (6 templates compilados)                  |
+| Validador HTML email                          | `bun run validate-email`               | Verde (0 errores)                               |
+| Comprobación de rama                          | `bun scripts/ai/check-task-branch.mjs` | Verde (`feature/mhb-29`)                        |
+| Sincronización de agentes                     | `bun run agents:check`                 | Verde (7 targets correctos)                     |
 
 ## Últimas entregas
 
@@ -58,20 +61,19 @@
 
 | Ámbito | Estado     | Propiedad                              | Handoff                                               |
 | :----- | :--------- | :------------------------------------- | :---------------------------------------------------- |
-| MHB-13 | Completada | Baseline tipos y mediciones            | Verificación completa y aceptada en `feature/mhb-13`. |
+| MHB-13 | Completada | Baseline tipos y mediciones            | Verificación completa y merge a `master` (`5fe448a`). |
 | MHB-20 | Completada | Tests integración, caché y exportación | Aceptación y merge a `master` en commit `619a425`.    |
 
 ## Decisiones y desviaciones vigentes
 
-- **Sin `@ts-ignore`:** Todos los diagnósticos se solventaron con anotaciones JSDoc y type guards nativos.
-- **Sin `.ts` prematuro:** Todos los archivos permanecen `.js`/`.mjs`; conversión reservada para MHB-29–MHB-34.
-- **Sin `strict` global prematuro:** Se amplió `checkJs: true` preservando flags permisivos de migración.
-- **Declaraciones ambientales acotadas:** `types/*.d.ts` definen interfaces externas (DOM/lucide/import.meta) sin tocar runtime.
+- **`typescript-eslint` como devDependency:** Se incorporó `typescript-eslint@8.70.0` para permitir a ESLint 10 analizar sintaxis TypeScript sin dependencias en tiempo de ejecución.
+- **`allowImportingTsExtensions: true`:** Habilitado en `tsconfig.base.json` junto con `noEmit: true` para permitir imports explícitos `.ts` con resolución ESM nativa.
+- **Baseline de inventario en 194 JS:** Incorpora los 192 archivos de partida de MHB-13 más los 2 archivos de infraestructura del control de inventario (`check-migration-inventory.js` y `check-migration-inventory.test.js`), listados para migrar en MHB-34.
 
 ## Handoff
 
-- Próxima acción inmediata: merge de `feature/mhb-13` a `master`.
+- Próxima acción inmediata: Revisión técnica independiente de MHB-29 en `feature/mhb-29`.
 - Siguiente tarea del roadmap:
-  - MHB-29 (`desbloqueado`): Base de ejecución TypeScript (prerequisito MHB-13 completado).
-  - MHB-14 (`desbloqueado`): Evidencia de uso y compatibilidad (depende de flujo de producto publicado).
+  - MHB-30 (`bloqueado`): Núcleo y validadores en TypeScript (requiere cierre y merge de MHB-29).
+  - MHB-14 (`desbloqueado`): Evidencia de uso y compatibilidad.
   - MHB-28 (`desbloqueado`): Modularización de superficies web sobredimensionadas.

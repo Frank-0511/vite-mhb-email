@@ -104,49 +104,43 @@ git commit -m "chore: establish complete JavaScript type baseline"
 **Files:**
 
 - Modify: `tsconfig.json`
-- Create as needed: `tsconfig.node.json`, `tsconfig.web.json`, `tsconfig.test.json`
-- Modify: `package.json`, `eslint.config.js`, lockfile only if a direct loader dependency is proven necessary
-- Modify/Create: `types/*.d.ts`
-- Create: `scripts/validators/check-typescript-migration.ts`
-- Create: `scripts/validators/check-typescript-migration.test.ts`
+- Create: `tsconfig.strict.json`
+- Modify: `package.json`, `bun.lock`, `eslint.config.js`
+- Create: `scripts/shared/pilot.ts`
+- Create: `scripts/shared/pilot.test.ts`
+- Create: `scripts/inventory/inventory-baseline.json`
+- Create: `scripts/inventory/check-migration-inventory.js`
+- Create: `scripts/inventory/check-migration-inventory.test.js`
 - Modify: `docs/implementation/STATUS.md`
 
 **Interfaces:**
 
 - Consumes: exact MHB-13 inventory and ambient declarations.
-- Produces: strict `.ts` support and a deterministic remaining-JavaScript counter used by MHB-30 to MHB-34.
+- Produces: strict `.ts` execution base, two-tier `tsconfig` architecture, and a deterministic remaining-JavaScript counter used by MHB-30 to MHB-34.
 
-- [ ] **Step 1: Write the failing inventory-guard test**
+- [ ] **Step 1: Write the inventory guard unit tests**
 
-Test that the guard classifies first-party `.js`/`.mjs` by `scripts`, `src`, and root config, while excluding `dist`, dependencies and read-only synchronized material. Run:
+Test that the guard classifies first-party `.js`/`.mjs` by the 5 migration layers (`core`, `cli`, `vite`, `web`, `tooling`), validates against baseline, and supports `--require-zero` / `--strict-zero` mode. Run:
 
 ```bash
-bun test scripts/validators/check-typescript-migration.test.ts
+bun test scripts/inventory/check-migration-inventory.test.js
 ```
 
-Expected: FAIL because the guard does not exist.
+- [ ] **Step 2: Implement deterministic inventory guard and versioned baseline**
 
-- [ ] **Step 2: Implement the deterministic inventory guard**
+Create `scripts/inventory/inventory-baseline.json` (tracking initial baseline of 194 JS/MJS and 2 TS files across 5 layers) and `scripts/inventory/check-migration-inventory.js`. Wire `bun run check:inventory` into `package.json`. The tool exits zero while migration is in progress and exits non-zero if unexpected new JS files appear or if `--require-zero` is passed with remaining JS files.
 
-Export a pure function returning this contract:
+- [ ] **Step 3: Consolidate configuration into a two-file tsconfig architecture**
 
-```ts
-export interface MigrationInventory {
-  total: number;
-  byArea: Readonly<Record<string, number>>;
-  files: readonly string[];
-}
-```
+Consolidate compiler configuration into two files:
 
-The CLI exits zero while migration remains in progress and accepts `--require-zero` for MHB-34.
+- `tsconfig.json`: Project-wide canonical configuration (`allowJs: true`, `checkJs: true`, `target: es2022`, `module: nodenext`, `noEmit: true`, `allowImportingTsExtensions: true`, unified `lib: ["es2022", "dom", "dom.iterable"]`).
+- `tsconfig.strict.json`: Extends `./tsconfig.json` enabling `strict: true`, `noImplicitAny: true`, and `strictNullChecks: true` for `.ts` files under `scripts/**` and `src/**`.
+- Wire dual check into `package.json`: `"typecheck": "tsc --noEmit && tsc -p tsconfig.strict.json --noEmit"`.
 
-- [ ] **Step 3: Separate Node, browser and test compiler contexts**
+- [ ] **Step 4: Prove each loader with a non-production TypeScript pilot**
 
-Keep shared strict options in `tsconfig.json`; give Node configs `types: ["node"]`, browser config `lib: ["ES2022", "DOM", "DOM.Iterable"]`, and tests the Bun test declarations actually required by the suite.
-
-- [ ] **Step 4: Prove each loader with one non-production pilot**
-
-Use the guard and its test as the `.ts` pilot. Verify Bun, Node 24, Vite, ESLint, Maizzle, Tailwind and PostCSS configuration loading without changing product source extensions.
+Create `scripts/shared/pilot.ts` and `scripts/shared/pilot.test.ts` exercising interfaces, generics and type guards directly in Bun. Install `typescript-eslint` for ESLint 10 flat config linting of `**/*.ts`. Verify loader matrix: Bun, Node 24, Vite, ESLint, Maizzle, Tailwind, and PostCSS configuration loading without changing product source extensions.
 
 - [ ] **Step 5: Run the complete mixed-mode gate**
 
@@ -157,16 +151,17 @@ bun run test
 bun run format:check
 bun run build
 bun run validate-email
+bun run check:inventory
 git diff --check
 ```
 
 - [ ] **Step 6: Record loader matrix and commit**
 
-Update STATUS with tool, command, TypeScript loading mechanism and result; set MHB-29 to `En revisión`.
+Update STATUS with tool, command, TypeScript loading mechanism, quality gate output, and inventory count (194 JS / 2 TS); set MHB-29 to `En revisión`.
 
 ```bash
-git add tsconfig*.json package.json bun.lock eslint.config.js types scripts/validators docs/implementation/STATUS.md
-git commit -m "build: establish mixed TypeScript execution"
+git add tsconfig.json tsconfig.strict.json package.json bun.lock eslint.config.js scripts/shared/pilot.ts scripts/shared/pilot.test.ts scripts/inventory docs/implementation/STATUS.md
+git commit -m "build: establish mixed TypeScript execution baseline (MHB-29)"
 ```
 
 ### Task 3: MHB-30 — Core, build, ESP and validators
@@ -183,7 +178,7 @@ git commit -m "build: establish mixed TypeScript execution"
 
 **Interfaces:**
 
-- Consumes: MHB-29 strict configs and inventory guard.
+- Consumes: MHB-29 strict configs, 2-file tsconfig architecture, and inventory guard.
 - Produces: typed domain/build/validation contracts for MHB-31 and MHB-32.
 
 - [ ] **Step 1: Capture build hashes and focused test baseline**
@@ -192,26 +187,29 @@ Run build, validation, focused suites for the four directories and hash every tr
 
 - [ ] **Step 2: Migrate `scripts/shared` with its tests**
 
-Rename implementation and test pairs together, export shared types only when consumed outside the defining module, update imports, then run focused tests and typecheck.
+Rename implementation and test pairs together, export shared types only when consumed outside the defining module, update imports using explicit `.ts` extensions (`import { ... } from "./file.ts"`), then run focused tests, typecheck, and verify inventory drop (`bun run check:inventory`). Commit subfolder independently: `git commit -m "refactor(shared): migrate shared utilities to TypeScript (MHB-30)"`.
 
 - [ ] **Step 3: Migrate `scripts/esp` and `scripts/build`**
 
-Preserve runtime parsing and delimiter behavior. After each directory, run focused tests plus `bun run build` and compare `dist` hashes.
+Preserve runtime parsing and delimiter behavior. Use explicit `.ts` extensions in imports.
+
+- Migrate `scripts/esp`, test, check inventory, commit: `git commit -m "refactor(esp): migrate ESP engine and delimiters to TypeScript (MHB-30)"`.
+- Migrate `scripts/build`, test, run `bun run build`, compare `dist/*.html` hashes byte-for-byte, check inventory, commit: `git commit -m "refactor(build): migrate build pipeline to TypeScript (MHB-30)"`.
 
 - [ ] **Step 4: Migrate validators and the email partial test**
 
-Keep rule severities and public result shapes unchanged. Run every validator test and `bun run validate-email`.
+Keep rule severities and public result shapes unchanged. Use explicit `.ts` extensions in imports.
+
+- Migrate `scripts/validators`, test, run `bun run validate-email`, check inventory, commit: `git commit -m "refactor(validators): migrate email validators to TypeScript (MHB-30)"`.
+- Migrate `src/emails/**/*.test.js` → `.test.ts`, test with `bun test src/emails`, commit: `git commit -m "test(emails): migrate email tests to TypeScript (MHB-30)"`.
 
 - [ ] **Step 5: Prove the layer is complete**
 
-Run the full gate and verify the migration inventory has zero JS/MJS in all MHB-30-owned paths.
+Run the full gate: `bun run lint`, `bun run typecheck`, `bun test`, `bun run format:check`, `bun run build`, `bun run validate-email`, `bun run check:inventory`, and `git diff --check`. Verify the migration inventory has zero JS/MJS in Layer 1 (core, build, esp, validators).
 
-- [ ] **Step 6: Update STATUS and commit**
+- [ ] **Step 6: Update STATUS and handoff**
 
-```bash
-git add scripts/shared scripts/build scripts/esp scripts/validators src/emails package.json docs/implementation/STATUS.md
-git commit -m "refactor: migrate core pipeline to TypeScript"
-```
+Update STATUS with the final test/typecheck evidence, zero Layer 1 inventory, and reviewer handoff; set MHB-30 to `En revisión`.
 
 ### Task 4: MHB-31 — CLI, export, generators and mail
 
@@ -316,35 +314,32 @@ Record required IDs/classes/ARIA, storage keys, API routes and the six width/the
 
 - [ ] **Step 2: Migrate shared utilities and Home**
 
-Use generic DOM query helpers returning precise element types; type IntersectionObserver and iframe loading; convert tests together with modules.
+Use generic DOM query helpers returning precise element types; type IntersectionObserver and iframe loading; convert tests together with modules using explicit `.ts` extensions (`import { ... } from "./file.ts"`). Check inventory (`bun run check:inventory`). Commit independently: `git commit -m "refactor(web): migrate shared web utilities and home to TypeScript (MHB-33)"`.
 
 - [ ] **Step 3: Migrate Library**
 
-Define component/schema/form state types, type events via narrowed `currentTarget`, preserve skeleton and selection behavior, then run focused tests.
+Define component/schema/form state types, type events via narrowed `currentTarget`, preserve skeleton and selection behavior, use explicit `.ts` extensions, then run focused tests and check inventory. Commit independently: `git commit -m "refactor(web): migrate component library to TypeScript (MHB-33)"`.
 
 - [ ] **Step 4: Migrate Preview**
 
-Convert leaf modules before `main.ts`; type editor CDN, HMR, iframe manager, render state, save/reset, viewport and copy/download discriminated results. Preserve all runtime guards.
+Convert leaf modules before `main.ts`; type editor CDN, HMR, iframe manager, render state, save/reset, viewport and copy/download discriminated results. Preserve all runtime guards and use explicit `.ts` extensions. Run focused tests and check inventory. Commit independently: `git commit -m "refactor(web): migrate preview dashboard to TypeScript (MHB-33)"`.
 
 - [ ] **Step 5: Run automatic and manual UI gates**
 
-Run lint, strict typecheck, tests, format, build, email validation, contrast and a11y. Then execute the documented 375/768/1440 dark/light walkthrough without accepting any visual or email-output change.
+Run lint, strict typecheck, tests, format, build, email validation, contrast and a11y. Then execute the documented 375/768/1440 dark/light walkthrough without accepting any visual or email-output change. Verify `bun run check:inventory` shows 0 JS/MJS remaining in Layer 4 (`src/web/**`).
 
 - [ ] **Step 6: Verify inventory, update STATUS and commit**
 
-```bash
-git add src/web docs/implementation/STATUS.md
-git commit -m "refactor: migrate dashboard to TypeScript"
-```
+Update STATUS with the final test/typecheck evidence, zero Layer 4 inventory, and reviewer handoff; set MHB-33 to `En revisión`.
 
 ### Task 7: MHB-34 — Strict global closure
 
 **Files:**
 
 - Rename and modify: `scripts/ai/**/*.js`, `scripts/ai/**/*.mjs` → `.ts`
+- Rename and modify: `scripts/inventory/**/*.js` → `.ts`
 - Rename and modify: remaining root `*.config.js` → supported `.ts` equivalents
-- Modify: `package.json`, `tsconfig*.json`, ESLint/lint-staged, README and all maintained docs referencing old paths
-- Modify: `scripts/validators/check-typescript-migration.ts`
+- Modify: `package.json`, `tsconfig.json` (delete `tsconfig.strict.json`), ESLint/lint-staged, README and all maintained docs referencing old paths
 - Modify: `docs/implementation/STATUS.md`
 
 **Interfaces:**
@@ -356,13 +351,13 @@ git commit -m "refactor: migrate dashboard to TypeScript"
 
 Run the inventory guard and `rg --files -g '*.js' -g '*.mjs'`. Classify every result as first-party scope or documented external/generated exclusion; no first-party exception is allowed.
 
-- [ ] **Step 2: Migrate AI tooling and root configs**
+- [ ] **Step 2: Migrate AI tooling, inventory scripts, and root configs**
 
-Preserve `agents:sync`, `agents:check`, branch guard, ESLint, Maizzle, PostCSS and both Tailwind configs. Verify each tool immediately after its config/entrypoint rename.
+Pre-check loader compatibility for non-Vite tools (`maizzle`, `postcss`, `tailwind`) before renaming configs. Preserve `agents:sync`, `agents:check`, branch guard, ESLint, Maizzle, PostCSS and both Tailwind configs. Verify each tool immediately after its config/entrypoint rename.
 
-- [ ] **Step 3: Remove transitional compiler options**
+- [ ] **Step 3: Remove transitional compiler options and consolidate into single tsconfig.json**
 
-Set the global compiler contract to:
+Delete `tsconfig.strict.json` and set the single canonical `tsconfig.json` compiler contract to:
 
 ```json
 {
@@ -373,11 +368,11 @@ Set the global compiler contract to:
 }
 ```
 
-Remove `checkJs` and any JavaScript-only includes. Reject unjustified `any`, `@ts-ignore` and untracked loader exceptions.
+Remove `checkJs` and any JavaScript-only includes. Update `package.json` `"typecheck"` script to `"tsc --noEmit"`. Reject unjustified `any`, `@ts-ignore` and untracked loader exceptions.
 
 - [ ] **Step 4: Make zero JavaScript a permanent gate**
 
-Wire `check-typescript-migration.ts --require-zero` into the maintained verification path and add a negative test proving a synthetic `.js` file fails the guard.
+Wire `bun run check:inventory --require-zero` into the maintained verification path and CI gates (`bun run test`, PR checks).
 
 - [ ] **Step 5: Update every maintained path reference**
 
@@ -396,17 +391,18 @@ bun run validate-email
 bun run lint:contrast
 bun run a11y-check
 bun run agents:check
+bun run check:inventory --require-zero
 git diff --check
 ```
 
-Expected: all pass, final first-party JS/MJS inventory is zero, UI walkthrough passes, and `dist` hashes match the approved baseline.
+Expected: all pass, final first-party JS/MJS inventory is zero via `--require-zero`, UI walkthrough passes, and `dist` hashes match the approved baseline.
 
 - [ ] **Step 7: Update STATUS and commit**
 
 Record the zero inventory, complete gate outputs, residual external/generated exclusions and reviewer handoff; set MHB-34 to `En revisión`.
 
 ```bash
-git add scripts package.json bun.lock tsconfig*.json *.config.ts README.md docs
+git add scripts package.json bun.lock tsconfig.json *.config.ts README.md docs
 git commit -m "refactor: complete strict TypeScript migration"
 ```
 
@@ -414,5 +410,5 @@ git commit -m "refactor: complete strict TypeScript migration"
 
 - Spec coverage: MHB-13 and MHB-29 through MHB-34 each have scope, dependencies, acceptance, verification, evidence and handoff.
 - Placeholders: no marker, deferred implementation or unspecified “add tests” step remains.
-- Type consistency: `MigrationInventory` and `--require-zero` are introduced in MHB-29 and consumed unchanged in MHB-30 through MHB-34.
+- Tooling consistency: 2-file `tsconfig` architecture (`tsconfig.json`, `tsconfig.strict.json`) established in MHB-29 is consolidated into a single strict `tsconfig.json` in MHB-34; `scripts/inventory/check-migration-inventory.js` and `--require-zero` are introduced in MHB-29 and enforced across MHB-30 through MHB-34.
 - Scope: React, behavioral redesign, release/tag publication and output changes remain excluded.

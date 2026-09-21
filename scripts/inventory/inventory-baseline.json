@@ -1,0 +1,55 @@
+{
+  "version": "1.0.0",
+  "task": "MHB-29",
+  "generatedAt": "2026-09-20",
+  "description": "Baseline decreciente de archivos JavaScript/MJS por capa para la migración gradual a TypeScript (MHB-29 a MHB-34)",
+  "layers": {
+    "layer-1-core": {
+      "name": "Núcleo y validadores",
+      "targetTask": "MHB-30",
+      "baselineJsCount": 65,
+      "patterns": [
+        "scripts/shared/**/*.{js,mjs}",
+        "scripts/build/**/*.{js,mjs}",
+        "scripts/esp/**/*.{js,mjs}",
+        "scripts/validators/**/*.{js,mjs}",
+        "src/emails/partials/**/*.test.js"
+      ]
+    },
+    "layer-2-cli": {
+      "name": "CLI, exportación y correo",
+      "targetTask": "MHB-31",
+      "baselineJsCount": 20,
+      "patterns": [
+        "scripts/cli/**/*.{js,mjs}",
+        "scripts/export/**/*.{js,mjs}",
+        "scripts/generators/**/*.{js,mjs}",
+        "scripts/mail/**/*.{js,mjs}"
+      ]
+    },
+    "layer-3-vite": {
+      "name": "Servidor Vite y APIs",
+      "targetTask": "MHB-32",
+      "baselineJsCount": 33,
+      "patterns": ["scripts/vite/**/*.{js,mjs}", "vite.config.js"]
+    },
+    "layer-4-web": {
+      "name": "Dashboard web",
+      "targetTask": "MHB-33",
+      "baselineJsCount": 51,
+      "patterns": ["src/web/**/*.{js,mjs}"]
+    },
+    "layer-5-tooling": {
+      "name": "AI, inventario y configs raíz",
+      "targetTask": "MHB-34",
+      "baselineJsCount": 25,
+      "patterns": [
+        "scripts/ai/**/*.{js,mjs}",
+        "scripts/perf/**/*.{js,mjs}",
+        "scripts/inventory/**/*.{js,mjs}",
+        "*.config.js"
+      ]
+    }
+  },
+  "totalBaselineJsCount": 194
+}
