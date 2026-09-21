@@ -1,0 +1,239 @@
+/* ── Export / Copy HTML Dialog (Linear / Raycast inspired) ──────── */
+
+#dialog-copy-html {
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 0;
+  width: 460px;
+  max-width: calc(100vw - 32px);
+  box-shadow: 0 25px 60px -15px rgb(0 0 0 / 25%);
+  background: #fff;
+  color: #0f172a;
+}
+
+html.dark #dialog-copy-html {
+  background: #0f172a;
+  color: #f8fafc;
+  border-color: #334155;
+  box-shadow: 0 25px 60px -15px rgb(0 0 0 / 60%);
+}
+
+#dialog-copy-html::backdrop {
+  background: rgb(15 23 42 / 60%);
+  backdrop-filter: blur(8px);
+}
+
+.copy-html-dialog-inner {
+  padding: 24px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Botón de cierre X ─────────────────────────────────────────── */
+
+.copy-html-close-btn {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.copy-html-close-btn:hover {
+  color: #1e293b;
+  background: #f1f5f9;
+}
+
+html.dark .copy-html-close-btn:hover {
+  color: #f8fafc;
+  background: #1e293b;
+}
+
+.copy-html-close-btn:focus-visible {
+  outline: 2px solid #0ea5e9;
+  outline-offset: 2px;
+}
+
+/* ── Cabecera ───────────────────────────────────────────────────── */
+
+.copy-html-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding-right: 32px;
+}
+
+.copy-html-icon-badge {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #f0f9ff;
+  color: #0284c7;
+  border: 1px solid #bae6fd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+html.dark .copy-html-icon-badge {
+  background: rgb(14 165 233 / 15%);
+  color: #38bdf8;
+  border-color: rgb(14 165 233 / 30%);
+}
+
+.copy-html-header-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.copy-html-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.copy-html-title {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.25;
+  color: #0f172a;
+}
+
+html.dark .copy-html-title {
+  color: #f8fafc;
+}
+
+.copy-html-template-chip {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+html.dark .copy-html-template-chip {
+  background: #1e293b;
+  color: #94a3b8;
+  border-color: #334155;
+}
+
+.copy-html-desc {
+  font-size: 0.8125rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+html.dark .copy-html-desc {
+  color: #94a3b8;
+}
+
+/* ── Segmented Control estilo píldora ──────────────────────────── */
+
+.export-segmented-control {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: #f1f5f9;
+  border-radius: 10px;
+  padding: 3px;
+  gap: 3px;
+  border: 1px solid #e2e8f0;
+}
+
+html.dark .export-segmented-control {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+.export-segmented-tab {
+  position: relative;
+  display: flex;
+  cursor: pointer;
+  margin: 0;
+  border-radius: 8px;
+}
+
+.export-segmented-tab input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  margin: 0;
+  pointer-events: none;
+}
+
+.export-segmented-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #64748b;
+  border-radius: 7px;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    box-shadow 0.15s;
+  user-select: none;
+}
+
+html.dark .export-segmented-label {
+  color: #94a3b8;
+}
+
+.export-segmented-tab:hover .export-segmented-label {
+  color: #1e293b;
+}
+
+html.dark .export-segmented-tab:hover .export-segmented-label {
+  color: #f1f5f9;
+}
+
+.export-segmented-tab input[type="radio"]:checked + .export-segmented-label {
+  background: #fff;
+  color: #0f172a;
+  font-weight: 600;
+  box-shadow:
+    0 1px 3px rgb(0 0 0 / 10%),
+    0 1px 2px rgb(0 0 0 / 6%);
+}
+
+html.dark .export-segmented-tab input[type="radio"]:checked + .export-segmented-label {
+  background: #0f172a;
+  color: #f8fafc;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 40%);
+}
+
+.export-segmented-tab input[type="radio"]:focus-visible + .export-segmented-label {
+  outline: 2px solid #0ea5e9;
+  outline-offset: 1px;
+}
+
+.export-segmented-tab input[type="radio"]:disabled + .export-segmented-label {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

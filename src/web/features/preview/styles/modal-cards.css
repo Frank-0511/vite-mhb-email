@@ -1,0 +1,235 @@
+/* ── Tarjetas de acción interactivas (Action Cards) ─────────────── */
+
+.export-actions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.export-action-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    transform 0.15s,
+    box-shadow 0.15s;
+  color: inherit;
+}
+
+html.dark .export-action-card {
+  background: #1e293b;
+  border-color: #334155;
+  color: #f8fafc;
+}
+
+.export-action-card:hover:not(:disabled) {
+  border-color: #0ea5e9;
+  background: #f8fafc;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgb(14 165 233 / 10%);
+}
+
+html.dark .export-action-card:hover:not(:disabled) {
+  border-color: #38bdf8;
+  background: #1e293b;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 30%);
+}
+
+.export-action-card:hover:not(:disabled) .export-card-arrow {
+  color: #0ea5e9;
+  transform: translateX(3px);
+}
+
+html.dark .export-action-card:hover:not(:disabled) .export-card-arrow {
+  color: #38bdf8;
+}
+
+.export-action-card:focus-visible {
+  outline: 2px solid #0ea5e9;
+  outline-offset: 2px;
+}
+
+.export-action-card:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.export-card-icon-wrap {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.export-card-icon-wrap.primary {
+  background: #eff6ff;
+  color: #0284c7;
+  border: 1px solid #bfdbfe;
+}
+
+html.dark .export-card-icon-wrap.primary {
+  background: rgb(2 132 199 / 15%);
+  color: #38bdf8;
+  border-color: rgb(2 132 199 / 30%);
+}
+
+.export-card-icon-wrap.secondary {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+html.dark .export-card-icon-wrap.secondary {
+  background: #334155;
+  color: #94a3b8;
+  border-color: #475569;
+}
+
+.export-card-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.export-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 3px;
+  flex-wrap: wrap;
+}
+
+.export-card-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+html.dark .export-card-title {
+  color: #f8fafc;
+}
+
+.export-badge {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.export-badge-recommended {
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+}
+
+html.dark .export-badge-recommended {
+  background: rgb(5 150 105 / 20%);
+  color: #34d399;
+  border-color: rgb(5 150 105 / 40%);
+}
+
+.export-badge-fast {
+  background: #f8fafc;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+
+html.dark .export-badge-fast {
+  background: #0f172a;
+  color: #94a3b8;
+  border-color: #334155;
+}
+
+.export-card-desc {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+html.dark .export-card-desc {
+  color: #94a3b8;
+}
+
+.export-card-arrow {
+  color: #cbd5e1;
+  flex-shrink: 0;
+  transition:
+    transform 0.15s ease,
+    color 0.15s ease;
+}
+
+html.dark .export-card-arrow {
+  color: #475569;
+}
+
+/* ── Feedback de estado ─────────────────────────────────────────── */
+
+.copy-html-status {
+  margin-top: 2px;
+  font-size: 0.8125rem;
+  border-radius: 8px;
+  padding: 10px 14px;
+  line-height: 1.4;
+}
+
+.copy-html-status.hidden {
+  display: none;
+}
+
+.copy-html-status.loading {
+  background: #f0f9ff;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+}
+
+html.dark .copy-html-status.loading {
+  background: #0c2842;
+  color: #7dd3fc;
+  border-color: #0369a1;
+}
+
+.copy-html-status.success {
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+html.dark .copy-html-status.success {
+  background: #052e16;
+  color: #86efac;
+  border-color: #15803d;
+}
+
+.copy-html-status.error {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+html.dark .copy-html-status.error {
+  background: #2d0a0a;
+  color: #fca5a5;
+  border-color: #b91c1c;
+}
+
+/* ── Clases heredadas para retrocompatibilidad ─────────────────── */
+
+.btn-copy-existing {
+  border-radius: 8px;
+}
