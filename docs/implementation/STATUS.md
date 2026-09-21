@@ -42,7 +42,7 @@
 | Control                                       | Comando                                | Resultado                                       |
 | :-------------------------------------------- | :------------------------------------- | :---------------------------------------------- |
 | Typecheck unificado + estricto                | `bun run typecheck`                    | Verde (0 errores en tsconfig y tsconfig.strict) |
-| Pruebas unitarias/integración                 | `bun test`                             | Verde (484 pasados, 0 fallos en 65 archivos)    |
+| Pruebas unitarias/integración                 | `bun test`                             | Verde (486 pasados, 0 fallos en 65 archivos)    |
 | Linting completo (html, js/ts, md, json, css) | `bun run lint`                         | Verde (0 errores, 0 warnings)                   |
 | Control de inventario de migración            | `bun run check:inventory`              | Verde (194 JS / 2 TS conforme)                  |
 | Formato de código                             | `bun run format:check`                 | Verde (100% formateado)                         |
@@ -66,8 +66,9 @@
 
 ## Decisiones y desviaciones vigentes
 
-- **`typescript-eslint` como devDependency:** Se incorporó `typescript-eslint@8.70.0` para permitir a ESLint 10 analizar sintaxis TypeScript sin dependencias en tiempo de ejecución.
-- **`allowImportingTsExtensions: true`:** Habilitado en `tsconfig.base.json` junto con `noEmit: true` para permitir imports explícitos `.ts` con resolución ESM nativa.
+- **`typescript-eslint` fijado exacto:** Se fijó a `8.70.0` exacta en `package.json` conforme al invariante de versiones sin rangos.
+- **`allowImportingTsExtensions: true`:** Habilitado en `tsconfig.json` junto con `noEmit: true` para permitir imports explícitos `.ts` con resolución ESM nativa.
+- **`checkJs: false` en `tsconfig.strict.json`:** Permite que archivos `.ts` importen `.js` legados sin aplicar `strict: true` sobre código JS en transición.
 - **Baseline de inventario en 194 JS:** Incorpora los 192 archivos de partida de MHB-13 más los 2 archivos de infraestructura del control de inventario (`check-migration-inventory.js` y `check-migration-inventory.test.js`), listados para migrar en MHB-34.
 
 ## Handoff
