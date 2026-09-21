@@ -605,60 +605,6 @@
       </div>
     </dialog>
 
-    <!-- Mobile Tab Switching & Accessibility Controller -->
-    <script>
-      (function () {
-        function initMobileTabs() {
-          const btnPreview = document.getElementById("tab-btn-preview");
-          const btnEditor = document.getElementById("tab-btn-editor");
-          if (!btnPreview || !btnEditor) return;
-
-          function switchTab(activeTab) {
-            const isPreview = activeTab === "preview";
-
-            btnPreview.classList.toggle("active", isPreview);
-            btnPreview.setAttribute("aria-selected", isPreview ? "true" : "false");
-
-            btnEditor.classList.toggle("active", !isPreview);
-            btnEditor.setAttribute("aria-selected", !isPreview ? "true" : "false");
-
-            document.body.setAttribute("data-mobile-tab", activeTab);
-          }
-
-          btnPreview.addEventListener("click", () => switchTab("preview"));
-          btnEditor.addEventListener("click", () => switchTab("editor"));
-
-          // Iniciar por defecto en la pestaña Vista previa en móvil
-          if (!document.body.hasAttribute("data-mobile-tab")) {
-            document.body.setAttribute("data-mobile-tab", "preview");
-          }
-        }
-
-        // Cerrar menú desplegable ⋯ al hacer click fuera (solo aplica en
-        // <480px: en ese ancho el menú es un desplegable real. En ≥480px
-        // permanece "open" siempre a propósito — ahí no es un desplegable,
-        // es cómo se muestra el toggle de tema directamente en el header).
-        document.addEventListener("click", (e) => {
-          const menu = document.getElementById("editor-more-menu");
-          if (
-            menu &&
-            menu.hasAttribute("open") &&
-            window.matchMedia("(max-width: 479px)").matches &&
-            e.target &&
-            !menu.contains(/** @type {Node} */ (e.target))
-          ) {
-            menu.removeAttribute("open");
-          }
-        });
-
-        if (document.readyState === "loading") {
-          document.addEventListener("DOMContentLoaded", initMobileTabs);
-        } else {
-          initMobileTabs();
-        }
-      })();
-    </script>
-
     <!-- Preview App Entry Point -->
     <script type="module" src="/features/preview/main.js"></script>
   </body>

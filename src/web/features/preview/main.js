@@ -14,6 +14,7 @@ import { initializeEditor } from "./editor.js";
 import { createIframeManager } from "./iframe-manager.js";
 import { setupPreviewHmr } from "./preview-hmr.js";
 import { getTemplateNameFromUrl, renderMissingTemplateError } from "./preview-params.js";
+import { initMobileTabs } from "./mobile-tabs.js";
 import { setupMoreMenu } from "./more-menu.js";
 import { markPreviewReady } from "./preview-ready.js";
 import { createPreviewStatus } from "./preview-status.js";
@@ -44,6 +45,9 @@ export async function initializePreview() {
 
   // Menú "más opciones" del editor (abierto por defecto en ≥480px)
   setupMoreMenu();
+
+  // Inicializar navegación por pestañas en móvil
+  initMobileTabs();
 
   // Obtener elementos DOM requeridos
   const templateNameEl = queryRequired("template-name", "Preview Module");
