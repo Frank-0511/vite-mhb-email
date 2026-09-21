@@ -48,6 +48,10 @@ describe("view-mode-controls (MHB-17)", () => {
     };
   }
 
+  /**
+   * @param {Record<string, any>} [overrides]
+   * @param {import("./view-mode-controls.js").ViewModeStorage | any} [storage]
+   */
   function initDefault(overrides = {}, storage = mockStorage) {
     return initViewModeControls(createDefaultElements(overrides), storage);
   }
@@ -159,6 +163,8 @@ describe("view-mode-controls (MHB-17)", () => {
       setItem: () => {
         throw new Error("QuotaExceededError");
       },
+      removeItem: () => {},
+      clear: () => {},
     };
 
     expect(() => {
@@ -205,7 +211,6 @@ describe("view-mode-controls (MHB-17)", () => {
         getElementById: (/** @type {string} */ id) =>
           id === "view-mode-render" ? renderBtn : null,
       };
-      // @ts-expect-error mock incompleto
       expect(setupViewModeControls(incompleteDom)).toBeNull();
     });
 
@@ -224,7 +229,6 @@ describe("view-mode-controls (MHB-17)", () => {
         getElementById: (/** @type {string} */ id) => domMap[id] ?? null,
       };
 
-      // @ts-expect-error mock DOM
       const controller = setupViewModeControls(mockDom, mockStorage);
       expect(controller).not.toBeNull();
       expect(typeof controller?.applyViewMode).toBe("function");

@@ -26,9 +26,9 @@ export function debounce(fn, delayMs = 300) {
  * Execute a callback after user input stops.
  * Returns a function that resets the timer on each call.
  *
- * @param {Function} callback - Function to execute
+ * @param {Function} callback - Function to run after delay
  * @param {number} delayMs - Delay after last input (default 300ms)
- * @returns {Function} Function to call on each input event
+ * @returns {() => void} Function to call on each input event
  */
 export function createDebounceTimer(callback, delayMs = 300) {
   let timer = null;

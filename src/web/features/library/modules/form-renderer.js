@@ -47,8 +47,9 @@ export const formRenderer = {
         toggle.className = "toggle-switch-input";
         toggle.checked = formData[key] || false;
         toggle.addEventListener("change", (e) => {
-          formData[key] = e.target.checked;
-          this.onInputChange(key, e.target.checked);
+          const target = /** @type {HTMLInputElement} */ (e.target);
+          formData[key] = target.checked;
+          this.onInputChange(key, target.checked);
         });
 
         const labelText = document.createElement("span");
@@ -73,8 +74,9 @@ export const formRenderer = {
 
         if (key === "variant") {
           input.addEventListener("change", (e) => {
-            formData[key] = e.target.value;
-            this.onVariantChange(e.target.value);
+            const target = /** @type {HTMLSelectElement} */ (e.target);
+            formData[key] = target.value;
+            this.onVariantChange(target.value);
           });
         }
       } else if (prop.type === "textarea") {
@@ -100,15 +102,19 @@ export const formRenderer = {
       }
 
       input.addEventListener("input", (e) => {
-        const value = prop.type === "number" ? parseFloat(e.target.value) : e.target.value;
+        const target = /** @type {HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement} */ (
+          e.target
+        );
+        const value = prop.type === "number" ? parseFloat(target.value) : target.value;
         formData[key] = value;
         this.onInputChange(key, value);
       });
 
       if (prop.type === "select" && key !== "variant") {
         input.addEventListener("change", (e) => {
-          formData[key] = e.target.value;
-          this.onInputChange(key, e.target.value);
+          const target = /** @type {HTMLSelectElement} */ (e.target);
+          formData[key] = target.value;
+          this.onInputChange(key, target.value);
         });
       }
 

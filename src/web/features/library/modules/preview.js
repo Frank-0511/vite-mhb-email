@@ -12,6 +12,13 @@ export const previewManager = {
     this.skeleton = skeletonEl;
   },
 
+  /**
+   * @param {string} componentId
+   * @param {string} variant
+   * @param {unknown} props
+   * @param {{ showLoading?: boolean, type?: "atoms"|"molecules"|"organisms"|"templates"|string }} [options]
+   * @returns {Promise<void>}
+   */
   async render(componentId, variant, props, { showLoading = false, type } = {}) {
     if (showLoading) this.showSkeleton(type);
 
@@ -56,7 +63,7 @@ export const previewManager = {
   },
 
   /**
-   * @param {"atoms"|"molecules"|"organisms"|"templates"} [type] - Atomic
+   * @param {"atoms"|"molecules"|"organisms"|"templates"|string} [type] - Atomic
    *   design category driving the skeleton shape shown; defaults to
    *   "organisms" when omitted or unrecognized.
    * @returns {void}

@@ -49,9 +49,7 @@ describe("editor-menu-filter", () => {
 
   describe("filterEditorMenuItems", () => {
     test("returns empty array for invalid inputs", () => {
-      // @ts-expect-error test defensivo
       expect(filterEditorMenuItems(null)).toEqual([]);
-      // @ts-expect-error test defensivo
       expect(filterEditorMenuItems(undefined)).toEqual([]);
     });
 

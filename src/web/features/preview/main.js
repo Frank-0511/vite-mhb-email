@@ -47,7 +47,9 @@ export async function initializePreview() {
 
   // Obtener elementos DOM requeridos
   const templateNameEl = queryRequired("template-name", "Preview Module");
-  const iframeEl = queryRequired("preview-iframe", "Preview Module");
+  const iframeEl = /** @type {HTMLIFrameElement} */ (
+    queryRequired("preview-iframe", "Preview Module")
+  );
   const editorContainer = queryRequired("editor-container", "Preview Module");
 
   templateNameEl.textContent = templateName;

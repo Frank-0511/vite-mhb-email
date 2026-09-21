@@ -38,7 +38,7 @@ export function querySelectorRequired(selector, context = "Application") {
     console.error(msg);
     throw new Error(msg);
   }
-  return el;
+  return /** @type {HTMLElement} */ (el);
 }
 
 /**

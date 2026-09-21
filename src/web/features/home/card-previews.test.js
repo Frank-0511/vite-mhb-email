@@ -33,7 +33,7 @@ describe("card-previews", () => {
   test("carga el iframe solo al activarlo y entonces oculta el skeleton", () => {
     const { iframe, wrapper, load } = createPreview();
 
-    loadTemplateCardPreview(/** @type {HTMLIFrameElement} */ (iframe));
+    loadTemplateCardPreview(/** @type {HTMLIFrameElement} */ (/** @type {unknown} */ (iframe)));
 
     expect(iframe.src).toBe("/templates/welcome/index.html");
     expect(iframe.dataset.previewSrc).toBeUndefined();
@@ -52,7 +52,7 @@ describe("card-previews", () => {
       querySelectorAll: () => [first.iframe, second.iframe],
     };
 
-    initializeTemplateCardPreviews(/** @type {Document} */ (root));
+    initializeTemplateCardPreviews(/** @type {Document} */ (/** @type {unknown} */ (root)));
 
     expect(first.iframe.src).toBe("/templates/first/index.html");
     expect(second.iframe.src).toBe("/templates/second/index.html");
@@ -60,9 +60,10 @@ describe("card-previews", () => {
 
   test("espera que la tarjeta se aproxime al viewport antes de cargarla", () => {
     const preview = createPreview();
+    /** @type {Function | undefined} */
     let callback;
     const unobserved = [];
-    globalThis.IntersectionObserver = /** @type {typeof IntersectionObserver} */ (
+    globalThis.IntersectionObserver = /** @type {any} */ (
       class {
         constructor(observerCallback) {
           callback = observerCallback;
@@ -83,11 +84,13 @@ describe("card-previews", () => {
     );
     const root = { querySelectorAll: () => [preview.iframe] };
 
-    initializeTemplateCardPreviews(/** @type {Document} */ (root));
+    initializeTemplateCardPreviews(/** @type {Document} */ (/** @type {unknown} */ (root)));
 
     expect(preview.iframe.src).toBe("");
 
-    callback([{ isIntersecting: true, target: preview.iframe }]);
+    if (callback) {
+      callback([{ isIntersecting: true, target: preview.iframe }]);
+    }
 
     expect(preview.iframe.src).toBe("/templates/welcome/index.html");
     expect(unobserved).toEqual([preview.iframe]);

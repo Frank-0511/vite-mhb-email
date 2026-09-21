@@ -32,7 +32,7 @@ import {
 
 /**
  * Icon names that should be available across the app
- * @type {Record<string, Function>}
+ * @type {import("lucide").Icons}
  */
 const AVAILABLE_ICONS = {
   ArrowLeft,

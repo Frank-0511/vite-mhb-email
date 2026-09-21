@@ -176,7 +176,6 @@ describe("render-error-parser (parser seguro de errores de render)", () => {
     });
 
     test("maneja respuesta sin status o con formato inválido", () => {
-      // @ts-expect-error probando entrada defensiva
       const error = parseRenderErrorResponse(null, "{}");
       expect(error.status).toBe(0);
       expect(error.message).toBe("No se pudo renderizar el template.");
