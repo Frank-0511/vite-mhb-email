@@ -29,20 +29,22 @@
     "skipLibCheck": true,
 
     /* ── Lib ── */
-    "lib": ["es2022"]
+    "lib": ["es2022", "dom", "dom.iterable"]
   },
 
   /*
-   * ALCANCE INICIAL (F0-T3):
-   *   Solo scripts/shared/** y scripts/build/**.
-   *   Se amplía carpeta a carpeta en F2-T1 (D2, R3).
+   * MHB-13: Cobertura total de checkJs sobre scripts, configs, src y tests.
    */
-  "include": ["scripts/shared/**/*.js", "scripts/build/**/*.js", "scripts/validators/**/*.js"],
+  "include": [
+    "types/**/*.d.ts",
+    "*.config.js",
+    "scripts/**/*.js",
+    "scripts/**/*.mjs",
+    "src/**/*.js"
+  ],
 
   /*
    * Excluir node_modules y dist siempre.
-   * Los tests también se excluyen del typecheck de producción
-   * (bun test los evalúa por separado).
    */
-  "exclude": ["node_modules", "dist", "**/*.test.js"]
+  "exclude": ["node_modules", "dist"]
 }
