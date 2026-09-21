@@ -1,50 +1,48 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    /* ── Modo JS con JSDoc ── */
+    /* ── Target y módulos ── */
+    "target": "es2022",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+
+    /* ── Modo JS con JSDoc y convivencia TS ── */
     "allowJs": true,
     "checkJs": true,
     "noEmit": true,
 
-    /* ── Resolución de módulos ESM (Node.js) ── */
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
-
-    /* ── Target ── */
-    "target": "es2022",
-
-    /* ── Rigor ── */
+    /* ── Rigor gradual para JS (estricto en tsconfig.strict.json) ── */
     "strict": false,
     "noImplicitAny": false,
     "strictNullChecks": false,
 
-    /* ── Interop ── */
+    /* ── Interop y resolución ── */
     "esModuleInterop": true,
     "resolveJsonModule": true,
-
-    /* ── Tipos Node.js ── */
-    "types": ["node"],
-
-    /* ── Suprimir errores en .d.ts de dependencias ── */
+    "allowImportingTsExtensions": true,
     "skipLibCheck": true,
 
-    /* ── Lib ── */
+    /* ── Tipos y librerías ── */
+    "types": ["node"],
     "lib": ["es2022", "dom", "dom.iterable"]
   },
 
   /*
-   * MHB-13: Cobertura total de checkJs sobre scripts, configs, src y tests.
+   * Cobertura integral del proyecto: configs, scripts, src y tests.
    */
   "include": [
     "types/**/*.d.ts",
     "*.config.js",
+    "*.config.ts",
     "scripts/**/*.js",
     "scripts/**/*.mjs",
-    "src/**/*.js"
+    "scripts/**/*.ts",
+    "src/**/*.js",
+    "src/**/*.ts"
   ],
 
   /*
-   * Excluir node_modules y dist siempre.
+   * Excluir artefactos de build y dependencias.
    */
   "exclude": ["node_modules", "dist"]
 }
