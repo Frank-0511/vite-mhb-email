@@ -3,9 +3,9 @@
 ## Resumen
 
 - ID activo: MHB-28
-- Estado: En revisión
+- Estado: Completada
 - Implementador: Perfil UI/web
-- Revisor: Revisor UI
+- Revisor: Revisor UI / Usuario
 - Rama: `feature/mhb-28`
 - Última actualización: 2026-09-21
 - Contrato activo: `docs/implementation/PLAN.md`
@@ -13,6 +13,7 @@
 ## Baseline vigente
 
 - La release [v1.2.0](https://github.com/Frank-0511/vite-mhb-email/releases/tag/v1.2.0) es el baseline funcional publicado.
+- MHB-28 completada en `feature/mhb-28`.
 - MHB-29 completada y mergeada a `master` (commits `b5f659d` y `5e18515`).
 - MHB-20 mergeada a `master` (commits `4cc964f` y `619a425`).
 - MHB-13 completada y mergeada a `master` (commit `5fe448a`).
@@ -45,6 +46,7 @@
 
 ## Últimas entregas
 
+- MHB-28: `Completada` el 2026-09-21; modularización de superficies web sobredimensionadas (< 300 líneas en `src/web/**`, arquitectura `preview/modules/` por dominios, Web Component `<ef-skeleton>` en Light DOM, extracción de JS inline, cero regresión en `dist/*.html`); rama `feature/mhb-28`.
 - MHB-29: `Completada` el 2026-09-21; base de ejecución TypeScript establecida (tsconfig unificado y estricto, eslint 10, tests piloto TS nativos en Bun, control de inventario de 194 JS / 2 TS); commits `b5f659d` y `5e18515` en `master`.
 - MHB-13: `Completada` el 2026-09-20; baseline completo de tipos `checkJs` en 190 archivos JS/MJS (0 errores tsc, 0 `@ts-ignore`), tipos ambientales en `types/`, suite de benchmark reproducible y mediciones comparativas Bun vs Node.js.
 - MHB-20: `Completada` el 2026-09-20; integración hermética de build, render, delimitadores, peso, caché y exportación; commits `4cc964f` y `619a425` en `master`.
@@ -52,12 +54,12 @@
 
 ## Ejecuciones delegadas relevantes
 
-| Ámbito | Estado      | Propiedad                              | Handoff                                                 |
-| :----- | :---------- | :------------------------------------- | :------------------------------------------------------ |
-| MHB-28 | En revisión | Modularización web sobredimensionada   | Entregado a revisión independiente en `feature/mhb-28`. |
-| MHB-29 | Completada  | Base de ejecución TypeScript           | Aprobación técnica y merge a `master` (`5e18515`).      |
-| MHB-13 | Completada  | Baseline tipos y mediciones            | Verificación completa y merge a `master` (`5fe448a`).   |
-| MHB-20 | Completada  | Tests integración, caché y exportación | Aceptación y merge a `master` en commit `619a425`.      |
+| Ámbito | Estado     | Propiedad                              | Handoff                                                                    |
+| :----- | :--------- | :------------------------------------- | :------------------------------------------------------------------------- |
+| MHB-28 | Completada | Modularización web sobredimensionada   | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-28`. |
+| MHB-29 | Completada | Base de ejecución TypeScript           | Aprobación técnica y merge a `master` (`5e18515`).                         |
+| MHB-13 | Completada | Baseline tipos y mediciones            | Verificación completa y merge a `master` (`5fe448a`).                      |
+| MHB-20 | Completada | Tests integración, caché y exportación | Aceptación y merge a `master` en commit `619a425`.                         |
 
 ## Decisiones y desviaciones vigentes
 
@@ -69,7 +71,7 @@
 
 ## Handoff
 
-- Próxima acción inmediata: Revisión técnica independiente de MHB-28 y validación visual manual a diferentes resoluciones (375px, 768px, 1440px) y temas (light/dark).
+- Próxima acción inmediata: Preparación de PR y merge de `feature/mhb-28` a `master`.
 - Siguiente tarea del roadmap:
   - MHB-30 (`desbloqueado`): Núcleo y validadores en TypeScript (prerrequisito MHB-29 completado).
   - MHB-14 (`desbloqueado`): Evidencia de uso y compatibilidad.
