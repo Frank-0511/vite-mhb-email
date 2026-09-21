@@ -11,8 +11,8 @@ import { prompt } from "../shared/prompts.js";
  * Si `dist/` está vacío, pregunta al usuario si quiere buildear ahora.
  * Ejecuta `bun run build` si confirma.
  *
- * @param {import('readline').Interface} rl
- * @param {typeof spawn} [spawnProcess=spawn] - Implementación de spawn.
+ * @param {import('readline').Interface | { question: Function }} rl
+ * @param {typeof spawn | Function} [spawnProcess=spawn] - Implementación de spawn.
  * @returns {Promise<boolean>} `true` si se buildeó exitosamente (o ya había templates), `false` si el usuario canceló o el build falló
  */
 export async function buildIfNeeded(rl, spawnProcess = spawn) {

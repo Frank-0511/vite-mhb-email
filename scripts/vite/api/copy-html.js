@@ -27,7 +27,7 @@ import { sendJson, readJsonBody, getRequestUrl } from "./http.js";
 /**
  * Registra el middleware para POST /api/copy-html en el servidor de Vite.
  *
- * @param {import("vite").ViteDevServer} server Instancia del servidor Vite.
+ * @param {import("vite").ViteDevServer | { middlewares: { use: Function } }} server Instancia del servidor Vite.
  * @param {string} rootDir Directorio raíz del proyecto.
  */
 export function setupCopyHtmlApi(server, rootDir) {

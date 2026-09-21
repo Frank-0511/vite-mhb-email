@@ -47,7 +47,7 @@ export async function ensureScreenshotDir() {
 /**
  * Obtiene la ruta del archivo PNG de salida.
  * @param {string} templateName - Nombre del template
- * @returns {string} Ruta del PNG de salida
+ * @returns {{ png: string, pdf: string }} Rutas de salida
  */
 export function getOutputPaths(templateName) {
   const screenshotDir = path.join(process.cwd(), "screenshots");

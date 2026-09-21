@@ -9,7 +9,7 @@ import { c, paint } from "./console.js";
  * Muestra una pregunta al usuario y devuelve su respuesta.
  * Si el usuario no escribe nada, devuelve `defaultValue`.
  *
- * @param {import('readline').Interface} rl
+ * @param {import('readline').Interface | { question: Function }} rl
  * @param {string} question
  * @param {string} [defaultValue=""]
  * @returns {Promise<string>}
@@ -27,7 +27,7 @@ export function prompt(rl, question, defaultValue = "") {
 /**
  * Muestra una lista numerada y espera que el usuario elija un ítem válido.
  *
- * @param {import('readline').Interface} rl
+ * @param {import('readline').Interface | { question: Function }} rl
  * @param {string[]} items
  * @returns {Promise<string>}
  */

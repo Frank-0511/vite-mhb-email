@@ -400,6 +400,7 @@ describe("MHB-20 — Integración Build, Render, Caché y Exportación", () => {
         },
       });
       expect(downloadResult.ok).toBe(true);
+      if (!downloadResult.ok) throw new Error("download failed");
       expect(downloadResult.filename).toBe("receipt.html");
     });
   });
@@ -490,6 +491,7 @@ describe("MHB-20 — Integración Build, Render, Caché y Exportación", () => {
         },
       });
       expect(downloadResult.ok).toBe(true);
+      if (!downloadResult.ok) throw new Error("download failed");
       expect(downloadResult.filename).toBe("newsletter.html");
     });
   });

@@ -12,7 +12,7 @@ import { c, paint } from "../shared/console.js";
  * Ejecuta un comando del sistema con stdio heredado.
  * @param {string} cmd - Comando a ejecutar
  * @param {string[]} args - Argumentos del comando
- * @param {typeof spawn} [spawnProcess=spawn] - Implementación de spawn.
+ * @param {typeof spawn | Function} [spawnProcess=spawn] - Implementación de spawn.
  * @returns {Promise<number>} Código de salida
  */
 export function run(cmd, args = [], spawnProcess = spawn) {

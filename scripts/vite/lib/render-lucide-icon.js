@@ -101,6 +101,7 @@ export function renderLucideIcon(iconName, elementAttrs = {}) {
 
   const ariaProps = hasA11yProp(elementAttrs) ? {} : { "aria-hidden": "true" };
 
+  /** @type {Record<string, any>} */
   const svgAttrs = {
     ...defaultAttributes,
     ...ariaProps,

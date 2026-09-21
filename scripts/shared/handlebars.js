@@ -49,7 +49,7 @@ export function applyHandlebars(html, data) {
  * el build final debe preservar estos placeholders para SendGrid Legacy.
  *
  * @param {string} html - HTML renderizado que puede contener placeholders legacy.
- * @param {Record<string, unknown>} data - Datos de preview disponibles para reemplazo.
+ * @param {unknown} [data] - Datos de preview disponibles para reemplazo.
  * @returns {string} HTML con placeholders legacy reemplazados cuando exista la llave.
  */
 export function applyLegacySendGridSubstitutions(html, data) {
