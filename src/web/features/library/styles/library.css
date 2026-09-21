@@ -1,6 +1,4 @@
-/* Library Component - Additional Custom Styles */
-
-/* Styles that are imported after tailwind.css to extend with custom CSS */
+/* Library Component - Additional Custom Styles (imported after tailwind.css) */
 
 /* Reset and base styles */
 * {
@@ -16,80 +14,53 @@ body {
   padding: 0;
 }
 
-/* Sidebar with smooth scrollbar */
-#component-list {
-  scrollbar-width: thin;
-  scrollbar-color: rgb(203 213 225) transparent; /* slate-300 */
-}
-
-#component-list::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-#component-list::-webkit-scrollbar-track {
-  @apply bg-transparent;
-}
-
-#component-list::-webkit-scrollbar-thumb {
-  @apply bg-slate-300 rounded;
-}
-
-#component-list::-webkit-scrollbar-thumb:hover {
-  @apply bg-slate-500;
-}
-
-/* Dark mode scrollbar */
-.dark #component-list {
-  scrollbar-color: rgb(71 85 105) transparent; /* slate-600 */
-}
-
-.dark #component-list::-webkit-scrollbar-thumb {
-  @apply bg-slate-600;
-}
-
-.dark #component-list::-webkit-scrollbar-thumb:hover {
-  @apply bg-slate-700;
-}
-
-/* Preview and form section scrollbars */
+/* Scrollbars compartidos (sidebar, preview y form) */
+#component-list,
 .library-preview,
 .library-form {
   scrollbar-width: thin;
   scrollbar-color: rgb(203 213 225) transparent; /* slate-300 */
 }
 
+#component-list::-webkit-scrollbar,
 .library-preview::-webkit-scrollbar,
 .library-form::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
+#component-list::-webkit-scrollbar-track,
 .library-preview::-webkit-scrollbar-track,
 .library-form::-webkit-scrollbar-track {
   @apply bg-transparent;
 }
 
+#component-list::-webkit-scrollbar-thumb,
 .library-preview::-webkit-scrollbar-thumb,
 .library-form::-webkit-scrollbar-thumb {
   @apply bg-slate-300 rounded;
 }
 
+#component-list::-webkit-scrollbar-thumb:hover,
 .library-preview::-webkit-scrollbar-thumb:hover,
 .library-form::-webkit-scrollbar-thumb:hover {
   @apply bg-slate-500;
 }
 
+/* Dark mode scrollbars */
+.dark #component-list,
 .dark .library-preview,
 .dark .library-form {
   scrollbar-color: rgb(71 85 105) transparent; /* slate-600 */
 }
 
+.dark #component-list::-webkit-scrollbar-thumb,
 .dark .library-preview::-webkit-scrollbar-thumb,
 .dark .library-form::-webkit-scrollbar-thumb {
   @apply bg-slate-600;
 }
 
+.dark #component-list::-webkit-scrollbar-thumb:hover,
 .dark .library-preview::-webkit-scrollbar-thumb:hover,
 .dark .library-form::-webkit-scrollbar-thumb:hover {
   @apply bg-slate-700;
@@ -260,7 +231,8 @@ body {
   border-color: var(--ef-border);
 }
 
-.library-shell .library-preview-skeleton {
+.library-shell .library-preview-skeleton,
+.library-shell .library-form {
   background: var(--ef-surface);
 }
 
@@ -275,10 +247,6 @@ body {
   .library-preview-skeleton[data-type="templates"]
   [data-skeleton-variant="templates"] {
   display: block;
-}
-
-.library-shell .library-form {
-  background: var(--ef-surface);
 }
 
 .library-shell #empty-preview,
