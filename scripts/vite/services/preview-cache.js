@@ -53,10 +53,10 @@ class PreviewCacheManager {
       try {
         if (fs.existsSync(fullPath)) {
           const stat = fs.statSync(fullPath);
-          maxTime = Math.max(maxTime, stat.mtimeMs);
 
-          // Si es un directorio, revisar archivos internos también
-          if (stat.isDirectory()) {
+          if (stat.isFile()) {
+            maxTime = Math.max(maxTime, stat.mtimeMs);
+          } else if (stat.isDirectory()) {
             const files = fs.readdirSync(fullPath, { recursive: true });
             for (const file of files) {
               try {
