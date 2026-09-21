@@ -9,11 +9,12 @@ describe("EfSkeleton Web Component", () => {
     const mockEl = createMockElement([], attrs);
 
     // Asignar métodos mock sobre la instancia para simular DOM en bun test
-    skeleton.getAttribute = mockEl.getAttribute;
-    skeleton.setAttribute = mockEl.setAttribute;
-    skeleton.hasAttribute = mockEl.hasAttribute;
-    skeleton.classList = mockEl.classList;
-    skeleton.remove = mock(() => {});
+    const mockSkeleton = /** @type {any} */ (skeleton);
+    mockSkeleton.getAttribute = mockEl.getAttribute;
+    mockSkeleton.setAttribute = mockEl.setAttribute;
+    mockSkeleton.hasAttribute = mockEl.hasAttribute;
+    mockSkeleton.classList = mockEl.classList;
+    mockSkeleton.remove = mock(() => {});
 
     return { skeleton, mockEl };
   }
