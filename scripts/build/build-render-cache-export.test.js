@@ -36,7 +36,7 @@ import {
   createPreviewDataHash,
 } from "../vite/services/preview-cache.js";
 import { runSelectiveBuild } from "../vite/services/selective-build.js";
-import { downloadHtml } from "../../src/web/features/preview/html-download.js";
+import { downloadHtml } from "../../src/web/features/preview/modules/copy-html/html-download.js";
 
 const projectRoot = process.cwd();
 

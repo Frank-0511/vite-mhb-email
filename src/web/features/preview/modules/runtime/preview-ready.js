@@ -3,8 +3,8 @@
  * @fileoverview Orquestador de la transición visual entre skeletons y controles interactivos en preview.
  */
 
-import { initLucideIcons } from "../../shared/utils/lucide-setup.js";
-import "../../shared/components/ef-skeleton.js";
+import { initLucideIcons } from "../../../../shared/utils/lucide-setup.js";
+import "../../../../shared/components/ef-skeleton.js";
 
 /**
  * Revela los controles interactivos y oculta los skeletons correspondientes

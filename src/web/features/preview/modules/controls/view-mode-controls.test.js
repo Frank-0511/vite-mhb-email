@@ -1,7 +1,7 @@
 // @ts-check
 import { beforeEach, describe, expect, mock, test } from "bun:test";
 
-import { createMockElement, createMockStorage } from "./test-helpers.js";
+import { createMockElement, createMockStorage } from "../runtime/test-helpers.js";
 import {
   initViewModeControls,
   setupViewModeControls,

@@ -1,5 +1,5 @@
 // @ts-check
-import { postJSON } from "../../shared/utils/http-helpers.js";
+import { postJSON } from "../../../../shared/utils/http-helpers.js";
 import {
   copyTextToClipboard,
   formatDownloadSuccessMessage,

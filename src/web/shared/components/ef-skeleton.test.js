@@ -1,7 +1,7 @@
 // @ts-check
 import { describe, expect, it, mock } from "bun:test";
 import { EfSkeleton } from "./ef-skeleton.js";
-import { createMockElement } from "../../features/preview/test-helpers.js";
+import { createMockElement } from "../../features/preview/modules/runtime/test-helpers.js";
 
 describe("EfSkeleton Web Component", () => {
   function createTestSkeleton(attrs = {}) {

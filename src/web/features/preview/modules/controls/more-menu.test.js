@@ -1,7 +1,7 @@
 // @ts-check
 import { describe, expect, it, mock } from "bun:test";
 import { setupMoreMenu } from "./more-menu.js";
-import { createMockElement } from "./test-helpers.js";
+import { createMockElement } from "../runtime/test-helpers.js";
 
 describe("more-menu", () => {
   function setupTestEnv({ matches = false } = {}) {
