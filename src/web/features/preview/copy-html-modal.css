@@ -470,7 +470,6 @@ html.dark .copy-html-status.error {
 
 /* ── Clases heredadas para retrocompatibilidad ─────────────────── */
 
-.btn-build-copy,
 .btn-copy-existing {
   border-radius: 8px;
 }
