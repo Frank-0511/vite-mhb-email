@@ -4,7 +4,12 @@ import { renderLucideIcon } from "../lib/render-lucide-icon.js";
 // as authored directly in the HTML entry files (not ones injected at runtime).
 const LUCIDE_PLACEHOLDER_RE = /<i\b([^>]*?)\bdata-lucide="([\w-]+)"([^>]*?)>\s*<\/i>/g;
 
+/**
+ * @param {string} attrString
+ * @returns {Record<string, string>}
+ */
 function parseAttrs(attrString) {
+  /** @type {Record<string, string>} */
   const attrs = {};
   const attrRegex = /([\w-]+)\s*=\s*"([^"]*)"/g;
   let match;

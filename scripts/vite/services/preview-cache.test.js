@@ -9,7 +9,7 @@ import { createPreviewCacheManager, createPreviewDataHash } from "./preview-cach
 describe("PreviewCacheManager & createPreviewDataHash", () => {
   /** @type {string} */
   let tempDir;
-  /** @type {PreviewCacheManager} */
+  /** @type {import("./preview-cache.js").PreviewCacheManager} */
   let cacheManager;
 
   beforeEach(() => {

@@ -154,7 +154,6 @@ export async function crawlDashboard() {
         try {
           await page.evaluateOnNewDocument((themeName) => {
             // Corre en contexto de navegador (inyectado por Puppeteer), no de Node.
-            // @ts-expect-error -- window es global del navegador, no de Node.
             // eslint-disable-next-line no-undef
             window.localStorage.setItem("app-theme", themeName);
           }, theme);

@@ -89,6 +89,7 @@ describe("dashboardPlugin", () => {
   describe("configureServer - /api/template-sizes", () => {
     test("responde con objeto de tamaños solo para templates reales", async () => {
       const plugin = dashboardPlugin(rootDir);
+      /** @type {Function | null} */
       let middlewareHandler = null;
 
       const mockServer = {
@@ -115,6 +116,7 @@ describe("dashboardPlugin", () => {
         nextCalled = true;
       };
 
+      if (!middlewareHandler) throw new Error("middlewareHandler no configurado");
       await middlewareHandler(req, res, next);
       expect(nextCalled).toBe(false);
 

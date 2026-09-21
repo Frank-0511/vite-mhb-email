@@ -16,7 +16,7 @@ import { assertValidTemplateName } from "../../shared/path-safety.js";
  * @property {number} timestamp - Timestamp de creación
  */
 
-class PreviewCacheManager {
+export class PreviewCacheManager {
   constructor(rootDir) {
     this.rootDir = rootDir;
     this.cacheDir = resolve(rootDir, ".cache", "preview");

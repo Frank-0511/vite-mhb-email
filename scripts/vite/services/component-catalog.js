@@ -21,6 +21,10 @@ import { isPathInside, isValidTemplateName } from "../../shared/path-safety.js";
  * @property {string} name Nombre legible desde el schema.
  * @property {string} path Ruta lógica mostrada al cliente (`src/emails/partials/...`).
  * @property {string} dirPath Ruta absoluta del componente.
+ * @property {string} [icon] Ícono del schema.
+ * @property {Record<string, unknown>} [props] Props del schema.
+ * @property {Array<{ id: string, name?: string, description?: string }>} [variants]
+ * @property {string[]} [icons]
  */
 
 /**
@@ -143,7 +147,7 @@ export function listComponents(rootDir) {
  * que permanezca dentro de la raíz permitida.
  *
  * @param {string} rootDir
- * @param {string} componentName
+ * @param {unknown} componentName
  * @returns {string | null}
  */
 export function findComponentDir(rootDir, componentName) {
