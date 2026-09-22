@@ -8,6 +8,6 @@
     "strictNullChecks": true,
     "checkJs": false
   },
-  "include": ["types/**/*.d.ts", "scripts/**/*.ts", "src/**/*.ts"],
+  "include": ["types/**/*.d.ts", "*.config.ts", "scripts/**/*.ts", "src/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

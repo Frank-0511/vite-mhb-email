@@ -8,7 +8,7 @@
 
 import { validateEmailHtml } from "../validators/validate-email-html.ts";
 import { assertValidTemplateName } from "../shared/index.ts";
-import { runSelectiveBuild } from "../vite/services/selective-build.js";
+import { runSelectiveBuild } from "../vite/services/index.ts";
 
 const rootDir = process.cwd();
 const templateName = process.argv[2];

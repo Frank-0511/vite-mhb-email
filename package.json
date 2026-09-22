@@ -54,7 +54,7 @@
     "cli": "bun scripts/cli/cli.ts",
     "lint": "bun run lint:html && bun run lint:js && bun run lint:md && bun run lint:json && bun run lint:css",
     "lint:html": "htmlhint \"src/**/*.html\"",
-    "lint:js": "eslint scripts/ src/web/ src/emails/ vite.config.js maizzle.config.js",
+    "lint:js": "eslint scripts/ src/web/ src/emails/ vite.config.ts maizzle.config.js",
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\"",
     "lint:json": "bun scripts/validators/validate-json.ts",
     "lint:css": "stylelint \"src/**/*.css\"",
