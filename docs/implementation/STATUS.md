@@ -3,7 +3,7 @@
 ## Resumen
 
 - ID activo: MHB-30
-- Estado: En progreso
+- Estado: En revisión
 - Implementador: Perfil TypeScript/backend
 - Revisor: Revisor de build/compatibilidad
 - Rama: `feature/mhb-30`
@@ -75,7 +75,27 @@
 
 ## Handoff
 
-- Próxima acción inmediata: Ejecución de las fases técnicas de MHB-30 en `feature/mhb-30`.
+- Entrega de MHB-30: En revisión en rama `feature/mhb-30`.
+  - Commits en rama:
+    - `14af516`: `feat(shared): estructurar en subdirectorios tematicos y migrar a typescript estricto (MHB-30)`
+    - `73b5fb4`: `feat(esp): migrar subsistema esp a typescript estricto (MHB-30)`
+    - `a0ab073`: `feat(build): migrar pipeline de build y modularizar tests de integracion a typescript (MHB-30)`
+    - `7ce545b`: `feat(validators): migrar suite de validadores y reglas a typescript estricto (MHB-30)`
+    - `653c69e`: `feat(tooling): migrar inventory y benchmarks a typescript modular (MHB-30)`
+  - Evidencia de calidad:
+    - `bun run typecheck`: 0 errores en base y `tsconfig.strict.json`.
+    - `bun test`: 529 pasados en 73 suites, 0 fallos.
+    - `bun run lint:js`: 0 errores.
+    - `bun run build`: 6 templates generados en 3.35s.
+    - `shasum -a 256 dist/*.html`: hashes idénticos al baseline byte a byte.
+    - `bun run validate-email`: 0 errores de compatibilidad.
+    - `bun run a11y-check`: 0 violaciones axe-core en light y dark.
+    - `bun run lint:contrast`: 26 contrastes WCAG conformes.
+    - `bun run check:inventory`: Capa `layer-1-core` en 0 JS / 74 TS (`✅ Migrado`), total proyecto 135 JS / 82 TS.
+    - `bun run agents:check`: 7 adaptadores declarados válidos.
+  - Riesgos residuales:
+    - Declaraciones ambientales en `types/fs-extra.d.ts` cubren sync y async methods para capas posteriores (MHB-31).
+  - Próxima acción inmediata: Revisión independiente y confirmación de cierre (`Completada`) por revisor técnico.
 - Siguiente tarea del roadmap:
   - MHB-31 (`bloqueado` por MHB-30): CLI, exportación y correo en TypeScript.
   - MHB-14 (`desbloqueado`): Evidencia de uso y compatibilidad.
