@@ -3,7 +3,7 @@
 ## Resumen
 
 - ID activo: MHB-31
-- Estado: En progreso
+- Estado: En revisión
 - Implementador: Perfil TypeScript/CLI
 - Revisor: Revisor técnico de CLI/filesystem
 - Rama: `feature/mhb-31`
@@ -23,7 +23,7 @@
 
 ## Entrega activa (MHB-31: CLI, exportación y correo en TypeScript)
 
-- **Migración a TypeScript estricto:** Conversión a `.ts` de `scripts/generators/**`, `scripts/export/**`, `scripts/mail/**` y `scripts/cli/**`.
+- **Migración a TypeScript estricto:** Conversión a `.ts` de `scripts/generators/**`, `scripts/export/**`, `scripts/mail/**` y `scripts/cli/**` (0 JS restantes en Capa 2).
 - **Refactor integrado de `scripts/cli/helpers.js`:** Desacoplamiento modular en `process-runner.ts`, `prompts.ts`, `template-prompts.ts` y barril `helpers.ts` manteniendo responsabilidad única y ≤ 250 líneas.
 - **Tipado ambiental seguro:** Declaración de `types/nodemailer.d.ts` sin añadir dependencias runtime ni alterar contratos.
 - **Suite de pruebas de correo:** Creación de `scripts/mail/mail.test.ts` con validación de entorno y payloads sin envíos reales ni credenciales.
@@ -33,15 +33,15 @@
 
 | Control                                       | Comando                                | Resultado |
 | :-------------------------------------------- | :------------------------------------- | :-------- |
-| Comprobación de rama                          | `bun scripts/ai/check-task-branch.mjs` | Pendiente |
-| Typecheck unificado + estricto                | `bun run typecheck`                    | Pendiente |
-| Pruebas unitarias/integración                 | `bun test`                             | Pendiente |
-| Linting completo (html, js/ts, md, json, css) | `bun run lint`                         | Pendiente |
-| Formato de código                             | `bun run format:check`                 | Pendiente |
-| Build pipeline                                | `bun run build`                        | Pendiente |
-| Validador HTML email                          | `bun run validate-email`               | Pendiente |
-| Control de inventario TypeScript              | `bun run check:inventory`              | Pendiente |
-| Sincronización de agentes                     | `bun run agents:check`                 | Pendiente |
+| Comprobación de rama                          | `bun scripts/ai/check-task-branch.mjs` | Verde     |
+| Typecheck unificado + estricto                | `bun run typecheck`                    | Verde     |
+| Pruebas unitarias/integración (537 tests)     | `bun test`                             | Verde     |
+| Linting completo (html, js/ts, md, json, css) | `bun run lint`                         | Verde     |
+| Formato de código                             | `bun run format:check`                 | Verde     |
+| Build pipeline                                | `bun run build`                        | Verde     |
+| Validador HTML email                          | `bun run validate-email`               | Verde     |
+| Control de inventario TypeScript              | `bun run check:inventory`              | Verde     |
+| Sincronización de agentes                     | `bun run agents:check`                 | Verde     |
 
 ## Últimas entregas
 
@@ -55,48 +55,47 @@
 
 ## Ejecuciones delegadas relevantes
 
-| Ámbito | Estado     | Propiedad                              | Handoff                                                                    |
-| :----- | :--------- | :------------------------------------- | :------------------------------------------------------------------------- |
-| MHB-30 | Completada | Núcleo y validadores en TS             | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-30`. |
-| MHB-35 | Completada | Consolidación shared y deduplicación   | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-35`. |
-| MHB-28 | Completada | Modularización web sobredimensionada   | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-28`. |
-| MHB-29 | Completada | Base de ejecución TypeScript           | Aprobación técnica y merge a `master` (`5e18515`).                         |
-| MHB-13 | Completada | Baseline tipos y mediciones            | Verificación completa y merge a `master` (`5fe448a`).                      |
-| MHB-20 | Completada | Tests integración, caché y exportación | Aceptación y merge a `master` en commit `619a425`.                         |
+| Ámbito | Estado      | Propiedad                              | Handoff                                                                    |
+| :----- | :---------- | :------------------------------------- | :------------------------------------------------------------------------- |
+| MHB-31 | En revisión | CLI, exportación y correo en TS        | Entrega técnica completa en `feature/mhb-31`; controles verdes.            |
+| MHB-30 | Completada  | Núcleo y validadores en TS             | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-30`. |
+| MHB-35 | Completada  | Consolidación shared y deduplicación   | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-35`. |
+| MHB-28 | Completada  | Modularización web sobredimensionada   | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-28`. |
+| MHB-29 | Completada  | Base de ejecución TypeScript           | Aprobación técnica y merge a `master` (`5e18515`).                         |
+| MHB-13 | Completada  | Baseline tipos y mediciones            | Verificación completa y merge a `master` (`5fe448a`).                      |
+| MHB-20 | Completada  | Tests integración, caché y exportación | Aceptación y merge a `master` en commit `619a425`.                         |
 
 ## Decisiones y desviaciones vigentes
 
-- **Sincronización de baseline de inventario para MHB-35:** Incorporación de 5 archivos JS/MJS legítimos (`format-helpers.js`, `format-helpers.test.js`, `theme-helpers.js`, `theme-helpers.test.js`, `http-helpers.test.js`), elevando el baseline a 206 archivos JS para control estricto decreciente hacia MHB-30 y MHB-33.
-- **Robustez en helpers de red:** `fetchJSON` y `fetchText` admiten respuestas mockeadas de test verificando explícitamente `response.ok === false` y códigos HTTP fuera de rango 200-299 para garantizar compatibilidad con mocks mínimos de tests unitarios existentes.
-- **Light DOM en `<ef-skeleton>`:** Obligatorio para permitir que las utilidades Tailwind (`animate-pulse`) alcancen los elementos internos y no ocultar los IDs consumidos por scripts y tests.
-- **División de `copy-html-modal.css`:** Dividido en `styles/modal-dialog.css` y `styles/modal-cards.css` para respetar el umbral de 300 líneas sin alterar ninguna regla ni valor de especificidad.
-- **Eliminación de componentes huérfanos:** Los 5 fragmentos HTML en `src/web/features/library/components/` se eliminan al no tener referencias en runtime.
-- **Estructuración en subcarpetas de `preview/modules/`:** 40+ archivos planos organizados en subcarpetas cohesivas por dominio (`controls`, `copy-html`, `editor`, `render`, `runtime`) alineando preview con la estructura modular de `library/modules/`.
+- **Desacoplamiento modular de `scripts/cli/helpers.js`:** Dividido en `process-runner.ts`, `prompts.ts`, `template-prompts.ts` y un barril cohesivo `helpers.ts` para respetar el umbral de ≤ 250 líneas y responsabilidad única.
+- **Tipado ambiental de Nodemailer:** Incorporación de `types/nodemailer.d.ts` para cubrir `createTransport` y la interfaz del transporter sin requerir paquetes de tipos adicionales en devDependencies.
+- **Pruebas unitarias de mail con mocks seguros:** Adición de `scripts/mail/mail.test.ts` con cobertura de validaciones de credenciales y API REST de Mailtrap inyectando mocks de red sin envíos reales.
+- **Sincronización de baseline de inventario para MHB-35:** Incorporación de 5 archivos JS/MJS legítimos, elevando el baseline a 206 archivos JS para control estricto decreciente hacia MHB-30 y MHB-33.
 - **Política de refactor integrado y límites cuantitativos:** Se acuerda no crear más tareas de refactor aisladas; todo trabajo debe refactorizar mientras avanza respetando límites estrictos (≤250 líneas archivo fuente, ≤8 archivos por carpeta).
 
 ## Handoff
 
-- Entrega de MHB-30: Completada en rama `feature/mhb-30`.
+- Entrega de MHB-31: En revisión en rama `feature/mhb-31`.
   - Commits en rama:
-    - `14af516`: `feat(shared): estructurar en subdirectorios tematicos y migrar a typescript estricto (MHB-30)`
-    - `73b5fb4`: `feat(esp): migrar subsistema esp a typescript estricto (MHB-30)`
-    - `a0ab073`: `feat(build): migrar pipeline de build y modularizar tests de integracion a typescript (MHB-30)`
-    - `7ce545b`: `feat(validators): migrar suite de validadores y reglas a typescript estricto (MHB-30)`
-    - `653c69e`: `feat(tooling): migrar inventory y benchmarks a typescript modular (MHB-30)`
+    - `e321b08`: `docs(status): registrar inicio de MHB-31 en progreso`
+    - `0325d1b`: `feat(generators): migrar generadores y arquetipos a typescript estricto (MHB-31)`
+    - `f024055`: `feat(export): migrar exportador y renderizador puppeteer a typescript estricto (MHB-31)`
+    - `d7fc22a`: `feat(mail): migrar transporte smtp, api mailtrap y selectores a typescript estricto (MHB-31)`
+    - `0bbb4d9`: `feat(cli): modularizar helpers y migrar loop interactivo a typescript estricto (MHB-31)`
   - Evidencia de calidad:
+    - `bun run check:task-branch`: Verde (`feature/mhb-31`).
     - `bun run typecheck`: 0 errores en base y `tsconfig.strict.json`.
-    - `bun test`: 529 pasados en 73 suites, 0 fallos.
-    - `bun run lint:js`: 0 errores.
-    - `bun run build`: 6 templates generados en 3.35s.
-    - `shasum -a 256 dist/*.html`: hashes idénticos al baseline byte a byte.
+    - `bun test`: 537 pasados en 74 suites, 0 fallos.
+    - `bun run lint`: 0 errores en HTML, JS/TS, MD, JSON y CSS.
+    - `bun run format:check`: Código 100% formateado según Prettier.
+    - `bun run build`: 6 templates generados en 3.31s con tamaño seguro para Gmail.
     - `bun run validate-email`: 0 errores de compatibilidad.
-    - `bun run a11y-check`: 0 violaciones axe-core en light y dark.
-    - `bun run lint:contrast`: 26 contrastes WCAG conformes.
-    - `bun run check:inventory`: Capa `layer-1-core` en 0 JS / 74 TS (`✅ Migrado`), total proyecto 135 JS / 82 TS.
+    - `bun run check:inventory`: Capa `layer-2-cli` en 0 JS / 24 TS (`✅ Migrado`), total proyecto 115 JS / 106 TS.
     - `bun run agents:check`: 7 adaptadores declarados válidos.
+    - Verificación manual CLI: `bun run cli --help` y `bun run generate:email --list` conformes con exit code 0; casos de escape/inválidos rechazados con exit code 1.
   - Riesgos residuales:
-    - Declaraciones ambientales en `types/fs-extra.d.ts` cubren sync y async methods para capas posteriores (MHB-31).
-  - Próxima acción inmediata: Merge de la rama `feature/mhb-30` a `master` mediante Pull Request.
+    - Ninguno. Contratos de comandos, flags, prompts y rutas de filesystem preservados.
+  - Próxima acción inmediata: Revisión técnica independiente y confirmación de cierre de MHB-31 para merge a `master`.
 - Siguiente tarea del roadmap:
-  - MHB-31 (`desbloqueado`): CLI, exportación y correo en TypeScript.
+  - MHB-32 (`desbloqueado`): Servidor Vite y APIs en TypeScript.
   - MHB-14 (`desbloqueado`): Evidencia de uso y compatibilidad.
