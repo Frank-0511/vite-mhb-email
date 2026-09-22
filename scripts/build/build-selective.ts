@@ -6,7 +6,7 @@
  * Genera `dist/<templateName>.html` sin mutar `maizzle.config.js`.
  */
 
-import { validateEmailHtml } from "../validators/validate-email-html.js";
+import { validateEmailHtml } from "../validators/validate-email-html.ts";
 import { assertValidTemplateName } from "../shared/index.ts";
 import { runSelectiveBuild } from "../vite/services/selective-build.js";
 

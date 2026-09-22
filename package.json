@@ -48,18 +48,18 @@
     "build-selective": "bun scripts/build/build-selective.ts",
     "generate:email": "bun scripts/generators/generate-email.js",
     "export:screenshot": "bun scripts/export/export-screenshot.js",
-    "check-size": "bun scripts/validators/check-html-size.js",
-    "validate-email": "bun scripts/validators/validate-email-html.js",
+    "check-size": "bun scripts/validators/check-html-size.ts",
+    "validate-email": "bun scripts/validators/validate-email-html.ts",
     "benchmark": "bun scripts/perf/measure-benchmarks.js",
     "cli": "bun scripts/cli/cli.js",
     "lint": "bun run lint:html && bun run lint:js && bun run lint:md && bun run lint:json && bun run lint:css",
     "lint:html": "htmlhint \"src/**/*.html\"",
     "lint:js": "eslint scripts/ src/web/ src/emails/ vite.config.js maizzle.config.js",
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\"",
-    "lint:json": "bun scripts/validators/validate-json.js",
+    "lint:json": "bun scripts/validators/validate-json.ts",
     "lint:css": "stylelint \"src/**/*.css\"",
-    "lint:contrast": "bun scripts/validators/validate-contrast.js",
-    "a11y-check": "bun scripts/validators/a11y-check.js",
+    "lint:contrast": "bun scripts/validators/validate-contrast.ts",
+    "a11y-check": "bun scripts/validators/a11y-check.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check:task-branch": "bun scripts/ai/check-task-branch.mjs",
@@ -96,7 +96,7 @@
       "prettier --write"
     ],
     "src/emails/templates/*/data.json": [
-      "bun scripts/validators/validate-json.js"
+      "bun scripts/validators/validate-json.ts"
     ],
     "**/*.json": [
       "prettier --write"
