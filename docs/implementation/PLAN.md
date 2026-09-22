@@ -40,8 +40,9 @@ en MHB-29 a MHB-34; MHB-35 consolida utilidades compartidas antes de migrar el n
 | MHB-32 | Servidor Vite y APIs en TypeScript             | Pendiente  | MHB-31                                            |
 | MHB-33 | Dashboard web en TypeScript                    | Pendiente  | MHB-28, MHB-32 y MHB-35                           |
 | MHB-34 | Cierre total y modo estricto TypeScript        | Pendiente  | MHB-33                                            |
+| MHB-36 | Compatibilidad multi-package-manager           | Pendiente  | MHB-34                                            |
 | MHB-14 | Evidencia de uso y compatibilidad              | Pendiente  | Flujo de producto publicado                       |
-| MHB-15 | Documentación, capturas y release posterior    | Pendiente  | MHB-14 y MHB-34                                   |
+| MHB-15 | Documentación, capturas y release posterior    | Pendiente  | MHB-14, MHB-34 y MHB-36                           |
 | MHB-16 | Demo candidata pre-renderizada                 | Opcional   | MHB-15                                            |
 | MHB-23 | Ampliar biblioteca de componentes              | Opcional   | MHB-20                                            |
 
@@ -423,6 +424,34 @@ rediseños ni alteraciones de los contratos CLI, filesystem, email o ESP.
 - **Revisor independiente:** revisor técnico final distinto de los implementadores.
 - **Condición de escalamiento:** queda cualquier excepción JavaScript, falla un gate global o una herramienta exige conservar wrapper no TypeScript.
 
+### MHB-36 — Compatibilidad multi-package-manager
+
+- **Objetivo observable:** permitir que cualquier desarrollador clone el proyecto y trabaje con npm, yarn, pnpm o bun indistintamente, sin que ninguno sea obligatorio.
+- **Motivación:** el código runtime ya usa exclusivamente APIs estándar de Node.js (cero `Bun.*`), pero scripts, tests, CI/CD, hooks y documentación están acoplados a Bun como único package manager.
+- **Superficies autorizadas:** `package.json`, scripts en `scripts/cli/actions.js`, `scripts/build/build-helper.ts`, `scripts/perf/measure-benchmarks.js`, `scripts/export/renderers.js`, `scripts/cli/helpers.js`, `lint-staged` config, 73 archivos de test (`*.test.js` / `*.test.ts`), `bunfig.toml`, `types/bun-test.d.ts`, `vitest.config.*` (nuevo), `.github/workflows/ci.yml`, `.github/workflows/audit.yml`, `.husky/*`, `AGENTS.md`, `CLAUDE.md`, `README.md`, skills bajo `docs/ai/skills/`, documentación de implementación y un helper nuevo `scripts/shared/env/detect-pm.js`.
+- **Dependencias y precondiciones:** MHB-34 completada para evitar doble churn durante la migración TypeScript; todos los tests ya convertidos a `.ts`.
+- **Pasos técnicos:**
+  - **F1 — Scripts genéricos y detección de PM:** reemplazar los 15 scripts de `package.json` que usan `bun script.js` por `node script.js`; eliminar `"packageManager": "bun@1.3.13"` y `trustedDependencies` (Bun-only); actualizar `lint-staged`; crear `scripts/shared/env/detect-pm.ts` que detecte el PM activo via `process.env.npm_config_user_agent` o presencia de lockfiles.
+  - **F2 — CLI y build helper agnósticos:** reemplazar `spawn("bun", ...)` en `scripts/cli/actions.js` y `scripts/build/build-helper.ts` por detección dinámica del PM; actualizar mensajes de error; hacer graceful fallback en benchmarks si `bun -v` no está disponible; eliminar mensaje legacy `"yarn build"` en helpers.
+  - **F3 — Migración de tests a Vitest:** agregar `vitest` como devDependency; crear `vitest.config.ts`; cambiar imports de `"bun:test"` a `"vitest"` en los 73 archivos de test (`mock()` → `vi.fn()`, `spyOn()` → `vi.spyOn()`, `mock.module()` → `vi.mock()`); eliminar `bunfig.toml` y `types/bun-test.d.ts`; actualizar `package.json` scripts de test.
+  - **F4 — CI/CD y hooks:** reemplazar `oven-sh/setup-bun` por `actions/setup-node` con Node 24 en los 2 workflows; actualizar comandos de hooks Husky a genéricos.
+  - **F5 — Documentación y governance:** reescribir la invariante de Bun en AGENTS.md, CLAUDE.md, README.md y las 8 skills; actualizar tablas de comandos; documentar instalación con los 4 managers.
+- **Criterios de aceptación:**
+  - El proyecto se instala, lintea, typecheckea, testea, compila y valida con cada uno de los 4 managers (npm, yarn, pnpm, bun) desde un checkout limpio.
+  - Ningún script de `package.json` ni código fuente contiene `"bun"` hardcodeado como único path de ejecución.
+  - La suite completa de tests pasa bajo Vitest con Node y con Bun.
+  - CI/CD corre en Node 24 sin dependencia de `oven-sh/setup-bun`.
+  - Documentación refleja soporte multi-manager.
+- **Validación automática:** instalar con cada PM y ejecutar `typecheck`, `lint`, `test`, `build`, `validate-email`, `format:check` y `agents:check`.
+- **Validación manual:** clonar en directorio limpio y verificar el flujo completo con npm y con bun como extremos representativos.
+- **Evidencia requerida:** logs de instalación y gates con cada PM; diff de scripts y imports migrados; confirmación de que `dist/*.html` es idéntico con todos los managers.
+- **Riesgos y reversión:** romper resolución de módulos en algún PM; diferencias sutiles de comportamiento entre runners de test. Mitigación: ejecutar gates con los 4 managers como matrix CI; cada fase se revierte independientemente.
+- **Exclusiones específicas:** no cambiar lógica de negocio, templates de email, output HTML ni APIs; no migrar a un monorepo; no añadir Corepack obligatorio.
+- **Análisis de mantenibilidad:** el helper `detect-pm.ts` es un archivo pequeño (~30 líneas) con responsabilidad única; la migración de tests es mecánica (search-and-replace de imports); no se crean abstracciones nuevas innecesarias.
+- **Implementador:** perfil tooling/infraestructura, medio-alto.
+- **Revisor independiente:** revisor técnico.
+- **Condición de escalamiento:** un PM no soporta una feature usada por el proyecto (e.g. workspaces, lifecycle scripts); Vitest introduce incompatibilidad con algún mock existente; se requiere cambiar un contrato público.
+
 ## Fases
 
 ### Fase C — Evidencia para la puerta de calidad
@@ -439,12 +468,12 @@ rediseños ni alteraciones de los contratos CLI, filesystem, email o ESP.
 - **Nota de alcance:** no es una fase solo opcional. La validación automatizada de accesibilidad/contraste y la mantenibilidad del código web son requeridas: no añaden producto, pero sostienen un dashboard verificable y mantenible.
 - **Criterio de salida:** cada opcional aprobado cumple su propia aceptación; una demo accesible permite verificación, pero no equivale a publicar el caso como destacado. Los IDs requeridos cumplen su aceptación completa, sin excepción por ser trabajo interno.
 
-#### Fase E — Migración completa a TypeScript
+#### Fase E — Migración completa a TypeScript y compatibilidad multi-PM
 
-- **IDs incluidos:** MHB-35, MHB-29, MHB-30, MHB-31, MHB-32, MHB-33 y MHB-34.
-- **Entregables:** utilidades compartidas consolidadas (MHB-35), tooling mixto temporal, núcleo, CLI, servidor y web convertidos por capas; saneamiento de deuda y arquitectura modular; cierre global estricto sin JavaScript propio residual.
-- **Riesgos:** mezclar renombres con cambios funcionales, perder compatibilidad de loaders o ocultar límites runtime con tipos estáticos.
-- **Criterio de salida:** MHB-34 confirma inventario JavaScript propio en cero, límites de tamaño y carpetas cumplidos, typecheck estricto y matriz global verde.
+- **IDs incluidos:** MHB-35, MHB-29, MHB-30, MHB-31, MHB-32, MHB-33, MHB-34 y MHB-36.
+- **Entregables:** utilidades compartidas consolidadas (MHB-35), tooling mixto temporal, núcleo, CLI, servidor y web convertidos por capas; saneamiento de deuda y arquitectura modular; cierre global estricto sin JavaScript propio residual; compatibilidad con npm, yarn, pnpm y bun (MHB-36).
+- **Riesgos:** mezclar renombres con cambios funcionales, perder compatibilidad de loaders o ocultar límites runtime con tipos estáticos; incompatibilidades sutiles entre package managers.
+- **Criterio de salida:** MHB-34 confirma inventario JavaScript propio en cero, límites de tamaño y carpetas cumplidos, typecheck estricto y matriz global verde; MHB-36 confirma que el proyecto funciona con los 4 managers.
 
 ### Fase F — Release y demostración
 
@@ -484,6 +513,7 @@ Cada elemento debe conservar en el contrato transferido objetivo, archivos, paso
 | MHB-32 | Tests Vite/API e integración MHB-20.                                                | Revisar endpoints, caché y render.                                                        | Tabla endpoint→contrato→test y comparación de payloads.                                  |
 | MHB-33 | Typecheck web, suite, contraste, accesibilidad y hashes.                            | Home/Preview/Library en seis combinaciones ancho×tema.                                    | Matriz flujo→evidencia, capturas e inventario web cero.                                  |
 | MHB-34 | Gate de cero `.js`/`.mjs`, typecheck estricto y matriz global.                      | Revisar comandos, tooling, UI y outputs finales.                                          | Inventario final cero, gates completos y referencias actualizadas.                       |
+| MHB-36 | Instalación y gates completos con npm, yarn, pnpm y bun; suite Vitest verde.        | Clonar limpio e instalar con npm y bun como extremos representativos.                     | Logs de 4 managers, diff de imports, hashes `dist/` idénticos entre managers.            |
 
 ### Gates globales
 
@@ -501,9 +531,10 @@ Cada elemento debe conservar en el contrato transferido objetivo, archivos, paso
 2. Ejecutar MHB-28 después de MHB-20; MHB-23 permanece opcional y separado.
 3. Ejecutar MHB-35 (consolidación de shared y deduplicación) antes de migrar el núcleo.
 4. Ejecutar secuencialmente MHB-29, MHB-30, MHB-31 y MHB-32; MHB-33 espera además el cierre de MHB-28, MHB-32 y MHB-35.
-5. Cerrar la migración con MHB-34; ninguna excepción `.js`/`.mjs` permite avanzar a release.
-6. Preparar MHB-15 solo tras MHB-14 y MHB-34; decidir MHB-16 después de esa release candidata.
-7. Someter el producto a revisión final independiente antes de declararlo listo para presentarse como caso de portafolio.
+5. Cerrar la migración con MHB-34; ninguna excepción `.js`/`.mjs` permite avanzar.
+6. Ejecutar MHB-36 (compatibilidad multi-PM) tras MHB-34; migrar tests a Vitest y eliminar acoplamiento a Bun.
+7. Preparar MHB-15 solo tras MHB-14, MHB-34 y MHB-36; decidir MHB-16 después de esa release candidata.
+8. Someter el producto a revisión final independiente antes de declararlo listo para presentarse como caso de portafolio.
 
 ### Política de ramas y versiones conservada
 
@@ -556,6 +587,7 @@ Las skills son contratos de procedimiento; los subagentes son ejecuciones tempor
 | MHB-32 Vite TS   | `email-project-stack`, `email-preview-dashboard`, `email-refactor-type-safety` | Perfil alto; Vite APIs/services/plugins       | Revisor backend/Vite     | Endpoints, caché, integración y payloads           | Exige versionar API o alterar Maizzle/Handlebars.           |
 | MHB-33 web TS    | `email-preview-dashboard`, `email-refactor-type-safety`, `task-verification`   | Perfil alto; `src/web/**`                     | Revisor UI independiente | Strict, suite, a11y, contraste, hashes y recorrido | Exige React, cambio visual, endpoint o cambio de email.     |
 | MHB-34 cierre TS | `email-project-stack`, `email-quality-gates`, `task-verification`              | Perfil alto; AI/configs/gates/docs residuales | Revisor técnico final    | Inventario cero, strict global y matriz completa   | Queda una excepción JS/MJS o falla cualquier gate global.   |
+| MHB-36 multi-PM  | `email-project-stack`, `email-quality-gates`, `task-verification`              | Perfil medio-alto; scripts/tests/CI/docs      | Revisor técnico          | Gates con 4 PMs, Vitest verde, hashes idénticos    | Un PM no soporta una feature o Vitest rompe un mock.        |
 
 ### Fase F — Release y demo
 
