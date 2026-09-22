@@ -11,7 +11,7 @@
 
 import fs from "fs-extra";
 import path from "node:path";
-import { exportScreenshot } from "./index.js";
+import { exportScreenshot } from "./index.ts";
 import { c, paint } from "../shared/index.ts";
 import { assertValidTemplateName } from "../shared/index.ts";
 
@@ -30,12 +30,15 @@ try {
   process.exit(1);
 }
 
-const htmlPath = path.join(process.cwd(), "dist", `${templateName}.html`);
+// Validado por assertValidTemplateName
+const validatedTemplateName = templateName as string;
+
+const htmlPath = path.join(process.cwd(), "dist", `${validatedTemplateName}.html`);
 
 if (!fs.existsSync(htmlPath)) {
   console.error(
     paint(c.red + c.bold, "❌ Error:") +
-      paint(c.dim, ` El template "${templateName}" no existe en dist.\n`) +
+      paint(c.dim, ` El template "${validatedTemplateName}" no existe en dist.\n`) +
       paint(c.cyan, "   Asegúrate de hacer 'bun run build' primero.\n"),
   );
   process.exit(1);
@@ -43,16 +46,21 @@ if (!fs.existsSync(htmlPath)) {
 
 // ─── Obtener datos del template ──────────────────────────────────────────────
 
-const dataPath = path.join(process.cwd(), "src/emails/templates", templateName, "data.json");
+const dataPath = path.join(
+  process.cwd(),
+  "src/emails/templates",
+  validatedTemplateName,
+  "data.json",
+);
 
-let templateData = {};
+let templateData: Record<string, unknown> = {};
 if (fs.existsSync(dataPath)) {
-  templateData = fs.readJsonSync(dataPath);
+  templateData = fs.readJsonSync(dataPath) as Record<string, unknown>;
 }
 
 // ─── Ejecutar ────────────────────────────────────────────────────────────────
 
-exportScreenshot(htmlPath, templateName, templateData).catch((err) => {
+exportScreenshot(htmlPath, validatedTemplateName, templateData).catch((err) => {
   const errorMsg = err instanceof Error ? err.message : String(err);
   console.error(paint(c.red + c.bold, "❌ Error:"), errorMsg);
   process.exit(1);

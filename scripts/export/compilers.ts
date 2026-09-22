@@ -8,11 +8,8 @@ import { c, paint } from "../shared/index.ts";
 
 /**
  * Compila el HTML con Handlebars usando datos locales.
- * @param {string} htmlFile - Ruta del archivo HTML a compilar
- * @param {object} data - Datos para pasar a Handlebars
- * @returns {string} HTML compilado
  */
-export function compileHtmlWithData(htmlFile, data) {
+export function compileHtmlWithData(htmlFile: string, data: Record<string, unknown>): string {
   try {
     const htmlContent = fs.readFileSync(htmlFile, "utf-8");
     const template = Handlebars.compile(htmlContent);

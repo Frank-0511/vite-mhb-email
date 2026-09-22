@@ -6,37 +6,36 @@
 import fs from "fs-extra";
 import { c, paint } from "../shared/index.ts";
 import { formatBytes } from "../shared/index.ts";
-import { compileHtmlWithData } from "./compilers.js";
+import { compileHtmlWithData } from "./compilers.ts";
 import {
   cleanupTempFile,
   createTempHtmlFile,
   ensureScreenshotDir,
   getOutputPaths,
-} from "./file-manager.js";
-import { getPuppeteerLaunchError, tryPuppeteer } from "./renderers.js";
+} from "./file-manager.ts";
+import { getPuppeteerLaunchError, tryPuppeteer } from "./renderers.ts";
 
 /**
  * Imprime mensaje de éxito.
- * @param {string} outPath - Ruta del archivo generado
  */
-function printSuccess(outPath) {
+function printSuccess(outPath: string): void {
   const fileSize = fs.statSync(outPath).size;
   const formattedSize = formatBytes(fileSize, { useKBOnly: true });
 
-  console.log(paint(c.green + c.bold, `  ✅ Exportado exitosamente`));
+  console.log(paint(c.green + c.bold, "  ✅ Exportado exitosamente"));
   console.log(paint(c.cyan, `  📁 ${outPath}`));
   console.log(paint(c.dim, `  📊 Tamaño: ${formattedSize}\n`));
 }
 
 /**
  * Exporta un screenshot PNG de un template de email.
- * @param {string} htmlFile - Ruta del HTML compilado en dist/
- * @param {string} templateName - Nombre del template
- * @param {object} templateData - Datos para compilar con Handlebars
- * @returns {Promise<void>}
  */
-export async function exportScreenshot(htmlFile, templateName, templateData) {
-  let tempHtmlFile;
+export async function exportScreenshot(
+  htmlFile: string,
+  templateName: string,
+  templateData: Record<string, unknown>,
+): Promise<void> {
+  let tempHtmlFile: string | undefined;
   try {
     console.log(paint(c.cyan + c.bold, `\n  📸 Exportando ${templateName} como PNG\n`));
 
