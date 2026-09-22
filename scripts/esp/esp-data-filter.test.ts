@@ -1,6 +1,5 @@
-// @ts-check
 import { describe, expect, test } from "bun:test";
-import { filterDataKeys } from "./esp-data-filter.js";
+import { filterDataKeys } from "./esp-data-filter.ts";
 
 describe("filterDataKeys", () => {
   test("conserva solo las claves escalares de primer nivel", () => {

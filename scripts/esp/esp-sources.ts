@@ -1,4 +1,3 @@
-// @ts-check
 /**
  * @fileoverview Resuelve las fuentes HTML que participan en un template.
  *
@@ -22,17 +21,14 @@ const COMPONENT_TAG_RE = /<x-([a-z0-9-]+)\b[^>]*>/gi;
  * @param {string} templateName Nombre validado del template.
  * @returns {string}
  */
-export function collectTemplateSource(rootDir, templateName) {
+export function collectTemplateSource(rootDir: string, templateName: string): string {
   const templatePath = resolve(rootDir, "src/emails/templates", templateName, "index.html");
   if (!existsSync(templatePath)) return "";
 
-  const visited = new Set();
-  const sources = [];
+  const visited = new Set<string>();
+  const sources: string[] = [];
 
-  /**
-   * @param {string} filePath
-   */
-  function visit(filePath) {
+  function visit(filePath: string): void {
     if (visited.has(filePath) || !existsSync(filePath)) return;
     visited.add(filePath);
 
@@ -59,7 +55,7 @@ export function collectTemplateSource(rootDir, templateName) {
  * @param {string} source
  * @returns {string}
  */
-function localizeComponentProps(rootDir, filePath, source) {
+function localizeComponentProps(rootDir: string, filePath: string, source: string): string {
   const partialsRoot = resolve(rootDir, "src/emails/partials");
   if (!filePath.startsWith(`${partialsRoot}${sep}`)) return source;
 
@@ -73,7 +69,7 @@ function localizeComponentProps(rootDir, filePath, source) {
           schema && typeof schema === "object" && schema.props && typeof schema.props === "object"
             ? Object.keys(schema.props)
             : [];
-        return properties.reduce((result, property) => {
+        return properties.reduce((result: string, property: string) => {
           const escaped = property.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
           return result.replace(
             new RegExp(`\\{\\{\\s*${escaped}\\s*\\}\\}`, "g"),
@@ -100,7 +96,7 @@ function localizeComponentProps(rootDir, filePath, source) {
  * @param {string} tagName
  * @returns {string | null}
  */
-function resolveComponentPath(rootDir, tagName) {
+function resolveComponentPath(rootDir: string, tagName: string): string | null {
   const layoutsRoot = resolve(rootDir, "src/emails/layouts");
   const partialsRoot = resolve(rootDir, "src/emails/partials");
 
@@ -120,6 +116,6 @@ function resolveComponentPath(rootDir, tagName) {
  * @param {string} filePath
  * @returns {string}
  */
-export function getSourceName(filePath) {
+export function getSourceName(filePath: string): string {
   return basename(filePath);
 }

@@ -1,11 +1,10 @@
-// @ts-check
 import { describe, expect, test } from "bun:test";
 import {
   frontmatterKeys,
   parseEspFrontmatter,
   stripFrontmatter,
   unquote,
-} from "./esp-frontmatter.js";
+} from "./esp-frontmatter.ts";
 
 describe("unquote", () => {
   test("quita comillas simples o dobles envolventes", () => {
@@ -71,8 +70,8 @@ describe("parseEspFrontmatter", () => {
   test("no lanza ante frontmatter ausente, vacío o de tipo inesperado", () => {
     expect(parseEspFrontmatter("<p>Sin frontmatter</p>")).toEqual({});
     expect(parseEspFrontmatter("---\ntitle: Hola\n---\n<p></p>")).toEqual({});
-    expect(parseEspFrontmatter(/** @type {any} */ (null))).toEqual({});
-    expect(parseEspFrontmatter(/** @type {any} */ (42))).toEqual({});
+    expect(parseEspFrontmatter(null as unknown as string)).toEqual({});
+    expect(parseEspFrontmatter(42 as unknown as string)).toEqual({});
   });
 });
 
@@ -97,6 +96,6 @@ describe("frontmatterKeys", () => {
   });
 
   test("no lanza con una entrada que no es string", () => {
-    expect(frontmatterKeys(/** @type {any} */ (undefined)).size).toBe(0);
+    expect(frontmatterKeys(undefined as unknown as string).size).toBe(0);
   });
 });
