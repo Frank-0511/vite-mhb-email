@@ -5,11 +5,12 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "bun:test";
+import type { BaselineData, InventoryResults } from "./check-migration-inventory.ts";
 import {
   checkInventory,
   formatInventoryReport,
   matchesLayer,
-} from "./check-migration-inventory.js";
+} from "./check-migration-inventory.ts";
 
 describe("check-migration-inventory (MHB-29)", () => {
   describe("matchesLayer", () => {
@@ -62,7 +63,11 @@ describe("check-migration-inventory (MHB-29)", () => {
 
   describe("checkInventory y formatInventoryReport", () => {
     it("detecta cumplimiento cuando los archivos no exceden el baseline", () => {
-      const mockBaseline = {
+      const mockBaseline: BaselineData = {
+        version: "1.0.0",
+        task: "MHB-test",
+        generatedAt: "2026-09-22",
+        description: "Test baseline",
         totalBaselineJsCount: 2,
         layers: {
           "layer-1-core": {
@@ -80,8 +85,7 @@ describe("check-migration-inventory (MHB-29)", () => {
         },
       };
 
-      // Simulamos la verificación sobre el mock
-      const mockResults = {
+      const mockResults: InventoryResults = {
         layerResults: [
           {
             key: "layer-1-core",
@@ -122,7 +126,7 @@ describe("check-migration-inventory (MHB-29)", () => {
     });
 
     it("marca error si una capa excede su baseline", () => {
-      const mockResults = {
+      const mockResults: InventoryResults = {
         layerResults: [
           {
             key: "layer-1-core",
@@ -151,7 +155,7 @@ describe("check-migration-inventory (MHB-29)", () => {
 
     it("ejecuta checkInventory con el baseline del proyecto y confirma allPassed", () => {
       const baselinePath = new URL("./inventory-baseline.json", import.meta.url);
-      const baselineData = JSON.parse(readFileSync(baselinePath, "utf8"));
+      const baselineData = JSON.parse(readFileSync(baselinePath, "utf8")) as BaselineData;
       const rootDir = fileURLToPath(new URL("../..", import.meta.url));
       const results = checkInventory(rootDir, baselineData);
       expect(results.allPassed).toBe(true);
@@ -161,7 +165,7 @@ describe("check-migration-inventory (MHB-29)", () => {
 
     it("falla en modo requireZero si aún existen archivos JS/MJS", () => {
       const baselinePath = new URL("./inventory-baseline.json", import.meta.url);
-      const baselineData = JSON.parse(readFileSync(baselinePath, "utf8"));
+      const baselineData = JSON.parse(readFileSync(baselinePath, "utf8")) as BaselineData;
       const rootDir = fileURLToPath(new URL("../..", import.meta.url));
       const results = checkInventory(rootDir, baselineData, { requireZero: true });
       expect(results.allPassed).toBe(false);
@@ -174,7 +178,7 @@ describe("check-migration-inventory (MHB-29)", () => {
     });
 
     it("pasa en modo requireZero cuando el conteo de JS es 0", () => {
-      const mockResults = {
+      const mockResults: InventoryResults = {
         layerResults: [
           {
             key: "layer-1-core",

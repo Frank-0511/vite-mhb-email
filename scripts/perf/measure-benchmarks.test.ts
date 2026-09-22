@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { computeStats, formatMarkdownTable, getEnvironmentInfo } from "./measure-benchmarks.js";
+import type { BenchmarkResult, EnvironmentInfo } from "./measure-benchmarks.ts";
+import { computeStats, formatMarkdownTable, getEnvironmentInfo } from "./measure-benchmarks.ts";
 
 describe("measure-benchmarks", () => {
   describe("computeStats", () => {
@@ -37,7 +38,7 @@ describe("measure-benchmarks", () => {
 
   describe("formatMarkdownTable", () => {
     test("formats markdown table correctly", () => {
-      const env = {
+      const env: EnvironmentInfo = {
         os: "Darwin 25.6.0",
         arch: "arm64",
         cpuModel: "Apple M3",
@@ -47,7 +48,7 @@ describe("measure-benchmarks", () => {
         timestamp: "2026-09-20T20:00:00.000Z",
       };
 
-      const results = [
+      const results: BenchmarkResult[] = [
         {
           name: "Test Task",
           runtime: "Bun",
