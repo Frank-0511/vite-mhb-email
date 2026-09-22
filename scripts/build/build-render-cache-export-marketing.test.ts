@@ -11,12 +11,12 @@ import { compileHtmlWithData } from "../export/compilers.js";
 import { validateEspVariables } from "../esp/esp-variables.ts";
 import { checkHtmlSize } from "../validators/check-html-size.ts";
 import { validateEmailHtml } from "../validators/validate-email-html.ts";
-import { applyPreviewTheme } from "../vite/api/render.js";
+import { applyPreviewTheme } from "../vite/api/render.ts";
 import {
   createPreviewCacheManager,
   createPreviewDataHash,
-} from "../vite/services/preview-cache.js";
-import { runSelectiveBuild } from "../vite/services/selective-build.js";
+  runSelectiveBuild,
+} from "../vite/services/index.ts";
 import { downloadHtml } from "../../src/web/features/preview/modules/copy-html/html-download.js";
 import {
   createFakeDownloadEnvironment,

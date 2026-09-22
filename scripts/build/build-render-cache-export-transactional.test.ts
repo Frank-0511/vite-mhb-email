@@ -7,23 +7,30 @@ import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync } from "node
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import Handlebars from "handlebars";
-import { simulateRequest } from "../vite/test-helpers.js";
+import { simulateRequest } from "../vite/test-helpers.ts";
 import { compileHtmlWithData } from "../export/compilers.js";
 import { validateEspVariables } from "../esp/esp-variables.ts";
 import { checkHtmlSize } from "../validators/check-html-size.ts";
 import { validateEmailHtml } from "../validators/validate-email-html.ts";
-import { setupCopyHtmlApi } from "../vite/api/copy-html.js";
-import { applyPreviewTheme } from "../vite/api/render.js";
+import { setupCopyHtmlApi } from "../vite/api/copy-html.ts";
+import { applyPreviewTheme } from "../vite/api/render.ts";
 import {
   createPreviewCacheManager,
   createPreviewDataHash,
-} from "../vite/services/preview-cache.js";
-import { runSelectiveBuild } from "../vite/services/selective-build.js";
+  runSelectiveBuild,
+} from "../vite/services/index.ts";
 import { downloadHtml } from "../../src/web/features/preview/modules/copy-html/html-download.js";
 import {
   createFakeDownloadEnvironment,
   createTransactionalFixture,
 } from "./build-render-cache-export.test-fixtures.ts";
+
+interface CopyHtmlResponse {
+  success: boolean;
+  built?: boolean;
+  html?: string;
+  error?: string;
+}
 
 const projectRoot = process.cwd();
 
@@ -164,7 +171,7 @@ describe("MHB-20 — Integración Build, Render, Caché y Exportación (Transacc
       setupCopyHtmlApi(fakeServer, tempDir);
       expect(copyHtmlMiddleware).toBeDefined();
 
-      const apiResponseRead = await simulateRequest(copyHtmlMiddleware!, {
+      const apiResponseRead = await simulateRequest<CopyHtmlResponse>(copyHtmlMiddleware!, {
         method: "POST",
         url: `/api/copy-html?template=${fixture.templateName}`,
         body: { build: false },
@@ -174,7 +181,7 @@ describe("MHB-20 — Integración Build, Render, Caché y Exportación (Transacc
       expect(apiResponseRead.json.built).toBe(false);
       expect(apiResponseRead.json.html).toContain("{{ customer_name }}");
 
-      const apiResponseBuild = await simulateRequest(copyHtmlMiddleware!, {
+      const apiResponseBuild = await simulateRequest<CopyHtmlResponse>(copyHtmlMiddleware!, {
         method: "POST",
         url: `/api/copy-html?template=${fixture.templateName}`,
         body: { build: true },
@@ -210,7 +217,7 @@ describe("MHB-20 — Integración Build, Render, Caché y Exportación (Transacc
       };
       setupCopyHtmlApi(fakeServer, tempDir);
 
-      const response = await simulateRequest(copyHtmlMiddleware!, {
+      const response = await simulateRequest<CopyHtmlResponse>(copyHtmlMiddleware!, {
         method: "POST",
         url: "/api/copy-html?template=non-existent",
         body: { build: false },
@@ -232,7 +239,7 @@ describe("MHB-20 — Integración Build, Render, Caché y Exportación (Transacc
       };
       setupCopyHtmlApi(fakeServer, tempDir);
 
-      const response = await simulateRequest(copyHtmlMiddleware!, {
+      const response = await simulateRequest<CopyHtmlResponse>(copyHtmlMiddleware!, {
         method: "POST",
         url: "/api/copy-html?template=../secret",
         body: { build: false },
@@ -254,7 +261,7 @@ describe("MHB-20 — Integración Build, Render, Caché y Exportación (Transacc
       };
       setupCopyHtmlApi(fakeServer, tempDir);
 
-      const response = await simulateRequest(copyHtmlMiddleware!, {
+      const response = await simulateRequest<CopyHtmlResponse>(copyHtmlMiddleware!, {
         method: "GET",
         url: "/api/copy-html?template=receipt",
       });
