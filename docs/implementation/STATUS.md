@@ -3,9 +3,9 @@
 ## Resumen
 
 - ID activo: MHB-30
-- Estado: En revisión
+- Estado: Completada
 - Implementador: Perfil TypeScript/backend
-- Revisor: Revisor de build/compatibilidad
+- Revisor: Frank-0511 (Aprobación técnica usuario)
 - Rama: `feature/mhb-30`
 - Última actualización: 2026-09-22
 - Contrato activo: `docs/implementation/PLAN.md`
@@ -46,6 +46,7 @@
 
 ## Últimas entregas
 
+- MHB-30: `Completada` el 2026-09-22; núcleo, build, ESP, validadores, benchmarks e inventario migrados a TypeScript estricto (0 errores tsc, 529 tests verdes, hashes `dist/*.html` idénticos byte a byte, layer-1-core en 0 JS / 74 TS); rama `feature/mhb-30`.
 - MHB-35: `Completada` el 2026-09-22; consolidación de utilidades shared (`format-helpers`, `theme-helpers`), adopción estricta de storage keys, eliminación de fetch crudo y saneamiento de render inicial de skeletons sin FOUC en preview; rama `feature/mhb-35`.
 - MHB-28: `Completada` el 2026-09-21; modularización de superficies web sobredimensionadas (< 300 líneas en `src/web/**`, arquitectura `preview/modules/` por dominios, Web Component `<ef-skeleton>` en Light DOM, extracción de JS inline, cero regresión en `dist/*.html`); rama `feature/mhb-28`.
 - MHB-29: `Completada` el 2026-09-21; base de ejecución TypeScript establecida (tsconfig unificado y estricto, eslint 10, tests piloto TS nativos en Bun, control de inventario de 194 JS / 2 TS); commits `b5f659d` y `5e18515` en `master`.
@@ -57,6 +58,7 @@
 
 | Ámbito | Estado     | Propiedad                              | Handoff                                                                    |
 | :----- | :--------- | :------------------------------------- | :------------------------------------------------------------------------- |
+| MHB-30 | Completada | Núcleo y validadores en TS             | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-30`. |
 | MHB-35 | Completada | Consolidación shared y deduplicación   | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-35`. |
 | MHB-28 | Completada | Modularización web sobredimensionada   | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-28`. |
 | MHB-29 | Completada | Base de ejecución TypeScript           | Aprobación técnica y merge a `master` (`5e18515`).                         |
@@ -75,7 +77,7 @@
 
 ## Handoff
 
-- Entrega de MHB-30: En revisión en rama `feature/mhb-30`.
+- Entrega de MHB-30: Completada en rama `feature/mhb-30`.
   - Commits en rama:
     - `14af516`: `feat(shared): estructurar en subdirectorios tematicos y migrar a typescript estricto (MHB-30)`
     - `73b5fb4`: `feat(esp): migrar subsistema esp a typescript estricto (MHB-30)`
@@ -95,7 +97,7 @@
     - `bun run agents:check`: 7 adaptadores declarados válidos.
   - Riesgos residuales:
     - Declaraciones ambientales en `types/fs-extra.d.ts` cubren sync y async methods para capas posteriores (MHB-31).
-  - Próxima acción inmediata: Revisión independiente y confirmación de cierre (`Completada`) por revisor técnico.
+  - Próxima acción inmediata: Merge de la rama `feature/mhb-30` a `master` mediante Pull Request.
 - Siguiente tarea del roadmap:
-  - MHB-31 (`bloqueado` por MHB-30): CLI, exportación y correo en TypeScript.
+  - MHB-31 (`desbloqueado`): CLI, exportación y correo en TypeScript.
   - MHB-14 (`desbloqueado`): Evidencia de uso y compatibilidad.
