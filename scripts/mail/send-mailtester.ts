@@ -8,19 +8,19 @@
  *   MAILTESTER_TO_EMAIL — dirección de mail-tester.com por defecto (opcional)
  */
 
-import { c, paint } from "../shared/index.ts";
-import { loadEnv } from "../shared/index.ts";
-import { prompt } from "../shared/index.ts";
-import { selectBuiltTemplateWithData } from "./template-selection.js";
-import { sendViaGmail } from "./gmail-transport.js";
+import type { Interface } from "readline";
+import { c, loadEnv, paint, prompt } from "../shared/index.ts";
+import { sendViaGmail } from "./gmail-transport.ts";
+import { selectBuiltTemplateWithData } from "./template-selection.ts";
 
 // ─── Flujo principal (exportado para el CLI) ──────────────────────────────────
 
 /**
- * @param {import('readline').Interface} rl
- * @returns {Promise<void>}
+ * Orquesta el envío de prueba hacia mail-tester.com.
+ *
+ * @param rl - readline heredado del CLI
  */
-export async function sendToMailtester(rl) {
+export async function sendToMailtester(rl: Interface): Promise<void> {
   loadEnv();
 
   const fromEmailDefault = process.env.GMAIL_USER || "";
@@ -85,11 +85,12 @@ export async function sendToMailtester(rl) {
     const resultUrl = `https://www.mail-tester.com/${prefix}`;
 
     console.log(paint(c.green + c.bold, "\n  ✅ Email enviado exitosamente a Mail-Tester"));
-    console.log(paint(c.bold, `\n  🔗 Revisá tu score en:`));
+    console.log(paint(c.bold, "\n  🔗 Revisá tu score en:"));
     console.log(`     ${paint(c.cyan + c.bold, resultUrl)}\n`);
   } catch (err) {
-    console.log(paint(c.red + c.bold, `\n  ❌ Error al enviar: ${err.message}\n`));
-    if (err.message.includes("Invalid login")) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    console.log(paint(c.red + c.bold, `\n  ❌ Error al enviar: ${errorMsg}\n`));
+    if (errorMsg.includes("Invalid login")) {
       console.log(
         paint(
           c.dim,

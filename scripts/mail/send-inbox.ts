@@ -11,27 +11,33 @@
  *   TEST_APPLE_TO       — destinatario por defecto para Apple Mail
  */
 
-import { c, paint } from "../shared/index.ts";
-import { loadEnv } from "../shared/index.ts";
-import { prompt } from "../shared/index.ts";
-import { selectBuiltTemplateWithData } from "./template-selection.js";
-import { sendViaGmail } from "./gmail-transport.js";
+import type { Interface } from "readline";
+import { c, loadEnv, paint, prompt } from "../shared/index.ts";
+import { sendViaGmail } from "./gmail-transport.ts";
+import { selectBuiltTemplateWithData } from "./template-selection.ts";
 
 // ─── Proveedores disponibles ──────────────────────────────────────────────────
 
-const PROVIDERS = [
+export interface MailProvider {
+  key: string;
+  icon: string;
+  label: string;
+  color: string;
+  envVar: string;
+}
+
+export const PROVIDERS: readonly MailProvider[] = Object.freeze([
   { key: "1", icon: "📧", label: "Gmail", color: c.red, envVar: "TEST_GMAIL_TO" },
   { key: "2", icon: "📘", label: "Outlook / Hotmail", color: c.blue, envVar: "TEST_OUTLOOK_TO" },
   { key: "3", icon: "🍎", label: "Apple Mail (iCloud)", color: c.white, envVar: "TEST_APPLE_TO" },
-];
+]);
 
 // ─── Elegir proveedor ─────────────────────────────────────────────────────────
 
 /**
- * @param {import('readline').Interface} rl
- * @returns {Promise<typeof PROVIDERS[number]>}
+ * Solicita interactivamente al usuario seleccionar uno de los proveedores soportados.
  */
-async function pickProvider(rl) {
+async function pickProvider(rl: Interface): Promise<MailProvider> {
   console.log(paint(c.bold, "  ¿A cuál bandeja querés enviar?\n"));
 
   for (const p of PROVIDERS) {
@@ -54,10 +60,11 @@ async function pickProvider(rl) {
 // ─── Flujo principal (exportado para el CLI) ──────────────────────────────────
 
 /**
- * @param {import('readline').Interface} rl
- * @returns {Promise<void>}
+ * Orquesta el flujo de envío a bandejas reales.
+ *
+ * @param rl - readline heredado del CLI
  */
-export async function sendToInbox(rl) {
+export async function sendToInbox(rl: Interface): Promise<void> {
   loadEnv();
 
   const fromEmailDefault = process.env.GMAIL_USER || "";
@@ -121,8 +128,9 @@ export async function sendToInbox(rl) {
       ),
     );
   } catch (err) {
-    console.log(paint(c.red + c.bold, `\n  ❌ Error al enviar: ${err.message}\n`));
-    if (err.message.includes("Invalid login")) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    console.log(paint(c.red + c.bold, `\n  ❌ Error al enviar: ${errorMsg}\n`));
+    if (errorMsg.includes("Invalid login")) {
       console.log(
         paint(
           c.dim,
