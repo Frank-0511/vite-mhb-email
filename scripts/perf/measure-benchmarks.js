@@ -238,12 +238,12 @@ export function main(options = {}) {
     {
       name: "Build Pipeline (Maizzle)",
       runtime: "Bun",
-      command: "bun scripts/build/build.js",
+      command: "bun scripts/build/build.ts",
     },
     {
       name: "Build Pipeline (Maizzle)",
       runtime: "Node.js",
-      command: "node scripts/build/build.js",
+      command: "node scripts/build/build.ts",
     },
     {
       name: "Email Validator",

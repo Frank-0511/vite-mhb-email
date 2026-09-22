@@ -13,11 +13,11 @@
  *   bun run build                 # Comportamiento por defecto
  *   bun run build --allow-warnings # (reservado para CI permisivo)
  */
-import { execSync } from "child_process";
+import { execSync } from "node:child_process";
 import { checkHtmlSize } from "../validators/check-html-size.js";
 import { validateEmailHtml } from "../validators/validate-email-html.js";
 
-function build() {
+export function build(): void {
   try {
     // Ejecutar el build de Maizzle
     console.log("\n📦 Building with Maizzle...\n");
@@ -45,8 +45,9 @@ function build() {
     }
 
     console.log("✅ Build completed successfully!\n");
-  } catch (err) {
-    console.error("\n❌ Build failed:", err.message);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("\n❌ Build failed:", message);
     process.exit(1);
   }
 }

@@ -3,7 +3,7 @@
  * Cada acción corresponde a una opción del menú.
  */
 
-import { buildIfNeeded } from "../build/build-helper.js";
+import { buildIfNeeded } from "../build/build-helper.ts";
 import { sendToInbox } from "../mail/send-inbox.js";
 import { sendToMailtester } from "../mail/send-mailtester.js";
 import { sendTemplate } from "../mail/send-mailtrap.js";

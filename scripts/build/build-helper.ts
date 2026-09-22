@@ -4,18 +4,22 @@
  */
 
 import { spawn } from "node:child_process";
-import { c, paint } from "../shared/index.ts";
-import { prompt } from "../shared/index.ts";
+import { c, paint, prompt, type PromptSource } from "../shared/index.ts";
+
+export type SpawnFunction = typeof spawn;
 
 /**
  * Si `dist/` está vacío, pregunta al usuario si quiere buildear ahora.
  * Ejecuta `bun run build` si confirma.
  *
- * @param {import('../shared/index.ts').PromptSource} rl
- * @param {typeof spawn | Function} [spawnProcess=spawn] - Implementación de spawn.
- * @returns {Promise<boolean>} `true` si se buildeó exitosamente (o ya había templates), `false` si el usuario canceló o el build falló
+ * @param rl - Fuente de prompt readline
+ * @param spawnProcess - Implementación de spawn.
+ * @returns `true` si se buildeó exitosamente (o ya había templates), `false` si el usuario canceló o el build falló
  */
-export async function buildIfNeeded(rl, spawnProcess = spawn) {
+export async function buildIfNeeded(
+  rl: PromptSource,
+  spawnProcess: SpawnFunction = spawn,
+): Promise<boolean> {
   console.log(paint(c.yellow, "\n  ⚠️  No hay templates buildeados en dist/."));
   const answer = await prompt(rl, paint(c.yellow + c.bold, "¿Querés buildear ahora? (s/N)"), "N");
 
@@ -26,9 +30,9 @@ export async function buildIfNeeded(rl, spawnProcess = spawn) {
 
   console.log(paint(c.yellow + c.bold, "\n  📦 Buildeando para producción…\n"));
 
-  const code = await new Promise((resolve, reject) => {
+  const code = await new Promise<number>((resolve, reject) => {
     let settled = false;
-    const rejectOnce = (error) => {
+    const rejectOnce = (error: Error) => {
       if (!settled) {
         settled = true;
         reject(error);
@@ -36,11 +40,11 @@ export async function buildIfNeeded(rl, spawnProcess = spawn) {
     };
 
     const child = spawnProcess("bun", ["run", "build"], { stdio: "inherit" });
-    child.once("error", (error) => {
+    child.once("error", (error: unknown) => {
       const message = error instanceof Error ? error.message : String(error);
       rejectOnce(new Error(`No se pudo iniciar "bun run build": ${message}`, { cause: error }));
     });
-    child.once("close", (code, signal) => {
+    child.once("close", (code: number | null, signal: string | null) => {
       if (settled) return;
       if (signal) {
         rejectOnce(new Error(`"bun run build" terminó por la señal ${signal}`));

@@ -25,9 +25,16 @@ export function simulateRequest(middleware, { method = "GET", url, body }) {
       set statusCode(code) {
         statusCode = code;
       },
+      /**
+       * @param {string} name
+       * @param {any} value
+       */
       setHeader(name, value) {
         headers.set(name, String(value));
       },
+      /**
+       * @param {any} [chunk]
+       */
       end(chunk) {
         const responseBody = String(chunk ?? "");
         let json = null;
