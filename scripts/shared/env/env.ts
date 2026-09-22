@@ -1,18 +1,17 @@
-// @ts-check
 /**
  * @fileoverview Gestión de variables de entorno desde .env
  */
 
 import fs from "node:fs";
 import path from "node:path";
-import { c, paint } from "./console.js";
+import { c, paint } from "../ui/console.ts";
 
 /**
  * Lee el archivo `.env` de la raíz del proyecto y carga las variables en
  * `process.env`. No sobreescribe variables ya definidas en el entorno.
  * Termina el proceso con código 1 si el archivo no existe.
  */
-export function loadEnv() {
+export function loadEnv(): void {
   const envPath = path.resolve(process.cwd(), ".env");
 
   if (!fs.existsSync(envPath)) {
@@ -38,13 +37,18 @@ export function loadEnv() {
   }
 }
 
+export interface CheckEnvResult {
+  exists: boolean;
+  missing: string[];
+}
+
 /**
  * Chequea si el `.env` existe sin terminar el proceso.
  * @param {string[]} [requiredKeys=[]]
- * @returns {{ exists: boolean, missing: string[] }}
+ * @returns {CheckEnvResult}
  *   `missing` contiene las claves de `requiredKeys` que no están configuradas.
  */
-export function checkEnv(requiredKeys = []) {
+export function checkEnv(requiredKeys: string[] = []): CheckEnvResult {
   const envPath = path.resolve(process.cwd(), ".env");
   if (!fs.existsSync(envPath)) return { exists: false, missing: requiredKeys };
 

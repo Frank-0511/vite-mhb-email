@@ -13,7 +13,7 @@
 
 import fs from "fs-extra";
 import { resolve } from "node:path";
-import { isPathInside, isValidTemplateName } from "../../shared/path-safety.js";
+import { isPathInside, isValidTemplateName } from "../../shared/index.ts";
 
 /**
  * @typedef {Object} ComponentSummary

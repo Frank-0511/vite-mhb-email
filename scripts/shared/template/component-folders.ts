@@ -1,4 +1,3 @@
-// @ts-check
 import { globSync } from "glob";
 import { resolve } from "node:path";
 
@@ -12,7 +11,7 @@ import { resolve } from "node:path";
  * @param {string} rootDir - Raíz absoluta o relativa del proyecto.
  * @returns {string[]} Carpetas absolutas de componentes.
  */
-export function getEmailComponentFolders(rootDir) {
+export function getEmailComponentFolders(rootDir: string): string[] {
   const layoutsRoot = resolve(rootDir, "src/emails/layouts");
   const partialsRoot = resolve(rootDir, "src/emails/partials");
   const partialFolders = globSync("**/", {

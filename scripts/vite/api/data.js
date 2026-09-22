@@ -1,6 +1,6 @@
 import fs from "fs-extra";
-import { isValidTemplateName, isPathInside } from "../../shared/path-safety.js";
-import { getProjectPaths } from "../../shared/paths.js";
+import { isValidTemplateName, isPathInside } from "../../shared/index.ts";
+import { getProjectPaths } from "../../shared/index.ts";
 import { sendJson, sendText, readJsonBody, getRequestUrl } from "./http.js";
 
 /**

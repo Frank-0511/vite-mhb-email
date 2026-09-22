@@ -6,7 +6,7 @@ import {
   formatBytes,
   GMAIL_MAX_SAFE_BYTES,
   GMAIL_WARNING_THRESHOLD_BYTES,
-} from "../shared/format-helpers.js";
+} from "../shared/index.ts";
 
 const rootDir = process.cwd();
 const GMAIL_LIMIT = GMAIL_MAX_SAFE_BYTES;

@@ -1,4 +1,3 @@
-// @ts-check
 /** @fileoverview Regresiones de seguridad para el contrato de nombres de template. */
 
 import { describe, expect, test } from "bun:test";
@@ -6,7 +5,7 @@ import { spawnSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { assertValidTemplateName, isPathInside, isValidTemplateName } from "./path-safety.js";
+import { assertValidTemplateName, isPathInside, isValidTemplateName } from "./path-safety.ts";
 
 const projectRoot = process.cwd();
 
@@ -17,7 +16,7 @@ const projectRoot = process.cwd();
  * @param {string} [templateName]
  * @returns {ReturnType<typeof spawnSync>}
  */
-function runScript(scriptPath, templateName) {
+function runScript(scriptPath: string, templateName?: string) {
   const args = templateName === undefined ? [scriptPath] : [scriptPath, templateName];
   return spawnSync(process.execPath, args, {
     cwd: projectRoot,
@@ -30,7 +29,7 @@ function runScript(scriptPath, templateName) {
  *
  * @returns {string}
  */
-function readMaizzleConfig() {
+function readMaizzleConfig(): string {
   return readFileSync(resolve(projectRoot, "maizzle.config.js"), "utf-8");
 }
 
@@ -39,7 +38,7 @@ function readMaizzleConfig() {
  *
  * @returns {string}
  */
-function traversalProbe() {
+function traversalProbe(): string {
   return `../mhb-05-traversal-${randomUUID()}`;
 }
 

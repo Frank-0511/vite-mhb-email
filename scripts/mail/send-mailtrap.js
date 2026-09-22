@@ -11,9 +11,9 @@
  *   MAILTRAP_TO_NAME    — nombre destinatario por defecto (opcional)
  */
 
-import { c, paint } from "../shared/console.js";
-import { loadEnv } from "../shared/env.js";
-import { prompt } from "../shared/prompts.js";
+import { c, paint } from "../shared/index.ts";
+import { loadEnv } from "../shared/index.ts";
+import { prompt } from "../shared/index.ts";
 import { selectBuiltTemplateWithData } from "./template-selection.js";
 
 // ─── Envío a Mailtrap ─────────────────────────────────────────────────────────

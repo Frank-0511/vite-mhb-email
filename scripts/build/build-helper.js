@@ -4,14 +4,14 @@
  */
 
 import { spawn } from "node:child_process";
-import { c, paint } from "../shared/console.js";
-import { prompt } from "../shared/prompts.js";
+import { c, paint } from "../shared/index.ts";
+import { prompt } from "../shared/index.ts";
 
 /**
  * Si `dist/` está vacío, pregunta al usuario si quiere buildear ahora.
  * Ejecuta `bun run build` si confirma.
  *
- * @param {import('readline').Interface | { question: Function }} rl
+ * @param {import('../shared/index.ts').PromptSource} rl
  * @param {typeof spawn | Function} [spawnProcess=spawn] - Implementación de spawn.
  * @returns {Promise<boolean>} `true` si se buildeó exitosamente (o ya había templates), `false` si el usuario canceló o el build falló
  */

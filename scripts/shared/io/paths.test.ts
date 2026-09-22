@@ -1,7 +1,6 @@
-// @ts-check
 import { describe, expect, test } from "bun:test";
 import { isAbsolute, join, resolve, sep } from "node:path";
-import { getProjectPaths } from "./paths.js";
+import { getProjectPaths } from "./paths.ts";
 
 describe("getProjectPaths", () => {
   test("deriva todas las rutas centrales como absolutas bajo la raíz dada", () => {

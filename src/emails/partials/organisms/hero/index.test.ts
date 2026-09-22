@@ -1,4 +1,3 @@
-// @ts-check
 /**
  * @fileoverview Contrato del despachador de variantes de `hero`.
  *
@@ -9,7 +8,20 @@
 
 import { render } from "@maizzle/framework";
 import { describe, expect, test } from "bun:test";
-import { getEmailComponentFolders } from "../../../../../scripts/shared/component-folders.js";
+import { globSync } from "glob";
+import { resolve } from "node:path";
+
+function getLocalComponentFolders(rootDir: string): string[] {
+  const layoutsRoot = resolve(rootDir, "src/emails/layouts");
+  const partialsRoot = resolve(rootDir, "src/emails/partials");
+  const partialFolders = globSync("**/", {
+    cwd: partialsRoot,
+    absolute: true,
+    mark: false,
+  });
+
+  return [layoutsRoot, partialsRoot, ...partialFolders];
+}
 
 /**
  * Compila un fragmento que usa `<x-hero>` con las carpetas de componentes reales.
@@ -17,10 +29,10 @@ import { getEmailComponentFolders } from "../../../../../scripts/shared/componen
  * @param {string} tag
  * @returns {Promise<string>}
  */
-async function renderHero(tag) {
+async function renderHero(tag: string): Promise<string> {
   const { html } = await render(tag, {
     components: {
-      folders: getEmailComponentFolders(process.cwd()),
+      folders: getLocalComponentFolders(process.cwd()),
       tagPrefix: "x-",
     },
     expressions: {

@@ -3,8 +3,8 @@
  * Pantalla, menú, banner, ayuda y validación de .env
  */
 
-import { c, paint } from "../shared/console.js";
-import { checkEnv } from "../shared/env.js";
+import { c, paint } from "../shared/index.ts";
+import { checkEnv } from "../shared/index.ts";
 
 /** @param {string} text @returns {string} */
 const bold = (text) => paint(c.bold, text);

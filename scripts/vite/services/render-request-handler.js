@@ -8,8 +8,8 @@
 import fs from "fs-extra";
 import { compileTemplate as defaultCompileTemplate } from "./maizzle-compiler.js";
 import { createPreviewCacheManager, createPreviewDataHash } from "./preview-cache.js";
-import { isPathInside, isValidTemplateName } from "../../shared/path-safety.js";
-import { getProjectPaths } from "../../shared/paths.js";
+import { isPathInside, isValidTemplateName } from "../../shared/index.ts";
+import { getProjectPaths } from "../../shared/index.ts";
 import { getRequestUrl, readJsonBody, sendJson, sendText } from "../api/http.js";
 import { validateEspVariables } from "../../esp/esp-variables.js";
 import { collectTemplateSource } from "../../esp/esp-sources.js";

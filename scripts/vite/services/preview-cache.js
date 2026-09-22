@@ -6,7 +6,7 @@
 import fs from "fs-extra";
 import { createHash } from "node:crypto";
 import { resolve } from "node:path";
-import { assertValidTemplateName } from "../../shared/path-safety.js";
+import { assertValidTemplateName } from "../../shared/index.ts";
 
 /**
  * @typedef {Object} CacheEntry

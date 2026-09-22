@@ -6,7 +6,7 @@
  */
 
 import { isAbsolute, relative, resolve, sep } from "node:path";
-import { isPathInside } from "../../shared/path-safety.js";
+import { isPathInside } from "../../shared/index.ts";
 
 export const RENDER_ERROR_VERSION = 1;
 

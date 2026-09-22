@@ -9,7 +9,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { c as colors, paint } from "../shared/console.js";
+import { c as colors, paint } from "../shared/index.ts";
 
 const TOKENS_PATH = path.resolve(process.cwd(), "src/web/shared/styles/design-tokens.css");
 

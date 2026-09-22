@@ -4,14 +4,14 @@
  */
 
 import { buildIfNeeded } from "../build/build-helper.js";
-import { getBuiltTemplates, readBuiltTemplate } from "../shared/built-templates.js";
-import { c, paint } from "../shared/console.js";
+import { getBuiltTemplates, readBuiltTemplate } from "../shared/index.ts";
+import { c, paint } from "../shared/index.ts";
 import {
   applyHandlebars,
   applyLegacySendGridSubstitutions,
   getTemplateData,
-} from "../shared/handlebars.js";
-import { pickFromList } from "../shared/prompts.js";
+} from "../shared/index.ts";
+import { pickFromList } from "../shared/index.ts";
 
 /**
  * Asegura que existan templates, permite elegir uno y le aplica Handlebars.

@@ -1,24 +1,23 @@
-// @ts-check
 /**
  * @fileoverview Helpers Handlebars: carga de datos y aplicación de variables a templates.
  */
 
 import Handlebars from "handlebars";
 import fs from "node:fs";
-import { getProjectPaths } from "./paths.js";
+import { getProjectPaths } from "../io/paths.ts";
 
 /**
  * Carga el data.json correspondiente a un template.
  * @param {string} templateName - Nombre del template (ej: "welcome.html")
- * @returns {Object} Datos del template o objeto vacío si no existe
+ * @returns {Record<string, unknown>} Datos del template o objeto vacío si no existe
  */
-export function getTemplateData(templateName) {
+export function getTemplateData(templateName: string): Record<string, unknown> {
   try {
     const baseName = templateName.replace(".html", "");
     const paths = getProjectPaths(process.cwd());
     const dataPath = paths.templateData(baseName);
     const content = fs.readFileSync(dataPath, "utf-8");
-    return JSON.parse(content);
+    return JSON.parse(content) as Record<string, unknown>;
   } catch {
     // Silenciosamente ignorar si no existe el archivo
     return {};
@@ -32,7 +31,7 @@ export function getTemplateData(templateName) {
  * @param {Record<string, unknown>} data - Datos para reemplazar
  * @returns {string} HTML procesado
  */
-export function applyHandlebars(html, data) {
+export function applyHandlebars(html: string, data: Record<string, unknown>): string {
   try {
     const template = Handlebars.compile(html);
     return template(data);
@@ -52,13 +51,14 @@ export function applyHandlebars(html, data) {
  * @param {unknown} [data] - Datos de preview disponibles para reemplazo.
  * @returns {string} HTML con placeholders legacy reemplazados cuando exista la llave.
  */
-export function applyLegacySendGridSubstitutions(html, data) {
+export function applyLegacySendGridSubstitutions(html: string, data?: unknown): string {
   if (!data || typeof data !== "object") return html;
+  const dataObj = data as Record<string, unknown>;
 
   return html.replace(/-([A-Za-z0-9_]+)-/g, (match, key) => {
-    if (!Object.hasOwn(data, key)) return match;
+    if (!Object.hasOwn(dataObj, key)) return match;
 
-    const value = data[key];
+    const value = dataObj[key];
     if (value === null || value === undefined || typeof value === "object") return match;
 
     return Handlebars.escapeExpression(String(value));

@@ -7,7 +7,7 @@ import {
   applyHandlebars,
   applyLegacySendGridSubstitutions,
   getTemplateData,
-} from "./handlebars.js";
+} from "./handlebars.ts";
 
 describe("applyLegacySendGridSubstitutions", () => {
   test("sustituye placeholders Legacy solo cuando el dato local existe", () => {
@@ -95,8 +95,7 @@ describe("getTemplateData", () => {
     rmSync(projectRoot, { recursive: true, force: true });
   });
 
-  /** @param {string} templateName @param {string} content */
-  function writeData(templateName, content) {
+  function writeData(templateName: string, content: string) {
     const templateRoot = join(projectRoot, "src", "emails", "templates", templateName);
     mkdirSync(templateRoot, { recursive: true });
     writeFileSync(join(templateRoot, "data.json"), content, "utf8");

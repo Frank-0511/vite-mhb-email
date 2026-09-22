@@ -4,8 +4,8 @@
  */
 
 import fs from "fs-extra";
-import { c, paint } from "../shared/console.js";
-import { formatBytes } from "../shared/format-helpers.js";
+import { c, paint } from "../shared/index.ts";
+import { formatBytes } from "../shared/index.ts";
 import { compileHtmlWithData } from "./compilers.js";
 import {
   cleanupTempFile,
