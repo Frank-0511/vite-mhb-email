@@ -11,18 +11,37 @@
  *   MAILTRAP_TO_NAME    — nombre destinatario por defecto (opcional)
  */
 
-import { c, paint } from "../shared/index.ts";
-import { loadEnv } from "../shared/index.ts";
-import { prompt } from "../shared/index.ts";
-import { selectBuiltTemplateWithData } from "./template-selection.js";
+import type { Interface } from "readline";
+import { c, loadEnv, paint, prompt } from "../shared/index.ts";
+import { selectBuiltTemplateWithData } from "./template-selection.ts";
+
+/**
+ * Opciones para el envío a Mailtrap Sandbox API.
+ */
+export interface MailtrapSendOptions {
+  html: string;
+  subject: string;
+  to: string;
+  toName?: string;
+  fromEmail: string;
+  fromName: string;
+  fetchFn?: typeof fetch;
+}
 
 // ─── Envío a Mailtrap ─────────────────────────────────────────────────────────
 
 /**
- * @param {{ html: string, subject: string, to: string, toName: string, fromEmail: string, fromName: string }} opts
- * @returns {Promise<void>}
+ * Envía el email a Mailtrap Sandbox mediante su API REST oficial.
  */
-async function sendToMailtrap({ html, subject, to, toName, fromEmail, fromName }) {
+export async function sendToMailtrap({
+  html,
+  subject,
+  to,
+  toName,
+  fromEmail,
+  fromName,
+  fetchFn = fetch,
+}: MailtrapSendOptions): Promise<unknown> {
   const token = process.env.MAILTRAP_API_TOKEN;
   const inboxId = process.env.MAILTRAP_INBOX_ID;
 
@@ -41,7 +60,7 @@ async function sendToMailtrap({ html, subject, to, toName, fromEmail, fromName }
     html,
   });
 
-  const res = await fetch(url, {
+  const res = await fetchFn(url, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -61,10 +80,11 @@ async function sendToMailtrap({ html, subject, to, toName, fromEmail, fromName }
 // ─── Flujo principal (exportado para el CLI) ──────────────────────────────────
 
 /**
- * @param {import('readline').Interface} rl  readline heredado del CLI
- * @returns {Promise<void>}
+ * Orquesta el flujo interactivo de envío a Mailtrap desde la CLI.
+ *
+ * @param rl - readline heredado del CLI
  */
-export async function sendTemplate(rl) {
+export async function sendTemplate(rl: Interface): Promise<void> {
   loadEnv();
 
   const fromEmailDefault = process.env.MAILTRAP_FROM_EMAIL || "no-reply@example.com";
@@ -113,6 +133,7 @@ export async function sendTemplate(rl) {
     console.log(paint(c.green + c.bold, `\n  ✅ Email enviado exitosamente a ${to}`));
     console.log(paint(c.dim, "     Revisá tu inbox en https://mailtrap.io\n"));
   } catch (err) {
-    console.log(paint(c.red + c.bold, `\n  ❌ Error al enviar: ${err.message}\n`));
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    console.log(paint(c.red + c.bold, `\n  ❌ Error al enviar: ${errorMsg}\n`));
   }
 }

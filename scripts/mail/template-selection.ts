@@ -1,25 +1,37 @@
-// @ts-check
 /**
  * @fileoverview Lógica común para seleccionar templates buildeados y aplicarles datos de preview.
  */
 
+import type { Interface } from "readline";
 import { buildIfNeeded } from "../build/build-helper.ts";
-import { getBuiltTemplates, readBuiltTemplate } from "../shared/index.ts";
-import { c, paint } from "../shared/index.ts";
 import {
   applyHandlebars,
   applyLegacySendGridSubstitutions,
+  c,
+  getBuiltTemplates,
   getTemplateData,
+  paint,
+  pickFromList,
+  readBuiltTemplate,
 } from "../shared/index.ts";
-import { pickFromList } from "../shared/index.ts";
+
+/**
+ * Resultado de la selección de template con sus datos aplicados.
+ */
+export interface SelectedTemplateWithData {
+  chosen: string;
+  html: string;
+}
 
 /**
  * Asegura que existan templates, permite elegir uno y le aplica Handlebars.
  *
- * @param {import('readline').Interface} rl
- * @returns {Promise<{ chosen: string, html: string } | null>} Objeto con el template elegido y su HTML procesado, o null si se cancela.
+ * @param rl - Interfaz readline para interacción con el usuario.
+ * @returns Objeto con el template elegido y su HTML procesado, o null si se cancela.
  */
-export async function selectBuiltTemplateWithData(rl) {
+export async function selectBuiltTemplateWithData(
+  rl: Interface,
+): Promise<SelectedTemplateWithData | null> {
   let templates = getBuiltTemplates();
   if (templates.length === 0) {
     const built = await buildIfNeeded(rl);

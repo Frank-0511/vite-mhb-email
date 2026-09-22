@@ -1,19 +1,33 @@
-// @ts-check
 /**
  * @fileoverview Transporte Gmail SMTP compartido para los scripts de envío.
- * Encapsula la lógica de nodemailer para no repetirla en send-mailtester.js y send-inbox.js.
+ * Encapsula la lógica de nodemailer para no repetirla en send-mailtester.ts y send-inbox.ts.
  */
 
 import { createTransport } from "nodemailer";
 
 /**
+ * Opciones para el envío de email mediante Gmail SMTP.
+ */
+export interface GmailSendOptions {
+  html: string;
+  subject: string;
+  to: string;
+  fromEmail: string;
+  fromName: string;
+}
+
+/**
  * Envía un email HTML usando Gmail SMTP (App Password).
  *
- * @param {{ html: string, subject: string, to: string, fromEmail: string, fromName: string }} opts
- * @returns {Promise<void>}
  * @throws {Error} si GMAIL_USER o GMAIL_APP_PASS no están configurados
  */
-export async function sendViaGmail({ html, subject, to, fromEmail, fromName }) {
+export async function sendViaGmail({
+  html,
+  subject,
+  to,
+  fromEmail,
+  fromName,
+}: GmailSendOptions): Promise<void> {
   const user = process.env.GMAIL_USER;
   const pass = process.env.GMAIL_APP_PASS;
 
