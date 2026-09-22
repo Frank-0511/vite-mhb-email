@@ -14,15 +14,14 @@ import {
   sendMailtrap,
   testMailTester,
   validateEmails,
-} from "./actions.js";
-import { askMenuChoice } from "./helpers.js";
-import { clearScreen, printBanner, printHelp, printMenu, warnMissingEnv } from "./ui.js";
+} from "./actions.ts";
+import { askMenuChoice } from "./helpers.ts";
+import { clearScreen, printBanner, printHelp, printMenu, warnMissingEnv } from "./ui.ts";
 
 /**
  * Ejecuta el loop principal del CLI.
- * @returns {Promise<void>}
  */
-export async function main() {
+export async function main(): Promise<void> {
   // Flag --help
   if (process.argv.includes("--help") || process.argv.includes("-h")) {
     printHelp();

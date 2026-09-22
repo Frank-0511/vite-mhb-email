@@ -3,25 +3,22 @@
  * Pantalla, menú, banner, ayuda y validación de .env
  */
 
-import { c, paint } from "../shared/index.ts";
-import { checkEnv } from "../shared/index.ts";
+import { c, checkEnv, paint } from "../shared/index.ts";
 
-/** @param {string} text @returns {string} */
-const bold = (text) => paint(c.bold, text);
-/** @param {string} text @returns {string} */
-const dim = (text) => paint(c.dim, text);
+const bold = (text: string): string => paint(c.bold, text);
+const dim = (text: string): string => paint(c.dim, text);
 
 /**
  * Limpia la pantalla del terminal.
  */
-export function clearScreen() {
+export function clearScreen(): void {
   process.stdout.write("\x1b[2J\x1b[H");
 }
 
 /**
  * Muestra el banner principal del CLI.
  */
-export function printBanner() {
+export function printBanner(): void {
   console.log(
     [
       "",
@@ -33,11 +30,18 @@ export function printBanner() {
   );
 }
 
+interface MenuOption {
+  key: string;
+  icon: string;
+  label: string;
+  color: string;
+}
+
 /**
  * Muestra el menú principal con todas las opciones disponibles.
  */
-export function printMenu() {
-  const options = [
+export function printMenu(): void {
+  const options: MenuOption[] = [
     { key: "1", icon: "⚡", label: "Levantar servidor local", color: c.green },
     { key: "2", icon: "📦", label: "Buildear para producción", color: c.yellow },
     { key: "3", icon: "✨", label: "Crear nuevo template", color: c.magenta },
@@ -66,17 +70,17 @@ export function printMenu() {
 /**
  * Muestra la pantalla de ayuda.
  */
-export function printHelp() {
+export function printHelp(): void {
   console.log(`
 ${paint(c.cyan + c.bold, "  vite-mhb-email CLI")}
 
   ${bold("Uso:")}
-    yarn cli          Abre el menú interactivo
-    yarn cli --help   Muestra esta ayuda
+    bun cli           Abre el menú interactivo
+    bun cli --help    Muestra esta ayuda
 
   ${bold("Opciones del menú:")}
-    ${paint(c.green, "[1]")}  ⚡  Levantar servidor de desarrollo  (yarn dev)
-    ${paint(c.yellow, "[2]")}  📦  Buildear para producción          (yarn build)
+    ${paint(c.green, "[1]")}  ⚡  Levantar servidor de desarrollo  (bun run dev)
+    ${paint(c.yellow, "[2]")}  📦  Buildear para producción          (bun run build)
     ${paint(c.magenta, "[3]")}  ✨  Crear nuevo template
     ${paint(c.blue, "[4]")}  📨  Enviar template a Mailtrap        (requiere MAILTRAP_*)
     ${paint(c.cyan, "[5]")}  🧪  Testear con Mail-Tester (Gmail)   (requiere GMAIL_*)
@@ -95,7 +99,7 @@ ${paint(c.cyan + c.bold, "  vite-mhb-email CLI")}
  * Verifica el estado del .env y muestra advertencias si faltan variables.
  * No termina el proceso — solo informa al usuario.
  */
-export function warnMissingEnv() {
+export function warnMissingEnv(): void {
   const ALL_KEYS = ["MAILTRAP_API_TOKEN", "MAILTRAP_INBOX_ID", "GMAIL_USER", "GMAIL_APP_PASS"];
 
   const { exists, missing } = checkEnv(ALL_KEYS);
@@ -110,7 +114,7 @@ export function warnMissingEnv() {
   }
 
   if (missing.length > 0) {
-    const groups = {
+    const groups: Record<string, string[]> = {
       "Mailtrap (opción 4)": ["MAILTRAP_API_TOKEN", "MAILTRAP_INBOX_ID"],
       "Gmail SMTP (opciones 5 y 6)": ["GMAIL_USER", "GMAIL_APP_PASS"],
     };

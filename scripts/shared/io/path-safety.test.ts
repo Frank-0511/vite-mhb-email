@@ -104,7 +104,7 @@ describe("entrypoints de template", () => {
     const escaped = resolve(projectRoot, "src/emails", name.slice(3));
     expect(existsSync(escaped)).toBe(false);
 
-    const result = runScript("scripts/generators/generate-email.js", name);
+    const result = runScript("scripts/generators/generate-email.ts", name);
 
     expect(result.status).toBe(1);
     expect(result.stderr).toContain("nombre del template");
@@ -112,21 +112,21 @@ describe("entrypoints de template", () => {
   });
 
   test("el generador rechaza un argumento ausente", () => {
-    const result = runScript("scripts/generators/generate-email.js");
+    const result = runScript("scripts/generators/generate-email.ts");
 
     expect(result.status).toBe(1);
     expect(result.stderr).toContain("nombre del template");
   });
 
   test("el exportador rechaza traversal antes de leer dist", () => {
-    const result = runScript("scripts/export/export-screenshot.js", traversalProbe());
+    const result = runScript("scripts/export/export-screenshot.ts", traversalProbe());
 
     expect(result.status).toBe(1);
     expect(result.stderr).toContain("nombre del template");
   });
 
   test("el exportador rechaza un argumento ausente", () => {
-    const result = runScript("scripts/export/export-screenshot.js");
+    const result = runScript("scripts/export/export-screenshot.ts");
 
     expect(result.status).toBe(1);
     expect(result.stderr).toContain("nombre del template");
