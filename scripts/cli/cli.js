@@ -12,7 +12,7 @@
 import { main } from "./index.js";
 
 main().catch(async (err) => {
-  const { c, paint } = await import("../shared/console.js");
+  const { c, paint } = await import("../shared/index.ts");
   console.error(paint(c.red, `\n  ❌ Error inesperado: ${err.message}\n`));
   process.exit(1);
 });

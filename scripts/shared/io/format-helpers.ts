@@ -1,4 +1,3 @@
-// @ts-check
 /**
  * @fileoverview Funciones auxiliares para formateo y cálculo de tamaños en bytes.
  * Centraliza la conversión a KB/MB y constantes de umbral de tamaño de correo.
@@ -20,19 +19,18 @@ export const GMAIL_WARNING_THRESHOLD_BYTES = 100 * BYTES_PER_KB;
  * @param {number} [decimals=2] - Número de posiciones decimales.
  * @returns {string} Valor numérico formateado como string en KB (ej. "12.34").
  */
-export function bytesToKB(bytes, decimals = 2) {
+export function bytesToKB(bytes: number, decimals: number = 2): string {
   if (!Number.isFinite(bytes) || bytes < 0) {
     return (0).toFixed(decimals);
   }
   return (bytes / BYTES_PER_KB).toFixed(decimals);
 }
 
-/**
- * @typedef {Object} FormatBytesOptions
- * @property {number} [decimals=2] - Cantidad de cifras decimales a mostrar.
- * @property {boolean} [useKBOnly=false] - Forzar siempre la unidad KB (ideal para métricas de correo).
- * @property {boolean} [includeSpace=true] - Incluir un espacio antes de la unidad.
- */
+export interface FormatBytesOptions {
+  decimals?: number;
+  useKBOnly?: boolean;
+  includeSpace?: boolean;
+}
 
 /**
  * Formatea un tamaño en bytes con la unidad correspondiente (B, KB, MB) o siempre en KB.
@@ -41,7 +39,7 @@ export function bytesToKB(bytes, decimals = 2) {
  * @param {FormatBytesOptions} [options] - Opciones de formateo.
  * @returns {string} Cadena formateada con número y unidad (ej. "12.34 KB" o "512 B").
  */
-export function formatBytes(bytes, options = {}) {
+export function formatBytes(bytes: number, options: FormatBytesOptions = {}): string {
   const { decimals = 2, useKBOnly = false, includeSpace = true } = options;
   const space = includeSpace ? " " : "";
 

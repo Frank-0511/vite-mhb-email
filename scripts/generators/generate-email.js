@@ -6,7 +6,7 @@
 
 import fs from "fs-extra";
 import path from "node:path";
-import { assertValidTemplateName, isValidTemplateName } from "../shared/path-safety.js";
+import { assertValidTemplateName, isValidTemplateName } from "../shared/index.ts";
 import { getAvailableArchetypes } from "./archetypes.js";
 
 const firstArg = process.argv[2];

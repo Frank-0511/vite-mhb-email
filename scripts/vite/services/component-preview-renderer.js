@@ -12,7 +12,7 @@ import { render } from "@maizzle/framework";
 import fs from "fs-extra";
 import Handlebars from "handlebars";
 import { resolve } from "node:path";
-import { getEmailComponentFolders } from "../../shared/component-folders.js";
+import { getEmailComponentFolders } from "../../shared/index.ts";
 import {
   findComponentDir,
   isValidComponentIdentifier,

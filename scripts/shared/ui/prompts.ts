@@ -1,24 +1,37 @@
-// @ts-check
 /**
  * @fileoverview Helpers para interactividad CLI: prompts y selección de opciones.
  */
 
-import { c, paint } from "./console.js";
+import type { Interface as ReadlineInterface } from "node:readline";
+import { c, paint } from "./console.ts";
+
+export interface PromptInterface {
+  question(query: string, callback: (answer: string) => void): void;
+}
+
+export type PromptSource =
+  | ReadlineInterface
+  | PromptInterface
+  | { question: (...args: unknown[]) => unknown };
 
 /**
  * Muestra una pregunta al usuario y devuelve su respuesta.
  * Si el usuario no escribe nada, devuelve `defaultValue`.
  *
- * @param {import('readline').Interface | { question: Function }} rl
+ * @param {PromptSource} rl
  * @param {string} question
  * @param {string} [defaultValue=""]
  * @returns {Promise<string>}
  */
-export function prompt(rl, question, defaultValue = "") {
+export function prompt(
+  rl: PromptSource,
+  question: string,
+  defaultValue: string = "",
+): Promise<string> {
   const hint = defaultValue ? paint(c.dim, ` (${defaultValue})`) : "";
   return new Promise((resolve) => {
-    rl.question(`  ${question}${hint}: `, (answer) => {
-      const val = answer.trim();
+    (rl as PromptInterface).question(`  ${question}${hint}: `, (answer: string) => {
+      const val = typeof answer === "string" ? answer.trim() : "";
       resolve(val !== "" ? val : defaultValue);
     });
   });
@@ -27,11 +40,11 @@ export function prompt(rl, question, defaultValue = "") {
 /**
  * Muestra una lista numerada y espera que el usuario elija un ítem válido.
  *
- * @param {import('readline').Interface | { question: Function }} rl
+ * @param {PromptSource} rl
  * @param {string[]} items
  * @returns {Promise<string>}
  */
-export async function pickFromList(rl, items) {
+export async function pickFromList(rl: PromptSource, items: string[]): Promise<string> {
   items.forEach((item, i) => {
     console.log(`  ${paint(c.cyan + c.bold, `[${i + 1}]`)} ${paint(c.cyan, item)}`);
   });

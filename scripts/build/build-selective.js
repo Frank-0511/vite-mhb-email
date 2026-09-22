@@ -7,7 +7,7 @@
  */
 
 import { validateEmailHtml } from "../validators/validate-email-html.js";
-import { assertValidTemplateName } from "../shared/path-safety.js";
+import { assertValidTemplateName } from "../shared/index.ts";
 import { runSelectiveBuild } from "../vite/services/selective-build.js";
 
 const rootDir = process.cwd();

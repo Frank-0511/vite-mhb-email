@@ -1,6 +1,6 @@
 import { globSync } from "glob";
 import { rm } from "node:fs/promises";
-import { getEmailComponentFolders } from "./scripts/shared/component-folders.js";
+import { getEmailComponentFolders } from "./scripts/shared/index.ts";
 
 export default {
   build: {

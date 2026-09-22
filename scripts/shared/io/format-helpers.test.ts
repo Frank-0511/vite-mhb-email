@@ -1,4 +1,3 @@
-// @ts-check
 import { describe, expect, test } from "bun:test";
 import {
   BYTES_PER_KB,
@@ -6,7 +5,7 @@ import {
   formatBytes,
   GMAIL_MAX_SAFE_BYTES,
   GMAIL_WARNING_THRESHOLD_BYTES,
-} from "./format-helpers.js";
+} from "./format-helpers.ts";
 
 describe("format-helpers (formateo y umbrales de tamaño en bytes)", () => {
   test("constantes de umbral y unidades están correctamente calculadas", () => {

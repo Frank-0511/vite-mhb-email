@@ -14,7 +14,7 @@ import { createRequire } from "node:module";
 import path from "node:path";
 import puppeteer from "puppeteer";
 import { createServer } from "vite";
-import { c as colors, paint } from "../shared/console.js";
+import { c as colors, paint } from "../shared/index.ts";
 
 const require = createRequire(import.meta.url);
 const projectRoot = path.resolve(import.meta.dirname, "../..");

@@ -6,7 +6,7 @@
 
 import fs from "fs-extra";
 import { resolve } from "node:path";
-import { isValidTemplateName } from "../shared/path-safety.js";
+import { isValidTemplateName } from "../shared/index.ts";
 
 /**
  * @typedef {Object} ArchetypeTemplateInfo

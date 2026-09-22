@@ -1,10 +1,8 @@
-// @ts-check
 /**
  * @fileoverview Códigos de color ANSI para terminal y utilidades de pintado de texto.
  */
 
-/** @type {Object<string, string>} */
-export const c = {
+export const c: Record<string, string> = {
   reset: "\x1b[0m",
   bold: "\x1b[1m",
   dim: "\x1b[2m",
@@ -25,4 +23,4 @@ export const c = {
  * @param {string} text - Texto a colorear
  * @returns {string} Texto coloreado
  */
-export const paint = (color, text) => `${color}${text}${c.reset}`;
+export const paint = (color: string, text: string): string => `${color}${text}${c.reset}`;

@@ -28,8 +28,8 @@ import * as maizzleFramework from "@maizzle/framework";
 import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
-import { isValidTemplateName } from "../../shared/path-safety.js";
-import { getProjectPaths } from "../../shared/paths.js";
+import { isValidTemplateName } from "../../shared/index.ts";
+import { getProjectPaths } from "../../shared/index.ts";
 import { validateEspVariables } from "../../esp/esp-variables.js";
 import { collectTemplateSource } from "../../esp/esp-sources.js";
 

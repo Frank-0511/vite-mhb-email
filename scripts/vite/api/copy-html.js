@@ -20,8 +20,8 @@
 import fs from "fs-extra";
 import { resolve } from "node:path";
 import { runSelectiveBuild } from "../services/selective-build.js";
-import { isValidTemplateName, isPathInside } from "../../shared/path-safety.js";
-import { getProjectPaths } from "../../shared/paths.js";
+import { isValidTemplateName, isPathInside } from "../../shared/index.ts";
+import { getProjectPaths } from "../../shared/index.ts";
 import { sendJson, readJsonBody, getRequestUrl } from "./http.js";
 
 /**

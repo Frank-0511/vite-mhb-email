@@ -1,9 +1,8 @@
-// @ts-check
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { checkEnv, loadEnv } from "./env.js";
+import { checkEnv, loadEnv } from "./env.ts";
 
 const originalCwd = process.cwd();
 /** Claves de prueba: se borran de process.env tras cada caso. */
@@ -22,8 +21,7 @@ afterEach(() => {
   for (const key of TEST_KEYS) delete process.env[key];
 });
 
-/** @param {string} content */
-function writeEnvFile(content) {
+function writeEnvFile(content: string) {
   writeFileSync(join(projectRoot, ".env"), content, "utf8");
 }
 

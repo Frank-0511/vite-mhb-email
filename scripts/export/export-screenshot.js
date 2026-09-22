@@ -12,8 +12,8 @@
 import fs from "fs-extra";
 import path from "node:path";
 import { exportScreenshot } from "./index.js";
-import { c, paint } from "../shared/console.js";
-import { assertValidTemplateName } from "../shared/path-safety.js";
+import { c, paint } from "../shared/index.ts";
+import { assertValidTemplateName } from "../shared/index.ts";
 
 const templateName = process.argv[2];
 

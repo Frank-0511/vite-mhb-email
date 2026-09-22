@@ -1,9 +1,8 @@
-// @ts-check
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { getBuiltTemplates, readBuiltTemplate } from "./built-templates.js";
+import { getBuiltTemplates, readBuiltTemplate } from "./built-templates.ts";
 
 const originalCwd = process.cwd();
 let projectRoot = "";
@@ -18,10 +17,7 @@ afterEach(() => {
   rmSync(projectRoot, { recursive: true, force: true });
 });
 
-/**
- * @param {Record<string, string>} files
- */
-function writeDist(files) {
+function writeDist(files: Record<string, string>) {
   const distDir = join(projectRoot, "dist");
   mkdirSync(distDir, { recursive: true });
   for (const [name, content] of Object.entries(files)) {

@@ -4,7 +4,7 @@
  */
 
 import { createInterface } from "readline";
-import { c, paint } from "../shared/console.js";
+import { c, paint } from "../shared/index.ts";
 import {
   buildProd,
   createTemplate,

@@ -11,9 +11,9 @@
  *   TEST_APPLE_TO       — destinatario por defecto para Apple Mail
  */
 
-import { c, paint } from "../shared/console.js";
-import { loadEnv } from "../shared/env.js";
-import { prompt } from "../shared/prompts.js";
+import { c, paint } from "../shared/index.ts";
+import { loadEnv } from "../shared/index.ts";
+import { prompt } from "../shared/index.ts";
 import { selectBuiltTemplateWithData } from "./template-selection.js";
 import { sendViaGmail } from "./gmail-transport.js";
 

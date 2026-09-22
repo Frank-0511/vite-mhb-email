@@ -2,30 +2,31 @@
 
 ## Resumen
 
-- ID activo: MHB-35
-- Estado: Completada
-- Implementador: Perfil arquitectura frontend/shared
-- Revisor: Usuario (confirmado el 2026-09-22)
-- Rama: `feature/mhb-35`
+- ID activo: MHB-30
+- Estado: En progreso
+- Implementador: Perfil TypeScript/backend
+- Revisor: Revisor de build/compatibilidad
+- Rama: `feature/mhb-30`
 - Última actualización: 2026-09-22
 - Contrato activo: `docs/implementation/PLAN.md`
 
 ## Baseline vigente
 
 - La release [v1.2.0](https://github.com/Frank-0511/vite-mhb-email/releases/tag/v1.2.0) es el baseline funcional publicado.
+- MHB-35 completada y mergeada a `master` (commit `b495ec5`).
 - MHB-28 completada en `feature/mhb-28`.
 - MHB-29 completada y mergeada a `master` (commits `b5f659d` y `5e18515`).
 - MHB-20 mergeada a `master` (commits `4cc964f` y `619a425`).
 - MHB-13 completada y mergeada a `master` (commit `5fe448a`).
 - Las variables ESP `{{ }}` se preservan en el HTML final; `[[ page.* ]]` queda reservado para Maizzle.
 
-## Entrega activa (MHB-35: Consolidación de shared y deduplicación)
+## Entrega activa (MHB-30: Núcleo y validadores en TypeScript)
 
-- **Adopción estricta de storage keys:** Cero cadenas literales (`"template-theme"`, `"app-theme"`, `"selectedComponentId"`) fuera de `storage-keys.js`; adoptado en `theme-manager.js`, `iframe-manager.js`, `theme-toggle-component.js` y `library/main.js`.
-- **Eliminación de llamadas directas a `fetch()`:** Cero `fetch(` crudos en `src/web/features/**`; todo el tráfico web usa `fetchJSON`, `fetchText`, `postText` y `sendRequest` de `http-helpers.js`.
-- **Saneamiento DOM y debounce en Library:** Eliminadas todas las ocurrencias de `document.getElementById` crudo en `library/main.js` (sustituidas por `queryRequired` y `querySafe`), y temporizador manual `setTimeout` de debounce reemplazado por `debounce` de `http-helpers.js`.
-- **Centralización de formateo de bytes:** Creado `scripts/shared/format-helpers.js` (`formatBytes()`, `bytesToKB()`, constantes de límites) con suite de 10 tests; adoptado en `check-html-size.js`, `export/index.js` y `dashboard.js`.
-- **Unificación de resolución de tema:** Creado `src/web/shared/utils/theme-helpers.js` con lectura, fallback seguro a dark y persistencia; deduplicando y desacoplando `theme-manager.js`, `iframe-manager.js` y `render-api.js` con suite de 6 tests.
+- **Estructuración en subdirectorios temáticos:** Organización de `scripts/shared/` en `io/`, `template/`, `ui/`, `env/` y `rules/` en `structure/`, `accessibility/`, `content/` respetando el límite estricto de ≤ 8 archivos fuente por carpeta.
+- **División de módulos sobredimensionados:** Desacople de `validate-contrast.js` (261 líneas), `check-migration-inventory.js` (335 líneas), `measure-benchmarks.js` (321 líneas) y `build-render-cache-export.test.js` (571 líneas) para cumplir ≤ 250 líneas (y tests ≤ 400 líneas).
+- **Desacoplamiento hero test:** Eliminación de dependencia cruzada desde `src/emails/partials/organisms/hero/index.test.js` hacia `scripts/shared/component-folders.js`.
+- **Desambiguación de nombres:** Renombrado de `rules/esp-variables.js` a `rules/content/esp-variables-rule.ts` preservando `ruleId: "esp-variables"`.
+- **Conversión TypeScript estricta:** Migración a `.ts` con tipado estricto para `scripts/shared/**`, `scripts/esp/**`, `scripts/build/**`, `scripts/validators/**`, `scripts/inventory/**`, `scripts/perf/**` y hero test.
 
 ### Controles de Calidad
 
@@ -74,7 +75,7 @@
 
 ## Handoff
 
-- Próxima acción inmediata: Merge de rama `feature/mhb-35` a `master` y preparación de rama `feature/mhb-30`.
+- Próxima acción inmediata: Ejecución de las fases técnicas de MHB-30 en `feature/mhb-30`.
 - Siguiente tarea del roadmap:
-  - MHB-30 (`desbloqueado`): Núcleo y validadores en TypeScript.
+  - MHB-31 (`bloqueado` por MHB-30): CLI, exportación y correo en TypeScript.
   - MHB-14 (`desbloqueado`): Evidencia de uso y compatibilidad.

@@ -4,7 +4,7 @@
 
 import { pathToFileURL } from "node:url";
 import puppeteer from "puppeteer";
-import { c, paint } from "../shared/console.js";
+import { c, paint } from "../shared/index.ts";
 
 /**
  * Describe la recuperación disponible cuando Puppeteer no puede iniciar.

@@ -1,7 +1,7 @@
 import fs from "fs-extra";
 import { compileTemplate } from "../services/maizzle-compiler.js";
-import { isPathInside } from "../../shared/path-safety.js";
-import { getProjectPaths } from "../../shared/paths.js";
+import { isPathInside } from "../../shared/index.ts";
+import { getProjectPaths } from "../../shared/index.ts";
 import { sendText } from "./http.js";
 
 const TEMPLATE_ROUTE_PATTERN = /^\/templates\/([a-z0-9-]+)\/index\.html$/;

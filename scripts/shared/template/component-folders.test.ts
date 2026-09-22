@@ -1,9 +1,8 @@
-// @ts-check
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { getEmailComponentFolders } from "./component-folders.js";
+import { getEmailComponentFolders } from "./component-folders.ts";
 
 let projectRoot = "";
 
@@ -15,8 +14,7 @@ afterEach(() => {
   rmSync(projectRoot, { recursive: true, force: true });
 });
 
-/** @param {string[]} relativeDirs */
-function scaffold(relativeDirs) {
+function scaffold(relativeDirs: string[]) {
   mkdirSync(join(projectRoot, "src", "emails", "layouts"), { recursive: true });
   mkdirSync(join(projectRoot, "src", "emails", "partials"), { recursive: true });
   for (const dir of relativeDirs) {

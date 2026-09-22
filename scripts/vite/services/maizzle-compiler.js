@@ -1,8 +1,8 @@
 import { render } from "@maizzle/framework";
 import fs from "fs-extra";
 import Handlebars from "handlebars";
-import { getEmailComponentFolders } from "../../shared/component-folders.js";
-import { applyLegacySendGridSubstitutions } from "../../shared/handlebars.js";
+import { getEmailComponentFolders } from "../../shared/index.ts";
+import { applyLegacySendGridSubstitutions } from "../../shared/index.ts";
 
 /**
  * Compila una plantilla HTML con Maizzle y Handlebars.

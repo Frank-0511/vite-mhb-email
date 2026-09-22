@@ -1,8 +1,8 @@
 import fs from "fs-extra";
 import { globSync } from "glob";
 import { resolve } from "node:path";
-import { bytesToKB } from "../../shared/format-helpers.js";
-import { getProjectPaths } from "../../shared/paths.js";
+import { bytesToKB } from "../../shared/index.ts";
+import { getProjectPaths } from "../../shared/index.ts";
 import {
   getTemplateSizesClientScript,
   renderEmptyDashboardPlaceholder,
