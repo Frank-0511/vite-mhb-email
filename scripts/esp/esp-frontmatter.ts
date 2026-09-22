@@ -1,9 +1,8 @@
-// @ts-check
 /**
  * @fileoverview Extracción y análisis de frontmatter YAML-lite para templates de email.
  */
 
-import { FRONTMATTER_METADATA_KEYS, FRONTMATTER_RE } from "./esp-constants.js";
+import { FRONTMATTER_METADATA_KEYS, FRONTMATTER_RE } from "./esp-constants.ts";
 
 /**
  * Quita comillas simples o dobles envolventes de un token.
@@ -11,7 +10,7 @@ import { FRONTMATTER_METADATA_KEYS, FRONTMATTER_RE } from "./esp-constants.js";
  * @param {string} value
  * @returns {string}
  */
-export function unquote(value) {
+export function unquote(value: string): string {
   if (!value) return value;
   const first = value[0];
   const last = value[value.length - 1];
@@ -27,11 +26,15 @@ export function unquote(value) {
  * @param {string} source
  * @returns {string}
  */
-export function stripFrontmatter(source) {
+export function stripFrontmatter(source: string): string {
   const match = source.match(FRONTMATTER_RE);
   if (!match) return source;
   const after = source.slice(match[0].length);
   return after.startsWith("\r\n") || after.startsWith("\n") ? after.slice(1) : after;
+}
+
+export interface EspFrontmatterResult {
+  espVariables?: string[];
 }
 
 /**
@@ -42,9 +45,9 @@ export function stripFrontmatter(source) {
  * Devuelve `{}` si el frontmatter falta o es ilegible; no lanza.
  *
  * @param {string} source
- * @returns {{ espVariables?: string[] }}
+ * @returns {EspFrontmatterResult}
  */
-export function parseEspFrontmatter(source) {
+export function parseEspFrontmatter(source: string): EspFrontmatterResult {
   if (typeof source !== "string") return {};
   const match = source.match(FRONTMATTER_RE);
   if (!match) return {};
@@ -84,11 +87,11 @@ export function parseEspFrontmatter(source) {
  * @param {string} source
  * @returns {Set<string>}
  */
-export function frontmatterKeys(source) {
+export function frontmatterKeys(source: string): Set<string> {
   const match = typeof source === "string" ? source.match(FRONTMATTER_RE) : null;
   if (!match) return new Set();
 
-  const keys = new Set(FRONTMATTER_METADATA_KEYS);
+  const keys = new Set<string>(FRONTMATTER_METADATA_KEYS);
   for (const line of match[1].split(/\r?\n/)) {
     const keyMatch = line.match(/^([A-Za-z_][A-Za-z0-9_-]*)\s*:/);
     if (keyMatch) keys.add(keyMatch[1]);

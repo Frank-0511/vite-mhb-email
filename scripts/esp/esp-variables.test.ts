@@ -1,10 +1,9 @@
-// @ts-check
 /**
  * @fileoverview Tests de integración del validador de variables ESP `{{ }}` y su fachada.
  */
 
 import { describe, expect, test } from "bun:test";
-import { validateEspVariables } from "./esp-variables.js";
+import { validateEspVariables } from "./esp-variables.ts";
 
 describe("validateEspVariables — coincidencia", () => {
   test("data y template coinciden exactamente → sin issues", () => {

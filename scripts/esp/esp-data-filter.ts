@@ -1,10 +1,9 @@
-// @ts-check
 /**
  * @fileoverview Filtrado y normalización de claves del objeto de datos `data.json`.
  */
 
-import { FRONTMATTER_METADATA_KEYS } from "./esp-constants.js";
-import { frontmatterKeys } from "./esp-frontmatter.js";
+import { FRONTMATTER_METADATA_KEYS } from "./esp-constants.ts";
+import { frontmatterKeys } from "./esp-frontmatter.ts";
 
 /**
  * Extrae y filtra las claves de primer nivel del objeto `data` que son
@@ -19,12 +18,12 @@ import { frontmatterKeys } from "./esp-frontmatter.js";
  * @param {string} [source] Contenido del template fuente para identificar metadatos.
  * @returns {string[]} Lista de nombres de claves filtradas.
  */
-export function filterDataKeys(data, source = "") {
+export function filterDataKeys(data: unknown, source: string = ""): string[] {
   if (!data || typeof data !== "object" || Array.isArray(data)) {
     return [];
   }
 
-  const record = /** @type {Record<string, unknown>} */ (data);
+  const record = data as Record<string, unknown>;
   const metadataKeys = frontmatterKeys(source);
 
   return Object.keys(record).filter((key) => {

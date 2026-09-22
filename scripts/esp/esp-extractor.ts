@@ -1,4 +1,3 @@
-// @ts-check
 /**
  * @fileoverview Extracción de variables ESP `{{ var }}` a partir del código fuente HTML de emails.
  */
@@ -8,8 +7,8 @@ import {
   MAIZZE_DOUBLE_RE,
   MAIZZE_TRIPLE_RE,
   TRIPLE_STASH_RE,
-} from "./esp-constants.js";
-import { stripFrontmatter } from "./esp-frontmatter.js";
+} from "./esp-constants.ts";
+import { stripFrontmatter } from "./esp-frontmatter.ts";
 
 /**
  * Elimina todos los bloques `{{#each …}}…{{/each}}` (no anidados) del cuerpo
@@ -19,7 +18,7 @@ import { stripFrontmatter } from "./esp-frontmatter.js";
  * @param {string} body
  * @returns {string}
  */
-export function stripEachBlocks(body) {
+export function stripEachBlocks(body: string): string {
   let output = "";
   let index = 0;
   while (index < body.length) {
@@ -51,7 +50,7 @@ export function stripEachBlocks(body) {
  * @param {string} body
  * @returns {Set<string>}
  */
-export function collectEspVariablesInBody(body) {
+export function collectEspVariablesInBody(body: string): Set<string> {
   // Eliminar zonas que NO son ESP: triple-stash, maizzle [[ ]] y [[[ ]]].
   // El orden importa: primero lo más específico (triple) para no destruir
   // accidentalmente pares `{{ }}` legítimos dentro de un bloque Maizzle.
@@ -63,7 +62,7 @@ export function collectEspVariablesInBody(body) {
   // Eliminar bloques `{{#each …}}…{{/each}}` para ignorar `{{ this }}` interno.
   const eachStripped = stripEachBlocks(sanitized);
 
-  const found = new Set();
+  const found = new Set<string>();
   for (const match of eachStripped.matchAll(ESP_VAR_RE)) {
     found.add(match[1]);
   }
@@ -76,7 +75,7 @@ export function collectEspVariablesInBody(body) {
  * @param {string} source Contenido del `index.html` del template.
  * @returns {Set<string>} Conjunto de nombres únicos (primer uso gana orden).
  */
-export function extractEspVariables(source) {
+export function extractEspVariables(source: string): Set<string> {
   if (typeof source !== "string" || source.length === 0) {
     return new Set();
   }
