@@ -3,9 +3,9 @@
 ## Resumen
 
 - ID activo: MHB-31
-- Estado: En revisión
+- Estado: Completada
 - Implementador: Perfil TypeScript/CLI
-- Revisor: Revisor técnico de CLI/filesystem
+- Revisor: Frank-0511 (Aprobación técnica usuario)
 - Rama: `feature/mhb-31`
 - Última actualización: 2026-09-22
 - Contrato activo: `docs/implementation/PLAN.md`
@@ -45,6 +45,7 @@
 
 ## Últimas entregas
 
+- MHB-31: `Completada` el 2026-09-22; CLI, exportación y correo migrados a TypeScript estricto (0 errores tsc, 537 tests verdes, helpers modularizados, layer-2-cli en 0 JS / 24 TS); rama `feature/mhb-31`.
 - MHB-30: `Completada` el 2026-09-22; núcleo, build, ESP, validadores, benchmarks e inventario migrados a TypeScript estricto (0 errores tsc, 529 tests verdes, hashes `dist/*.html` idénticos byte a byte, layer-1-core en 0 JS / 74 TS); rama `feature/mhb-30`.
 - MHB-35: `Completada` el 2026-09-22; consolidación de utilidades shared (`format-helpers`, `theme-helpers`), adopción estricta de storage keys, eliminación de fetch crudo y saneamiento de render inicial de skeletons sin FOUC en preview; rama `feature/mhb-35`.
 - MHB-28: `Completada` el 2026-09-21; modularización de superficies web sobredimensionadas (< 300 líneas en `src/web/**`, arquitectura `preview/modules/` por dominios, Web Component `<ef-skeleton>` en Light DOM, extracción de JS inline, cero regresión en `dist/*.html`); rama `feature/mhb-28`.
@@ -55,15 +56,15 @@
 
 ## Ejecuciones delegadas relevantes
 
-| Ámbito | Estado      | Propiedad                              | Handoff                                                                    |
-| :----- | :---------- | :------------------------------------- | :------------------------------------------------------------------------- |
-| MHB-31 | En revisión | CLI, exportación y correo en TS        | Entrega técnica completa en `feature/mhb-31`; controles verdes.            |
-| MHB-30 | Completada  | Núcleo y validadores en TS             | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-30`. |
-| MHB-35 | Completada  | Consolidación shared y deduplicación   | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-35`. |
-| MHB-28 | Completada  | Modularización web sobredimensionada   | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-28`. |
-| MHB-29 | Completada  | Base de ejecución TypeScript           | Aprobación técnica y merge a `master` (`5e18515`).                         |
-| MHB-13 | Completada  | Baseline tipos y mediciones            | Verificación completa y merge a `master` (`5fe448a`).                      |
-| MHB-20 | Completada  | Tests integración, caché y exportación | Aceptación y merge a `master` en commit `619a425`.                         |
+| Ámbito | Estado     | Propiedad                              | Handoff                                                                    |
+| :----- | :--------- | :------------------------------------- | :------------------------------------------------------------------------- |
+| MHB-31 | Completada | CLI, exportación y correo en TS        | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-31`. |
+| MHB-30 | Completada | Núcleo y validadores en TS             | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-30`. |
+| MHB-35 | Completada | Consolidación shared y deduplicación   | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-35`. |
+| MHB-28 | Completada | Modularización web sobredimensionada   | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-28`. |
+| MHB-29 | Completada | Base de ejecución TypeScript           | Aprobación técnica y merge a `master` (`5e18515`).                         |
+| MHB-13 | Completada | Baseline tipos y mediciones            | Verificación completa y merge a `master` (`5fe448a`).                      |
+| MHB-20 | Completada | Tests integración, caché y exportación | Aceptación y merge a `master` en commit `619a425`.                         |
 
 ## Decisiones y desviaciones vigentes
 
