@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
-import { createPuppeteerRenderer } from "./renderers.js";
+import type puppeteer from "puppeteer";
+import { createPuppeteerRenderer } from "./renderers.ts";
 
 const originalConsoleLog = console.log;
 
@@ -17,10 +18,10 @@ describe("createPuppeteerRenderer", () => {
   test("devuelve false cuando el navegador no inicia, sin lanzar un navegador real", async () => {
     let launchCalls = 0;
     const render = createPuppeteerRenderer({
-      launch: () => {
+      launch: (() => {
         launchCalls += 1;
         return Promise.reject(new Error("Chrome executable missing"));
-      },
+      }) as unknown as typeof puppeteer.launch,
     });
 
     await expect(render("/tmp/email.html", "/tmp/email.png")).resolves.toBe(false);

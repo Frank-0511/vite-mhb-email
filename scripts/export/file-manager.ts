@@ -7,11 +7,11 @@ import path from "node:path";
 
 /**
  * Crea un archivo temporal con el HTML compilado.
- * @param {string} compiledHtml - Contenido HTML compilado
- * @param {string} templateName - Nombre del template
- * @returns {Promise<string>} Ruta del archivo temporal
  */
-export async function createTempHtmlFile(compiledHtml, templateName) {
+export async function createTempHtmlFile(
+  compiledHtml: string,
+  templateName: string,
+): Promise<string> {
   const tempDir = path.join(process.cwd(), ".temp-screenshots");
   await fs.ensureDir(tempDir);
 
@@ -23,10 +23,8 @@ export async function createTempHtmlFile(compiledHtml, templateName) {
 
 /**
  * Limpia un archivo temporal.
- * @param {string} tempFile - Ruta del archivo temporal
- * @returns {Promise<void>}
  */
-export async function cleanupTempFile(tempFile) {
+export async function cleanupTempFile(tempFile: string): Promise<void> {
   try {
     await fs.remove(tempFile);
   } catch {
@@ -36,20 +34,25 @@ export async function cleanupTempFile(tempFile) {
 
 /**
  * Asegura que existe el directorio de screenshots.
- * @returns {Promise<string>} Ruta del directorio de screenshots
  */
-export async function ensureScreenshotDir() {
+export async function ensureScreenshotDir(): Promise<string> {
   const screenshotDir = path.join(process.cwd(), "screenshots");
   await fs.ensureDir(screenshotDir);
   return screenshotDir;
 }
 
 /**
- * Obtiene la ruta del archivo PNG de salida.
- * @param {string} templateName - Nombre del template
- * @returns {{ png: string, pdf: string }} Rutas de salida
+ * Rutas de archivos de salida para screenshots y PDFs.
  */
-export function getOutputPaths(templateName) {
+export interface OutputPaths {
+  png: string;
+  pdf: string;
+}
+
+/**
+ * Obtiene la ruta del archivo PNG de salida.
+ */
+export function getOutputPaths(templateName: string): OutputPaths {
   const screenshotDir = path.join(process.cwd(), "screenshots");
   return {
     png: path.join(screenshotDir, `${templateName}.png`),
