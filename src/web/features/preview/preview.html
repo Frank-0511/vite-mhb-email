@@ -6,12 +6,9 @@
     <title>Email Preview & Edit - EmailForge Toolkit</title>
     <!-- Use the same Tailwind output -->
     <link href="/shared/styles/tailwind.css" rel="stylesheet" />
+    <link href="/features/preview/styles.css" rel="stylesheet" />
 
-    <!-- Vanilla JSONEditor (Svelte JSONEditor) -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/vanilla-jsoneditor@3.11.0/themes/jse-theme-dark.css"
-      rel="stylesheet"
-    />
+    <!-- Vanilla JSONEditor theme is loaded on-demand by editor.js -->
     <script>
       // Prevent FOUC by applying app theme immediately
       if (localStorage.getItem("app-theme") === "dark" || !("app-theme" in localStorage)) {

@@ -1,13 +1,13 @@
 {
   "version": "1.0.0",
-  "task": "MHB-29",
-  "generatedAt": "2026-09-20",
+  "task": "MHB-35",
+  "generatedAt": "2026-09-21",
   "description": "Baseline decreciente de archivos JavaScript/MJS por capa para la migración gradual a TypeScript (MHB-29 a MHB-34)",
   "layers": {
     "layer-1-core": {
       "name": "Núcleo y validadores",
       "targetTask": "MHB-30",
-      "baselineJsCount": 65,
+      "baselineJsCount": 67,
       "patterns": [
         "scripts/shared/**/*.{js,mjs}",
         "scripts/build/**/*.{js,mjs}",
@@ -36,7 +36,7 @@
     "layer-4-web": {
       "name": "Dashboard web",
       "targetTask": "MHB-33",
-      "baselineJsCount": 57,
+      "baselineJsCount": 60,
       "patterns": ["src/web/**/*.{js,mjs}"]
     },
     "layer-5-tooling": {
@@ -51,5 +51,5 @@
       ]
     }
   },
-  "totalBaselineJsCount": 201
+  "totalBaselineJsCount": 206
 }

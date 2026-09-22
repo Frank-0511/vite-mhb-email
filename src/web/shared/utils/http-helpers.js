@@ -48,7 +48,10 @@ export function createDebounceTimer(callback, delayMs = 300) {
  */
 export async function fetchJSON(url, options = {}) {
   const response = await fetch(url, options);
-  if (!response.ok) {
+  if (
+    response.ok === false ||
+    (typeof response.status === "number" && (response.status < 200 || response.status >= 300))
+  ) {
     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
   }
   return response.json();
@@ -64,7 +67,10 @@ export async function fetchJSON(url, options = {}) {
  */
 export async function fetchText(url, options = {}) {
   const response = await fetch(url, options);
-  if (!response.ok) {
+  if (
+    response.ok === false ||
+    (typeof response.status === "number" && (response.status < 200 || response.status >= 300))
+  ) {
     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
   }
   return response.text();
@@ -84,4 +90,32 @@ export function postJSON(url, data) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
+}
+
+/**
+ * Post JSON data to a URL and get plain text (HTML) response.
+ *
+ * @param {string} url - Request URL
+ * @param {unknown} data - Data to send as JSON
+ * @returns {Promise<string>} Plain text response
+ * @throws {Error} If fetch fails or response status is not OK
+ */
+export function postText(url, data) {
+  return fetchText(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+}
+
+/**
+ * Execute a fetch request directly returning the Response without status checks.
+ * Allows custom header inspection and status handling while centralizing network access.
+ *
+ * @param {string | URL | Request} input - Request URL or Request object
+ * @param {RequestInit} [init] - Fetch options
+ * @returns {Promise<Response>}
+ */
+export function sendRequest(input, init) {
+  return fetch(input, init);
 }

@@ -1,5 +1,6 @@
 // @ts-check
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
+import { STORAGE_KEY_TEMPLATE_THEME } from "../../../../shared/utils/storage-keys.js";
 import { createIframeManager } from "./iframe-manager.js";
 import { createMockElement, createMockIframe } from "./test-helpers.js";
 
@@ -101,15 +102,15 @@ describe("iframe-manager", () => {
       onSyncStatusChange: () => {},
     });
 
-    expect(localStorage.getItem("template-theme")).toBeNull();
+    expect(localStorage.getItem(STORAGE_KEY_TEMPLATE_THEME)).toBeNull();
 
     // Primer toggle (default 'dark' pasa a 'light')
     manager.toggleTheme("welcome");
-    expect(localStorage.getItem("template-theme")).toBe("light");
+    expect(localStorage.getItem(STORAGE_KEY_TEMPLATE_THEME)).toBe("light");
 
     // Segundo toggle ('light' pasa a 'dark')
     manager.toggleTheme("welcome");
-    expect(localStorage.getItem("template-theme")).toBe("dark");
+    expect(localStorage.getItem(STORAGE_KEY_TEMPLATE_THEME)).toBe("dark");
   });
 
   test("reset reinicia el template y actualiza el estado", () => {

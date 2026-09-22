@@ -2,12 +2,12 @@
 
 ## Resumen
 
-- ID activo: ninguno
-- Estado: Completada (MHB-28)
-- Implementador: Perfil UI/web
-- Revisor: Revisor UI / Usuario
-- Rama: `master`
-- Última actualización: 2026-09-21
+- ID activo: MHB-35
+- Estado: Completada
+- Implementador: Perfil arquitectura frontend/shared
+- Revisor: Usuario (confirmado el 2026-09-22)
+- Rama: `feature/mhb-35`
+- Última actualización: 2026-09-22
 - Contrato activo: `docs/implementation/PLAN.md`
 
 ## Baseline vigente
@@ -19,14 +19,13 @@
 - MHB-13 completada y mergeada a `master` (commit `5fe448a`).
 - Las variables ESP `{{ }}` se preservan en el HTML final; `[[ page.* ]]` queda reservado para Maizzle.
 
-## Entrega activa (MHB-28: Modularización de superficies web sobredimensionadas)
+## Entrega activa (MHB-35: Consolidación de shared y deduplicación)
 
-- **División modular de estilos:** `styles.css` (6 líneas) dividido en 5 subhojas temáticas en `styles/` y `copy-html-modal.css` (3 líneas) desacoplado en 2 subhojas, todos estrictamente bajo el umbral de 300 líneas.
-- **Estructuración modular por carpetas:** módulos de preview agrupados en subcarpetas cohesivas por dominio bajo `modules/` (`controls`, `copy-html`, `editor`, `render`, `runtime`), dejando la raíz limpia con solo los puntos de entrada.
-- **JavaScript embebido extraído:** lógica inline de `preview.html` delegada a `mobile-tabs.js` y `more-menu.js` (con tests unitarios).
-- **Web Component `<ef-skeleton>`:** implementación declarativa en Light DOM y desacoplamiento de `preview-ready.js` cubierto con tests unitarios.
-- **Desacoplamiento de plantillas y scrollbars:** HTML/scripts extraídos de `dashboard.js` a `dashboard-templates.js` (110 líneas) y scrollbars deduplicados en `library.css` (299 líneas).
-- **Cero regresión:** hashes SHA-256 de `dist/*.html` 100% idénticos byte a byte respecto al baseline previo; gates de contraste y a11y 100% verdes.
+- **Adopción estricta de storage keys:** Cero cadenas literales (`"template-theme"`, `"app-theme"`, `"selectedComponentId"`) fuera de `storage-keys.js`; adoptado en `theme-manager.js`, `iframe-manager.js`, `theme-toggle-component.js` y `library/main.js`.
+- **Eliminación de llamadas directas a `fetch()`:** Cero `fetch(` crudos en `src/web/features/**`; todo el tráfico web usa `fetchJSON`, `fetchText`, `postText` y `sendRequest` de `http-helpers.js`.
+- **Saneamiento DOM y debounce en Library:** Eliminadas todas las ocurrencias de `document.getElementById` crudo en `library/main.js` (sustituidas por `queryRequired` y `querySafe`), y temporizador manual `setTimeout` de debounce reemplazado por `debounce` de `http-helpers.js`.
+- **Centralización de formateo de bytes:** Creado `scripts/shared/format-helpers.js` (`formatBytes()`, `bytesToKB()`, constantes de límites) con suite de 10 tests; adoptado en `check-html-size.js`, `export/index.js` y `dashboard.js`.
+- **Unificación de resolución de tema:** Creado `src/web/shared/utils/theme-helpers.js` con lectura, fallback seguro a dark y persistencia; deduplicando y desacoplando `theme-manager.js`, `iframe-manager.js` y `render-api.js` con suite de 6 tests.
 
 ### Controles de Calidad
 
@@ -34,7 +33,7 @@
 | :-------------------------------------------- | :------------------------------------- | :-------- |
 | Comprobación de rama                          | `bun scripts/ai/check-task-branch.mjs` | Verde     |
 | Typecheck unificado + estricto                | `bun run typecheck`                    | Verde     |
-| Pruebas unitarias/integración (504 tests)     | `bun test`                             | Verde     |
+| Pruebas unitarias/integración (529 tests)     | `bun test`                             | Verde     |
 | Linting completo (html, js/ts, md, json, css) | `bun run lint`                         | Verde     |
 | Formato de código                             | `bun run format:check`                 | Verde     |
 | Build pipeline                                | `bun run build`                        | Verde     |
@@ -46,6 +45,7 @@
 
 ## Últimas entregas
 
+- MHB-35: `Completada` el 2026-09-22; consolidación de utilidades shared (`format-helpers`, `theme-helpers`), adopción estricta de storage keys, eliminación de fetch crudo y saneamiento de render inicial de skeletons sin FOUC en preview; rama `feature/mhb-35`.
 - MHB-28: `Completada` el 2026-09-21; modularización de superficies web sobredimensionadas (< 300 líneas en `src/web/**`, arquitectura `preview/modules/` por dominios, Web Component `<ef-skeleton>` en Light DOM, extracción de JS inline, cero regresión en `dist/*.html`); rama `feature/mhb-28`.
 - MHB-29: `Completada` el 2026-09-21; base de ejecución TypeScript establecida (tsconfig unificado y estricto, eslint 10, tests piloto TS nativos en Bun, control de inventario de 194 JS / 2 TS); commits `b5f659d` y `5e18515` en `master`.
 - MHB-13: `Completada` el 2026-09-20; baseline completo de tipos `checkJs` en 190 archivos JS/MJS (0 errores tsc, 0 `@ts-ignore`), tipos ambientales en `types/`, suite de benchmark reproducible y mediciones comparativas Bun vs Node.js.
@@ -56,6 +56,7 @@
 
 | Ámbito | Estado     | Propiedad                              | Handoff                                                                    |
 | :----- | :--------- | :------------------------------------- | :------------------------------------------------------------------------- |
+| MHB-35 | Completada | Consolidación shared y deduplicación   | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-35`. |
 | MHB-28 | Completada | Modularización web sobredimensionada   | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-28`. |
 | MHB-29 | Completada | Base de ejecución TypeScript           | Aprobación técnica y merge a `master` (`5e18515`).                         |
 | MHB-13 | Completada | Baseline tipos y mediciones            | Verificación completa y merge a `master` (`5fe448a`).                      |
@@ -63,17 +64,17 @@
 
 ## Decisiones y desviaciones vigentes
 
+- **Sincronización de baseline de inventario para MHB-35:** Incorporación de 5 archivos JS/MJS legítimos (`format-helpers.js`, `format-helpers.test.js`, `theme-helpers.js`, `theme-helpers.test.js`, `http-helpers.test.js`), elevando el baseline a 206 archivos JS para control estricto decreciente hacia MHB-30 y MHB-33.
+- **Robustez en helpers de red:** `fetchJSON` y `fetchText` admiten respuestas mockeadas de test verificando explícitamente `response.ok === false` y códigos HTTP fuera de rango 200-299 para garantizar compatibilidad con mocks mínimos de tests unitarios existentes.
 - **Light DOM en `<ef-skeleton>`:** Obligatorio para permitir que las utilidades Tailwind (`animate-pulse`) alcancen los elementos internos y no ocultar los IDs consumidos por scripts y tests.
 - **División de `copy-html-modal.css`:** Dividido en `styles/modal-dialog.css` y `styles/modal-cards.css` para respetar el umbral de 300 líneas sin alterar ninguna regla ni valor de especificidad.
 - **Eliminación de componentes huérfanos:** Los 5 fragmentos HTML en `src/web/features/library/components/` se eliminan al no tener referencias en runtime.
 - **Estructuración en subcarpetas de `preview/modules/`:** 40+ archivos planos organizados en subcarpetas cohesivas por dominio (`controls`, `copy-html`, `editor`, `render`, `runtime`) alineando preview con la estructura modular de `library/modules/`.
-- **Sincronización de baseline de inventario:** Tras modularizar legítimamente superficies en capas 3 y 4 (nuevos submódulos y tests JS), se actualizó el baseline en `inventory-baseline.json` a 201 archivos JS para mantener el control estricto decreciente hacia MHB-30 y MHB-33.
-- **Política de refactor integrado y límites cuantitativos:** Se acuerda no crear más tareas de refactor aisladas; todo trabajo debe refactorizar mientras avanza respetando límites estrictos (≤250 líneas archivo fuente, ≤8 archivos por carpeta). Se añade MHB-35 para consolidar `shared/` y eliminar duplicación antes de la conversión a TypeScript.
+- **Política de refactor integrado y límites cuantitativos:** Se acuerda no crear más tareas de refactor aisladas; todo trabajo debe refactorizar mientras avanza respetando límites estrictos (≤250 líneas archivo fuente, ≤8 archivos por carpeta).
 
 ## Handoff
 
-- Próxima acción inmediata: Iniciar MHB-35 en rama `feature/mhb-35`.
+- Próxima acción inmediata: Merge de rama `feature/mhb-35` a `master` y preparación de rama `feature/mhb-30`.
 - Siguiente tarea del roadmap:
-  - MHB-35 (`desbloqueado`): Consolidación de shared y deduplicación (prerrequisitos MHB-20 y MHB-28 completados).
-  - MHB-30 (`bloqueado por MHB-35`): Núcleo y validadores en TypeScript.
+  - MHB-30 (`desbloqueado`): Núcleo y validadores en TypeScript.
   - MHB-14 (`desbloqueado`): Evidencia de uso y compatibilidad.

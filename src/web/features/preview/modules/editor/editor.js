@@ -16,12 +16,30 @@ import { filterEditorMenuItems } from "./editor-menu-filter.js";
  */
 
 /**
+ * Carga bajo demanda la hoja de estilos de tema oscuro para Vanilla JSONEditor.
+ *
+ * @returns {void}
+ */
+function ensureJsonEditorDarkTheme() {
+  if (typeof document === "undefined") return;
+  if (!document.getElementById("jse-theme-dark-css")) {
+    const link = document.createElement("link");
+    link.id = "jse-theme-dark-css";
+    link.rel = "stylesheet";
+    link.href = "https://cdn.jsdelivr.net/npm/vanilla-jsoneditor@3.11.0/themes/jse-theme-dark.css";
+    document.head.appendChild(link);
+  }
+}
+
+/**
  * Initialize JSONEditor for template data
  * @param {EditorConfig} config
  * @returns {Promise<Object>} Editor instance and API
  */
 export async function initializeEditor(config) {
   const { templateName, container, onChange, onStatusChange } = config;
+
+  ensureJsonEditorDarkTheme();
 
   let editor = null;
   let initialData = {};

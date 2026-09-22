@@ -4,6 +4,10 @@
  */
 
 import { queryRequired, querySafe } from "../../../../shared/utils/dom-helpers.js";
+import {
+  isTemplateThemeDark,
+  toggleTemplateTheme,
+} from "../../../../shared/utils/theme-helpers.js";
 
 /**
  * Setup template theme toggle button
@@ -22,8 +26,7 @@ export function setupTemplateThemeToggle(config) {
    * Update template theme UI icons
    */
   function updateUI() {
-    const isDark =
-      localStorage.getItem("template-theme") === "dark" || !("template-theme" in localStorage);
+    const isDark = isTemplateThemeDark();
     if (isDark) {
       if (templateIconLight) templateIconLight.classList.add("hidden");
       if (templateIconDark) templateIconDark.classList.remove("hidden");
@@ -36,9 +39,7 @@ export function setupTemplateThemeToggle(config) {
   updateUI();
 
   templateToggleBtn.addEventListener("click", () => {
-    const currentTheme = localStorage.getItem("template-theme") || "light";
-    const newTheme = currentTheme === "dark" ? "light" : "dark";
-    localStorage.setItem("template-theme", newTheme);
+    const newTheme = toggleTemplateTheme();
     updateUI();
     onThemeChange(newTheme);
   });

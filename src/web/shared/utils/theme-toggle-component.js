@@ -4,6 +4,8 @@
  * Handles localStorage persistence and dispatches theme-changed events
  */
 
+import { STORAGE_KEY_APP_THEME } from "./storage-keys.js";
+
 /**
  * @class ThemeToggle
  * Web component for theme toggling functionality
@@ -134,7 +136,7 @@ export class ThemeToggle extends HTMLElement {
     this.button.addEventListener("click", () => {
       document.documentElement.classList.toggle("dark");
       const isDark = document.documentElement.classList.contains("dark");
-      localStorage.setItem("app-theme", isDark ? "dark" : "light");
+      localStorage.setItem(STORAGE_KEY_APP_THEME, isDark ? "dark" : "light");
 
       this.updateIcon();
       window.dispatchEvent(new CustomEvent("theme-changed", { detail: { isDark } }));

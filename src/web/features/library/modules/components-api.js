@@ -1,11 +1,12 @@
 // Components management module
+import { fetchJSON, postText } from "../../../shared/utils/http-helpers.js";
+
 export const componentsManager = {
   all: [],
 
   async loadAll() {
     try {
-      const response = await fetch("/api/components");
-      this.all = await response.json();
+      this.all = await fetchJSON("/api/components");
       return this.all;
     } catch (err) {
       console.error("Error loading components:", err);
@@ -47,8 +48,7 @@ export const componentsManager = {
 
   async loadFull(componentId) {
     try {
-      const response = await fetch(`/api/components/${componentId}`);
-      return await response.json();
+      return await fetchJSON(`/api/components/${componentId}`);
     } catch (err) {
       console.error("Error loading component schema:", err);
       return null;
@@ -57,12 +57,7 @@ export const componentsManager = {
 
   async render(componentId, variant, props) {
     try {
-      const response = await fetch(`/api/components/${componentId}/render`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ variant, props }),
-      });
-      return await response.text();
+      return await postText(`/api/components/${componentId}/render`, { variant, props });
     } catch (err) {
       console.error("Error rendering component:", err);
       return null;
