@@ -3,7 +3,7 @@
 ## Resumen
 
 - ID activo: MHB-32
-- Estado: En progreso
+- Estado: En revisión
 - Implementador: Perfil TypeScript/Vite
 - Revisor: Revisor backend/Vite
 - Rama: `feature/mhb-32`
@@ -24,7 +24,7 @@
 
 ## Entrega activa (MHB-32: Servidor Vite y APIs en TypeScript)
 
-- **Migración a TypeScript estricto:** Conversión a `.ts` de `scripts/vite/**` y `vite.config.ts` (0 JS restantes en Capa 3).
+- **Migración a TypeScript estricto:** Conversión a `.ts` de `scripts/vite/**` y `vite.config.ts` (0 JS restantes en Capa 3, 42 archivos TS).
 - **Refactor integrado de `component-preview-transforms.js`:** Modularización en `transforms/` (`delimiter-transforms.ts`, `conditional-transforms.ts`, `table-transforms.ts`, `script-transforms.ts`, `index.ts`) para respetar ≤ 250 líneas.
 - **Arquitectura de carpetas en `services/`:** Reestructuración de 15 archivos planos en subdirectorios temáticos (`cache/`, `catalog/`, `transforms/`, `render/`) respetando ≤ 8 archivos fuente por directorio.
 - **Tipado estricto de APIs y middlewares:** Middlewares Connect/Vite y endpoints HTTP (`/api/*`) con tipos y validación runtime preservada.
@@ -32,17 +32,17 @@
 
 ### Controles de Calidad
 
-| Control                                       | Comando                                | Resultado   |
-| :-------------------------------------------- | :------------------------------------- | :---------- |
-| Comprobación de rama                          | `bun scripts/ai/check-task-branch.mjs` | En progreso |
-| Typecheck unificado + estricto                | `bun run typecheck`                    | En progreso |
-| Pruebas unitarias/integración (537+ tests)    | `bun test`                             | En progreso |
-| Linting completo (html, js/ts, md, json, css) | `bun run lint`                         | En progreso |
-| Formato de código                             | `bun run format:check`                 | En progreso |
-| Build pipeline                                | `bun run build`                        | En progreso |
-| Validador HTML email                          | `bun run validate-email`               | En progreso |
-| Control de inventario TypeScript              | `bun run check:inventory`              | En progreso |
-| Sincronización de agentes                     | `bun run agents:check`                 | En progreso |
+| Control                                       | Comando                                | Resultado                          |
+| :-------------------------------------------- | :------------------------------------- | :--------------------------------- |
+| Comprobación de rama                          | `bun scripts/ai/check-task-branch.mjs` | Verde                              |
+| Typecheck unificado + estricto                | `bun run typecheck`                    | Verde (0 errores en tsc y strict)  |
+| Pruebas unitarias/integración (537+ tests)    | `bun test`                             | Verde (537 pass, 0 fail, 74 files) |
+| Linting completo (html, js/ts, md, json, css) | `bun run lint`                         | Verde (0 errores, 0 warnings)      |
+| Formato de código                             | `bun run format:check`                 | Verde (Prettier conforme)          |
+| Build pipeline                                | `bun run build`                        | Verde (6 templates compilados)     |
+| Validador HTML email                          | `bun run validate-email`               | Verde (0 errores, compatibilidad)  |
+| Control de inventario TypeScript              | `bun run check:inventory`              | Verde (Capa 3: 0 JS / 42 TS)       |
+| Sincronización de agentes                     | `bun run agents:check`                 | Verde (7 targets declarados)       |
 
 ## Últimas entregas
 
@@ -59,7 +59,7 @@
 
 | Ámbito | Estado      | Propiedad                              | Handoff                                                                    |
 | :----- | :---------- | :------------------------------------- | :------------------------------------------------------------------------- |
-| MHB-32 | En progreso | Servidor Vite y APIs en TS             | En progreso en rama `feature/mhb-32`.                                      |
+| MHB-32 | En revisión | Servidor Vite y APIs en TS             | Entregado a revisión técnica en commit `0c902c8` (rama `feature/mhb-32`).  |
 | MHB-31 | Completada  | CLI, exportación y correo en TS        | Aprobación técnica y merge a `master` en commit `ac367a8`.                 |
 | MHB-30 | Completada  | Núcleo y validadores en TS             | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-30`. |
 | MHB-35 | Completada  | Consolidación shared y deduplicación   | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-35`. |
@@ -76,8 +76,8 @@
 
 ## Handoff
 
-- Entrega de MHB-32: En progreso en rama `feature/mhb-32`.
-- Próxima acción inmediata: Ejecución de las fases de refactor, modularización y tipado de `scripts/vite/**`.
+- Entrega de MHB-32: En revisión técnica en commit `0c902c8` (rama `feature/mhb-32`).
+- Próxima acción inmediata: Revisión técnica independiente de MHB-32 y confirmación de cierre por el revisor.
 - Siguiente tarea del roadmap:
-  - MHB-33 (`bloqueado`): Dashboard web en TypeScript (depende de MHB-32).
+  - MHB-33 (`bloqueado`): Dashboard web en TypeScript (se desbloquea al confirmar el cierre de MHB-32).
   - MHB-14 (`desbloqueado`): Evidencia de uso y compatibilidad.
