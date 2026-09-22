@@ -1,8 +1,7 @@
 import { describe, expect, test } from "bun:test";
-import { resolve } from "node:path";
-import { getArchetypeById, getAvailableArchetypes } from "./archetypes.js";
+import { getArchetypeById, getAvailableArchetypes } from "./archetypes.ts";
 
-const rootDir = resolve(import.meta.dir, "../..");
+const rootDir = process.cwd();
 
 describe("archetypes (descubrimiento dinámico)", () => {
   describe("getAvailableArchetypes", () => {

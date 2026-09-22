@@ -7,7 +7,7 @@
 import fs from "fs-extra";
 import path from "node:path";
 import { assertValidTemplateName, isValidTemplateName } from "../shared/index.ts";
-import { getAvailableArchetypes } from "./archetypes.js";
+import { getAvailableArchetypes } from "./archetypes.ts";
 
 const firstArg = process.argv[2];
 
@@ -29,13 +29,11 @@ if (firstArg === "--list" || firstArg === "-l") {
 
 /**
  * Nombre del template recibido por argumento de línea de comandos.
- * @type {string | undefined}
  */
 const name = firstArg;
 
 /**
  * Arquetipo opcional de partials/templates a utilizar como base.
- * @type {string | undefined}
  */
 const archetype = process.argv[3];
 
@@ -44,13 +42,13 @@ try {
 } catch {
   console.error("❌ El nombre del template debe usar solo minúsculas, números y guiones.");
   console.error(
-    "   Uso: bun scripts/generators/generate-email.js nombre-del-correo [template-base]",
+    "   Uso: bun scripts/generators/generate-email.ts nombre-del-correo [template-base]",
   );
-  console.error("   Ejemplo (desde cero): bun scripts/generators/generate-email.js notificacion");
+  console.error("   Ejemplo (desde cero): bun scripts/generators/generate-email.ts notificacion");
   console.error(
-    "   Ejemplo (con template): bun scripts/generators/generate-email.js bienvenida welcome",
+    "   Ejemplo (con template): bun scripts/generators/generate-email.ts bienvenida welcome",
   );
-  console.error("   Ver templates disponibles: bun scripts/generators/generate-email.js --list\n");
+  console.error("   Ver templates disponibles: bun scripts/generators/generate-email.ts --list\n");
   process.exit(1);
 }
 
@@ -59,23 +57,17 @@ if (archetype && !isValidTemplateName(archetype)) {
   process.exit(1);
 }
 
-/** @type {string} - Ruta absoluta al directorio del template */
-const dir = path.join(process.cwd(), "src/emails/templates", name);
+// En este punto name está validado por assertValidTemplateName
+const validatedName = name as string;
 
-/** @type {string} - Ruta absoluta al archivo index.html */
+const dir = path.join(process.cwd(), "src/emails/templates", validatedName);
 const htmlFile = path.join(dir, "index.html");
-
-/** @type {string} - Ruta absoluta al archivo data.json */
 const jsonFile = path.join(dir, "data.json");
 
 /**
  * Construye el contenido HTML inicial según el arquetipo o desde cero.
- *
- * @param {string} templateName
- * @param {string | undefined} baseArchetype
- * @returns {string}
  */
-function buildInitialHtml(templateName, baseArchetype) {
+function buildInitialHtml(templateName: string, baseArchetype: string | undefined): string {
   if (baseArchetype) {
     const archetypeDir = path.join(process.cwd(), "src/emails/partials/templates", baseArchetype);
     if (fs.existsSync(archetypeDir)) {
@@ -107,14 +99,12 @@ titleTemplate: "Nombre de ${templateName}"
 
 /**
  * Construye el contenido inicial de data.json a partir del arquetipo si existe.
- *
- * @param {string} templateName
- * @param {string | undefined} baseArchetype
- * @returns {Record<string, unknown>}
  */
-function buildInitialData(templateName, baseArchetype) {
-  /** @type {Record<string, unknown>} */
-  let data = {
+function buildInitialData(
+  templateName: string,
+  baseArchetype: string | undefined,
+): Record<string, unknown> {
+  let data: Record<string, unknown> = {
     titleTemplate: `Nombre de ${templateName}`,
   };
 
@@ -127,7 +117,7 @@ function buildInitialData(templateName, baseArchetype) {
     );
     if (fs.existsSync(archetypeDataPath)) {
       try {
-        const templateData = fs.readJsonSync(archetypeDataPath);
+        const templateData = fs.readJsonSync(archetypeDataPath) as Record<string, unknown>;
         data = {
           ...templateData,
           titleTemplate: `Nombre de ${templateName}`,
@@ -144,23 +134,18 @@ function buildInitialData(templateName, baseArchetype) {
 /**
  * Crea la estructura física del template (directorio y archivos).
  * Valida si el template ya existe para evitar sobrescritura.
- *
- * @async
- * @returns {Promise<void>}
  */
-async function createTemplate() {
+async function createTemplate(): Promise<void> {
   try {
-    // Verificar si el directorio ya existe
     const exists = await fs.pathExists(dir);
     if (exists) {
-      console.warn(`⚠️ El template "${name}" ya existe.`);
+      console.warn(`⚠️ El template "${validatedName}" ya existe.`);
       return;
     }
 
-    const htmlContent = buildInitialHtml(name, archetype);
-    const jsonContent = buildInitialData(name, archetype);
+    const htmlContent = buildInitialHtml(validatedName, archetype);
+    const jsonContent = buildInitialData(validatedName, archetype);
 
-    // Crear carpeta y escribir archivos
     await fs.ensureDir(dir);
 
     await Promise.all([
@@ -169,10 +154,11 @@ async function createTemplate() {
     ]);
 
     const modeMsg = archetype ? ` basado en template "${archetype}"` : " desde cero";
-    console.log(`✅ Template "${name}" creado con éxito${modeMsg} en src/emails/templates/${name}`);
+    console.log(
+      `✅ Template "${validatedName}" creado con éxito${modeMsg} en src/emails/templates/${validatedName}`,
+    );
   } catch (err) {
-    /** @type {Error} */
-    const error = err;
+    const error = err instanceof Error ? err : new Error(String(err));
     console.error("❌ Error al crear el template:", error.message);
   }
 }
