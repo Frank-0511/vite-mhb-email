@@ -3,7 +3,7 @@
 ## Resumen
 
 - ID activo: MHB-32
-- Estado: En revisión
+- Estado: Completada
 - Implementador: Perfil TypeScript/Vite
 - Revisor: Revisor backend/Vite
 - Rama: `feature/mhb-32`
@@ -13,6 +13,7 @@
 ## Baseline vigente
 
 - La release [v1.2.0](https://github.com/Frank-0511/vite-mhb-email/releases/tag/v1.2.0) es el baseline funcional publicado.
+- MHB-32 completada en rama `feature/mhb-32`.
 - MHB-31 completada y mergeada a `master` (commit `ac367a8`).
 - MHB-30 completada y mergeada a `master` (commits `14af516` a `f6301ea`).
 - MHB-35 completada y mergeada a `master` (commit `b495ec5`).
@@ -46,6 +47,7 @@
 
 ## Últimas entregas
 
+- MHB-32: `Completada` el 2026-09-22; servidor Vite, APIs, plugins y configuración migrados a TypeScript estricto (0 errores tsc, 537 tests verdes, modularización de transforms en subcarpetas temáticas, layer-3-vite en 0 JS / 42 TS); rama `feature/mhb-32`.
 - MHB-31: `Completada` el 2026-09-22; CLI, exportación y correo migrados a TypeScript estricto (0 errores tsc, 537 tests verdes, helpers modularizados, layer-2-cli en 0 JS / 24 TS); commit `ac367a8` en `master`.
 - MHB-30: `Completada` el 2026-09-22; núcleo, build, ESP, validadores, benchmarks e inventario migrados a TypeScript estricto (0 errores tsc, 529 tests verdes, hashes `dist/*.html` idénticos byte a byte, layer-1-core en 0 JS / 74 TS); rama `feature/mhb-30`.
 - MHB-35: `Completada` el 2026-09-22; consolidación de utilidades shared (`format-helpers`, `theme-helpers`), adopción estricta de storage keys, eliminación de fetch crudo y saneamiento de render inicial de skeletons sin FOUC en preview; rama `feature/mhb-35`.
@@ -57,16 +59,16 @@
 
 ## Ejecuciones delegadas relevantes
 
-| Ámbito | Estado      | Propiedad                              | Handoff                                                                    |
-| :----- | :---------- | :------------------------------------- | :------------------------------------------------------------------------- |
-| MHB-32 | En revisión | Servidor Vite y APIs en TS             | Entregado a revisión técnica en commit `0c902c8` (rama `feature/mhb-32`).  |
-| MHB-31 | Completada  | CLI, exportación y correo en TS        | Aprobación técnica y merge a `master` en commit `ac367a8`.                 |
-| MHB-30 | Completada  | Núcleo y validadores en TS             | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-30`. |
-| MHB-35 | Completada  | Consolidación shared y deduplicación   | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-35`. |
-| MHB-28 | Completada  | Modularización web sobredimensionada   | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-28`. |
-| MHB-29 | Completada  | Base de ejecución TypeScript           | Aprobación técnica y merge a `master` (`5e18515`).                         |
-| MHB-13 | Completada  | Baseline tipos y mediciones            | Verificación completa y merge a `master` (`5fe448a`).                      |
-| MHB-20 | Completada  | Tests integración, caché y exportación | Aceptación y merge a `master` en commit `619a425`.                         |
+| Ámbito | Estado     | Propiedad                              | Handoff                                                                    |
+| :----- | :--------- | :------------------------------------- | :------------------------------------------------------------------------- |
+| MHB-32 | Completada | Servidor Vite y APIs en TS             | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-32`. |
+| MHB-31 | Completada | CLI, exportación y correo en TS        | Aprobación técnica y merge a `master` en commit `ac367a8`.                 |
+| MHB-30 | Completada | Núcleo y validadores en TS             | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-30`. |
+| MHB-35 | Completada | Consolidación shared y deduplicación   | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-35`. |
+| MHB-28 | Completada | Modularización web sobredimensionada   | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-28`. |
+| MHB-29 | Completada | Base de ejecución TypeScript           | Aprobación técnica y merge a `master` (`5e18515`).                         |
+| MHB-13 | Completada | Baseline tipos y mediciones            | Verificación completa y merge a `master` (`5fe448a`).                      |
+| MHB-20 | Completada | Tests integración, caché y exportación | Aceptación y merge a `master` en commit `619a425`.                         |
 
 ## Decisiones y desviaciones vigentes
 
@@ -76,8 +78,8 @@
 
 ## Handoff
 
-- Entrega de MHB-32: En revisión técnica en commit `0c902c8` (rama `feature/mhb-32`).
-- Próxima acción inmediata: Revisión técnica independiente de MHB-32 y confirmación de cierre por el revisor.
+- Entrega de MHB-32: Completada en rama `feature/mhb-32`.
+- Próxima acción inmediata: Crear Pull Request de `feature/mhb-32` hacia `master` y realizar merge.
 - Siguiente tarea del roadmap:
-  - MHB-33 (`bloqueado`): Dashboard web en TypeScript (se desbloquea al confirmar el cierre de MHB-32).
+  - MHB-33 (`desbloqueado`): Dashboard web en TypeScript (Capa 4).
   - MHB-14 (`desbloqueado`): Evidencia de uso y compatibilidad.
