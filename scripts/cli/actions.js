@@ -156,6 +156,6 @@ export async function validateEmails(rl) {
     }
   }
 
-  const { validateEmailHtml } = await import("../validators/validate-email-html.js");
+  const { validateEmailHtml } = await import("../validators/validate-email-html.ts");
   validateEmailHtml();
 }

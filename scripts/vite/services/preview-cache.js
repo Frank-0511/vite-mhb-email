@@ -57,7 +57,7 @@ export class PreviewCacheManager {
           if (stat.isFile()) {
             maxTime = Math.max(maxTime, stat.mtimeMs);
           } else if (stat.isDirectory()) {
-            const files = fs.readdirSync(fullPath, { recursive: true });
+            const files = fs.readdirSync(fullPath, { recursive: true, encoding: "utf-8" });
             for (const file of files) {
               try {
                 const filePath = resolve(fullPath, file);

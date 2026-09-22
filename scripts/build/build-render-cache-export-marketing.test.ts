@@ -9,8 +9,8 @@ import { resolve } from "node:path";
 import Handlebars from "handlebars";
 import { compileHtmlWithData } from "../export/compilers.js";
 import { validateEspVariables } from "../esp/esp-variables.ts";
-import { checkHtmlSize } from "../validators/check-html-size.js";
-import { validateEmailHtml } from "../validators/validate-email-html.js";
+import { checkHtmlSize } from "../validators/check-html-size.ts";
+import { validateEmailHtml } from "../validators/validate-email-html.ts";
 import { applyPreviewTheme } from "../vite/api/render.js";
 import {
   createPreviewCacheManager,

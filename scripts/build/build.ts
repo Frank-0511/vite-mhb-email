@@ -14,8 +14,8 @@
  *   bun run build --allow-warnings # (reservado para CI permisivo)
  */
 import { execSync } from "node:child_process";
-import { checkHtmlSize } from "../validators/check-html-size.js";
-import { validateEmailHtml } from "../validators/validate-email-html.js";
+import { checkHtmlSize } from "../validators/check-html-size.ts";
+import { validateEmailHtml } from "../validators/validate-email-html.ts";
 
 export function build(): void {
   try {

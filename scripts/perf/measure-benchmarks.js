@@ -248,12 +248,12 @@ export function main(options = {}) {
     {
       name: "Email Validator",
       runtime: "Bun",
-      command: "bun scripts/validators/validate-email-html.js",
+      command: "bun scripts/validators/validate-email-html.ts",
     },
     {
       name: "Email Validator",
       runtime: "Node.js",
-      command: "node scripts/validators/validate-email-html.js",
+      command: "node scripts/validators/validate-email-html.ts",
     },
     {
       name: "Unit Test Suite",

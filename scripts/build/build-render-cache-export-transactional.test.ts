@@ -10,8 +10,8 @@ import Handlebars from "handlebars";
 import { simulateRequest } from "../vite/test-helpers.js";
 import { compileHtmlWithData } from "../export/compilers.js";
 import { validateEspVariables } from "../esp/esp-variables.ts";
-import { checkHtmlSize } from "../validators/check-html-size.js";
-import { validateEmailHtml } from "../validators/validate-email-html.js";
+import { checkHtmlSize } from "../validators/check-html-size.ts";
+import { validateEmailHtml } from "../validators/validate-email-html.ts";
 import { setupCopyHtmlApi } from "../vite/api/copy-html.js";
 import { applyPreviewTheme } from "../vite/api/render.js";
 import {
@@ -153,10 +153,10 @@ describe("MHB-20 — Integración Build, Render, Caché y Exportación (Transacc
       expect(screenshotHtml).toContain("Carlos Gómez");
       expect(screenshotHtml).toContain("ORD-2026-987");
 
-      let copyHtmlMiddleware: ((...args: unknown[]) => unknown) | undefined;
+      let copyHtmlMiddleware: Parameters<typeof simulateRequest>[0] | undefined;
       const fakeServer = {
         middlewares: {
-          use: (fn: (...args: unknown[]) => unknown) => {
+          use: (fn: Parameters<typeof simulateRequest>[0]) => {
             copyHtmlMiddleware = fn;
           },
         },
@@ -200,10 +200,10 @@ describe("MHB-20 — Integración Build, Render, Caché y Exportación (Transacc
 
   describe("Casos borde y seguridad de API", () => {
     test("POST /api/copy-html rechaza template inexistente con 404 en build: false", async () => {
-      let copyHtmlMiddleware: ((...args: unknown[]) => unknown) | undefined;
+      let copyHtmlMiddleware: Parameters<typeof simulateRequest>[0] | undefined;
       const fakeServer = {
         middlewares: {
-          use: (fn: (...args: unknown[]) => unknown) => {
+          use: (fn: Parameters<typeof simulateRequest>[0]) => {
             copyHtmlMiddleware = fn;
           },
         },
@@ -222,10 +222,10 @@ describe("MHB-20 — Integración Build, Render, Caché y Exportación (Transacc
     });
 
     test("POST /api/copy-html rechaza nombres inseguros con 400", async () => {
-      let copyHtmlMiddleware: ((...args: unknown[]) => unknown) | undefined;
+      let copyHtmlMiddleware: Parameters<typeof simulateRequest>[0] | undefined;
       const fakeServer = {
         middlewares: {
-          use: (fn: (...args: unknown[]) => unknown) => {
+          use: (fn: Parameters<typeof simulateRequest>[0]) => {
             copyHtmlMiddleware = fn;
           },
         },
@@ -244,10 +244,10 @@ describe("MHB-20 — Integración Build, Render, Caché y Exportación (Transacc
     });
 
     test("POST /api/copy-html rechaza método GET con 405", async () => {
-      let copyHtmlMiddleware: ((...args: unknown[]) => unknown) | undefined;
+      let copyHtmlMiddleware: Parameters<typeof simulateRequest>[0] | undefined;
       const fakeServer = {
         middlewares: {
-          use: (fn: (...args: unknown[]) => unknown) => {
+          use: (fn: Parameters<typeof simulateRequest>[0]) => {
             copyHtmlMiddleware = fn;
           },
         },
