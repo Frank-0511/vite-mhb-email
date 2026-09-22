@@ -1,4 +1,6 @@
 // Preview manager module
+import { postText } from "../../../shared/utils/http-helpers.js";
+
 const SKELETON_TYPES = new Set(["atoms", "molecules", "organisms", "templates"]);
 
 export const previewManager = {
@@ -23,13 +25,7 @@ export const previewManager = {
     if (showLoading) this.showSkeleton(type);
 
     try {
-      const response = await fetch(`/api/components/${componentId}/render`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ variant, props }),
-      });
-
-      const html = await response.text();
+      const html = await postText(`/api/components/${componentId}/render`, { variant, props });
       this.iframe.srcdoc = html;
 
       // Adjust iframe height to content

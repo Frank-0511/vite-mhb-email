@@ -3,6 +3,11 @@
  * Handles iframe content updates and theme synchronization
  */
 
+import {
+  isTemplateThemeDark,
+  toggleTemplateTheme,
+} from "../../../../shared/utils/theme-helpers.js";
+
 /**
  * @typedef {Object} IframeManagerConfig
  * @property {HTMLIFrameElement} iframe - The iframe element
@@ -81,7 +86,7 @@ export function createIframeManager(config) {
    * @returns {void}
    */
   function applyTemplateTheme() {
-    const isTemplateDark = localStorage.getItem("template-theme") === "dark";
+    const isTemplateDark = isTemplateThemeDark();
     const iframeDoc = iframe.contentWindow.document;
 
     if (isTemplateDark) {
@@ -125,9 +130,7 @@ export function createIframeManager(config) {
    * @returns {void}
    */
   function toggleTheme(_templateName) {
-    const currentTheme = localStorage.getItem("template-theme") || "dark";
-    const newTheme = currentTheme === "dark" ? "light" : "dark";
-    localStorage.setItem("template-theme", newTheme);
+    toggleTemplateTheme();
     applyTemplateTheme();
   }
 

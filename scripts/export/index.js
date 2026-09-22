@@ -5,6 +5,7 @@
 
 import fs from "fs-extra";
 import { c, paint } from "../shared/console.js";
+import { formatBytes } from "../shared/format-helpers.js";
 import { compileHtmlWithData } from "./compilers.js";
 import {
   cleanupTempFile,
@@ -20,11 +21,11 @@ import { getPuppeteerLaunchError, tryPuppeteer } from "./renderers.js";
  */
 function printSuccess(outPath) {
   const fileSize = fs.statSync(outPath).size;
-  const sizeKB = (fileSize / 1024).toFixed(2);
+  const formattedSize = formatBytes(fileSize, { useKBOnly: true });
 
   console.log(paint(c.green + c.bold, `  ✅ Exportado exitosamente`));
   console.log(paint(c.cyan, `  📁 ${outPath}`));
-  console.log(paint(c.dim, `  📊 Tamaño: ${sizeKB} KB\n`));
+  console.log(paint(c.dim, `  📊 Tamaño: ${formattedSize}\n`));
 }
 
 /**

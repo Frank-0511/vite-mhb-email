@@ -34,7 +34,7 @@ en MHB-29 a MHB-34; MHB-35 consolida utilidades compartidas antes de migrar el n
 | MHB-13 | Baseline completo de tipos y rendimiento       | Completada | MHB-20                                            |
 | MHB-29 | Base de ejecución TypeScript                   | Completada | MHB-13                                            |
 | MHB-28 | Modularización de superficies web              | Completada | MHB-20                                            |
-| MHB-35 | Consolidación de shared y deduplicación        | Pendiente  | MHB-20 y MHB-28                                   |
+| MHB-35 | Consolidación de shared y deduplicación        | Completada | MHB-20 y MHB-28                                   |
 | MHB-30 | Núcleo y validadores en TypeScript             | Pendiente  | MHB-29 y MHB-35                                   |
 | MHB-31 | CLI, exportación y correo en TypeScript        | Pendiente  | MHB-30                                            |
 | MHB-32 | Servidor Vite y APIs en TypeScript             | Pendiente  | MHB-31                                            |

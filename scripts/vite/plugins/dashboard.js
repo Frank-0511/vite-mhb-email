@@ -1,6 +1,7 @@
 import fs from "fs-extra";
 import { globSync } from "glob";
 import { resolve } from "node:path";
+import { bytesToKB } from "../../shared/format-helpers.js";
 import { getProjectPaths } from "../../shared/paths.js";
 import {
   getTemplateSizesClientScript,
@@ -73,7 +74,7 @@ export const dashboardPlugin = (rootDir) => ({
             const stats = fs.statSync(distPath);
             sizes[name] = {
               bytes: stats.size,
-              kb: (stats.size / 1024).toFixed(2),
+              kb: bytesToKB(stats.size),
             };
           } else {
             sizes[name] = null; // Not built yet

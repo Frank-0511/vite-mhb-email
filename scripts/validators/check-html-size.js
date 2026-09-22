@@ -1,11 +1,16 @@
 #!/usr/bin/env node
+import { resolve } from "node:path";
 import fs from "fs-extra";
 import { globSync } from "glob";
-import { resolve } from "node:path";
+import {
+  formatBytes,
+  GMAIL_MAX_SAFE_BYTES,
+  GMAIL_WARNING_THRESHOLD_BYTES,
+} from "../shared/format-helpers.js";
 
 const rootDir = process.cwd();
-const GMAIL_LIMIT = 102 * 1024; // 102KB
-const WARNING_THRESHOLD = 100 * 1024; // 100KB
+const GMAIL_LIMIT = GMAIL_MAX_SAFE_BYTES;
+const WARNING_THRESHOLD = GMAIL_WARNING_THRESHOLD_BYTES;
 
 /**
  * Verifica el tamaño de los archivos HTML generados frente al límite de Gmail (102 KB).
@@ -30,7 +35,7 @@ export function checkHtmlSize(distDirOverride) {
   for (const file of htmlFiles) {
     const filePath = resolve(distDir, file);
     const stats = fs.statSync(filePath);
-    const sizeInKB = stats.size / 1024;
+    const formattedSize = formatBytes(stats.size, { useKBOnly: true, includeSpace: false });
     totalSize += stats.size;
 
     let status;
@@ -50,13 +55,11 @@ export function checkHtmlSize(distDirOverride) {
     }
 
     const resetColor = "\x1b[0m";
-    console.log(
-      `${color}${status}${resetColor} ${file.padEnd(30)} ${sizeInKB.toFixed(2)}KB / 102KB`,
-    );
+    console.log(`${color}${status}${resetColor} ${file.padEnd(30)} ${formattedSize} / 102KB`);
   }
 
-  const totalSizeKB = totalSize / 1024;
-  console.log(`\n📦 Total size: ${totalSizeKB.toFixed(2)}KB (All files combined)\n`);
+  const formattedTotal = formatBytes(totalSize, { useKBOnly: true, includeSpace: false });
+  console.log(`\n📦 Total size: ${formattedTotal} (All files combined)\n`);
 
   if (hasWarnings) {
     console.log(

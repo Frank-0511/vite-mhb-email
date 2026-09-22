@@ -3,7 +3,10 @@
  * Handles component selection, preview rendering, and form management for components-library.html
  */
 
+import { queryRequired, querySafe } from "../../shared/utils/dom-helpers.js";
+import { debounce } from "../../shared/utils/http-helpers.js";
 import { initLucideIcons } from "../../shared/utils/lucide-setup.js";
+import { STORAGE_KEY_SELECTED_COMPONENT } from "../../shared/utils/storage-keys.js";
 import "../../shared/utils/theme-toggle-component.js"; // Web Component auto-registers
 import { componentsManager } from "./modules/components-api.js";
 import { formRenderer } from "./modules/form-renderer.js";
@@ -11,12 +14,6 @@ import { listRenderer } from "./modules/list-renderer.js";
 import { previewManager } from "./modules/preview.js";
 import { search } from "./modules/search.js";
 import "./styles/library.css";
-
-// Storage key for selected component
-const STORAGE_KEY = "selectedComponentId";
-
-// Debounce timeout for preview rendering
-let updatePreviewTimeout = null;
 
 /**
  * @class ComponentLibraryApp
@@ -29,6 +26,11 @@ class ComponentLibraryApp {
     this.currentType = null;
     this.formData = {};
     this.allComponents = [];
+
+    // Debounced preview updater
+    this.updatePreview = debounce(() => {
+      this.renderPreview();
+    }, 300);
   }
 
   /**
@@ -43,20 +45,20 @@ class ComponentLibraryApp {
     // Preview manager is initialized by themeToggleComponent
     // which handles theme management across pages
     previewManager.init(
-      document.getElementById("preview-iframe"),
-      document.getElementById("empty-preview"),
-      document.getElementById("preview-skeleton"),
+      /** @type {HTMLIFrameElement} */ (queryRequired("preview-iframe", "ComponentLibrary")),
+      queryRequired("empty-preview", "ComponentLibrary"),
+      queryRequired("preview-skeleton", "ComponentLibrary"),
     );
 
     // Initialize list renderer
-    listRenderer.init(document.getElementById("component-list"), (comp) =>
+    listRenderer.init(queryRequired("component-list", "ComponentLibrary"), (comp) =>
       this.selectComponent(comp),
     );
 
     // Initialize form renderer
     formRenderer.init(
-      document.getElementById("form-container"),
-      document.getElementById("form-placeholder"),
+      queryRequired("form-container", "ComponentLibrary"),
+      queryRequired("form-placeholder", "ComponentLibrary"),
       () => this.updatePreview(),
       (variant) => {
         this.currentVariant = variant;
@@ -65,7 +67,10 @@ class ComponentLibraryApp {
     );
 
     // Initialize search
-    search.init(document.getElementById("search-input"), (query) => this.handleSearch(query));
+    search.init(
+      /** @type {HTMLInputElement} */ (queryRequired("search-input", "ComponentLibrary")),
+      (query) => this.handleSearch(query),
+    );
 
     // Load components
     this.allComponents = await componentsManager.loadAll();
@@ -76,7 +81,7 @@ class ComponentLibraryApp {
     initLucideIcons();
 
     // Restore previously selected component if exists
-    const savedComponentId = localStorage.getItem(STORAGE_KEY);
+    const savedComponentId = localStorage.getItem(STORAGE_KEY_SELECTED_COMPONENT);
     if (savedComponentId) {
       const savedComponent = this.allComponents.find((c) => (c.id || c.name) === savedComponentId);
       if (savedComponent) {
@@ -106,7 +111,7 @@ class ComponentLibraryApp {
     this.currentComponent._id = componentId;
 
     // Save selection to localStorage
-    localStorage.setItem(STORAGE_KEY, componentId);
+    localStorage.setItem(STORAGE_KEY_SELECTED_COMPONENT, componentId);
 
     // Initialize variant
     if (this.currentComponent.variants && this.currentComponent.variants.length > 0) {
@@ -129,25 +134,7 @@ class ComponentLibraryApp {
 
     // Render the newly selected component; previewManager.render() hides the
     // skeleton (shown above) once the compiled HTML is ready
-    if (updatePreviewTimeout) {
-      clearTimeout(updatePreviewTimeout);
-    }
     await this.renderPreview(true);
-  }
-
-  /**
-   * Update preview with debouncing to avoid flickering
-   * @returns {void}
-   */
-  updatePreview() {
-    // Debounce preview rendering to avoid flickering on rapid input changes
-    if (updatePreviewTimeout) {
-      clearTimeout(updatePreviewTimeout);
-    }
-
-    updatePreviewTimeout = setTimeout(() => {
-      this.renderPreview();
-    }, 300); // Wait 300ms after user stops typing before rendering
   }
 
   /**
@@ -217,7 +204,7 @@ class ComponentLibraryApp {
 function initializeComponentLibraryApp() {
   initLucideIcons();
 
-  if (!document.getElementById("component-list")) return;
+  if (!querySafe("component-list")) return;
 
   const app = new ComponentLibraryApp();
   app.init().catch((error) => {

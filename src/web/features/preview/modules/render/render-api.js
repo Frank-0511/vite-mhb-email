@@ -4,7 +4,12 @@
  * Orquesta peticiones de renderizado, invalidación de caché y debounce de cambios.
  */
 
-import { createDebounceTimer, fetchText } from "../../../../shared/utils/http-helpers.js";
+import {
+  createDebounceTimer,
+  fetchText,
+  sendRequest,
+} from "../../../../shared/utils/http-helpers.js";
+import { getTemplateTheme } from "../../../../shared/utils/theme-helpers.js";
 import { parseRenderErrorResponse, RenderApiError } from "./render-error-parser.js";
 
 export { parseRenderErrorResponse, RenderApiError };
@@ -47,9 +52,7 @@ export function createRenderAPI(config) {
    */
   function getCurrentTheme() {
     if (getTheme) return getTheme();
-    return (
-      (typeof localStorage !== "undefined" && localStorage.getItem("template-theme")) || "light"
-    );
+    return getTemplateTheme();
   }
 
   /**
@@ -65,7 +68,7 @@ export function createRenderAPI(config) {
     const theme = getCurrentTheme();
     let response;
     try {
-      response = await fetch(`/api/render?template=${templateName}&theme=${theme}`, {
+      response = await sendRequest(`/api/render?template=${templateName}&theme=${theme}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
