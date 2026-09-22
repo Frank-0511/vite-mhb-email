@@ -2,17 +2,18 @@
 
 ## Resumen
 
-- ID activo: MHB-30
-- Estado: Completada
-- Implementador: Perfil TypeScript/backend
-- Revisor: Frank-0511 (Aprobación técnica usuario)
-- Rama: `feature/mhb-30`
+- ID activo: MHB-31
+- Estado: En progreso
+- Implementador: Perfil TypeScript/CLI
+- Revisor: Revisor técnico de CLI/filesystem
+- Rama: `feature/mhb-31`
 - Última actualización: 2026-09-22
 - Contrato activo: `docs/implementation/PLAN.md`
 
 ## Baseline vigente
 
 - La release [v1.2.0](https://github.com/Frank-0511/vite-mhb-email/releases/tag/v1.2.0) es el baseline funcional publicado.
+- MHB-30 completada y mergeada a `master` (commits `14af516` a `f6301ea`).
 - MHB-35 completada y mergeada a `master` (commit `b495ec5`).
 - MHB-28 completada en `feature/mhb-28`.
 - MHB-29 completada y mergeada a `master` (commits `b5f659d` y `5e18515`).
@@ -20,29 +21,27 @@
 - MHB-13 completada y mergeada a `master` (commit `5fe448a`).
 - Las variables ESP `{{ }}` se preservan en el HTML final; `[[ page.* ]]` queda reservado para Maizzle.
 
-## Entrega activa (MHB-30: Núcleo y validadores en TypeScript)
+## Entrega activa (MHB-31: CLI, exportación y correo en TypeScript)
 
-- **Estructuración en subdirectorios temáticos:** Organización de `scripts/shared/` en `io/`, `template/`, `ui/`, `env/` y `rules/` en `structure/`, `accessibility/`, `content/` respetando el límite estricto de ≤ 8 archivos fuente por carpeta.
-- **División de módulos sobredimensionados:** Desacople de `validate-contrast.js` (261 líneas), `check-migration-inventory.js` (335 líneas), `measure-benchmarks.js` (321 líneas) y `build-render-cache-export.test.js` (571 líneas) para cumplir ≤ 250 líneas (y tests ≤ 400 líneas).
-- **Desacoplamiento hero test:** Eliminación de dependencia cruzada desde `src/emails/partials/organisms/hero/index.test.js` hacia `scripts/shared/component-folders.js`.
-- **Desambiguación de nombres:** Renombrado de `rules/esp-variables.js` a `rules/content/esp-variables-rule.ts` preservando `ruleId: "esp-variables"`.
-- **Conversión TypeScript estricta:** Migración a `.ts` con tipado estricto para `scripts/shared/**`, `scripts/esp/**`, `scripts/build/**`, `scripts/validators/**`, `scripts/inventory/**`, `scripts/perf/**` y hero test.
+- **Migración a TypeScript estricto:** Conversión a `.ts` de `scripts/generators/**`, `scripts/export/**`, `scripts/mail/**` y `scripts/cli/**`.
+- **Refactor integrado de `scripts/cli/helpers.js`:** Desacoplamiento modular en `process-runner.ts`, `prompts.ts`, `template-prompts.ts` y barril `helpers.ts` manteniendo responsabilidad única y ≤ 250 líneas.
+- **Tipado ambiental seguro:** Declaración de `types/nodemailer.d.ts` sin añadir dependencias runtime ni alterar contratos.
+- **Suite de pruebas de correo:** Creación de `scripts/mail/mail.test.ts` con validación de entorno y payloads sin envíos reales ni credenciales.
+- **Preservación total de contratos:** Comandos, argumentos, códigos de salida y comportamiento interactivo idénticos al baseline.
 
 ### Controles de Calidad
 
 | Control                                       | Comando                                | Resultado |
 | :-------------------------------------------- | :------------------------------------- | :-------- |
-| Comprobación de rama                          | `bun scripts/ai/check-task-branch.mjs` | Verde     |
-| Typecheck unificado + estricto                | `bun run typecheck`                    | Verde     |
-| Pruebas unitarias/integración (529 tests)     | `bun test`                             | Verde     |
-| Linting completo (html, js/ts, md, json, css) | `bun run lint`                         | Verde     |
-| Formato de código                             | `bun run format:check`                 | Verde     |
-| Build pipeline                                | `bun run build`                        | Verde     |
-| Validador HTML email                          | `bun run validate-email`               | Verde     |
-| Verificación a11y y contraste                 | `bun run a11y-check`                   | Verde     |
-| Contraste WCAG (light & dark)                 | `bun run lint:contrast`                | Verde     |
-| Control de inventario TypeScript              | `bun run check:inventory`              | Verde     |
-| Sincronización de agentes                     | `bun run agents:check`                 | Verde     |
+| Comprobación de rama                          | `bun scripts/ai/check-task-branch.mjs` | Pendiente |
+| Typecheck unificado + estricto                | `bun run typecheck`                    | Pendiente |
+| Pruebas unitarias/integración                 | `bun test`                             | Pendiente |
+| Linting completo (html, js/ts, md, json, css) | `bun run lint`                         | Pendiente |
+| Formato de código                             | `bun run format:check`                 | Pendiente |
+| Build pipeline                                | `bun run build`                        | Pendiente |
+| Validador HTML email                          | `bun run validate-email`               | Pendiente |
+| Control de inventario TypeScript              | `bun run check:inventory`              | Pendiente |
+| Sincronización de agentes                     | `bun run agents:check`                 | Pendiente |
 
 ## Últimas entregas
 
