@@ -3,27 +3,26 @@
  * Cada acción corresponde a una opción del menú.
  */
 
+import type { Interface } from "readline";
 import { buildIfNeeded } from "../build/build-helper.ts";
-import { sendToInbox } from "../mail/send-inbox.js";
-import { sendToMailtester } from "../mail/send-mailtester.js";
-import { sendTemplate } from "../mail/send-mailtrap.js";
-import { getBuiltTemplates } from "../shared/index.ts";
-import { c, paint } from "../shared/index.ts";
-import { getAvailableArchetypes } from "../generators/archetypes.js";
+import { getAvailableArchetypes } from "../generators/archetypes.ts";
+import { sendToInbox } from "../mail/send-inbox.ts";
+import { sendToMailtester } from "../mail/send-mailtester.ts";
+import { sendTemplate } from "../mail/send-mailtrap.ts";
+import { c, getBuiltTemplates, paint } from "../shared/index.ts";
 import {
   askCreationMode,
   askSelectArchetype,
   askSelectTemplate,
   askTemplateName,
   run,
-} from "./helpers.js";
-import { clearScreen } from "./ui.js";
+} from "./helpers.ts";
+import { clearScreen } from "./ui.ts";
 
 /**
  * Acción [1]: Levantar servidor de desarrollo
- * @returns {Promise<void>}
  */
-export async function devServer() {
+export async function devServer(): Promise<void> {
   clearScreen();
   console.log(paint(c.green + c.bold, "\n  ⚡ Iniciando servidor de desarrollo…\n"));
   await run("bun", ["run", "dev"]);
@@ -31,9 +30,8 @@ export async function devServer() {
 
 /**
  * Acción [2]: Buildear para producción
- * @returns {Promise<void>}
  */
-export async function buildProd() {
+export async function buildProd(): Promise<void> {
   clearScreen();
   console.log(paint(c.yellow + c.bold, "\n  📦 Buildeando para producción…\n"));
   const code = await run("bun", ["run", "build"]);
@@ -46,10 +44,8 @@ export async function buildProd() {
 
 /**
  * Acción [3]: Crear nuevo template
- * @param {import('readline').Interface} rl
- * @returns {Promise<void>}
  */
-export async function createTemplate(rl) {
+export async function createTemplate(rl: Interface): Promise<void> {
   clearScreen();
   console.log(paint(c.magenta + c.bold, "\n  ✨ Crear nuevo template\n"));
 
@@ -74,7 +70,7 @@ export async function createTemplate(rl) {
   }
 
   console.log();
-  const args = ["scripts/generators/generate-email.js", name];
+  const args = ["scripts/generators/generate-email.ts", name];
   if (archetype) {
     args.push(archetype);
   }
@@ -87,40 +83,32 @@ export async function createTemplate(rl) {
 
 /**
  * Acción [4]: Enviar template a Mailtrap
- * @param {import('readline').Interface} rl
- * @returns {Promise<void>}
  */
-export async function sendMailtrap(rl) {
+export async function sendMailtrap(rl: Interface): Promise<void> {
   clearScreen();
   await sendTemplate(rl);
 }
 
 /**
  * Acción [5]: Testear con Mail-Tester (Gmail)
- * @param {import('readline').Interface} rl
- * @returns {Promise<void>}
  */
-export async function testMailTester(rl) {
+export async function testMailTester(rl: Interface): Promise<void> {
   clearScreen();
   await sendToMailtester(rl);
 }
 
 /**
  * Acción [6]: Enviar a bandeja real (Gmail / Outlook / Apple)
- * @param {import('readline').Interface} rl
- * @returns {Promise<void>}
  */
-export async function sendInbox(rl) {
+export async function sendInbox(rl: Interface): Promise<void> {
   clearScreen();
   await sendToInbox(rl);
 }
 
 /**
  * Acción [7]: Exportar template como PNG
- * @param {import('readline').Interface} rl
- * @returns {Promise<void>}
  */
-export async function exportScreenshot(rl) {
+export async function exportScreenshot(rl: Interface): Promise<void> {
   clearScreen();
   console.log(paint(c.green + c.bold, "\n  📸 Exportar template como PNG\n"));
 
@@ -130,7 +118,7 @@ export async function exportScreenshot(rl) {
   }
 
   console.log();
-  const code = await run("bun", ["scripts/export/export-screenshot.js", templateName]);
+  const code = await run("bun", ["scripts/export/export-screenshot.ts", templateName]);
   if (code !== 0) {
     console.log(paint(c.red, `\n  ❌ Error al exportar la imagen (código ${code}).\n`));
   }
@@ -138,10 +126,8 @@ export async function exportScreenshot(rl) {
 
 /**
  * Acción [8]: Validar compatibilidad email
- * @param {import('readline').Interface} rl
- * @returns {Promise<void>}
  */
-export async function validateEmails(rl) {
+export async function validateEmails(rl: Interface): Promise<void> {
   clearScreen();
   console.log(paint(c.cyan + c.bold, "\n  🔍 Validar compatibilidad email\n"));
 
