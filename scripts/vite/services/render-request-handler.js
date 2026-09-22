@@ -79,6 +79,7 @@ export function createRenderRequestHandler(options = {}) {
     try {
       // Validar variables ESP antes de renderizar (MHB-06).
       // Solo log: no bloquea el preview, no cambia el HTML y no expone rutas.
+      /** @type {any} */
       let espValidation = { missing: [], unused: [] };
       try {
         const source = collectTemplateSource(rootDir, templateName);

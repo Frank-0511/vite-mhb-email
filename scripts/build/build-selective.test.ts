@@ -1,4 +1,3 @@
-// @ts-check
 /** @fileoverview Contratos del CLI de build selectivo. */
 
 import { afterEach, describe, expect, test } from "bun:test";
@@ -8,10 +7,14 @@ import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 
 const projectRoot = process.cwd();
-const buildSelectiveScript = resolve(projectRoot, "scripts/build/build-selective.js");
+const buildSelectiveScript = resolve(projectRoot, "scripts/build/build-selective.ts");
 
-/** @returns {{ tempDir: string, templateName: string }} */
-function createFixture() {
+interface Fixture {
+  tempDir: string;
+  templateName: string;
+}
+
+function createFixture(): Fixture {
   const tempDir = mkdtempSync(resolve(tmpdir(), "selective-build-"));
   const templateName = "welcome";
   writeFileSync(
@@ -27,8 +30,7 @@ function createFixture() {
 }
 
 describe("build-selective CLI", () => {
-  /** @type {string | null} */
-  let tempDir = null;
+  let tempDir: string | null = null;
 
   afterEach(() => {
     if (tempDir) rmSync(tempDir, { recursive: true, force: true });

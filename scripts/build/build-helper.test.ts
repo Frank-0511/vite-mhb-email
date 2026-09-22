@@ -1,26 +1,25 @@
-// @ts-check
 /** @fileoverview Regresiones para el build iniciado desde el CLI. */
 
 import { EventEmitter } from "node:events";
 import { afterEach, beforeEach, describe, expect, spyOn, test } from "bun:test";
-import { buildIfNeeded } from "./build-helper.js";
+import { buildIfNeeded, type SpawnFunction } from "./build-helper.ts";
+import type { PromptSource } from "../shared/index.ts";
 
-const spawnCalls = [];
-const children = [];
+const spawnCalls: unknown[][] = [];
+const children: EventEmitter[] = [];
 
-/** @type {ReturnType<typeof spyOn> | null} */
-let consoleLogSpy = null;
+let consoleLogSpy: ReturnType<typeof spyOn> | null = null;
 
-function spawnMock(...args) {
+const spawnMock = ((...args: unknown[]) => {
   const child = new EventEmitter();
   spawnCalls.push(args);
   children.push(child);
-  return child;
-}
+  return child as unknown;
+}) as unknown as SpawnFunction;
 
-function createReadline(answer) {
+function createReadline(answer: string): PromptSource {
   return {
-    question(_question, callback) {
+    question(_question: string, callback: (answer: string) => void) {
       callback(answer);
     },
   };

@@ -3,7 +3,7 @@
  * @fileoverview Lógica común para seleccionar templates buildeados y aplicarles datos de preview.
  */
 
-import { buildIfNeeded } from "../build/build-helper.js";
+import { buildIfNeeded } from "../build/build-helper.ts";
 import { getBuiltTemplates, readBuiltTemplate } from "../shared/index.ts";
 import { c, paint } from "../shared/index.ts";
 import {
