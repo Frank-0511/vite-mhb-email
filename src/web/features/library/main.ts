@@ -8,14 +8,16 @@ import { debounce } from "../../shared/utils/http-helpers.ts";
 import { initLucideIcons } from "../../shared/utils/lucide-setup.ts";
 import { STORAGE_KEY_SELECTED_COMPONENT } from "../../shared/utils/storage-keys.ts";
 import "../../shared/utils/theme-toggle-component.ts"; // Web Component auto-registers
+import { isComponentType } from "./guards.ts";
 import { componentsManager } from "./modules/components-api.ts";
+import { createLibraryController, type LibraryController } from "./modules/controller.ts";
 import { formRenderer } from "./modules/form-renderer.ts";
 import { listRenderer } from "./modules/list-renderer.ts";
 import { previewManager } from "./modules/preview.ts";
 import { search } from "./modules/search.ts";
-import { createLibraryController, type LibraryController } from "./modules/controller.ts";
-import { createLibraryState, type LibraryComponent, type LibraryState } from "./modules/state.ts";
+import { createLibraryState } from "./modules/state.ts";
 import "./styles/library.css";
+import type { LibraryComponent, LibraryComponentType, LibraryState } from "./types.ts";
 
 /**
  * @class ComponentLibraryApp
@@ -24,7 +26,7 @@ import "./styles/library.css";
 class ComponentLibraryApp {
   currentComponent: LibraryComponent | null;
   currentVariant: string | null;
-  currentType: string | null;
+  currentType: LibraryComponentType | null;
   formData: Record<string, unknown>;
   allComponents: LibraryComponent[];
   updatePreview: () => void;
@@ -93,7 +95,7 @@ class ComponentLibraryApp {
 
     // Restore previously selected component if exists
     const savedComponentId = localStorage.getItem(STORAGE_KEY_SELECTED_COMPONENT);
-    if (savedComponentId) {
+    if (typeof savedComponentId === "string" && savedComponentId.length > 0) {
       const savedComponent = this.allComponents.find((c) => (c.id || c.name) === savedComponentId);
       if (savedComponent) {
         this.selectComponent(savedComponent);
@@ -112,8 +114,9 @@ class ComponentLibraryApp {
     // sequential fetches, and the previous component must not linger on
     // screen while either of them is in flight. Its shape reflects the
     // component's atomic design category.
-    this.currentType = componentsManager.getType(comp.path);
-    previewManager.showSkeleton(this.currentType);
+    const rawType = componentsManager.getType(comp.path);
+    this.currentType = isComponentType(rawType) ? rawType : null;
+    previewManager.showSkeleton(this.currentType ?? undefined);
 
     // Load full component schema
     const componentId = comp.id || comp.name;
@@ -161,13 +164,7 @@ class ComponentLibraryApp {
     const componentId = this.currentComponent._id || this.currentComponent.id;
     await previewManager.render(componentId, this.currentVariant, this.formData, {
       showLoading,
-      type:
-        this.currentType === "atoms" ||
-        this.currentType === "molecules" ||
-        this.currentType === "organisms" ||
-        this.currentType === "templates"
-          ? this.currentType
-          : undefined,
+      type: this.currentType ?? undefined,
     });
 
     // Maintain selection highlight in list

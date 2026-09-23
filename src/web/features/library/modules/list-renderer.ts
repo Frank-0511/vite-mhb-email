@@ -14,7 +14,7 @@ import {
   Puzzle,
   Sun,
 } from "lucide";
-import type { LibraryComponent, LibraryGroup } from "./state.ts";
+import type { LibraryComponent, LibraryGroup } from "../types.ts";
 
 export const listRenderer = {
   container: null as HTMLElement | null,
