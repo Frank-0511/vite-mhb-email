@@ -28,16 +28,17 @@ y cierre independientes.
 
 ## Backlog activo
 
-| ID     | Entregable                                      | Estado    | Dependencia vigente                   |
-| ------ | ----------------------------------------------- | --------- | ------------------------------------- |
-| MHB-37 | Contratos, constantes tipadas y guards de tipos | Pendiente | Satisfecha                            |
-| MHB-34 | Cierre total y modo estricto TypeScript         | Pendiente | MHB-37                                |
-| MHB-36 | Compatibilidad multi-package-manager            | Pendiente | MHB-34                                |
-| MHB-14 | Evidencia de uso y compatibilidad               | Pendiente | Flujo de producto publicado           |
-| MHB-15 | Documentación, capturas y release posterior     | Pendiente | MHB-14, MHB-34 y MHB-36               |
-| MHB-16 | Demo candidata pre-renderizada                  | Opcional  | MHB-15                                |
-| MHB-23 | Ampliar biblioteca de componentes               | Opcional  | Caso de uso aprobado                  |
-| MHB-38 | Migración en bloque a Maizzle 6 y Tailwind v4   | Pendiente | MHB-34, MHB-36 y ventana ≥ 2027-01-15 |
+| ID     | Entregable                                             | Estado    | Dependencia vigente                   |
+| ------ | ------------------------------------------------------ | --------- | ------------------------------------- |
+| MHB-37 | Contratos, constantes tipadas y guards de tipos        | Pendiente | Satisfecha                            |
+| MHB-39 | Convenciones de nombres de archivo y linting con tipos | Pendiente | MHB-37                                |
+| MHB-34 | Cierre total y modo estricto TypeScript                | Pendiente | MHB-39                                |
+| MHB-36 | Compatibilidad multi-package-manager                   | Pendiente | MHB-34                                |
+| MHB-14 | Evidencia de uso y compatibilidad                      | Pendiente | Flujo de producto publicado           |
+| MHB-15 | Documentación, capturas y release posterior            | Pendiente | MHB-14, MHB-34 y MHB-36               |
+| MHB-16 | Demo candidata pre-renderizada                         | Opcional  | MHB-15                                |
+| MHB-23 | Ampliar biblioteca de componentes                      | Opcional  | Caso de uso aprobado                  |
+| MHB-38 | Migración en bloque a Maizzle 6 y Tailwind v4          | Pendiente | MHB-34, MHB-36 y ventana ≥ 2027-01-15 |
 
 ## Invariantes de calidad, arquitectura y refactor integrado
 
@@ -358,11 +359,39 @@ opcionales, número de tipos por archivo, strings repetidos en ≥2 archivos y
 "`string` donde exista `as const`" (no lo detecta `tsc`; queda como criterio de
 revisión).
 
+### MHB-39 — Convenciones de nombres de archivo y linting con tipos
+
+- **Objetivo observable:** estandarizar convenciones de nombres de archivos y carpetas (`kebab-case`, roles reservados, prohibición de nombres genéricos), verificar estructura mediante test de árbol y plugin de ESLint, e incorporar linting con tipos (`no-floating-promises`, `no-misused-promises`, `await-thenable`, `no-redundant-type-constituents`, `require-await`, `return-await`) resolviendo todos los hallazgos en middlewares Vite, listeners web y scripts.
+- **Superficies autorizadas:** `scripts/**`, `src/web/**`, `eslint.config.js`, `package.json`, `docs/ai/AGENTS.md`, `docs/ai/skills/**`, `docs/implementation/**`.
+- **Dependencias y precondiciones:** MHB-37 completada. Dependencia de desarrollo autorizada: `eslint-plugin-check-file`. Sin modificaciones a `tsconfig*.json`.
+- **Pasos técnicos:**
+  1. Renombrar con `git mv` archivos según la convención establecida (plugins Vite, entrypoints `main.ts`, módulos `esp/`, scripts de `build/`, fixtures `*.fixtures.ts`, validadores temáticos y submódulos `copy-html/`).
+  2. Actualizar referencias e imports en todo el proyecto (`scripts`, `src`, `vite.config.ts`, `package.json`, `docs`).
+  3. Instalar `eslint-plugin-check-file` y configurar reglas de nombres (`check-file/filename-naming-convention`, `check-file/folder-naming-convention`, `check-file/filename-blocklist`).
+  4. Implementar `scripts/validators/lint-guards/file-tree.test.ts` (≤ 400 líneas) para validar reglas estructurales del árbol.
+  5. Activar linting con tipos en `eslint.config.js` (`parserOptions.project: ["./tsconfig.strict.json"]`) con reglas estrictas de promesas y tipos redundantes; retirar selector AST casero `UNION_WITH_STRING_SELECTOR`.
+  6. Corregir hallazgos de promesas: envoltorio de middleware asíncrono en `scripts/vite/api/http.ts`, `.catch` explícito o `void` comentado en frontend, y captura de rechazos en scripts.
+  7. Crear skill `docs/ai/skills/email-code-conventions/`, actualizar `docs/ai/AGENTS.md` y sincronizar adaptadores con `bun run agents:sync` y `bun run agents:check`.
+- **Criterios de aceptación:**
+  - Todos los archivos siguen `kebab-case` sin redundancia de carpeta en el nombre ni nombres genéricos fuera de excepciones reservadas.
+  - Barrels `index.ts` puros; `main.ts` como entrypoints.
+  - Cero promesas flotantes (`no-floating-promises`), cero promesas mal usadas (`no-misused-promises`) y cero `await` redundantes (`await-thenable`).
+  - Suite de pruebas de árbol y guards pasando al 100%.
+  - Límites de archivo (≤ 250 líneas) y carpeta (≤ 8 archivos) respetados estrictamente.
+- **Validación automática:** `bun install --frozen-lockfile`, `bun run lint`, `bun run typecheck`, `bun run test`, `bun run format:check`, `bun run build`, `bun run validate-email`, `bun run agents:check`, `git diff --check`.
+- **Validación manual:** verificación de build limpio y respuestas de endpoints Vite.
+- **Evidencia requerida:** tabla de renombres aplicados, conteo de hallazgos antes/después por regla con tipos, tiempo de ejecución de `lint:js` y salida de controles.
+- **Riesgos y reversión:** un import no actualizado tras `git mv` rompe runtime o tests → mitigado por `typecheck` y suite completa de tests tras cada grupo. Modificaciones aislables por commit.
+- **Exclusiones específicas:** no cambiar nombres de scripts públicos en `package.json`; no alterar `dist/*.html`; no modificar `tsconfig*.json`; no añadir lógica funcional adicional.
+- **Implementador:** perfil TypeScript transversal / tooling, medio.
+- **Revisor independiente:** revisor técnico de arquitectura y tooling.
+- **Condición de escalamiento:** un renombre altera el output de build de templates, requiere cambiar scripts públicos de `package.json` o linting con tipos exige cambios en `tsconfig*.json`.
+
 ### MHB-34 — Cierre total y modo estricto TypeScript
 
 - **Objetivo observable:** eliminar la compatibilidad JavaScript transitoria, sanear utilidades residuales y dejar el repositorio propio completamente migrado a TypeScript estricto con arquitectura de carpetas validada.
 - **Superficies autorizadas:** `scripts/ai/**`, configuraciones raíz restantes, tests/imports residuales, `package.json`, `tsconfig*.json`, ESLint/lint-staged, documentación y control de inventario.
-- **Dependencias y precondiciones:** MHB-37 completada y conteo residual limitado a esta superficie.
+- **Dependencias y precondiciones:** MHB-37 y MHB-39 completadas y conteo residual limitado a esta superficie.
 - **Pasos técnicos:**
   - **Refactor y reorganización shared:** evaluar y mover utilidades agnósticas de `scripts/ai/common/` (`hashing.mjs`, `gitignore.mjs`) a `scripts/shared/` para unificar el tooling.
   - **Auditoría arquitectónica:** auditar y validar que todo el árbol de archivos cumpla la regla de ≤250 líneas y ≤8 archivos fuente por directorio (incluyendo `scripts/esp/`).
@@ -478,11 +507,12 @@ Cada elemento debe conservar en el contrato transferido objetivo, archivos, paso
 
 1. Ejecutar MHB-14 para cerrar la evidencia base de Fase C; MHB-23 permanece opcional y separado.
 2. Ejecutar MHB-37 (contratos, constantes tipadas y guards de tipos).
-3. Cerrar la migración con MHB-34; ninguna excepción `.js`/`.mjs` permite avanzar.
-4. Ejecutar MHB-36 (compatibilidad multi-PM) tras MHB-34; migrar tests a Vitest y eliminar acoplamiento a Bun.
-5. MHB-38 se ejecuta dentro de su ventana (no antes de 2027-01-15, límite 2027-06-30) o antes si se registra un disparador, siempre tras MHB-34 y MHB-36; hasta entonces el stack sigue en Maizzle 5 + Tailwind v3.
-6. Preparar MHB-15 solo tras MHB-14, MHB-34 y MHB-36; decidir MHB-16 después de esa release candidata.
-7. Someter el producto a revisión final independiente antes de declararlo listo para presentarse como caso de portafolio.
+3. Ejecutar MHB-39 (convenciones de nombres de archivo y linting con tipos).
+4. Cerrar la migración con MHB-34; ninguna excepción `.js`/`.mjs` permite avanzar.
+5. Ejecutar MHB-36 (compatibilidad multi-PM) tras MHB-34; migrar tests a Vitest y eliminar acoplamiento a Bun.
+6. MHB-38 se ejecuta dentro de su ventana (no antes de 2027-01-15, límite 2027-06-30) o antes si se registra un disparador, siempre tras MHB-34 y MHB-36; hasta entonces el stack sigue en Maizzle 5 + Tailwind v3.
+7. Preparar MHB-15 solo tras MHB-14, MHB-34 y MHB-36; decidir MHB-16 después de esa release candidata.
+8. Someter el producto a revisión final independiente antes de declararlo listo para presentarse como caso de portafolio.
 
 ### Política de ramas y versiones conservada
 
