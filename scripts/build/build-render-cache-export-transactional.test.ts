@@ -9,7 +9,7 @@ import { resolve } from "node:path";
 import Handlebars from "handlebars";
 import { simulateRequest } from "../vite/test-helpers.ts";
 import { compileHtmlWithData } from "../export/compilers.js";
-import { validateEspVariables } from "../esp/esp-validator.ts";
+import { validateEspVariables } from "../esp/validator.ts";
 import { checkHtmlSize } from "../validators/check-html-size.ts";
 import { validateEmailHtml } from "../validators/validate-email-html.ts";
 import { setupCopyHtmlApi } from "../vite/api/copy-html.ts";

@@ -2,7 +2,7 @@
  * @fileoverview Extracción y análisis de frontmatter YAML-lite para templates de email.
  */
 
-import { FRONTMATTER_METADATA_KEYS, FRONTMATTER_RE } from "./esp-constants.ts";
+import { FRONTMATTER_METADATA_KEYS, FRONTMATTER_RE } from "./constants.ts";
 
 /**
  * Quita comillas simples o dobles envolventes de un token.

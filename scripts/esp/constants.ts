@@ -18,9 +18,6 @@ export const ESP_SEVERITY = Object.freeze({
   unused: "INFO",
 } as const);
 
-export type EspSeverityKey = keyof typeof ESP_SEVERITY;
-export type EspSeverityValue = (typeof ESP_SEVERITY)[EspSeverityKey];
-
 /**
  * Claves reservadas del frontmatter del template que no deben tratarse como variables ESP del data.json.
  */

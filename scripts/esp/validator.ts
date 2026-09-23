@@ -2,9 +2,9 @@
  * @fileoverview Comparador y orquestador central de variables ESP faltantes y sobrantes.
  */
 
-import { filterDataKeys } from "./esp-data-filter.ts";
-import { extractEspVariables } from "./esp-extractor.ts";
-import { parseEspFrontmatter } from "./esp-frontmatter.ts";
+import { filterDataKeys } from "./data-filter.ts";
+import { extractEspVariables } from "./extractor.ts";
+import { parseEspFrontmatter } from "./frontmatter.ts";
 
 export interface EspValidationResult {
   missing: string[];

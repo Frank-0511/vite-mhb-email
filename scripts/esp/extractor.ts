@@ -2,13 +2,8 @@
  * @fileoverview Extracción de variables ESP `{{ var }}` a partir del código fuente HTML de emails.
  */
 
-import {
-  ESP_VAR_RE,
-  MAIZZE_DOUBLE_RE,
-  MAIZZE_TRIPLE_RE,
-  TRIPLE_STASH_RE,
-} from "./esp-constants.ts";
-import { stripFrontmatter } from "./esp-frontmatter.ts";
+import { ESP_VAR_RE, MAIZZE_DOUBLE_RE, MAIZZE_TRIPLE_RE, TRIPLE_STASH_RE } from "./constants.ts";
+import { stripFrontmatter } from "./frontmatter.ts";
 
 /**
  * Elimina todos los bloques `{{#each …}}…{{/each}}` (no anidados) del cuerpo
