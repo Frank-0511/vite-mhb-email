@@ -9,7 +9,7 @@
 - Rama: `feature/mhb-37`
 - Última actualización: 2026-09-23
 - Contrato activo: `docs/implementation/PLAN.md` (ajustado con convención modular y criterios de corrección)
-- Nota de cierre de implementación: Ejecutado el plan de corrección `mhb-37-fix-plan.md` al 100%. Contratos modularizados en constants/types/guards/routes, eliminados todos los reexports y alias en archivos de implementación, eliminadas uniones `Union | string`, selectores ESLint deduplicados en módulo modular (`selectors.js`), 5 nuevos guards con 43 fixtures en suite dedicada, suite completa de 587 tests pasando y hashes de templates intactos.
+- Nota de entrega: Corregidas las 23 infracciones de ESLint tras eliminar las 4 exclusiones indebidas en scripts (`esp/**`, `inventory/**`, `perf/**`, `cli/helpers.ts`). Eliminados el barrel `cli/helpers.ts` y la fachada `esp-variables.ts`, eliminados `export { ... }` sueltos y agregada verificación de política de ignores en `eslint-guards.test.ts`. Todos los controles en verde.
 
 ## Baseline vigente
 
@@ -22,12 +22,10 @@
 - **Hechos de implementación:**
   1. Modularización completa de contratos server↔client bajo `scripts/shared/contracts/{constants,types,guards,routes}/` y features web bajo `src/web/features/<f>/{constants,types,guards}.ts`, con types hoja con cero runtime.
   2. Eliminados todos los reexports en archivos de implementación (`render-error.ts`, `render/index.ts`, `dashboard.ts`, `maizzle-index.ts`, `preview/main.ts`, `theme-helpers.ts`, `validate-contrast.ts`). Barrels estrictamente como `index.ts` puros.
-  3. Eliminados alias y magic strings residuales (`VIEW_MODE_RENDER`, `VIEW_MODE_SOURCE`, `VIEW_MODE_KEY`, `SAFE_RENDER_CAUSES`, `SafeRenderLocation`).
-  4. Corregido colapso `Union | string` (eliminada la unión a string en `SeverityType` de `context.ts` y refinado el guard AST contra falsos positivos de wrappers nativos como `Promise`, `Buffer`, `URL`, `Request`).
-  5. Selectores de ESLint modularizados en `scripts/validators/lint-guards/selectors.js` usando `builtinModules` de `node:module`, conservando `eslint.config.js` en 226 líneas (≤ 250).
-  6. 5 nuevos guards sintácticos implementados y cubiertos por 43 tests en `scripts/validators/lint-guards/eslint-guards.test.ts` (368 líneas ≤ 400).
-  7. Límites de tamaño y carpetas respetados estrictamente (todos los no-test ≤ 250 líneas, tests ≤ 400 líneas, ≤ 8 archivos por directorio).
-- **Riesgo residual:** Ninguno identificado; hashes de `dist/*.html` idénticos byte a byte al baseline y suite global de 587 tests en verde.
+  3. Eliminadas exclusiones indebidas de scripts en `eslint.config.js`, eliminado el barrel `cli/helpers.ts`, eliminada la fachada `esp/esp-variables.ts` y saneados exports sueltos en `check-migration-inventory.ts` y `measure-benchmarks.ts`.
+  4. Agregado test en `eslint-guards.test.ts` que valida que no existan ignores indebidos de archivos de implementación en la configuración de ESLint.
+  5. Controles de punto de control A superados al 100%: `lint:js`, `typecheck`, `test` (588 tests pasando), `build` y `format:check`.
+- **Riesgo residual:** Ninguno identificado; suite global de 588 tests en verde y cero infracciones de lint.
 
 ### Controles de Calidad
 
