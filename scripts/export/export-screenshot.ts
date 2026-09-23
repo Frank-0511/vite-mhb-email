@@ -11,7 +11,7 @@
 
 import fs from "fs-extra";
 import path from "node:path";
-import { exportScreenshot } from "./index.ts";
+import { exportScreenshot } from "./main.ts";
 import { c, paint } from "../shared/index.ts";
 import { assertValidTemplateName } from "../shared/index.ts";
 
