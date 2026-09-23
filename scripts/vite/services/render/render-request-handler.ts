@@ -8,6 +8,14 @@ import fs from "fs-extra";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { collectTemplateSource } from "../../../esp/esp-sources.ts";
 import { validateEspVariables } from "../../../esp/esp-variables.ts";
+import {
+  API_ROUTES,
+  HEADER_X_ESP_VALIDATION,
+} from "../../../shared/contracts/constants/api-routes.ts";
+import { THEME } from "../../../shared/contracts/constants/theme.ts";
+import { isTheme } from "../../../shared/contracts/guards/theme.ts";
+import type { RenderErrorPayload } from "../../../shared/contracts/types/render-error.ts";
+import type { Theme } from "../../../shared/contracts/types/theme.ts";
 import { getProjectPaths, isPathInside, isValidTemplateName } from "../../../shared/index.ts";
 import { getRequestUrl, readJsonBody, sendJson, sendText } from "../../api/http.ts";
 import {
@@ -16,18 +24,15 @@ import {
   type PreviewCacheManager,
 } from "../cache/index.ts";
 import { compileTemplate as defaultCompileTemplate } from "./maizzle-compiler.ts";
-import {
-  normalizeRenderError as defaultNormalizeRenderError,
-  type NormalizedRenderError,
-} from "./render-error.ts";
+import { normalizeRenderError as defaultNormalizeRenderError } from "./render-error.ts";
 
 export interface RenderCacheAdapter {
-  isCacheValid: (templateName: string, meta: { theme: string; dataHash: string }) => boolean;
+  isCacheValid: (templateName: string, meta: { theme: Theme; dataHash: string }) => boolean;
   readFromCache: (templateName: string) => Promise<string | null> | string | null;
   saveToCache: (
     templateName: string,
     html: string,
-    meta: { theme: string; dataHash: string },
+    meta: { theme: Theme; dataHash: string },
   ) => Promise<void> | void;
 }
 
@@ -39,8 +44,8 @@ export interface RenderRequestHandlerOptions {
     rootDir: string,
   ) => Promise<string>;
   cacheManager?: RenderCacheAdapter | PreviewCacheManager;
-  applyPreviewTheme?: (html: string, theme: string) => string;
-  normalizeError?: (error: unknown, options: { templatesRoot: string }) => NormalizedRenderError;
+  applyPreviewTheme?: (html: string, theme: Theme) => string;
+  normalizeError?: (error: unknown, options: { templatesRoot: string }) => RenderErrorPayload;
 }
 
 /**
@@ -62,13 +67,14 @@ export function createRenderRequestHandler(options: RenderRequestHandlerOptions 
     res: ServerResponse,
     next: (err?: unknown) => void,
   ): Promise<void> {
-    if (!req.url?.startsWith("/api/render")) {
+    if (!req.url?.startsWith(API_ROUTES.RENDER)) {
       return next();
     }
 
     const url = getRequestUrl(req);
     const templateName = url.searchParams.get("template");
-    const theme = url.searchParams.get("theme") === "dark" ? "dark" : "light";
+    const rawTheme = url.searchParams.get("theme");
+    const theme: Theme = isTheme(rawTheme) ? rawTheme : THEME.LIGHT;
 
     if (req.method !== "POST" || !templateName) {
       return next();
@@ -117,7 +123,7 @@ export function createRenderRequestHandler(options: RenderRequestHandlerOptions 
         console.warn(`[maizzle] No se pudo validar variables ESP de ${templateName}: ${message}`);
       }
 
-      res.setHeader("X-ESP-Validation", JSON.stringify(espValidation));
+      res.setHeader(HEADER_X_ESP_VALIDATION, JSON.stringify(espValidation));
       let finalHtml: string | null = null;
 
       const dataHash = createPreviewDataHash(data);

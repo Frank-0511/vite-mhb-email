@@ -5,7 +5,7 @@ import {
   parseThemeTokens,
   relativeLuminance,
   type ContrastPair,
-} from "./validate-contrast.ts";
+} from "./contrast-calculator.ts";
 
 const sampleCss = `
 :root {

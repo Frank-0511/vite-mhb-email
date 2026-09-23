@@ -2,6 +2,8 @@
  * @fileoverview Funciones de cálculo matemático y parsing de tokens de color para contraste WCAG.
  */
 
+import { THEME } from "../shared/contracts/constants/theme.ts";
+
 export const ROLE_THRESHOLD = {
   text: 4.5,
   ui: 3,
@@ -83,8 +85,8 @@ export const PAIRS: ContrastPair[] = [
 ];
 
 export const THEMES = [
-  { name: "light", selector: ":root" },
-  { name: "dark", selector: ".dark" },
+  { name: THEME.LIGHT, selector: ":root" },
+  { name: THEME.DARK, selector: ".dark" },
 ] as const;
 
 export function parseThemeTokens(css: string, selector: string): Record<string, string> {

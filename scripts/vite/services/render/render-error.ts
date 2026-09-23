@@ -5,23 +5,17 @@
  */
 
 import { isAbsolute, relative, resolve, sep } from "node:path";
+import {
+  RENDER_ERROR_CODE,
+  RENDER_ERROR_MESSAGE,
+  RENDER_ERROR_VERSION,
+  SAFE_RENDER_CAUSE,
+} from "../../../shared/contracts/constants/render-error.ts";
+import type {
+  RenderErrorLocation,
+  RenderErrorPayload,
+} from "../../../shared/contracts/types/render-error.ts";
 import { isPathInside } from "../../../shared/index.ts";
-
-export const RENDER_ERROR_VERSION = 1;
-
-export interface RenderErrorLocation {
-  path: string;
-  line?: number;
-  column?: number;
-}
-
-export interface NormalizedRenderError {
-  version: number;
-  code: string;
-  message: string;
-  cause?: string;
-  location?: RenderErrorLocation;
-}
 
 export interface NormalizeRenderErrorOptions {
   templatesRoot: string;
@@ -37,24 +31,24 @@ export interface NormalizeRenderErrorOptions {
 export function normalizeRenderError(
   error: unknown,
   { templatesRoot }: NormalizeRenderErrorOptions,
-): NormalizedRenderError {
-  let cause = "Fallo de compilación.";
+): RenderErrorPayload {
+  let cause: string = SAFE_RENDER_CAUSE.COMPILATION;
 
   if (error instanceof SyntaxError) {
-    cause = "El template contiene sintaxis inválida.";
+    cause = SAFE_RENDER_CAUSE.SYNTAX;
   } else if (
     error &&
     typeof error === "object" &&
     "code" in error &&
     (error as { code?: unknown }).code === "ENOENT"
   ) {
-    cause = "Fuente requerida no encontrada.";
+    cause = SAFE_RENDER_CAUSE.NOT_FOUND;
   }
 
-  const result: NormalizedRenderError = {
+  const result: RenderErrorPayload = {
     version: RENDER_ERROR_VERSION,
-    code: "RENDER_FAILED",
-    message: "No se pudo renderizar el template.",
+    code: RENDER_ERROR_CODE.FAILED,
+    message: RENDER_ERROR_MESSAGE,
     cause,
   };
 

@@ -10,7 +10,7 @@ export type SeverityType = (typeof Severity)[keyof typeof Severity];
 
 export interface Issue {
   ruleId: string;
-  severity: SeverityType | string;
+  severity: SeverityType;
   message: string;
   context?: string;
   hint?: string;
@@ -24,7 +24,7 @@ export interface RuleContext {
 
 export interface Rule {
   id: string;
-  severity: SeverityType | string;
+  severity: SeverityType;
   description: string;
   check: (html: string, context: RuleContext) => Issue[];
 }

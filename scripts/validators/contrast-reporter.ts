@@ -2,6 +2,7 @@
  * @fileoverview Formateo y emisión de reportes de contraste WCAG en consola.
  */
 
+import type { Theme } from "../shared/contracts/types/theme.ts";
 import { c as colors, paint } from "../shared/index.ts";
 import type { ContrastStatus, PairResult } from "./contrast-calculator.ts";
 
@@ -13,11 +14,11 @@ const severityColor: Record<ContrastStatus, string> = {
 };
 
 export interface ThemeReportGroup {
-  theme: string;
+  theme: Theme;
   results: PairResult[];
 }
 
-export function printThemeReport(themeName: string, results: PairResult[]): void {
+export function printThemeReport(themeName: Theme, results: PairResult[]): void {
   console.log(paint(colors.bold + colors.white, `\n🎨 Contraste WCAG — tema ${themeName}\n`));
   for (const result of results) {
     const icon = severityIcon[result.status];

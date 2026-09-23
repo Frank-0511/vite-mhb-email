@@ -3,6 +3,7 @@
  */
 
 import type { Plugin, ViteDevServer } from "vite";
+import { API_ROUTES } from "../../shared/contracts/constants/api-routes.ts";
 
 /**
  * Create page resolver plugin for Vite.
@@ -58,7 +59,7 @@ export function createPageResolverPlugin(): Plugin {
         // Skip assets, API endpoints, template HTML and already-resolved paths.
         if (
           pathname.startsWith("/features/") ||
-          pathname.startsWith("/api/") ||
+          pathname.startsWith(API_ROUTES.PREFIX) ||
           pathname.startsWith("/templates/") ||
           pathname.startsWith("/shared/") ||
           pathname.startsWith("/@") ||

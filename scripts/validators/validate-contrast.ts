@@ -9,9 +9,6 @@ import { resolve } from "node:path";
 import { evaluatePairs, parseThemeTokens, THEMES } from "./contrast-calculator.ts";
 import { printSummary, printThemeReport, type ThemeReportGroup } from "./contrast-reporter.ts";
 
-export * from "./contrast-calculator.ts";
-export * from "./contrast-reporter.ts";
-
 export const TOKENS_PATH = resolve(process.cwd(), "src/web/shared/styles/design-tokens.css");
 
 /**

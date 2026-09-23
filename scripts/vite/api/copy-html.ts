@@ -9,6 +9,7 @@ import fs from "fs-extra";
 import { resolve } from "node:path";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Connect, ViteDevServer } from "vite";
+import { API_ROUTES } from "../../shared/contracts/constants/api-routes.ts";
 import { getProjectPaths, isPathInside, isValidTemplateName } from "../../shared/index.ts";
 import { runSelectiveBuild } from "../services/render/index.ts";
 import { getRequestUrl, readJsonBody, sendJson } from "./http.ts";
@@ -27,7 +28,7 @@ export function setupCopyHtmlApi(
 
   server.middlewares.use(
     async (req: IncomingMessage, res: ServerResponse, next: (err?: unknown) => void) => {
-      if (!req.url?.startsWith("/api/copy-html")) {
+      if (!req.url?.startsWith(API_ROUTES.COPY_HTML)) {
         return next();
       }
 
