@@ -2,7 +2,7 @@
  * @fileoverview Tests unitarios del validador de compatibilidad HTML para email.
  */
 
-import { afterEach, beforeEach, describe, expect, spyOn, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, spyOn, test, type Mock } from "bun:test";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
@@ -46,8 +46,8 @@ const HTML_CSS_ERROR = `<!doctype html>
 `;
 
 let tempDir = "";
-let consoleLogSpy: ReturnType<typeof spyOn> | null = null;
-let consoleErrorSpy: ReturnType<typeof spyOn> | null = null;
+let consoleLogSpy: Mock<(...args: unknown[]) => void> | null = null;
+let consoleErrorSpy: Mock<(...args: unknown[]) => void> | null = null;
 
 beforeEach(() => {
   tempDir = join(tmpdir(), `email-validate-${randomUUID()}`);

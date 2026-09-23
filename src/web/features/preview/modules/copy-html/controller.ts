@@ -68,10 +68,11 @@ export function createCopyHtmlModalController({
         transition("success", { message: formatSuccessMessage(build, result.validation) });
       else
         transition("clipboard-error", {
-          onRetry: () =>
-            retryClipboard().catch((error) =>
+          onRetry: () => {
+            void retryClipboard().catch((error) =>
               transition("error", { message: formatErrorMessage(error) }),
-            ),
+            );
+          },
         });
     } catch (error) {
       transition("error", { message: formatErrorMessage(error) });

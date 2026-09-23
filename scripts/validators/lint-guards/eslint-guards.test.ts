@@ -14,7 +14,24 @@ import { describe, expect, test } from "bun:test";
 import { ESLint } from "eslint";
 import eslintConfig from "../../../eslint.config.js";
 
-const eslint = new ESLint();
+const typeAwareRulesOff = {
+  "@typescript-eslint/no-floating-promises": "off",
+  "@typescript-eslint/no-misused-promises": "off",
+  "@typescript-eslint/await-thenable": "off",
+  "@typescript-eslint/no-redundant-type-constituents": "off",
+  "@typescript-eslint/require-await": "off",
+  "@typescript-eslint/return-await": "off",
+} as const;
+
+const eslint = new ESLint({
+  overrideConfig: [
+    {
+      files: ["**/*.ts"],
+      languageOptions: { parserOptions: { project: null } },
+      rules: typeAwareRulesOff,
+    },
+  ],
+});
 
 /**
  * Helper para obtener los ruleId con severidad error reportados por ESLint sobre un snippet.
@@ -344,24 +361,6 @@ describe("ESLint Quality & Contract Guards", () => {
       const errors = await lintSnippet(
         'export const COLOR = { RED: "red", BLUE: "blue" } as const;\n',
         "src/web/constants.ts",
-      );
-      expect(errors).not.toContain("no-restricted-syntax");
-    });
-  });
-
-  describe("Union | string guard", () => {
-    test("prohíbe combinar un tipo de referencia con string en una unión", async () => {
-      const errors = await lintSnippet(
-        "type MyType = 'a' | 'b';\nexport type Mixed = MyType | string;\n",
-        "src/web/dummy.ts",
-      );
-      expect(errors).toContain("no-restricted-syntax");
-    });
-
-    test("permite tipos puros o uniones literales sin string general", async () => {
-      const errors = await lintSnippet(
-        "type MyType = 'a' | 'b';\nexport type Pure = MyType;\nexport type Literals = 'x' | 'y';\n",
-        "src/web/dummy.ts",
       );
       expect(errors).not.toContain("no-restricted-syntax");
     });

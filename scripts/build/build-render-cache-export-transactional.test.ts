@@ -2,7 +2,7 @@
  * @fileoverview Test de integración e2e: Escenario Transaccional y API Security (MHB-20).
  */
 
-import { afterEach, beforeEach, describe, expect, spyOn, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, spyOn, test, type Mock } from "bun:test";
 import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
@@ -37,9 +37,9 @@ const projectRoot = process.cwd();
 describe("MHB-20 — Integración Build, Render, Caché y Exportación (Transaccional)", () => {
   let tempDir: string;
   let rootDistBefore: string[];
-  let consoleLogSpy: ReturnType<typeof spyOn> | null = null;
-  let consoleWarnSpy: ReturnType<typeof spyOn> | null = null;
-  let consoleInfoSpy: ReturnType<typeof spyOn> | null = null;
+  let consoleLogSpy: Mock<(...args: unknown[]) => void> | null = null;
+  let consoleWarnSpy: Mock<(...args: unknown[]) => void> | null = null;
+  let consoleInfoSpy: Mock<(...args: unknown[]) => void> | null = null;
 
   beforeEach(() => {
     const distPath = resolve(projectRoot, "dist");

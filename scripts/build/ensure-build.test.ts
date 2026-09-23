@@ -1,14 +1,14 @@
 /** @fileoverview Regresiones para el build iniciado desde el CLI. */
 
 import { EventEmitter } from "node:events";
-import { afterEach, beforeEach, describe, expect, spyOn, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, spyOn, test, type Mock } from "bun:test";
 import { buildIfNeeded, type SpawnFunction } from "./ensure-build.ts";
 import type { PromptSource } from "../shared/index.ts";
 
 const spawnCalls: unknown[][] = [];
 const children: EventEmitter[] = [];
 
-let consoleLogSpy: ReturnType<typeof spyOn> | null = null;
+let consoleLogSpy: Mock<(...args: unknown[]) => void> | null = null;
 
 const spawnMock = ((...args: unknown[]) => {
   const child = new EventEmitter();

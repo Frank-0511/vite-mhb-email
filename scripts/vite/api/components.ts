@@ -11,7 +11,7 @@ import {
   readComponentSchema,
 } from "../services/catalog/index.ts";
 import { renderComponentPreview } from "../services/render/index.ts";
-import { getRequestUrl, readJsonBody, sendJson, sendText } from "./http.ts";
+import { asyncHandler, getRequestUrl, readJsonBody, sendJson, sendText } from "./http.ts";
 
 /**
  * Maneja GET /api/components — listado.
@@ -139,41 +139,43 @@ async function handleRender(
  * @param rootDir Directorio raíz del proyecto.
  */
 export function setupComponentsApi(server: ViteDevServer, rootDir: string): void {
-  server.middlewares.use(async (req, res, next) => {
-    if (!req.url?.startsWith(API_ROUTES.COMPONENTS)) {
-      return next();
-    }
-
-    const url = getRequestUrl(req);
-    const segments = url.pathname.split("/").filter(Boolean);
-    const componentName = segments[2];
-
-    try {
-      if (req.method === "GET" && (!componentName || componentName === "")) {
-        return handleList(res, rootDir);
+  server.middlewares.use(
+    asyncHandler(async (req, res, next) => {
+      if (!req.url?.startsWith(API_ROUTES.COMPONENTS)) {
+        return next();
       }
 
-      if (req.method === "GET" && componentName && segments.length === 3) {
-        return handleGetSchema(res, rootDir, componentName);
-      }
+      const url = getRequestUrl(req);
+      const segments = url.pathname.split("/").filter(Boolean);
+      const componentName = segments[2];
 
-      if (
-        req.method === "POST" &&
-        componentName &&
-        segments.length === 4 &&
-        segments[3] === "render"
-      ) {
-        return await handleRender(req, res, rootDir, componentName);
-      }
+      try {
+        if (req.method === "GET" && (!componentName || componentName === "")) {
+          return handleList(res, rootDir);
+        }
 
-      if (req.method !== "GET" && req.method !== "POST") {
-        return sendJson(res, 405, { success: false, error: "Method not allowed" });
-      }
+        if (req.method === "GET" && componentName && segments.length === 3) {
+          return handleGetSchema(res, rootDir, componentName);
+        }
 
-      return sendText(res, 404, "Not found");
-    } catch (err) {
-      console.error("[components] Unexpected Error:", err);
-      return sendJson(res, 500, { success: false, error: "Internal error" });
-    }
-  });
+        if (
+          req.method === "POST" &&
+          componentName &&
+          segments.length === 4 &&
+          segments[3] === "render"
+        ) {
+          return await handleRender(req, res, rootDir, componentName);
+        }
+
+        if (req.method !== "GET" && req.method !== "POST") {
+          return sendJson(res, 405, { success: false, error: "Method not allowed" });
+        }
+
+        return sendText(res, 404, "Not found");
+      } catch (err) {
+        console.error("[components] Unexpected Error:", err);
+        return sendJson(res, 500, { success: false, error: "Internal error" });
+      }
+    }),
+  );
 }

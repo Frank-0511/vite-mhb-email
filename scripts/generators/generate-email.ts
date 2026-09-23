@@ -164,4 +164,8 @@ async function createTemplate(): Promise<void> {
 }
 
 // Ejecutar proceso
-createTemplate();
+createTemplate().catch((err: unknown) => {
+  const error = err instanceof Error ? err : new Error(String(err));
+  console.error("❌ Error inesperado:", error.message);
+  process.exit(1);
+});

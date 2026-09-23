@@ -103,7 +103,7 @@ describe("previewManager", () => {
   test("render with showLoading forwards the atomic design type to the skeleton", () => {
     globalThis.fetch = mock(() => new Promise<unknown>(() => {})) as unknown as typeof fetch;
 
-    previewManager.render("cta-button", "v1", {}, { showLoading: true, type: "atoms" });
+    void previewManager.render("cta-button", "v1", {}, { showLoading: true, type: "atoms" });
 
     expect(skeleton.dataset.type).toBe("atoms");
   });

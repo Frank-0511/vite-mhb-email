@@ -6,6 +6,7 @@ import type { Connect, ViteDevServer } from "vite";
 import { THEME } from "../../shared/contracts/constants/theme.ts";
 import type { Theme } from "../../shared/contracts/types/theme.ts";
 import { createRenderRequestHandler } from "../services/render/index.ts";
+import { asyncHandler } from "./http.ts";
 
 let handler: Connect.NextHandleFunction | undefined;
 
@@ -92,10 +93,12 @@ export function applyPreviewTheme(html: string, theme: Theme): string {
  */
 export function setupRenderApi(server: ViteDevServer, rootDir: string): void {
   if (!handler) {
-    handler = createRenderRequestHandler({
-      rootDir,
-      applyPreviewTheme,
-    });
+    handler = asyncHandler(
+      createRenderRequestHandler({
+        rootDir,
+        applyPreviewTheme,
+      }),
+    );
   }
 
   server.middlewares.use(handler);
