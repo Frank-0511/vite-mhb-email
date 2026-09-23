@@ -2,8 +2,8 @@
  * @fileoverview Filtrado y normalización de claves del objeto de datos `data.json`.
  */
 
-import { FRONTMATTER_METADATA_KEYS } from "./esp-constants.ts";
-import { frontmatterKeys } from "./esp-frontmatter.ts";
+import { FRONTMATTER_METADATA_KEYS } from "./constants.ts";
+import { frontmatterKeys } from "./frontmatter.ts";
 
 /**
  * Extrae y filtra las claves de primer nivel del objeto `data` que son

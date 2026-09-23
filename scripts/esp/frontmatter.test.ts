@@ -1,10 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import {
-  frontmatterKeys,
-  parseEspFrontmatter,
-  stripFrontmatter,
-  unquote,
-} from "./esp-frontmatter.ts";
+import { frontmatterKeys, parseEspFrontmatter, stripFrontmatter, unquote } from "./frontmatter.ts";
 
 describe("unquote", () => {
   test("quita comillas simples o dobles envolventes", () => {

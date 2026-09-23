@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { filterDataKeys } from "./esp-data-filter.ts";
+import { filterDataKeys } from "./data-filter.ts";
 
 describe("filterDataKeys", () => {
   test("conserva solo las claves escalares de primer nivel", () => {

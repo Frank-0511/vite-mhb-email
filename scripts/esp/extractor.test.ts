@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { extractEspVariables, stripEachBlocks } from "./esp-extractor.ts";
+import { extractEspVariables, stripEachBlocks } from "./extractor.ts";
 
 describe("extractEspVariables", () => {
   test("extrae identificadores simples entre {{ y }}", () => {
