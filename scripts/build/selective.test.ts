@@ -7,7 +7,7 @@ import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 
 const projectRoot = process.cwd();
-const buildSelectiveScript = resolve(projectRoot, "scripts/build/build-selective.ts");
+const buildSelectiveScript = resolve(projectRoot, "scripts/build/selective.ts");
 
 interface Fixture {
   tempDir: string;

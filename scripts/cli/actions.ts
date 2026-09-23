@@ -4,7 +4,7 @@
  */
 
 import type { Interface } from "readline";
-import { buildIfNeeded } from "../build/build-helper.ts";
+import { buildIfNeeded } from "../build/ensure-build.ts";
 import { getAvailableArchetypes } from "../generators/archetypes.ts";
 import { sendToInbox } from "../mail/send-inbox.ts";
 import { sendToMailtester } from "../mail/send-mailtester.ts";

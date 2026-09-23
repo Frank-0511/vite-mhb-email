@@ -22,7 +22,7 @@ import {
   createFakeDownloadEnvironment,
   createMarketingFixture,
   setupTempProjectEnvironment,
-} from "./build-render-cache-export.test-fixtures.ts";
+} from "./render-cache-export.fixtures.ts";
 
 const projectRoot = process.cwd();
 

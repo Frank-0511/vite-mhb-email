@@ -45,7 +45,7 @@
     "typecheck:strict": "tsc -p tsconfig.strict.json --noEmit",
     "check:inventory": "bun scripts/inventory/check-migration-inventory.ts",
     "build": "bun scripts/build/build.ts",
-    "build-selective": "bun scripts/build/build-selective.ts",
+    "build-selective": "bun scripts/build/selective.ts",
     "generate:email": "bun scripts/generators/generate-email.ts",
     "export:screenshot": "bun scripts/export/export-screenshot.ts",
     "check-size": "bun scripts/validators/check-html-size.ts",

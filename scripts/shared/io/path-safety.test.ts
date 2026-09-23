@@ -137,7 +137,7 @@ describe("entrypoints de template", () => {
     const backupPath = resolve(projectRoot, "maizzle.config.js.selective-bak");
     expect(existsSync(backupPath)).toBe(false);
 
-    const result = runScript("scripts/build/build-selective.ts", traversalProbe());
+    const result = runScript("scripts/build/selective.ts", traversalProbe());
 
     expect(result.status).toBe(1);
     expect(result.stderr).toContain("Template name");
@@ -146,7 +146,7 @@ describe("entrypoints de template", () => {
   });
 
   test("el build selectivo rechaza un argumento ausente", () => {
-    const result = runScript("scripts/build/build-selective.ts");
+    const result = runScript("scripts/build/selective.ts");
 
     expect(result.status).toBe(1);
     expect(result.stderr).toContain("Template name");
