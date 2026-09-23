@@ -59,7 +59,7 @@
     "lint:json": "bun scripts/validators/validate-json.ts",
     "lint:css": "stylelint \"src/**/*.css\"",
     "lint:contrast": "bun scripts/validators/validate-contrast.ts",
-    "a11y-check": "bun scripts/validators/a11y-check.ts",
+    "a11y-check": "bun scripts/validators/check-a11y.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check:task-branch": "bun scripts/ai/check-task-branch.mjs",
