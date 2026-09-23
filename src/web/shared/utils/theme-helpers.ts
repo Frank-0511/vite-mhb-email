@@ -3,6 +3,9 @@
  * Centraliza la resolución, lectura con fallback seguro y persistencia.
  */
 
+import { THEME } from "../../../../scripts/shared/contracts/constants/theme.ts";
+import { isTheme } from "../../../../scripts/shared/contracts/guards/theme.ts";
+import type { Theme } from "../../../../scripts/shared/contracts/types/theme.ts";
 import { STORAGE_KEY_APP_THEME, STORAGE_KEY_TEMPLATE_THEME } from "./storage-keys.ts";
 
 /**
@@ -21,13 +24,13 @@ function getStorage(customStorage?: Storage | null): Storage | null {
  * Por defecto es 'dark' si no está definido en almacenamiento.
  *
  * @param {Storage | null} [customStorage]
- * @returns {"dark" | "light"}
+ * @returns {Theme}
  */
-export function getTemplateTheme(customStorage?: Storage | null): "dark" | "light" {
+export function getTemplateTheme(customStorage?: Storage | null): Theme {
   const storage = getStorage(customStorage);
-  if (!storage) return "dark";
+  if (!storage) return THEME.DARK;
   const stored = storage.getItem(STORAGE_KEY_TEMPLATE_THEME);
-  return stored === "light" ? "light" : "dark";
+  return isTheme(stored) ? stored : THEME.DARK;
 }
 
 /**
@@ -37,30 +40,30 @@ export function getTemplateTheme(customStorage?: Storage | null): "dark" | "ligh
  * @returns {boolean}
  */
 export function isTemplateThemeDark(customStorage?: Storage | null): boolean {
-  return getTemplateTheme(customStorage) === "dark";
+  return getTemplateTheme(customStorage) === THEME.DARK;
 }
 
 /**
  * Guarda el tema de la plantilla en el almacenamiento.
  *
- * @param {"dark" | "light"} theme
+ * @param {Theme} theme
  * @param {Storage | null} [customStorage]
  * @returns {void}
  */
-export function setTemplateTheme(theme: "dark" | "light", customStorage?: Storage | null): void {
+export function setTemplateTheme(theme: Theme, customStorage?: Storage | null): void {
   const storage = getStorage(customStorage);
   if (!storage) return;
-  storage.setItem(STORAGE_KEY_TEMPLATE_THEME, theme === "light" ? "light" : "dark");
+  storage.setItem(STORAGE_KEY_TEMPLATE_THEME, isTheme(theme) ? theme : THEME.DARK);
 }
 
 /**
  * Alterna el tema de la plantilla entre 'dark' y 'light', lo persiste y devuelve el nuevo valor.
  *
  * @param {Storage | null} [customStorage]
- * @returns {"dark" | "light"}
+ * @returns {Theme}
  */
-export function toggleTemplateTheme(customStorage?: Storage | null): "dark" | "light" {
-  const nextTheme = isTemplateThemeDark(customStorage) ? "light" : "dark";
+export function toggleTemplateTheme(customStorage?: Storage | null): Theme {
+  const nextTheme: Theme = isTemplateThemeDark(customStorage) ? THEME.LIGHT : THEME.DARK;
   setTemplateTheme(nextTheme, customStorage);
   return nextTheme;
 }
@@ -69,24 +72,24 @@ export function toggleTemplateTheme(customStorage?: Storage | null): "dark" | "l
  * Obtiene el tema activo de la aplicación ('light' o 'dark').
  *
  * @param {Storage | null} [customStorage]
- * @returns {"dark" | "light"}
+ * @returns {Theme}
  */
-export function getAppTheme(customStorage?: Storage | null): "dark" | "light" {
+export function getAppTheme(customStorage?: Storage | null): Theme {
   const storage = getStorage(customStorage);
-  if (!storage) return "dark";
+  if (!storage) return THEME.DARK;
   const stored = storage.getItem(STORAGE_KEY_APP_THEME);
-  return stored === "light" ? "light" : "dark";
+  return isTheme(stored) ? stored : THEME.DARK;
 }
 
 /**
  * Guarda el tema de la aplicación en el almacenamiento.
  *
- * @param {"dark" | "light"} theme
+ * @param {Theme} theme
  * @param {Storage | null} [customStorage]
  * @returns {void}
  */
-export function setAppTheme(theme: "dark" | "light", customStorage?: Storage | null): void {
+export function setAppTheme(theme: Theme, customStorage?: Storage | null): void {
   const storage = getStorage(customStorage);
   if (!storage) return;
-  storage.setItem(STORAGE_KEY_APP_THEME, theme === "light" ? "light" : "dark");
+  storage.setItem(STORAGE_KEY_APP_THEME, isTheme(theme) ? theme : THEME.DARK);
 }

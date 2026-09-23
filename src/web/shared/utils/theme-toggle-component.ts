@@ -4,6 +4,8 @@
  * Handles localStorage persistence and dispatches theme-changed events
  */
 
+import { EVENTS } from "../../../../scripts/shared/contracts/constants/events.ts";
+import { THEME } from "../../../../scripts/shared/contracts/constants/theme.ts";
 import { STORAGE_KEY_APP_THEME } from "./storage-keys.ts";
 
 /**
@@ -29,11 +31,11 @@ export class ThemeToggle extends HTMLElement {
     this.setupEventListeners();
     this.updateIcon();
     // Listen for theme changes from other instances
-    window.addEventListener("theme-changed", this.handleThemeChanged);
+    window.addEventListener(EVENTS.THEME_CHANGED, this.handleThemeChanged);
   }
 
   disconnectedCallback(): void {
-    window.removeEventListener("theme-changed", this.handleThemeChanged);
+    window.removeEventListener(EVENTS.THEME_CHANGED, this.handleThemeChanged);
   }
 
   /**
@@ -149,10 +151,10 @@ export class ThemeToggle extends HTMLElement {
     this.button.addEventListener("click", () => {
       document.documentElement.classList.toggle("dark");
       const isDark = document.documentElement.classList.contains("dark");
-      localStorage.setItem(STORAGE_KEY_APP_THEME, isDark ? "dark" : "light");
+      localStorage.setItem(STORAGE_KEY_APP_THEME, isDark ? THEME.DARK : THEME.LIGHT);
 
       this.updateIcon();
-      window.dispatchEvent(new CustomEvent("theme-changed", { detail: { isDark } }));
+      window.dispatchEvent(new CustomEvent(EVENTS.THEME_CHANGED, { detail: { isDark } }));
     });
   }
 
