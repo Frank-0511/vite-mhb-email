@@ -2,7 +2,7 @@
 
 import { EventEmitter } from "node:events";
 import { afterEach, beforeEach, describe, expect, spyOn, test } from "bun:test";
-import { buildIfNeeded, type SpawnFunction } from "./build-helper.ts";
+import { buildIfNeeded, type SpawnFunction } from "./ensure-build.ts";
 import type { PromptSource } from "../shared/index.ts";
 
 const spawnCalls: unknown[][] = [];

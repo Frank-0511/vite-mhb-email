@@ -3,7 +3,7 @@
  */
 
 import type { Interface } from "readline";
-import { buildIfNeeded } from "../build/build-helper.ts";
+import { buildIfNeeded } from "../build/ensure-build.ts";
 import {
   applyHandlebars,
   applyLegacySendGridSubstitutions,

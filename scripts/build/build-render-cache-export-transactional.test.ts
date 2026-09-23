@@ -23,7 +23,7 @@ import { downloadHtml } from "../../src/web/features/preview/modules/copy-html/h
 import {
   createFakeDownloadEnvironment,
   createTransactionalFixture,
-} from "./build-render-cache-export.test-fixtures.ts";
+} from "./render-cache-export.fixtures.ts";
 
 interface CopyHtmlResponse {
   success: boolean;
