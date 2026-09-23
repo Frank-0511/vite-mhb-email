@@ -13,6 +13,8 @@ import { createRequire } from "node:module";
 import { resolve } from "node:path";
 import puppeteer, { type Browser } from "puppeteer";
 import { createServer } from "vite";
+import { THEME } from "../shared/contracts/constants/theme.ts";
+import type { Theme } from "../shared/contracts/types/theme.ts";
 import { c as colors, paint } from "../shared/index.ts";
 
 const require = createRequire(import.meta.url);
@@ -20,10 +22,6 @@ const projectRoot = resolve(import.meta.dirname ?? ".", "../..");
 
 /** Rutas del dashboard a auditar; `/preview` requiere un template válido. */
 export const ROUTES: readonly string[] = ["/", "/library", "/preview?template=welcome"] as const;
-
-/** Temas a auditar, replicando `document.documentElement.classList` real. */
-export const THEMES = ["light", "dark"] as const;
-export type ThemeType = (typeof THEMES)[number];
 
 /** Tags WCAG que corre axe-core (2A, 2AA y 2.1AA). */
 const AXE_TAGS = ["wcag2a", "wcag2aa", "wcag21aa"];
@@ -51,7 +49,7 @@ export interface ViolationSummary {
 
 export interface RouteReport {
   route: string;
-  theme: ThemeType;
+  theme: Theme;
   violations: ViolationSummary[];
 }
 
@@ -71,7 +69,7 @@ export interface RawAxeResults {
  */
 export function summarizeAxeResults(
   route: string,
-  theme: ThemeType,
+  theme: Theme,
   axeResults: RawAxeResults,
 ): RouteReport {
   const severityRank: Record<A11ySeverity, number> = { ERROR: 0, WARNING: 1, INFO: 2 };
@@ -160,7 +158,7 @@ export async function crawlDashboard(): Promise<RouteReport[]> {
 
     const reports: RouteReport[] = [];
     for (const route of ROUTES) {
-      for (const theme of THEMES) {
+      for (const theme of Object.values(THEME)) {
         const page = await browser.newPage();
         try {
           await page.evaluateOnNewDocument((themeName: string) => {

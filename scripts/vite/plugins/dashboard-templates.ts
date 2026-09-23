@@ -2,6 +2,8 @@
  * @fileoverview Plantillas HTML y scripts del cliente para el plugin Vite del dashboard.
  */
 
+import { API_ROUTES } from "../../shared/contracts/constants/api-routes.ts";
+
 export interface DashboardTemplateCardData {
   name: string;
   title: string;
@@ -88,7 +90,7 @@ export function getTemplateSizesClientScript(): string {
       <script>
         async function loadTemplateSizes() {
           try {
-            const response = await fetch('/api/template-sizes');
+            const response = await fetch('${API_ROUTES.TEMPLATE_SIZES}');
             const sizes = await response.json();
             for (const [name, size] of Object.entries(sizes)) {
               const sizeEl = document.querySelector('.template-size-' + name);

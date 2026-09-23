@@ -3,6 +3,7 @@
  */
 
 import type { ViteDevServer } from "vite";
+import { API_ROUTES } from "../../shared/contracts/constants/api-routes.ts";
 import { createPreviewCacheManager, type PreviewCacheManager } from "../services/cache/index.ts";
 import { getRequestUrl, sendJson } from "./http.ts";
 
@@ -21,14 +22,14 @@ export function setupCacheApi(server: ViteDevServer, rootDir: string): void {
   const manager = cacheManager ?? (cacheManager = createPreviewCacheManager(rootDir));
 
   server.middlewares.use(async (req, res, next) => {
-    if (!req.url?.startsWith("/api/cache")) {
+    if (!req.url?.startsWith(API_ROUTES.CACHE)) {
       return next();
     }
 
     const url = getRequestUrl(req);
 
     if (req.method === "POST") {
-      if (req.url.startsWith("/api/cache/invalidate")) {
+      if (req.url.startsWith(API_ROUTES.CACHE_INVALIDATE)) {
         const templateName = url.searchParams.get("template");
 
         if (!templateName) {
@@ -48,7 +49,7 @@ export function setupCacheApi(server: ViteDevServer, rootDir: string): void {
             message: `failed to invalidate cache for ${templateName}: ${message}`,
           });
         }
-      } else if (req.url.startsWith("/api/cache/clean")) {
+      } else if (req.url.startsWith(API_ROUTES.CACHE_CLEAN)) {
         try {
           await manager.invalidateAll();
           return sendJson(res, 200, { success: true, message: "Cache cleaned" });

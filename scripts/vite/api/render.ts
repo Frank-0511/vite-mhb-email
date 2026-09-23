@@ -3,6 +3,8 @@
  */
 
 import type { Connect, ViteDevServer } from "vite";
+import { THEME } from "../../shared/contracts/constants/theme.ts";
+import type { Theme } from "../../shared/contracts/types/theme.ts";
 import { createRenderRequestHandler } from "../services/render/index.ts";
 
 let handler: Connect.NextHandleFunction | undefined;
@@ -28,7 +30,7 @@ function findMatchingBrace(css: string, openBraceIndex: number): number {
  * En `dark`, elimina el wrapper @media para que sus reglas apliquen siempre.
  * En `light`, elimina esas reglas para evitar que el SO del navegador fuerce dark.
  */
-function transformColorSchemeMedia(css: string, theme: "light" | "dark"): string {
+function transformColorSchemeMedia(css: string, theme: Theme): string {
   const mediaPattern = /^@media\s*\(\s*prefers-color-scheme\s*:\s*dark\s*\)\s*\{/;
   let output = "";
   let index = 0;
@@ -54,7 +56,7 @@ function transformColorSchemeMedia(css: string, theme: "light" | "dark"): string
 
     const innerCss = css.slice(openBraceIndex + 1, closeBraceIndex);
 
-    if (theme === "dark") {
+    if (theme === THEME.DARK) {
       output += transformColorSchemeMedia(innerCss, theme);
     }
 
@@ -71,13 +73,11 @@ function transformColorSchemeMedia(css: string, theme: "light" | "dark"): string
  * @param theme Tema solicitado ("light" | "dark").
  * @returns HTML con reglas CSS adaptadas al tema.
  */
-export function applyPreviewTheme(html: string, theme: string): string {
-  const normalizedTheme = theme === "dark" ? "dark" : "light";
-
+export function applyPreviewTheme(html: string, theme: Theme): string {
   return html.replace(
     /<style\b([^>]*)>([\s\S]*?)<\/style>/gi,
     (_match, attrs: string, css: string) => {
-      const transformedCss = transformColorSchemeMedia(css, normalizedTheme);
+      const transformedCss = transformColorSchemeMedia(css, theme);
       return `<style${attrs}>${transformedCss}</style>`;
     },
   );

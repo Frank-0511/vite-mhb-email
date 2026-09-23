@@ -4,6 +4,7 @@
 
 import fs from "fs-extra";
 import type { ViteDevServer } from "vite";
+import { API_ROUTES } from "../../shared/contracts/constants/api-routes.ts";
 import { getProjectPaths, isPathInside, isValidTemplateName } from "../../shared/index.ts";
 import { getRequestUrl, readJsonBody, sendJson, sendText } from "./http.ts";
 
@@ -17,7 +18,7 @@ export function setupDataApi(server: ViteDevServer, rootDir: string): void {
   const paths = getProjectPaths(rootDir);
 
   server.middlewares.use(async (req, res, next) => {
-    if (!req.url?.startsWith("/api/data")) {
+    if (!req.url?.startsWith(API_ROUTES.DATA)) {
       return next();
     }
 

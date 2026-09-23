@@ -4,6 +4,7 @@
 
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { ViteDevServer } from "vite";
+import { API_ROUTES } from "../../shared/contracts/constants/api-routes.ts";
 import {
   isValidComponentIdentifier,
   listComponents,
@@ -139,7 +140,7 @@ async function handleRender(
  */
 export function setupComponentsApi(server: ViteDevServer, rootDir: string): void {
   server.middlewares.use(async (req, res, next) => {
-    if (!req.url?.startsWith("/api/components")) {
+    if (!req.url?.startsWith(API_ROUTES.COMPONENTS)) {
       return next();
     }
 

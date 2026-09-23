@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { normalizeRenderError, RENDER_ERROR_VERSION } from "./render-error.ts";
+import { RENDER_ERROR_VERSION } from "../../../shared/contracts/constants/render-error.ts";
+import { normalizeRenderError } from "./render-error.ts";
 
 describe("render-error (normalizador seguro)", () => {
   const templatesRoot = "/tmp/project/src/emails/templates";

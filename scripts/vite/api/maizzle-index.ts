@@ -4,16 +4,13 @@
 
 import { relative, resolve, sep } from "node:path";
 import type { HmrContext, Plugin, ViteDevServer } from "vite";
-import { compileTemplate } from "../services/render/index.ts";
+import { EVENTS } from "../../shared/contracts/constants/events.ts";
 import { setupCacheApi } from "./cache.ts";
 import { setupComponentsApi } from "./components.ts";
 import { setupCopyHtmlApi } from "./copy-html.ts";
 import { setupDataApi } from "./data.ts";
 import { setupRenderApi } from "./render.ts";
 import { setupTemplateApi } from "./templates.ts";
-
-// Exportamos compileTemplate por si otro script lo necesita
-export { compileTemplate };
 
 const EMAIL_SOURCE_PATHS = [
   "src/emails/templates",
@@ -72,7 +69,7 @@ function setupEmailSourceWatcher(server: ViteDevServer, rootDir: string): void {
     notifyTimer = setTimeout(() => {
       server.ws.send({
         type: "custom",
-        event: "email-source-changed",
+        event: EVENTS.EMAIL_SOURCE_CHANGED,
         data: { file: lastChangedFile },
       });
       notifyTimer = null;
@@ -109,7 +106,7 @@ export const maizzlePlugin = (rootDir: string): Plugin => ({
 
     server.ws.send({
       type: "custom",
-      event: "email-source-changed",
+      event: EVENTS.EMAIL_SOURCE_CHANGED,
       data: { file: getEmailRelativePath(rootDir, file) },
     });
 

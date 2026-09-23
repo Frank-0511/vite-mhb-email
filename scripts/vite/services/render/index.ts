@@ -4,13 +4,7 @@
 
 export { compileTemplate } from "./maizzle-compiler.ts";
 
-export {
-  normalizeRenderError,
-  RENDER_ERROR_VERSION,
-  type NormalizedRenderError,
-  type RenderErrorLocation,
-  type NormalizeRenderErrorOptions,
-} from "./render-error.ts";
+export { normalizeRenderError, type NormalizeRenderErrorOptions } from "./render-error.ts";
 
 export {
   renderComponentPreview,

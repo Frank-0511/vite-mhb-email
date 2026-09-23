@@ -6,6 +6,7 @@ import fs from "fs-extra";
 import { globSync } from "glob";
 import { resolve } from "node:path";
 import type { IndexHtmlTransformContext, Plugin, ViteDevServer } from "vite";
+import { API_ROUTES } from "../../shared/contracts/constants/api-routes.ts";
 import { bytesToKB, getProjectPaths } from "../../shared/index.ts";
 import {
   getTemplateSizesClientScript,
@@ -71,15 +72,13 @@ export function getTemplates(rootDir: string): DashboardTemplate[] {
   return templates;
 }
 
-export { renderTemplateCard };
-
 export const dashboardPlugin = (rootDir: string): Plugin => ({
   name: "vite-dashboard-context",
   configureServer(server: ViteDevServer) {
     const paths = getProjectPaths(rootDir);
     server.middlewares.use((req, res, next) => {
       // API endpoint: GET /api/template-sizes
-      if (req.url?.startsWith("/api/template-sizes")) {
+      if (req.url?.startsWith(API_ROUTES.TEMPLATE_SIZES)) {
         const templates = getTemplates(rootDir);
         const sizes: Record<string, { bytes: number; kb: string } | null> = {};
 
