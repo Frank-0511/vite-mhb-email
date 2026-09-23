@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { copyTextToClipboard } from "./copy-html-formatters.ts";
+import { copyTextToClipboard } from "./formatters.ts";
 
 describe("copyTextToClipboard", () => {
   test("devuelve true si el portapapeles escribe correctamente", async () => {

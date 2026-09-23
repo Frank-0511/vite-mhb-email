@@ -4,8 +4,8 @@
 
 import "./copy-html-modal.css";
 
-export { createCopyHtmlModalController } from "./copy-html-controller.ts";
-export { initCopyHtmlDialog as initCopyHtmlModal } from "./copy-html-dialog.ts";
+export { createCopyHtmlModalController } from "./controller.ts";
+export { initCopyHtmlDialog as initCopyHtmlModal } from "./dialog.ts";
 export {
   copyTextToClipboard,
   formatDownloadSuccessMessage,
@@ -13,6 +13,6 @@ export {
   formatLoadingMessage,
   formatSuccessMessage,
   formatValidation,
-} from "./copy-html-formatters.ts";
-export { renderModalState, updateExportModeView } from "./copy-html-view.ts";
+} from "./formatters.ts";
+export { renderModalState, updateExportModeView } from "./view.ts";
 export { downloadHtml, isSafeDownloadTemplateName } from "./html-download.ts";
