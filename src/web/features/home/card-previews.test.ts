@@ -1,21 +1,20 @@
-// @ts-check
 import { afterEach, describe, expect, test } from "bun:test";
-import { initializeTemplateCardPreviews, loadTemplateCardPreview } from "./card-previews.js";
+import { initializeTemplateCardPreviews, loadTemplateCardPreview } from "./card-previews.ts";
 
 function createPreview(source = "/templates/welcome/index.html") {
   const classes = new Set();
-  let onLoad;
+  let onLoad: (() => void) | undefined;
   const wrapper = {
     classList: {
-      add: (/** @type {string} */ className) => classes.add(className),
-      contains: (/** @type {string} */ className) => classes.has(className),
+      add: (className: string) => classes.add(className),
+      contains: (className: string) => classes.has(className),
     },
   };
   const iframe = {
     dataset: { previewSrc: source },
     src: "",
     closest: () => wrapper,
-    addEventListener: (/** @type {string} */ eventName, /** @type {() => void} */ listener) => {
+    addEventListener: (eventName: string, listener: () => void) => {
       if (eventName === "load") onLoad = listener;
     },
   };
@@ -33,7 +32,7 @@ describe("card-previews", () => {
   test("carga el iframe solo al activarlo y entonces oculta el skeleton", () => {
     const { iframe, wrapper, load } = createPreview();
 
-    loadTemplateCardPreview(/** @type {HTMLIFrameElement} */ (/** @type {unknown} */ (iframe)));
+    loadTemplateCardPreview(iframe as unknown as HTMLIFrameElement);
 
     expect(iframe.src).toBe("/templates/welcome/index.html");
     expect(iframe.dataset.previewSrc).toBeUndefined();
@@ -45,14 +44,14 @@ describe("card-previews", () => {
   });
 
   test("carga todos los previews si el navegador no soporta IntersectionObserver", () => {
-    globalThis.IntersectionObserver = undefined;
+    globalThis.IntersectionObserver = undefined as unknown as typeof IntersectionObserver;
     const first = createPreview("/templates/first/index.html");
     const second = createPreview("/templates/second/index.html");
     const root = {
       querySelectorAll: () => [first.iframe, second.iframe],
     };
 
-    initializeTemplateCardPreviews(/** @type {Document} */ (/** @type {unknown} */ (root)));
+    initializeTemplateCardPreviews(root as unknown as Document);
 
     expect(first.iframe.src).toBe("/templates/first/index.html");
     expect(second.iframe.src).toBe("/templates/second/index.html");
@@ -60,36 +59,41 @@ describe("card-previews", () => {
 
   test("espera que la tarjeta se aproxime al viewport antes de cargarla", () => {
     const preview = createPreview();
-    /** @type {Function | undefined} */
-    let callback;
-    const unobserved = [];
-    globalThis.IntersectionObserver = /** @type {any} */ (
-      class {
-        constructor(observerCallback) {
-          callback = observerCallback;
-        }
-
-        observe() {}
-
-        unobserve(target) {
-          unobserved.push(target);
-        }
-
-        disconnect() {}
-
-        takeRecords() {
-          return [];
-        }
+    let callback: IntersectionObserverCallback | undefined;
+    const unobserved: Element[] = [];
+    globalThis.IntersectionObserver = class {
+      constructor(observerCallback: IntersectionObserverCallback) {
+        callback = observerCallback;
       }
-    );
+
+      observe() {}
+
+      unobserve(target: Element) {
+        unobserved.push(target);
+      }
+
+      disconnect() {}
+
+      takeRecords() {
+        return [];
+      }
+    } as unknown as typeof IntersectionObserver;
     const root = { querySelectorAll: () => [preview.iframe] };
 
-    initializeTemplateCardPreviews(/** @type {Document} */ (/** @type {unknown} */ (root)));
+    initializeTemplateCardPreviews(root as unknown as Document);
 
     expect(preview.iframe.src).toBe("");
 
     if (callback) {
-      callback([{ isIntersecting: true, target: preview.iframe }]);
+      callback(
+        [
+          {
+            isIntersecting: true,
+            target: preview.iframe as unknown as Element,
+          } as IntersectionObserverEntry,
+        ],
+        {} as IntersectionObserver,
+      );
     }
 
     expect(preview.iframe.src).toBe("/templates/welcome/index.html");

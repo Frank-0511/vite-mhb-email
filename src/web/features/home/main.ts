@@ -3,15 +3,15 @@
  * Handles template listing and grid initialization for index.html
  */
 
-import { initLucideIcons } from "../../shared/utils/lucide-setup.js";
-import "../../shared/utils/theme-toggle-component.js"; // Web Component auto-registers
-import { initializeTemplateCardPreviews } from "./card-previews.js";
+import { initLucideIcons } from "../../shared/utils/lucide-setup.ts";
+import "../../shared/utils/theme-toggle-component.ts"; // Web Component auto-registers
+import { initializeTemplateCardPreviews } from "./card-previews.ts";
 import "./styles.css";
 
 /**
  * Initialize Lucide icons and render Lucide elements on the page
  */
-function initializeHome() {
+function initializeHome(): void {
   initLucideIcons();
   initializeTemplateCardPreviews();
 }
