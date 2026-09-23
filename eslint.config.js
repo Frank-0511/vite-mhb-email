@@ -3,9 +3,33 @@ import js from "@eslint/js";
 import prettierConfig from "eslint-config-prettier";
 import globals from "globals";
 import tseslint from "typescript-eslint";
+import {
+  BASE_TS_SYNTAX_SELECTORS,
+  CONSTANTS_SELECTORS,
+  CONTRACT_LITERAL_SELECTORS,
+  LOCAL_STORAGE_LITERAL_SELECTOR,
+  NODE_BUILTIN_IN_CONTRACTS,
+  NO_REEXPORT_SELECTORS,
+  OUTSIDE_CONTRACTS_MESSAGE,
+  TYPES_ZERO_RUNTIME_SELECTORS,
+} from "./scripts/validators/lint-guards/selectors.js";
+
+const TEST_FILES = ["**/*.test.ts", "**/*.spec.ts"];
+const SPECIAL_ROLE_FILES = [
+  "**/types.ts",
+  "**/types/**",
+  "**/constants.ts",
+  "**/constants/**",
+  "**/index.ts",
+];
 
 /** @type {import("eslint").Linter.Config[]} */
 export default [
+  // Ignora artefactos de compilación, cache y declaraciones de tipos de terceros
+  {
+    ignores: ["dist/**", "types/**", ".cache/**", ".temp-screenshots/**", "coverage/**"],
+  },
+
   // Reglas recomendadas de ESLint para JavaScript
   js.configs.recommended,
 
@@ -20,10 +44,8 @@ export default [
     files: [
       "scripts/**/*.{js,mjs,ts}",
       "src/emails/**/*.{js,ts}",
-      "vite.config.js",
       "vite.config.ts",
       "maizzle.config.js",
-      "maizzle.config.ts",
     ],
     languageOptions: {
       globals: {
@@ -45,17 +67,10 @@ export default [
   // Reglas propias del proyecto
   {
     rules: {
-      // Código
-      "no-unused-vars": "off",
       eqeqeq: ["error", "always"],
       "prefer-const": "error",
       "no-var": "error",
-
-      // CLI hace uso intensivo de console — permitido
       "no-console": "off",
-
-      // Async / await
-      "no-return-await": "error",
       "require-await": "warn",
     },
   },
@@ -68,11 +83,135 @@ export default [
     },
   },
 
-  // Regla no-unused-vars para TS
+  // Reglas de calidad y tipo para TypeScript
   {
     files: ["**/*.ts"],
     rules: {
       "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+      "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/consistent-type-imports": [
+        "error",
+        { prefer: "type-imports", fixStyle: "separate-type-imports" },
+      ],
+      "no-warning-comments": ["error", { terms: ["@typedef"], location: "anywhere" }],
+      "no-restricted-syntax": ["error", ...BASE_TS_SYNTAX_SELECTORS],
+    },
+  },
+
+  // types.ts y types/**: cero runtime (solo declaraciones de tipo)
+  {
+    files: ["**/types.ts", "**/types/**/*.ts"],
+    ignores: TEST_FILES,
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        ...BASE_TS_SYNTAX_SELECTORS,
+        ...TYPES_ZERO_RUNTIME_SELECTORS,
+      ],
+    },
+  },
+
+  // constants.ts y constants/**: sin funciones ni declaraciones de tipos
+  {
+    files: ["**/constants.ts", "**/constants/**/*.ts"],
+    ignores: TEST_FILES,
+    rules: {
+      "no-restricted-syntax": ["error", ...BASE_TS_SYNTAX_SELECTORS, ...CONSTANTS_SELECTORS],
+    },
+  },
+
+  // Prohibición de magic strings y reexports en scripts de implementación
+  {
+    files: ["scripts/**/*.ts", "src/emails/**/*.{js,ts}", "vite.config.ts"],
+    ignores: [
+      "scripts/shared/contracts/**",
+      "scripts/esp/**",
+      "scripts/inventory/**",
+      "scripts/perf/**",
+      "scripts/cli/helpers.ts",
+      ...SPECIAL_ROLE_FILES,
+      ...TEST_FILES,
+    ],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        ...BASE_TS_SYNTAX_SELECTORS,
+        ...NO_REEXPORT_SELECTORS,
+        ...CONTRACT_LITERAL_SELECTORS,
+      ],
+    },
+  },
+
+  // Prohibición de magic strings, localStorage literal y reexports en src/web/** de implementación
+  {
+    files: ["src/web/**/*.ts"],
+    ignores: [...SPECIAL_ROLE_FILES, ...TEST_FILES],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        ...BASE_TS_SYNTAX_SELECTORS,
+        ...NO_REEXPORT_SELECTORS,
+        ...CONTRACT_LITERAL_SELECTORS,
+        LOCAL_STORAGE_LITERAL_SELECTOR,
+      ],
+    },
+  },
+
+  // Aislamiento de contracts (raíz): prohibido Node.js y subir de directorio
+  {
+    files: ["scripts/shared/contracts/*.ts"],
+    ignores: TEST_FILES,
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            NODE_BUILTIN_IN_CONTRACTS,
+            { regex: "^\\.\\./", message: OUTSIDE_CONTRACTS_MESSAGE },
+          ],
+        },
+      ],
+    },
+  },
+
+  // Aislamiento de contracts (subcarpetas): se permite ../ entre subcarpetas, no salir de contracts/
+  {
+    files: ["scripts/shared/contracts/*/**/*.ts"],
+    ignores: TEST_FILES,
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            NODE_BUILTIN_IN_CONTRACTS,
+            { regex: "^\\.\\./\\.\\./", message: OUTSIDE_CONTRACTS_MESSAGE },
+          ],
+        },
+      ],
+    },
+  },
+
+  // Aislamiento de web: prohibido importar barrel scripts/shared o utilidades de Node
+  {
+    files: ["src/web/**/*.ts"],
+    ignores: TEST_FILES,
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              regex: "^node:.*",
+              message: "No uses módulos de Node.js en código frontend (src/web).",
+            },
+            {
+              regex: "scripts/shared(/(?!contracts(/|$)).*)?$",
+              message:
+                "En src/web solo se permite importar de scripts/shared/contracts/..., no del barrel ni de utilidades internas de scripts/shared/.",
+            },
+          ],
+        },
+      ],
     },
   },
 
