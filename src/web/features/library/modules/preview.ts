@@ -1,14 +1,15 @@
 // Preview manager module
-import { postText } from "../../../shared/utils/http-helpers.js";
+import { postText } from "../../../shared/utils/http-helpers.ts";
+import type { LibraryComponentType } from "./state.ts";
 
 const SKELETON_TYPES = new Set(["atoms", "molecules", "organisms", "templates"]);
 
 export const previewManager = {
-  iframe: null,
-  emptyPreview: null,
-  skeleton: null,
+  iframe: null as HTMLIFrameElement | null,
+  emptyPreview: null as HTMLElement | null,
+  skeleton: null as HTMLElement | null,
 
-  init(iframeEl, emptyPreviewEl, skeletonEl) {
+  init(iframeEl: HTMLIFrameElement, emptyPreviewEl: HTMLElement, skeletonEl: HTMLElement): void {
     this.iframe = iframeEl;
     this.emptyPreview = emptyPreviewEl;
     this.skeleton = skeletonEl;
@@ -21,20 +22,27 @@ export const previewManager = {
    * @param {{ showLoading?: boolean, type?: "atoms"|"molecules"|"organisms"|"templates"|string }} [options]
    * @returns {Promise<void>}
    */
-  async render(componentId, variant, props, { showLoading = false, type } = {}) {
+  async render(
+    componentId: string | undefined,
+    variant: string,
+    props: Record<string, unknown>,
+    { showLoading = false, type }: { showLoading?: boolean; type?: LibraryComponentType } = {},
+  ): Promise<void> {
+    if (!componentId || !this.iframe || !this.emptyPreview) return;
+    const iframe = this.iframe;
     if (showLoading) this.showSkeleton(type);
 
     try {
       const html = await postText(`/api/components/${componentId}/render`, { variant, props });
-      this.iframe.srcdoc = html;
+      iframe.srcdoc = html;
 
       // Adjust iframe height to content
       this.iframe.onload = () => {
         try {
-          const iframeDoc = this.iframe.contentDocument || this.iframe.contentWindow.document;
+          const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
           if (iframeDoc && iframeDoc.body) {
             const contentHeight = iframeDoc.body.scrollHeight;
-            this.iframe.style.height = contentHeight + "px";
+            iframe.style.height = contentHeight + "px";
           }
         } catch (err) {
           console.error("Error measuring iframe content:", err);
@@ -47,12 +55,14 @@ export const previewManager = {
     }
   },
 
-  show() {
+  show(): void {
+    if (!this.emptyPreview || !this.iframe) return;
     this.emptyPreview.style.display = "none";
     this.iframe.style.display = "block";
   },
 
-  hide() {
+  hide(): void {
+    if (!this.emptyPreview || !this.iframe) return;
     this.emptyPreview.style.display = "flex";
     this.iframe.style.display = "none";
     if (this.skeleton) this.skeleton.style.display = "none";
@@ -64,16 +74,16 @@ export const previewManager = {
    *   "organisms" when omitted or unrecognized.
    * @returns {void}
    */
-  showSkeleton(type) {
-    if (!this.skeleton) return;
-    this.skeleton.dataset.type = SKELETON_TYPES.has(type) ? type : "organisms";
+  showSkeleton(type?: LibraryComponentType | string): void {
+    if (!this.skeleton || !this.emptyPreview || !this.iframe) return;
+    this.skeleton.dataset.type = type && SKELETON_TYPES.has(type) ? type : "organisms";
     this.emptyPreview.style.display = "none";
     this.iframe.style.display = "none";
     this.skeleton.style.display = "block";
   },
 
-  hideSkeleton() {
-    if (!this.skeleton) return;
+  hideSkeleton(): void {
+    if (!this.skeleton || !this.iframe) return;
     this.skeleton.style.display = "none";
     this.iframe.style.display = "block";
   },
