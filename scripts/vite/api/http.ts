@@ -51,3 +51,16 @@ export function getRequestUrl(req: IncomingMessage): URL {
   const host = req.headers.host || "localhost";
   return new URL(req.url || "", `http://${host}`);
 }
+
+/**
+ * Envuelve un middleware async para capturar errores y devolver JSON 500.
+ */
+export function asyncHandler(
+  fn: (req: IncomingMessage, res: ServerResponse, next: () => void) => Promise<void>,
+): (req: IncomingMessage, res: ServerResponse, next: () => void) => void {
+  return (req, res, next) => {
+    fn(req, res, next).catch((err: unknown) => {
+      sendJson(res, 500, { error: err instanceof Error ? err.message : String(err) });
+    });
+  };
+}

@@ -168,7 +168,8 @@ export async function initializePreview(): Promise<void> {
       editorAPI.updateContent(editorAPI.getInitialData());
     },
     resetIframe: (name) => {
-      renderAPI.render(name, editorAPI.getInitialData());
+      // Re-renderizado asíncrono tras reset de datos
+      void renderAPI.render(name, editorAPI.getInitialData());
     },
   });
 
@@ -186,9 +187,13 @@ export async function initializePreview(): Promise<void> {
 if (typeof window !== "undefined" && typeof document !== "undefined") {
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => {
-      initializePreview();
+      initializePreview().catch((error) => {
+        console.error("Error al inicializar preview:", error);
+      });
     });
   } else {
-    initializePreview();
+    initializePreview().catch((error) => {
+      console.error("Error al inicializar preview:", error);
+    });
   }
 }

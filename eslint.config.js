@@ -72,7 +72,7 @@ export default [
       "prefer-const": "error",
       "no-var": "error",
       "no-console": "off",
-      "require-await": "warn",
+      "require-await": "off",
     },
   },
 
@@ -87,6 +87,12 @@ export default [
   // Reglas de calidad y tipo para TypeScript
   {
     files: ["**/*.ts"],
+    languageOptions: {
+      parserOptions: {
+        project: ["./tsconfig.strict.json"],
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
     rules: {
       "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
       "@typescript-eslint/no-explicit-any": "error",
@@ -96,6 +102,17 @@ export default [
       ],
       "no-warning-comments": ["error", { terms: ["@typedef"], location: "anywhere" }],
       "no-restricted-syntax": ["error", ...BASE_TS_SYNTAX_SELECTORS],
+      "@typescript-eslint/no-floating-promises": "error",
+      "@typescript-eslint/no-misused-promises": [
+        "error",
+        {
+          checksVoidReturn: { arguments: false, attributes: false },
+        },
+      ],
+      "@typescript-eslint/await-thenable": "error",
+      "@typescript-eslint/no-redundant-type-constituents": "error",
+      "@typescript-eslint/require-await": "error",
+      "@typescript-eslint/return-await": ["error", "in-try-catch"],
     },
   },
 

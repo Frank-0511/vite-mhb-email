@@ -40,16 +40,8 @@ export const NO_ENUM_SELECTOR = {
     "No uses enum o const enum. Usa objetos congelados con 'as const' y tipos derivados ('typeof OBJ[keyof typeof OBJ]').",
 };
 
-// 2. Sin Union | string que colapse la unión (excluyendo wrappers estándar como Promise, Buffer, URL, Request)
-export const UNION_WITH_STRING_SELECTOR = {
-  selector:
-    "TSUnionType:has(> TSStringKeyword):has(> TSTypeReference:not(:has(> Identifier[name=/^(Promise|Buffer|URL|Request)$/])))",
-  message:
-    "No combines un tipo de referencia con 'string' (e.g. 'Type | string') porque TypeScript lo colapsa a 'string'. Tipa como 'string' si es un boundary no validado y refina con un type guard, o usa el tipo exacto.",
-};
-
 // Reglas sintácticas base para todo archivo TypeScript
-export const BASE_TS_SYNTAX_SELECTORS = [NO_ENUM_SELECTOR, UNION_WITH_STRING_SELECTOR];
+export const BASE_TS_SYNTAX_SELECTORS = [NO_ENUM_SELECTOR];
 
 // 3. Sin reexports fuera de index.ts
 export const NO_REEXPORT_SELECTORS = [

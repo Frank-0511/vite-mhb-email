@@ -151,7 +151,8 @@ export function createRenderAPI(config: RenderAPIConfig): RenderAPIClient {
         return;
       }
 
-      render(templateName, data);
+      // Renderizado asíncrono con debounce tras cambio en editor
+      void render(templateName, data);
     }, debounceMs);
   }
 

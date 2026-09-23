@@ -5,7 +5,7 @@
 import type { ViteDevServer } from "vite";
 import { API_ROUTES } from "../../shared/contracts/constants/api-routes.ts";
 import { createPreviewCacheManager, type PreviewCacheManager } from "../services/cache/index.ts";
-import { getRequestUrl, sendJson } from "./http.ts";
+import { asyncHandler, getRequestUrl, sendJson } from "./http.ts";
 
 let cacheManager: PreviewCacheManager | undefined;
 
@@ -21,48 +21,50 @@ export function setupCacheApi(server: ViteDevServer, rootDir: string): void {
   // Inicializar cache manager solo una vez
   const manager = cacheManager ?? (cacheManager = createPreviewCacheManager(rootDir));
 
-  server.middlewares.use(async (req, res, next) => {
-    if (!req.url?.startsWith(API_ROUTES.CACHE)) {
-      return next();
-    }
+  server.middlewares.use(
+    asyncHandler(async (req, res, next) => {
+      if (!req.url?.startsWith(API_ROUTES.CACHE)) {
+        return next();
+      }
 
-    const url = getRequestUrl(req);
+      const url = getRequestUrl(req);
 
-    if (req.method === "POST") {
-      if (req.url.startsWith(API_ROUTES.CACHE_INVALIDATE)) {
-        const templateName = url.searchParams.get("template");
+      if (req.method === "POST") {
+        if (req.url.startsWith(API_ROUTES.CACHE_INVALIDATE)) {
+          const templateName = url.searchParams.get("template");
 
-        if (!templateName) {
-          return sendJson(res, 400, { success: false, message: "template query param required" });
-        }
+          if (!templateName) {
+            return sendJson(res, 400, { success: false, message: "template query param required" });
+          }
 
-        try {
-          await manager.invalidateTemplate(templateName);
-          return sendJson(res, 200, {
-            success: true,
-            message: `Invalidated cache for ${templateName}`,
-          });
-        } catch (error) {
-          const message = error instanceof Error ? error.message : "unknown error";
-          return sendJson(res, 500, {
-            success: false,
-            message: `failed to invalidate cache for ${templateName}: ${message}`,
-          });
-        }
-      } else if (req.url.startsWith(API_ROUTES.CACHE_CLEAN)) {
-        try {
-          await manager.invalidateAll();
-          return sendJson(res, 200, { success: true, message: "Cache cleaned" });
-        } catch (error) {
-          const message = error instanceof Error ? error.message : "unknown error";
-          return sendJson(res, 500, {
-            success: false,
-            message: `failed to clean cache: ${message}`,
-          });
+          try {
+            await manager.invalidateTemplate(templateName);
+            return sendJson(res, 200, {
+              success: true,
+              message: `Invalidated cache for ${templateName}`,
+            });
+          } catch (error) {
+            const message = error instanceof Error ? error.message : "unknown error";
+            return sendJson(res, 500, {
+              success: false,
+              message: `failed to invalidate cache for ${templateName}: ${message}`,
+            });
+          }
+        } else if (req.url.startsWith(API_ROUTES.CACHE_CLEAN)) {
+          try {
+            await manager.invalidateAll();
+            return sendJson(res, 200, { success: true, message: "Cache cleaned" });
+          } catch (error) {
+            const message = error instanceof Error ? error.message : "unknown error";
+            return sendJson(res, 500, {
+              success: false,
+              message: `failed to clean cache: ${message}`,
+            });
+          }
         }
       }
-    }
 
-    return next();
-  });
+      return next();
+    }),
+  );
 }

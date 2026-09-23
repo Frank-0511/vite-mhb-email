@@ -6,7 +6,7 @@ import fs from "fs-extra";
 import type { ViteDevServer } from "vite";
 import { getProjectPaths, isPathInside } from "../../shared/index.ts";
 import { compileTemplate } from "../services/render/index.ts";
-import { sendText } from "./http.ts";
+import { asyncHandler, sendText } from "./http.ts";
 
 const TEMPLATE_ROUTE_PATTERN = /^\/templates\/([a-z0-9-]+)\/index\.html$/;
 
@@ -19,33 +19,35 @@ const TEMPLATE_ROUTE_PATTERN = /^\/templates\/([a-z0-9-]+)\/index\.html$/;
 export function setupTemplateApi(server: ViteDevServer, rootDir: string): void {
   const paths = getProjectPaths(rootDir);
 
-  server.middlewares.use(async (req, res, next) => {
-    const reqPath = req.url?.split("?")[0] || "";
-    const routeMatch = reqPath.match(TEMPLATE_ROUTE_PATTERN);
-    if (!routeMatch) {
-      return next();
-    }
+  server.middlewares.use(
+    asyncHandler(async (req, res, next) => {
+      const reqPath = req.url?.split("?")[0] || "";
+      const routeMatch = reqPath.match(TEMPLATE_ROUTE_PATTERN);
+      if (!routeMatch) {
+        return next();
+      }
 
-    const templateName = routeMatch[1];
-    const filePath = paths.templateHtml(templateName);
+      const templateName = routeMatch[1];
+      const filePath = paths.templateHtml(templateName);
 
-    if (!isPathInside(paths.templatesRoot, filePath)) {
-      return sendText(res, 400, "Invalid template path");
-    }
+      if (!isPathInside(paths.templatesRoot, filePath)) {
+        return sendText(res, 400, "Invalid template path");
+      }
 
-    if (!fs.existsSync(filePath)) return next();
+      if (!fs.existsSync(filePath)) return next();
 
-    try {
-      const dataPath = paths.templateData(templateName);
-      const data = fs.existsSync(dataPath) ? fs.readJsonSync(dataPath) : {};
+      try {
+        const dataPath = paths.templateData(templateName);
+        const data = fs.existsSync(dataPath) ? fs.readJsonSync(dataPath) : {};
 
-      const finalHtml = await compileTemplate(filePath, data, rootDir);
-      res.setHeader("Content-Type", "text/html");
-      res.end(finalHtml);
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : String(err);
-      console.error("[maizzle] Error rendering template:", message);
-      next(err);
-    }
-  });
+        const finalHtml = await compileTemplate(filePath, data, rootDir);
+        res.setHeader("Content-Type", "text/html");
+        res.end(finalHtml);
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : String(err);
+        console.error("[maizzle] Error rendering template:", message);
+        throw err;
+      }
+    }),
+  );
 }

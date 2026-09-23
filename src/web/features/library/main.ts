@@ -41,7 +41,8 @@ class ComponentLibraryApp {
 
     // Debounced preview updater
     this.updatePreview = debounce(() => {
-      this.renderPreview();
+      // Disparo asíncrono de renderizado en debounce
+      void this.renderPreview();
     }, 300);
   }
 
@@ -98,7 +99,8 @@ class ComponentLibraryApp {
     if (typeof savedComponentId === "string" && savedComponentId.length > 0) {
       const savedComponent = this.allComponents.find((c) => (c.id || c.name) === savedComponentId);
       if (savedComponent) {
-        this.selectComponent(savedComponent);
+        // Restauración asíncrona del componente guardado
+        void this.selectComponent(savedComponent);
       }
     }
   }
