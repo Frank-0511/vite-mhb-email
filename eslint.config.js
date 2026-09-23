@@ -3,6 +3,7 @@ import js from "@eslint/js";
 import prettierConfig from "eslint-config-prettier";
 import globals from "globals";
 import tseslint from "typescript-eslint";
+import checkFile from "eslint-plugin-check-file";
 import {
   BASE_TS_SYNTAX_SELECTORS,
   CONSTANTS_SELECTORS,
@@ -14,7 +15,7 @@ import {
   TYPES_ZERO_RUNTIME_SELECTORS,
 } from "./scripts/validators/lint-guards/selectors.js";
 
-const TEST_FILES = ["**/*.test.ts", "**/*.spec.ts"];
+const TEST_FILES = ["**/*.test.ts", "**/*.spec.ts", "**/*.fixtures.ts", "**/test-helpers.ts"];
 const SPECIAL_ROLE_FILES = [
   "**/types.ts",
   "**/types/**",
@@ -202,6 +203,32 @@ export default [
                 "En src/web solo se permite importar de scripts/shared/contracts/..., no del barrel ni de utilidades internas de scripts/shared/.",
             },
           ],
+        },
+      ],
+    },
+  },
+
+  // Convenciones de nombres de archivos y carpetas
+  {
+    files: ["scripts/**/*.ts", "src/**/*.ts"],
+    ignores: ["src/web/shared/utils/**"],
+    plugins: {
+      "check-file": checkFile,
+    },
+    rules: {
+      "check-file/filename-naming-convention": [
+        "error",
+        { "**/*.{ts,js}": "KEBAB_CASE" },
+        { ignoreMiddleExtensions: true },
+      ],
+      "check-file/folder-naming-convention": ["error", { "**/*": "KEBAB_CASE" }],
+      "check-file/filename-blocklist": [
+        "error",
+        {
+          "**/helpers.ts": "<domain>-*helpers.ts",
+          "**/utils.ts": "<domain>-*utils.ts",
+          "**/*-helper.ts": "*-helpers.ts",
+          "**/*-utils.ts": "*-utilities.ts",
         },
       ],
     },
