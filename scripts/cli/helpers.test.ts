@@ -3,13 +3,8 @@
 import { EventEmitter } from "node:events";
 import type { Interface } from "readline";
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
-import {
-  askArchetype,
-  askCreationMode,
-  askSelectArchetype,
-  run,
-  type SpawnFunction,
-} from "./helpers.ts";
+import { run, type SpawnFunction } from "./process-runner.ts";
+import { askArchetype, askCreationMode, askSelectArchetype } from "./prompts.ts";
 
 const spawnCalls: unknown[][] = [];
 const children: EventEmitter[] = [];

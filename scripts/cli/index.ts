@@ -15,7 +15,7 @@ import {
   testMailTester,
   validateEmails,
 } from "./actions.ts";
-import { askMenuChoice } from "./helpers.ts";
+import { askMenuChoice } from "./prompts.ts";
 import { clearScreen, printBanner, printHelp, printMenu, warnMissingEnv } from "./ui.ts";
 
 /**

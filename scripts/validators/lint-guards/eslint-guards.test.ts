@@ -12,6 +12,7 @@
 
 import { describe, expect, test } from "bun:test";
 import { ESLint } from "eslint";
+import eslintConfig from "../../../eslint.config.js";
 
 const eslint = new ESLint();
 
@@ -363,6 +364,36 @@ describe("ESLint Quality & Contract Guards", () => {
         "src/web/dummy.ts",
       );
       expect(errors).not.toContain("no-restricted-syntax");
+    });
+  });
+
+  describe("ESLint ignores policy", () => {
+    test("los bloques con files no contienen ignores fuera de tests y roles reservados", () => {
+      const allowed = new Set([
+        "**/*.test.ts",
+        "**/*.spec.ts",
+        "**/*.fixtures.ts",
+        "**/test-helpers.ts",
+        "**/types.ts",
+        "**/types/**",
+        "**/constants.ts",
+        "**/constants/**",
+        "**/index.ts",
+        "scripts/shared/contracts/**",
+        "src/web/shared/utils/**",
+      ]);
+
+      for (const block of eslintConfig) {
+        if (!block.files || !block.ignores) continue;
+        for (const pattern of block.ignores) {
+          const isAllowed =
+            allowed.has(pattern) || pattern.endsWith(".test.ts") || pattern.endsWith(".spec.ts");
+          if (!isAllowed) {
+            throw new Error(`Ignore no permitido: ${pattern}`);
+          }
+          expect(isAllowed).toBe(true);
+        }
+      }
     });
   });
 });
