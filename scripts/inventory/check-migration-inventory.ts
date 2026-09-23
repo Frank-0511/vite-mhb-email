@@ -12,13 +12,10 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import type { BaselineData, CollectedFiles, LayerConfig } from "./inventory-parser.ts";
-import { IGNORED_DIRECTORIES, collectProjectFiles, matchesLayer } from "./inventory-parser.ts";
+import type { BaselineData } from "./inventory-parser.ts";
+import { collectProjectFiles, matchesLayer } from "./inventory-parser.ts";
 import type { InventoryResults, LayerResult } from "./inventory-reporter.ts";
 import { formatInventoryReport } from "./inventory-reporter.ts";
-
-export type { BaselineData, CollectedFiles, InventoryResults, LayerConfig, LayerResult };
-export { IGNORED_DIRECTORIES, collectProjectFiles, formatInventoryReport, matchesLayer };
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

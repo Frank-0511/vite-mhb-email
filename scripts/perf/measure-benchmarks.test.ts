@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
-import type { BenchmarkResult, EnvironmentInfo } from "./measure-benchmarks.ts";
-import { computeStats, formatMarkdownTable, getEnvironmentInfo } from "./measure-benchmarks.ts";
+import type { BenchmarkResult, EnvironmentInfo } from "./benchmark-runner.ts";
+import { computeStats, getEnvironmentInfo } from "./benchmark-runner.ts";
+import { formatMarkdownTable } from "./benchmark-formatter.ts";
 
 describe("measure-benchmarks", () => {
   describe("computeStats", () => {

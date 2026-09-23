@@ -123,15 +123,7 @@ export default [
   // Prohibición de magic strings y reexports en scripts de implementación
   {
     files: ["scripts/**/*.ts", "src/emails/**/*.{js,ts}", "vite.config.ts"],
-    ignores: [
-      "scripts/shared/contracts/**",
-      "scripts/esp/**",
-      "scripts/inventory/**",
-      "scripts/perf/**",
-      "scripts/cli/helpers.ts",
-      ...SPECIAL_ROLE_FILES,
-      ...TEST_FILES,
-    ],
+    ignores: ["scripts/shared/contracts/**", ...SPECIAL_ROLE_FILES, ...TEST_FILES],
     rules: {
       "no-restricted-syntax": [
         "error",

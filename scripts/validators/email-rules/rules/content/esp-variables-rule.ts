@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import { basename, resolve } from "node:path";
-import { validateEspVariables } from "../../../../esp/esp-variables.ts";
+import { validateEspVariables } from "../../../../esp/esp-validator.ts";
 import { collectTemplateSource } from "../../../../esp/esp-sources.ts";
 import { Severity, type Issue, type Rule, type RuleContext } from "../../context.ts";
 

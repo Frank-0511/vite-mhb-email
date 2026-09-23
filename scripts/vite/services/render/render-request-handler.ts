@@ -7,7 +7,7 @@
 import fs from "fs-extra";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { collectTemplateSource } from "../../../esp/esp-sources.ts";
-import { validateEspVariables } from "../../../esp/esp-variables.ts";
+import { validateEspVariables } from "../../../esp/esp-validator.ts";
 import {
   API_ROUTES,
   HEADER_X_ESP_VALIDATION,

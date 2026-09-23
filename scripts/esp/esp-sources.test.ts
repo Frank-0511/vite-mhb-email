@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { collectTemplateSource } from "./esp-sources.ts";
-import { validateEspVariables } from "./esp-variables.ts";
+import { validateEspVariables } from "./esp-validator.ts";
 
 describe("esp-sources", () => {
   test("collectTemplateSource incluye el layout y componentes realmente usados por welcome", () => {

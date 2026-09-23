@@ -14,7 +14,7 @@ import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { collectTemplateSource } from "../../../esp/esp-sources.ts";
-import { validateEspVariables } from "../../../esp/esp-variables.ts";
+import { validateEspVariables } from "../../../esp/esp-validator.ts";
 import { getProjectPaths, isValidTemplateName } from "../../../shared/index.ts";
 
 export interface SelectiveBuildResult {

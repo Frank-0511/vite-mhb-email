@@ -10,13 +10,9 @@ import { sendToInbox } from "../mail/send-inbox.ts";
 import { sendToMailtester } from "../mail/send-mailtester.ts";
 import { sendTemplate } from "../mail/send-mailtrap.ts";
 import { c, getBuiltTemplates, paint } from "../shared/index.ts";
-import {
-  askCreationMode,
-  askSelectArchetype,
-  askSelectTemplate,
-  askTemplateName,
-  run,
-} from "./helpers.ts";
+import { run } from "./process-runner.ts";
+import { askCreationMode, askSelectArchetype, askTemplateName } from "./prompts.ts";
+import { askSelectTemplate } from "./template-prompts.ts";
 import { clearScreen } from "./ui.ts";
 
 /**

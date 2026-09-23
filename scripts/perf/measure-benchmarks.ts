@@ -12,28 +12,8 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { formatMarkdownTable } from "./benchmark-formatter.ts";
-import type {
-  BenchmarkResult,
-  BenchmarkSpec,
-  BenchmarkStats,
-  EnvironmentInfo,
-  MeasureExecutionOptions,
-} from "./benchmark-runner.ts";
-import {
-  computeStats,
-  getEnvironmentInfo,
-  measureExecution,
-  runBenchmark,
-} from "./benchmark-runner.ts";
-
-export type {
-  BenchmarkResult,
-  BenchmarkSpec,
-  BenchmarkStats,
-  EnvironmentInfo,
-  MeasureExecutionOptions,
-};
-export { computeStats, formatMarkdownTable, getEnvironmentInfo, measureExecution, runBenchmark };
+import type { BenchmarkResult, BenchmarkSpec } from "./benchmark-runner.ts";
+import { getEnvironmentInfo, runBenchmark } from "./benchmark-runner.ts";
 
 export interface MainBenchmarkOptions {
   iterations?: number;

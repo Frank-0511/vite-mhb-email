@@ -5,12 +5,11 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "bun:test";
-import type { BaselineData, InventoryResults } from "./check-migration-inventory.ts";
-import {
-  checkInventory,
-  formatInventoryReport,
-  matchesLayer,
-} from "./check-migration-inventory.ts";
+import { checkInventory } from "./check-migration-inventory.ts";
+import type { BaselineData } from "./inventory-parser.ts";
+import { matchesLayer } from "./inventory-parser.ts";
+import type { InventoryResults } from "./inventory-reporter.ts";
+import { formatInventoryReport } from "./inventory-reporter.ts";
 
 describe("check-migration-inventory (MHB-29)", () => {
   describe("matchesLayer", () => {

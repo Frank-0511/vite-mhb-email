@@ -3,7 +3,7 @@
  */
 
 import { describe, expect, test } from "bun:test";
-import { validateEspVariables } from "./esp-variables.ts";
+import { validateEspVariables } from "./esp-validator.ts";
 
 describe("validateEspVariables — coincidencia", () => {
   test("data y template coinciden exactamente → sin issues", () => {
