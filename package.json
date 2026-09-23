@@ -124,7 +124,7 @@
     "axe-core": "4.13.0",
     "eslint": "10.2.1",
     "eslint-config-prettier": "10.1.8",
-    "fs-extra": "11.3.4",
+    "fs-extra": "11.4.0",
     "glob": "13.0.6",
     "globals": "17.5.0",
     "htmlhint": "1.9.2",
