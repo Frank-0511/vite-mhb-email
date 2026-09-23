@@ -2,7 +2,8 @@ import { describe, expect, test } from "bun:test";
 
 import { createCopyHtmlModalController } from "./copy-html-controller.ts";
 import type { ValidationResult } from "./copy-html-formatters.ts";
-import type { ModalState, RenderModalStateOptions } from "./copy-html-view.ts";
+import type { ModalState } from "../../types.ts";
+import type { RenderModalStateOptions } from "./copy-html-view.ts";
 import type { DownloadHtmlOptions, DownloadHtmlResult } from "./html-download.ts";
 
 type ApiResponse = {

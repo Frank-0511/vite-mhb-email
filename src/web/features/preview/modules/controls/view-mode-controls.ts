@@ -5,10 +5,9 @@
  */
 
 import { STORAGE_KEY_VIEW_MODE } from "../../../../shared/utils/storage-keys.ts";
-
-export const VIEW_MODE_KEY = STORAGE_KEY_VIEW_MODE;
-export const VIEW_MODE_RENDER = "render";
-export const VIEW_MODE_SOURCE = "source";
+import { VIEW_MODE } from "../../constants.ts";
+import { isViewMode } from "../../guards.ts";
+import type { ViewMode } from "../../types.ts";
 
 export type ViewModeElements = {
   renderBtn: HTMLButtonElement;
@@ -27,8 +26,8 @@ export type ViewModeStorage = {
 };
 
 export type ViewModeController = {
-  applyViewMode: (mode: string) => void;
-  getViewMode: () => string;
+  applyViewMode: (mode: ViewMode) => void;
+  getViewMode: () => ViewMode;
   updateSourceHtml: (html: string) => void;
   getSourceHtml: () => string;
 };
@@ -86,13 +85,11 @@ export function initViewModeControls(
     previewFrame,
     shell,
   } = elements;
-  let currentMode = VIEW_MODE_RENDER;
+  let currentMode: ViewMode = VIEW_MODE.RENDER;
   let lastHtml = "";
 
   /**
    * Determina si el skeleton inicial aún está visible.
-   *
-   * @returns {boolean}
    */
   function isSkeletonVisible(): boolean {
     if (!skeleton || !skeleton.classList) return false;
@@ -101,14 +98,11 @@ export function initViewModeControls(
 
   /**
    * Sincroniza la visibilidad entre el iframe y el visor de código.
-   *
-   * @param {string} mode
-   * @returns {void}
    */
-  function syncVisibility(mode: string): void {
+  function syncVisibility(mode: ViewMode): void {
     if (isSkeletonVisible()) return;
 
-    if (mode === VIEW_MODE_SOURCE) {
+    if (mode === VIEW_MODE.SOURCE) {
       if (iframe.classList) iframe.classList.add("hidden");
       if (sourceContainer.classList) sourceContainer.classList.remove("hidden");
     } else {
@@ -119,19 +113,15 @@ export function initViewModeControls(
 
   /**
    * Aplica un modo de vista ("render" o "source") sin disparar recompilación.
-   *
-   * @param {string} mode
-   * @returns {void}
    */
-  function applyViewMode(mode: string): void {
-    const resolvedMode = mode === VIEW_MODE_SOURCE ? VIEW_MODE_SOURCE : VIEW_MODE_RENDER;
-    currentMode = resolvedMode;
+  function applyViewMode(mode: ViewMode): void {
+    currentMode = mode;
 
-    setSelected(renderBtn, resolvedMode === VIEW_MODE_RENDER);
-    setSelected(sourceBtn, resolvedMode === VIEW_MODE_SOURCE);
+    setSelected(renderBtn, mode === VIEW_MODE.RENDER);
+    setSelected(sourceBtn, mode === VIEW_MODE.SOURCE);
 
     if (previewFrame?.classList && typeof previewFrame.classList.toggle === "function") {
-      previewFrame.classList.toggle("is-source-mode", resolvedMode === VIEW_MODE_SOURCE);
+      previewFrame.classList.toggle("is-source-mode", mode === VIEW_MODE.SOURCE);
     }
 
     const targetShell =
@@ -143,13 +133,13 @@ export function initViewModeControls(
         : null);
 
     if (targetShell && typeof targetShell.setAttribute === "function") {
-      targetShell.setAttribute("data-view-mode", resolvedMode);
+      targetShell.setAttribute("data-view-mode", mode);
     }
 
-    syncVisibility(resolvedMode);
+    syncVisibility(mode);
 
     try {
-      storage.setItem(VIEW_MODE_KEY, resolvedMode);
+      storage.setItem(STORAGE_KEY_VIEW_MODE, mode);
     } catch {
       // Degradar silenciosamente si storage falla o está restringido
     }
@@ -170,21 +160,19 @@ export function initViewModeControls(
     syncVisibility(currentMode);
   }
 
-  // Leer modo guardado en sesión al inicio
-  let savedMode = VIEW_MODE_RENDER;
+  // Leer modo guardado en sesión al inicio con type guard
+  let savedMode: ViewMode = VIEW_MODE.RENDER;
   try {
-    const stored = storage.getItem(VIEW_MODE_KEY);
-    if (stored === VIEW_MODE_SOURCE) {
-      savedMode = VIEW_MODE_SOURCE;
-    }
+    const stored = storage.getItem(STORAGE_KEY_VIEW_MODE);
+    if (isViewMode(stored)) savedMode = stored;
   } catch {
-    savedMode = VIEW_MODE_RENDER;
+    savedMode = VIEW_MODE.RENDER;
   }
 
   applyViewMode(savedMode);
 
-  renderBtn.addEventListener("click", () => applyViewMode(VIEW_MODE_RENDER));
-  sourceBtn.addEventListener("click", () => applyViewMode(VIEW_MODE_SOURCE));
+  renderBtn.addEventListener("click", () => applyViewMode(VIEW_MODE.RENDER));
+  sourceBtn.addEventListener("click", () => applyViewMode(VIEW_MODE.SOURCE));
 
   return {
     applyViewMode,

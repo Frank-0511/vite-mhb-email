@@ -3,6 +3,8 @@
  * Handles Vite HMR events for email template live reload.
  */
 
+import { EVENTS } from "../../../../../../scripts/shared/contracts/constants/events.ts";
+
 /**
  * Paths that affect all templates and should refresh the active preview.
  * @type {string[]}
@@ -152,7 +154,7 @@ export function setupPreviewHmr(
     }
   }
 
-  hot.on("email-source-changed", handleEmailSourceChanged);
+  hot.on(EVENTS.EMAIL_SOURCE_CHANGED, handleEmailSourceChanged);
 
   return handleEmailSourceChanged;
 }

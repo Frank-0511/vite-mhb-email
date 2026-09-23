@@ -3,22 +3,18 @@
  * Presenta el diagnóstico de forma segura mediante textContent puro sin interpolar HTML.
  */
 
+import { RENDER_ERROR_MESSAGE } from "../../../../../../scripts/shared/contracts/constants/render-error.ts";
+
 type RenderErrorDisplayData = {
   message?: string;
   cause?: string;
   location?: { path: string; line?: number; column?: number };
 };
 
-type RenderErrorView = {
+export type RenderErrorView = {
   show: (error?: unknown) => void;
   clear: () => void;
 };
-
-/**
- * @typedef {Object} RenderErrorView
- * @property {(error?: RenderErrorDisplayData | null) => void} show - Muestra el error formateado.
- * @property {() => void} clear - Oculta y limpia el panel de error.
- */
 
 /**
  * Formatea la ubicación relativa con línea y columna si están presentes.
@@ -52,7 +48,7 @@ export function createRenderErrorView(
 
       const lines = [];
       const displayError = error as RenderErrorDisplayData | null | undefined;
-      const message = displayError?.message || "No se pudo renderizar el template.";
+      const message = displayError?.message || RENDER_ERROR_MESSAGE;
       lines.push(message);
 
       if (displayError?.cause) {

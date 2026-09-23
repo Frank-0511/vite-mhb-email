@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
+import { RENDER_ERROR_MESSAGE } from "../../../../../../scripts/shared/contracts/constants/render-error.ts";
 import {
   parseRenderErrorResponse,
   parseSafeRenderLocation,
-  RENDER_ERROR_MESSAGE,
   RenderApiError,
 } from "./render-error-parser.ts";
 

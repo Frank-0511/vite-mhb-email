@@ -2,41 +2,13 @@
  * @fileoverview Capa de renderizado y manipulación segura del DOM para el modal de copiar HTML.
  */
 
-/**
- * @typedef {"idle" | "loading" | "success" | "clipboard-error" | "error"} ModalState
- */
-export type ModalState = "idle" | "loading" | "success" | "clipboard-error" | "error";
+import { EXPORT_MODE } from "../../constants.ts";
+import type { ExportMode, ModalState } from "../../types.ts";
 
-/**
- * @typedef {Object} ModalElements
- * @property {HTMLElement | null} [buildActionBtn]
- * @property {HTMLElement | null} [existingActionBtn]
- * @property {HTMLInputElement | null} [modeCopyRadio]
- * @property {HTMLInputElement | null} [modeDownloadRadio]
- * @property {HTMLElement | null} [textExportBuild]
- * @property {HTMLElement | null} [descExportBuild]
- * @property {HTMLElement | null} [textExportExisting]
- * @property {HTMLElement | null} [descExportExisting]
- * @property {HTMLElement | null} [templateChip]
- * @property {HTMLElement | null} [actionsSub]
- * @property {HTMLElement | null} [iconExportExistingCopy]
- * @property {HTMLElement | null} [iconExportExistingDownload]
- * @property {HTMLElement | null} [buildAndCopyBtn]
- * @property {HTMLElement | null} [copyExistingBtn]
- * @property {HTMLElement | null} [buildAndDownloadBtn]
- * @property {HTMLElement | null} [downloadExistingBtn]
- * @property {HTMLElement | null} [modalStatus]
- */
 export type ModalElements = {
   [key: string]: HTMLElement | HTMLInputElement | null | undefined;
 };
 
-/**
- * @typedef {Object} RenderModalStateOptions
- * @property {string} [message]
- * @property {() => void} [onRetry]
- * @property {Document} [doc]
- */
 export type RenderModalStateOptions = {
   message?: string;
   onRetry?: () => void;
@@ -79,8 +51,8 @@ function setActionButtonsDisabled(elements: ModalElements, disabled: boolean): v
  * @param {"copy" | "download"} mode
  * @returns {void}
  */
-export function updateExportModeView(elements: ModalElements, mode: "copy" | "download"): void {
-  const isCopy = mode === "copy";
+export function updateExportModeView(elements: ModalElements, mode: ExportMode): void {
+  const isCopy = mode === EXPORT_MODE.COPY;
   if (elements.actionsSub) {
     elements.actionsSub.textContent = isCopy
       ? "Acciones para copiar al portapapeles:"

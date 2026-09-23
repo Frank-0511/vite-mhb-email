@@ -2,15 +2,19 @@ import {
   STORAGE_KEY_VIEWPORT_MODE,
   STORAGE_KEY_VIEWPORT_CUSTOM_WIDTH,
 } from "../../../../shared/utils/storage-keys.ts";
+import { VIEWPORT_MODE } from "../../constants.ts";
+import { isViewportMode } from "../../guards.ts";
+import type { ViewportMode } from "../../types.ts";
 
 const CUSTOM_WIDTH_MIN = 280;
 const CUSTOM_WIDTH_MAX = 1200;
 const DEFAULT_DESKTOP_WIDTH = 600;
 
-const VIEWPORT_PRESETS = {
-  desktop: DEFAULT_DESKTOP_WIDTH,
-  mobile: 375,
-};
+const VIEWPORT_PRESETS: Record<typeof VIEWPORT_MODE.DESKTOP | typeof VIEWPORT_MODE.MOBILE, number> =
+  {
+    desktop: DEFAULT_DESKTOP_WIDTH,
+    mobile: 375,
+  };
 
 export type ViewportControlElements = {
   desktopButton: HTMLButtonElement;
@@ -29,7 +33,7 @@ export type ViewportStorage = {
 
 export type ViewportController = {
   applyViewport: (
-    mode: string,
+    mode: ViewportMode,
     customWidth?: string | number,
     options?: { syncInput?: boolean },
   ) => void;
@@ -41,6 +45,12 @@ const memoryFallbackStorage: ViewportStorage = {
   getItem: () => null,
   setItem: () => {},
 };
+
+function getDefaultStorage(): ViewportStorage {
+  if (typeof window !== "undefined" && window.localStorage) return window.localStorage;
+  if (typeof localStorage !== "undefined") return localStorage;
+  return memoryFallbackStorage;
+}
 
 const SELECTED_CLASSES = [
   "bg-sky-500",
@@ -97,50 +107,45 @@ export function getCommittedCustomViewportWidth(
 /** Initializes the preview viewport controls. */
 export function initViewportControls(
   elements: ViewportControlElements,
-  storage = typeof window !== "undefined"
-    ? window.localStorage
-    : typeof localStorage !== "undefined"
-      ? localStorage
-      : memoryFallbackStorage,
+  storage: ViewportStorage = getDefaultStorage(),
 ): ViewportController {
   function setSelected(button: HTMLButtonElement, isSelected: boolean): void {
     button.classList.remove(...SELECTED_CLASSES, ...UNSELECTED_CLASSES);
     button.classList.add(...(isSelected ? SELECTED_CLASSES : UNSELECTED_CLASSES));
   }
 
-  function setActiveViewportButton(active: string): void {
-    setSelected(elements.desktopButton, active === "desktop");
-    setSelected(elements.mobileButton, active === "mobile");
-    setSelected(elements.customButton, active === "custom");
+  function setActiveViewportButton(active: ViewportMode): void {
+    setSelected(elements.desktopButton, active === VIEWPORT_MODE.DESKTOP);
+    setSelected(elements.mobileButton, active === VIEWPORT_MODE.MOBILE);
+    setSelected(elements.customButton, active === VIEWPORT_MODE.CUSTOM);
   }
 
   function applyViewport(
-    mode: string,
+    mode: ViewportMode,
     customWidth?: string | number,
     options: { syncInput?: boolean } = {},
   ): void {
-    const resolvedMode = mode === "mobile" || mode === "custom" ? mode : "desktop";
     const width =
-      resolvedMode === "custom"
+      mode === VIEWPORT_MODE.CUSTOM
         ? clampViewportWidth(customWidth, DEFAULT_DESKTOP_WIDTH)
-        : VIEWPORT_PRESETS[resolvedMode];
+        : VIEWPORT_PRESETS[mode];
     const syncInput = options.syncInput !== false;
 
     elements.previewFrame.style.width = `${width}px`;
     if (elements.widthIndicator) {
       elements.widthIndicator.textContent = `${width}px`;
     }
-    elements.customInputWrap.classList.toggle("hidden", resolvedMode !== "custom");
-    elements.customInputWrap.classList.toggle("flex", resolvedMode === "custom");
+    elements.customInputWrap.classList.toggle("hidden", mode !== VIEWPORT_MODE.CUSTOM);
+    elements.customInputWrap.classList.toggle("flex", mode === VIEWPORT_MODE.CUSTOM);
 
-    if (resolvedMode === "custom" && syncInput) {
+    if (mode === VIEWPORT_MODE.CUSTOM && syncInput) {
       elements.customInput.value = String(width);
     }
 
-    setActiveViewportButton(resolvedMode);
+    setActiveViewportButton(mode);
 
-    storage.setItem(STORAGE_KEY_VIEWPORT_MODE, resolvedMode);
-    if (resolvedMode === "custom") {
+    storage.setItem(STORAGE_KEY_VIEWPORT_MODE, mode);
+    if (mode === VIEWPORT_MODE.CUSTOM) {
       storage.setItem(STORAGE_KEY_VIEWPORT_CUSTOM_WIDTH, String(width));
     }
   }
@@ -152,23 +157,26 @@ export function initViewportControls(
     );
     const width = getCommittedCustomViewportWidth(elements.customInput.value, fallbackWidth);
 
-    applyViewport("custom", width);
+    applyViewport(VIEWPORT_MODE.CUSTOM, width);
   }
 
-  const savedViewportMode = storage.getItem(STORAGE_KEY_VIEWPORT_MODE) || "desktop";
+  const rawSavedMode = storage.getItem(STORAGE_KEY_VIEWPORT_MODE);
+  const savedViewportMode: ViewportMode = isViewportMode(rawSavedMode)
+    ? rawSavedMode
+    : VIEWPORT_MODE.DESKTOP;
   const savedCustomWidth =
     storage.getItem(STORAGE_KEY_VIEWPORT_CUSTOM_WIDTH) || String(DEFAULT_DESKTOP_WIDTH);
 
   applyViewport(savedViewportMode, savedCustomWidth);
 
-  elements.desktopButton.addEventListener("click", () => applyViewport("desktop"));
-  elements.mobileButton.addEventListener("click", () => applyViewport("mobile"));
+  elements.desktopButton.addEventListener("click", () => applyViewport(VIEWPORT_MODE.DESKTOP));
+  elements.mobileButton.addEventListener("click", () => applyViewport(VIEWPORT_MODE.MOBILE));
   elements.customButton.addEventListener("click", () => {
     const storedCustomWidth =
       storage.getItem(STORAGE_KEY_VIEWPORT_CUSTOM_WIDTH) ||
       elements.customInput.value ||
       String(DEFAULT_DESKTOP_WIDTH);
-    applyViewport("custom", storedCustomWidth);
+    applyViewport(VIEWPORT_MODE.CUSTOM, storedCustomWidth);
     elements.customInput.focus();
   });
   elements.customInput.addEventListener("input", () => {
@@ -192,17 +200,10 @@ export function initViewportControls(
 /**
  * Inicializa los controles de viewport consultando los elementos estándar del DOM.
  * Devuelve el controlador o null si no se encuentran los elementos requeridos.
- *
- * @param {Document | { getElementById: (id: string) => any } | null} [dom]
- * @returns {ViewportController | null}
  */
 export function setupPreviewViewport(
   dom: ViewportDocument | null = typeof document !== "undefined" ? document : null,
-  storage = typeof window !== "undefined"
-    ? window.localStorage
-    : typeof localStorage !== "undefined"
-      ? localStorage
-      : memoryFallbackStorage,
+  storage: ViewportStorage = getDefaultStorage(),
 ): ViewportController | null {
   if (!dom || typeof dom.getElementById !== "function") return null;
 
