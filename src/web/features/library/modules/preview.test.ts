@@ -1,12 +1,11 @@
-// @ts-check
 import { afterEach, beforeEach, describe, expect, mock, test } from "bun:test";
-import { previewManager } from "./preview.js";
+import { previewManager } from "./preview.ts";
 
 /**
  * Mock DOM element exposing only the `style.display` surface previewManager
  * reads/writes.
  */
-function createMockElement() {
+function createMockElement(): { style: { display: string }; dataset: Record<string, string> } {
   return { style: { display: "" }, dataset: {} };
 }
 
@@ -19,19 +18,23 @@ function createMockIframe() {
 
 describe("previewManager", () => {
   /** @type {ReturnType<typeof createMockIframe>} */
-  let iframe;
+  let iframe: ReturnType<typeof createMockIframe>;
   /** @type {ReturnType<typeof createMockElement>} */
-  let emptyPreview;
+  let emptyPreview: ReturnType<typeof createMockElement>;
   /** @type {ReturnType<typeof createMockElement>} */
-  let skeleton;
+  let skeleton: ReturnType<typeof createMockElement>;
   /** @type {typeof fetch} */
-  let originalFetch;
+  let originalFetch: typeof fetch;
 
   beforeEach(() => {
     iframe = createMockIframe();
     emptyPreview = createMockElement();
     skeleton = createMockElement();
-    previewManager.init(iframe, emptyPreview, skeleton);
+    previewManager.init(
+      iframe as unknown as HTMLIFrameElement,
+      emptyPreview as unknown as HTMLElement,
+      skeleton as unknown as HTMLElement,
+    );
     originalFetch = globalThis.fetch;
   });
 
@@ -75,15 +78,13 @@ describe("previewManager", () => {
 
   test("render with showLoading shows the skeleton during the fetch and hides it after success", async () => {
     /** @type {(value?: unknown) => void} */
-    let resolveFetch = () => {};
-    globalThis.fetch = /** @type {any} */ (
-      mock(
-        () =>
-          new Promise((resolve) => {
-            resolveFetch = resolve;
-          }),
-      )
-    );
+    let resolveFetch: (value: unknown) => void = () => {};
+    globalThis.fetch = mock(
+      () =>
+        new Promise<unknown>((resolve) => {
+          resolveFetch = resolve;
+        }),
+    ) as unknown as typeof fetch;
 
     const renderPromise = previewManager.render("hero-section", "v1", {}, { showLoading: true });
 
@@ -99,7 +100,7 @@ describe("previewManager", () => {
   });
 
   test("render with showLoading forwards the atomic design type to the skeleton", () => {
-    globalThis.fetch = /** @type {any} */ (mock(() => new Promise(() => {})));
+    globalThis.fetch = mock(() => new Promise<unknown>(() => {})) as unknown as typeof fetch;
 
     previewManager.render("cta-button", "v1", {}, { showLoading: true, type: "atoms" });
 
@@ -107,9 +108,9 @@ describe("previewManager", () => {
   });
 
   test("render without showLoading never touches the skeleton", async () => {
-    globalThis.fetch = /** @type {any} */ (
-      mock(() => Promise.resolve(/** @type {any} */ ({ text: () => Promise.resolve("<p>ok</p>") })))
-    );
+    globalThis.fetch = mock(() =>
+      Promise.resolve(/** @type {any} */ { text: () => Promise.resolve("<p>ok</p>") }),
+    ) as unknown as typeof fetch;
 
     await previewManager.render("hero-section", "v1", {});
 
@@ -118,7 +119,9 @@ describe("previewManager", () => {
   });
 
   test("render with showLoading hides the skeleton even when the fetch fails", async () => {
-    globalThis.fetch = /** @type {any} */ (mock(() => Promise.reject(new Error("network down"))));
+    globalThis.fetch = mock(() =>
+      Promise.reject(new Error("network down")),
+    ) as unknown as typeof fetch;
     const originalConsoleError = console.error;
     console.error = mock(() => {});
 

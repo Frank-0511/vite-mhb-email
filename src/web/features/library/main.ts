@@ -3,16 +3,17 @@
  * Handles component selection, preview rendering, and form management for components-library.html
  */
 
-import { queryRequired, querySafe } from "../../shared/utils/dom-helpers.js";
-import { debounce } from "../../shared/utils/http-helpers.js";
-import { initLucideIcons } from "../../shared/utils/lucide-setup.js";
-import { STORAGE_KEY_SELECTED_COMPONENT } from "../../shared/utils/storage-keys.js";
-import "../../shared/utils/theme-toggle-component.js"; // Web Component auto-registers
-import { componentsManager } from "./modules/components-api.js";
-import { formRenderer } from "./modules/form-renderer.js";
-import { listRenderer } from "./modules/list-renderer.js";
-import { previewManager } from "./modules/preview.js";
-import { search } from "./modules/search.js";
+import { queryRequired, querySafe } from "../../shared/utils/dom-helpers.ts";
+import { debounce } from "../../shared/utils/http-helpers.ts";
+import { initLucideIcons } from "../../shared/utils/lucide-setup.ts";
+import { STORAGE_KEY_SELECTED_COMPONENT } from "../../shared/utils/storage-keys.ts";
+import "../../shared/utils/theme-toggle-component.ts"; // Web Component auto-registers
+import { componentsManager } from "./modules/components-api.ts";
+import { formRenderer } from "./modules/form-renderer.ts";
+import { listRenderer } from "./modules/list-renderer.ts";
+import { previewManager } from "./modules/preview.ts";
+import { search } from "./modules/search.ts";
+import { createLibraryState, type LibraryComponent } from "./modules/state.ts";
 import "./styles/library.css";
 
 /**
@@ -20,12 +21,20 @@ import "./styles/library.css";
  * Manages the component library UI and state
  */
 class ComponentLibraryApp {
+  currentComponent: LibraryComponent | null;
+  currentVariant: string | null;
+  currentType: string | null;
+  formData: Record<string, unknown>;
+  allComponents: LibraryComponent[];
+  updatePreview: () => void;
+
   constructor() {
-    this.currentComponent = null;
-    this.currentVariant = null;
-    this.currentType = null;
-    this.formData = {};
-    this.allComponents = [];
+    const state = createLibraryState();
+    this.currentComponent = state.currentComponent;
+    this.currentVariant = state.currentVariant;
+    this.currentType = state.currentType;
+    this.formData = state.formData;
+    this.allComponents = state.allComponents;
 
     // Debounced preview updater
     this.updatePreview = debounce(() => {
@@ -38,21 +47,22 @@ class ComponentLibraryApp {
    * @async
    * @returns {Promise<void>}
    */
-  async init() {
+  async init(): Promise<void> {
     // Initialize Lucide icons
     initLucideIcons();
 
     // Preview manager is initialized by themeToggleComponent
     // which handles theme management across pages
     previewManager.init(
-      /** @type {HTMLIFrameElement} */ (queryRequired("preview-iframe", "ComponentLibrary")),
+      /** @type {HTMLIFrameElement} */ queryRequired("preview-iframe", "ComponentLibrary"),
       queryRequired("empty-preview", "ComponentLibrary"),
       queryRequired("preview-skeleton", "ComponentLibrary"),
     );
 
     // Initialize list renderer
-    listRenderer.init(queryRequired("component-list", "ComponentLibrary"), (comp) =>
-      this.selectComponent(comp),
+    listRenderer.init(
+      queryRequired("component-list", "ComponentLibrary"),
+      (comp: LibraryComponent) => this.selectComponent(comp),
     );
 
     // Initialize form renderer
@@ -60,7 +70,7 @@ class ComponentLibraryApp {
       queryRequired("form-container", "ComponentLibrary"),
       queryRequired("form-placeholder", "ComponentLibrary"),
       () => this.updatePreview(),
-      (variant) => {
+      (variant: string) => {
         this.currentVariant = variant;
         this.updatePreview();
       },
@@ -68,8 +78,8 @@ class ComponentLibraryApp {
 
     // Initialize search
     search.init(
-      /** @type {HTMLInputElement} */ (queryRequired("search-input", "ComponentLibrary")),
-      (query) => this.handleSearch(query),
+      /** @type {HTMLInputElement} */ queryRequired("search-input", "ComponentLibrary"),
+      (query: string) => this.handleSearch(query),
     );
 
     // Load components
@@ -96,7 +106,7 @@ class ComponentLibraryApp {
    * @param {Object} comp - Component object
    * @returns {Promise<void>}
    */
-  async selectComponent(comp) {
+  async selectComponent(comp: LibraryComponent): Promise<void> {
     // Reveal the loading skeleton immediately: schema and render are two
     // sequential fetches, and the previous component must not linger on
     // screen while either of them is in flight. Its shape reflects the
@@ -150,7 +160,13 @@ class ComponentLibraryApp {
     const componentId = this.currentComponent._id || this.currentComponent.id;
     await previewManager.render(componentId, this.currentVariant, this.formData, {
       showLoading,
-      type: this.currentType,
+      type:
+        this.currentType === "atoms" ||
+        this.currentType === "molecules" ||
+        this.currentType === "organisms" ||
+        this.currentType === "templates"
+          ? this.currentType
+          : undefined,
     });
 
     // Maintain selection highlight in list
@@ -166,7 +182,7 @@ class ComponentLibraryApp {
     const componentId = this.currentComponent._id || this.currentComponent.id;
     const allItems = document.querySelectorAll("[data-component-id]");
     allItems.forEach((item) => {
-      const el = /** @type {HTMLElement} */ (item);
+      const el = item as HTMLElement;
       if (el.dataset.componentId === componentId) {
         el.classList.add("selected");
       } else {
@@ -180,7 +196,7 @@ class ComponentLibraryApp {
    * @param {string} query - Search query
    * @returns {void}
    */
-  handleSearch(query) {
+  handleSearch(query: string): void {
     const filtered = this.allComponents.filter((c) =>
       c.name.toLowerCase().includes(query.toLowerCase()),
     );

@@ -14,10 +14,11 @@ import {
   Puzzle,
   Sun,
 } from "lucide";
+import type { LibraryComponent, LibraryGroup } from "./state.ts";
 
 export const listRenderer = {
-  container: null,
-  onComponentSelect: null,
+  container: null as HTMLElement | null,
+  onComponentSelect: null as ((component: LibraryComponent) => void) | null,
 
   // Map Tabler icon names to Lucide equivalents
   iconMap: {
@@ -30,18 +31,19 @@ export const listRenderer = {
     package: "package",
     box: "box",
     dna: "dna",
-  },
+  } as Record<string, string>,
 
-  mapIconName(iconName) {
+  mapIconName(iconName: string): string {
     return this.iconMap[iconName] || iconName;
   },
 
-  init(containerEl, onSelect) {
+  init(containerEl: HTMLElement, onSelect: (component: LibraryComponent) => void): void {
     this.container = containerEl;
     this.onComponentSelect = onSelect;
   },
 
-  render(components, groups) {
+  render(components: LibraryComponent[], groups: LibraryGroup[]): void {
+    if (!this.container || !this.onComponentSelect) return;
     this.container.innerHTML = "";
 
     if (components.length === 0) {
@@ -93,7 +95,7 @@ export const listRenderer = {
             el.classList.remove("selected");
           });
           item.classList.add("selected");
-          this.onComponentSelect(comp);
+          this.onComponentSelect?.(comp);
         });
 
         itemsContainer.appendChild(item);
