@@ -132,7 +132,7 @@
     "lint-staged": "16.4.0",
     "maizzle": "1.1.0",
     "markdownlint-cli2": "0.22.1",
-    "nodemailer": "8.0.7",
+    "nodemailer": "10.0.10",
     "postcss": "8.5.12",
     "prettier": "3.8.3",
     "puppeteer": "24.42.0",
