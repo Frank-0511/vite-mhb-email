@@ -10,6 +10,13 @@ description: Aplicar calidad, seguridad, JSDoc, validación runtime, errores, de
   o typedefs a `Object` y explicar cualquier `any`.
 - Mantener ESLint sobre `scripts/`, `src/web/`, `vite.config.js` y
   `maizzle.config.js`. No desactivar reglas inline sin razón local.
+- Aplicar linting con tipos sobre `tsconfig.strict.json` (reglas `@typescript-eslint`:
+  `no-floating-promises`, `no-misused-promises`, `await-thenable`,
+  `no-redundant-type-constituents`, `require-await`, `return-await`).
+- Validar convención de nombres y estructura con `eslint-plugin-check-file` (kebab-case
+  obligatorio, sin prefijo redundante de carpeta padre ni nombres genéricos) y con
+  el validador de árbol `scripts/validators/lint-guards/file-tree.test.ts` (límites
+  de 250 líneas no-test, 400 líneas tests y máximo 8 archivos por carpeta).
 - Validar en runtime rutas, nombres de templates, JSON, query/body y variantes.
   Resolver entradas dentro de su raíz permitida; no usar shell con datos de
   usuario.

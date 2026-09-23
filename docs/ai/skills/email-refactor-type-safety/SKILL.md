@@ -11,7 +11,9 @@ description: Refactorizar módulos, extraer JavaScript embebido, modularizar fro
   extraer una unidad por vez, conservar comportamiento y añadir JSDoc o tipos nativos en los límites.
   Ningún archivo fuente no-test debe superar 250 líneas al cierre.
 - Estructurar en subdirectorios por dominio cuando un directorio supere 8 archivos
-  fuente (sin contar tests co-locados).
+  fuente (sin contar tests co-locados). Nombrar cada archivo según su sufijo de rol
+  (`.contract.ts`, `.view.ts`, `.parser.ts`, `.store.ts`, `.types.ts`, etc.) sin
+  prefijar el directorio padre, conforme a `email-code-conventions`.
 - Reutilizar helpers y constantes de `shared/` antes de crear nuevas utilidades.
   Mantener JavaScript embebido limitado a bootstrap. Llevar UI, fetch, editor,
   storage e iframe a módulos de feature o shared apropiados.

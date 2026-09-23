@@ -1,0 +1,4 @@
+interface:
+  display_name: "Convenciones de código"
+  short_description: "Aplica convenciones de nombres, estructura y promesas"
+  default_prompt: "Usa $email-code-conventions al crear, renombrar o mover archivos y módulos en EmailForge Toolkit."

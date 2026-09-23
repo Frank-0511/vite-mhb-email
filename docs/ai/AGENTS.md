@@ -32,6 +32,7 @@ validar y exportar templates HTML de email. Todo cambio debe preservar:
 | Tokens, temas dark/light o contraste del web             | `email-visual-design-system` |
 | Layout responsive web, Grid, Flexbox o container queries | `email-responsive-web-ui`    |
 | Refactor, modularización o tipado gradual                | `email-refactor-type-safety` |
+| Convenciones de código, nombres, roles o estructura      | `email-code-conventions`     |
 | Evidencias, ramas, commits o cierre                      | `task-verification`          |
 | Actualizar `docs/implementation/STATUS.md`               | `task-status-management`     |
 
