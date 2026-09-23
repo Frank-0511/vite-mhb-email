@@ -1,7 +1,6 @@
-// @ts-check
 import { describe, expect, it, mock } from "bun:test";
-import { EfSkeleton } from "./ef-skeleton.js";
-import { createMockElement } from "../../features/preview/modules/runtime/test-helpers.js";
+import { createMockElement } from "../../features/preview/modules/runtime/test-helpers.ts";
+import { EfSkeleton } from "./ef-skeleton.ts";
 
 describe("EfSkeleton Web Component", () => {
   function createTestSkeleton(attrs = {}) {
@@ -9,7 +8,7 @@ describe("EfSkeleton Web Component", () => {
     const mockEl = createMockElement([], attrs);
 
     // Asignar métodos mock sobre la instancia para simular DOM en bun test
-    const mockSkeleton = /** @type {any} */ (skeleton);
+    const mockSkeleton = skeleton as unknown as Record<string, unknown>;
     mockSkeleton.getAttribute = mockEl.getAttribute;
     mockSkeleton.setAttribute = mockEl.setAttribute;
     mockSkeleton.hasAttribute = mockEl.hasAttribute;
@@ -25,14 +24,14 @@ describe("EfSkeleton Web Component", () => {
     });
 
     const target = createMockElement(["hidden"]);
-    const doc = /** @type {any} */ ({
-      getElementById(id) {
+    const doc = /** @type {any} */ {
+      getElementById(id: string) {
         if (id === "target-content") return target;
         return null;
       },
-    });
+    };
 
-    skeleton.reveal(doc);
+    skeleton.reveal(doc as unknown as Document);
 
     expect(skeleton.classList.contains("hidden")).toBe(true);
     expect(target.classList.contains("hidden")).toBe(false);
@@ -45,14 +44,14 @@ describe("EfSkeleton Web Component", () => {
     });
 
     const target = createMockElement(["hidden"]);
-    const doc = /** @type {any} */ ({
-      getElementById(id) {
+    const doc = /** @type {any} */ {
+      getElementById(id: string) {
         if (id === "target-flex") return target;
         return null;
       },
-    });
+    };
 
-    skeleton.reveal(doc);
+    skeleton.reveal(doc as unknown as Document);
 
     expect(skeleton.classList.contains("hidden")).toBe(true);
     expect(target.classList.contains("hidden")).toBe(false);
@@ -66,14 +65,14 @@ describe("EfSkeleton Web Component", () => {
     });
 
     const target = createMockElement(["hidden"]);
-    const doc = /** @type {any} */ ({
-      getElementById(id) {
+    const doc = /** @type {any} */ {
+      getElementById(id: string) {
         if (id === "target-removable") return target;
         return null;
       },
-    });
+    };
 
-    skeleton.reveal(doc);
+    skeleton.reveal(doc as unknown as Document);
 
     expect(skeleton.remove).toHaveBeenCalled();
     expect(target.classList.contains("hidden")).toBe(false);
@@ -81,21 +80,21 @@ describe("EfSkeleton Web Component", () => {
 
   it("funciona correctamente sin atributo 'for' (solo oculta o elimina el skeleton)", () => {
     const { skeleton } = createTestSkeleton();
-    const doc = /** @type {any} */ ({
+    const doc = /** @type {any} */ {
       getElementById: () => null,
-    });
+    };
 
-    expect(() => skeleton.reveal(doc)).not.toThrow();
+    expect(() => skeleton.reveal(doc as unknown as Document)).not.toThrow();
     expect(skeleton.classList.contains("hidden")).toBe(true);
   });
 
   it("no lanza error si el target especificado en 'for' no existe en el documento", () => {
     const { skeleton } = createTestSkeleton({ for: "non-existent" });
-    const doc = /** @type {any} */ ({
+    const doc = /** @type {any} */ {
       getElementById: () => null,
-    });
+    };
 
-    expect(() => skeleton.reveal(doc)).not.toThrow();
+    expect(() => skeleton.reveal(doc as unknown as Document)).not.toThrow();
     expect(skeleton.classList.contains("hidden")).toBe(true);
   });
 });

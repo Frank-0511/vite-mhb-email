@@ -1,4 +1,3 @@
-// @ts-check
 /**
  * @fileoverview Web Component nativo <ef-skeleton> (Light DOM).
  *
@@ -12,20 +11,16 @@
  * encapsular los IDs consumidos por scripts, pruebas y accesibilidad.
  */
 
-/** @type {typeof HTMLElement} */
-const BaseElement =
-  typeof HTMLElement !== "undefined" ? HTMLElement : /** @type {any} */ (class {});
+const BaseElement = (
+  typeof HTMLElement === "undefined" ? class {} : HTMLElement
+) as typeof HTMLElement;
 
 /**
  * @class EfSkeleton
  * @extends {BaseElement}
  */
 export class EfSkeleton extends BaseElement {
-  /**
-   * @param {Document} [doc] - Objeto Document opcional (por defecto ownerDocument o document global).
-   * @returns {void}
-   */
-  reveal(doc) {
+  reveal(doc?: Document): void {
     const documentObj =
       doc ||
       (this.ownerDocument ? this.ownerDocument : typeof document !== "undefined" ? document : null);

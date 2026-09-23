@@ -12,14 +12,17 @@
  * @returns {HTMLElement} The queried element
  * @throws {Error} If the element is not found
  */
-export function queryRequired(elementId, context = "Application") {
+export function queryRequired<T extends HTMLElement = HTMLElement>(
+  elementId: string,
+  context = "Application",
+): T {
   const el = document.getElementById(elementId);
   if (!el) {
     const msg = `[${context}] Required DOM element not found: #${elementId}. Make sure the HTML structure is correct.`;
     console.error(msg);
     throw new Error(msg);
   }
-  return el;
+  return el as T;
 }
 
 /**
@@ -31,14 +34,17 @@ export function queryRequired(elementId, context = "Application") {
  * @returns {HTMLElement} The queried element
  * @throws {Error} If the element is not found
  */
-export function querySelectorRequired(selector, context = "Application") {
+export function querySelectorRequired<T extends Element = HTMLElement>(
+  selector: string,
+  context = "Application",
+): T {
   const el = document.querySelector(selector);
   if (!el) {
     const msg = `[${context}] Required DOM element not found: ${selector}. Make sure the HTML structure is correct.`;
     console.error(msg);
     throw new Error(msg);
   }
-  return /** @type {HTMLElement} */ (el);
+  return el as T;
 }
 
 /**
@@ -47,8 +53,8 @@ export function querySelectorRequired(selector, context = "Application") {
  * @param {string} elementId - The ID of the element to query
  * @returns {HTMLElement | null} The element or null if not found
  */
-export function querySafe(elementId) {
-  return document.getElementById(elementId);
+export function querySafe<T extends HTMLElement = HTMLElement>(elementId: string): T | null {
+  return document.getElementById(elementId) as T | null;
 }
 
 /**
@@ -57,6 +63,6 @@ export function querySafe(elementId) {
  * @param {string} selector - The CSS selector of the element to query
  * @returns {HTMLElement | null} The element or null if not found
  */
-export function querySelectorSafe(selector) {
-  return document.querySelector(selector);
+export function querySelectorSafe<T extends Element = HTMLElement>(selector: string): T | null {
+  return document.querySelector(selector) as T | null;
 }

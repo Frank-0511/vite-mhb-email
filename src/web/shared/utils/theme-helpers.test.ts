@@ -1,6 +1,5 @@
-// @ts-check
 import { describe, expect, test } from "bun:test";
-import { STORAGE_KEY_APP_THEME, STORAGE_KEY_TEMPLATE_THEME } from "./storage-keys.js";
+import { STORAGE_KEY_APP_THEME, STORAGE_KEY_TEMPLATE_THEME } from "./storage-keys.ts";
 import {
   getAppTheme,
   getTemplateTheme,
@@ -8,7 +7,7 @@ import {
   setAppTheme,
   setTemplateTheme,
   toggleTemplateTheme,
-} from "./theme-helpers.js";
+} from "./theme-helpers.ts";
 
 /**
  * Crea un mock simple compatible con Storage.
@@ -16,18 +15,18 @@ import {
  * @param {Record<string, string>} [initial]
  * @returns {Storage}
  */
-function createMockStorage(initial = {}) {
-  const store = new Map(Object.entries(initial));
-  return /** @type {Storage} */ ({
-    getItem: (key) => store.get(key) ?? null,
-    setItem: (key, val) => store.set(key, String(val)),
-    removeItem: (key) => store.delete(key),
+function createMockStorage(initial: Record<string, string> = {}): Storage {
+  const store = new Map<string, string>(Object.entries(initial));
+  return {
+    getItem: (key: string) => store.get(key) ?? null,
+    setItem: (key: string, val: string) => store.set(key, String(val)),
+    removeItem: (key: string) => store.delete(key),
     clear: () => store.clear(),
-    key: (index) => Array.from(store.keys())[index] ?? null,
+    key: (index: number) => Array.from(store.keys())[index] ?? null,
     get length() {
       return store.size;
     },
-  });
+  };
 }
 
 describe("theme-helpers (gestión de temas web)", () => {

@@ -11,9 +11,12 @@
  * @param {number} delayMs - Delay in milliseconds before executing
  * @returns {Function} Debounced function that clears previous timers
  */
-export function debounce(fn, delayMs = 300) {
-  let timer = null;
-  return function debounced(...args) {
+export function debounce<Arguments extends unknown[]>(
+  fn: (this: unknown, ...args: Arguments) => void,
+  delayMs = 300,
+): (...args: Arguments) => void {
+  let timer: ReturnType<typeof setTimeout> | null = null;
+  return function debounced(this: unknown, ...args: Arguments): void {
     if (timer) clearTimeout(timer);
     timer = setTimeout(() => {
       fn.apply(this, args);
@@ -30,9 +33,9 @@ export function debounce(fn, delayMs = 300) {
  * @param {number} delayMs - Delay after last input (default 300ms)
  * @returns {() => void} Function to call on each input event
  */
-export function createDebounceTimer(callback, delayMs = 300) {
-  let timer = null;
-  return function reset() {
+export function createDebounceTimer(callback: () => void, delayMs = 300): () => void {
+  let timer: ReturnType<typeof setTimeout> | null = null;
+  return function reset(): void {
     if (timer) clearTimeout(timer);
     timer = setTimeout(callback, delayMs);
   };
@@ -46,7 +49,7 @@ export function createDebounceTimer(callback, delayMs = 300) {
  * @returns {Promise<Object>} Parsed JSON response
  * @throws {Error} If fetch fails or response is not JSON
  */
-export async function fetchJSON(url, options = {}) {
+export async function fetchJSON<T = unknown>(url: string, options: RequestInit = {}): Promise<T> {
   const response = await fetch(url, options);
   if (
     response.ok === false ||
@@ -54,7 +57,7 @@ export async function fetchJSON(url, options = {}) {
   ) {
     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
   }
-  return response.json();
+  return (await response.json()) as T;
 }
 
 /**
@@ -65,7 +68,7 @@ export async function fetchJSON(url, options = {}) {
  * @returns {Promise<string>} Response text
  * @throws {Error} If fetch fails
  */
-export async function fetchText(url, options = {}) {
+export async function fetchText(url: string, options: RequestInit = {}): Promise<string> {
   const response = await fetch(url, options);
   if (
     response.ok === false ||
@@ -84,8 +87,8 @@ export async function fetchText(url, options = {}) {
  * @returns {Promise<Object>} Parsed JSON response
  * @throws {Error} If fetch or parsing fails
  */
-export function postJSON(url, data) {
-  return fetchJSON(url, {
+export function postJSON<T = unknown>(url: string, data: unknown): Promise<T> {
+  return fetchJSON<T>(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
@@ -100,7 +103,7 @@ export function postJSON(url, data) {
  * @returns {Promise<string>} Plain text response
  * @throws {Error} If fetch fails or response status is not OK
  */
-export function postText(url, data) {
+export function postText(url: string, data: unknown): Promise<string> {
   return fetchText(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -116,6 +119,6 @@ export function postText(url, data) {
  * @param {RequestInit} [init] - Fetch options
  * @returns {Promise<Response>}
  */
-export function sendRequest(input, init) {
+export function sendRequest(input: string | URL | Request, init?: RequestInit): Promise<Response> {
   return fetch(input, init);
 }
