@@ -66,6 +66,10 @@ asignado.
   claves de almacenamiento (`storage-keys.js`), breakpoints, encabezados o magic numbers.
   En frontend usar helpers centrales (`queryRequired`, `fetchJSON`, `debounce`) en vez
   de llamadas directas al DOM o `fetch()`.
+- Contratos aislados y tipado estricto: los contratos compartidos residen en
+  `scripts/shared/contracts/` como módulos hoja sin dependencias de Node.js ni
+  imports ascendentes. Se prohíbe `any` y `@typedef` en TypeScript (`.ts`); los
+  límites externos (storage, URL, red) deben validarse mediante type guards.
 - Menos es más: preferir eliminar código muerto o simplificar antes que agregar
   abstracciones preventivas. Un helper se justifica con ≥2 consumidores reales o
   manejo de error no trivial.

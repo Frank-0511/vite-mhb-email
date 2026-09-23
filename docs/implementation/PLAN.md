@@ -236,7 +236,23 @@ rediseños ni alteraciones de los contratos CLI, filesystem, email o ESP.
   - Objetos `as const` con tipo derivado; sin `enum` ni `const enum`. Objeto en `UPPER_SNAKE_CASE` y tipo en `PascalCase` (`VIEW_MODE` / `ViewMode`).
   - Los contratos server↔client viven en `scripts/shared/contracts/` como hoja aislada: sin `node:*`, sin imports fuera de la carpeta y excluida del barrel `scripts/shared/index.ts`, que reexporta módulos Node y no debe entrar al bundle del navegador. Allí vive también `Theme`.
   - Un objeto `as const` solo se crea si el conjunto de valores se usa en ≥2 archivos, cruza server↔client o se persiste/compara contra datos externos; en otro caso basta una unión literal local.
-  - Los tipos viven junto al módulo que los posee; `types.ts` solo si ≥2 archivos del directorio los consumen o para romper un ciclo; `src/web/shared/types/` solo con ≥2 features consumidoras. No se exportan tipos sin consumidor.
+  - Convención de organización:
+
+    | Qué                                                                        | Archivo                                  |
+    | -------------------------------------------------------------------------- | ---------------------------------------- |
+    | Objetos `as const`, literales, regex, números                              | `constants.ts`                           |
+    | Interfaces y uniones derivadas (`import type { X } from "./constants.ts"`) | `types.ts` (cero runtime)                |
+    | Type guards                                                                | `guards.ts`                              |
+    | Builders de rutas                                                          | `contracts/routes/`                      |
+    | `enum` / `const enum`                                                      | Prohibido (`erasableSyntaxOnly`, MHB-34) |
+
+    Ubicación:
+    - Server↔client: `scripts/shared/contracts/{constants,types,guards,routes}/<dominio>.ts`.
+    - Compartido web: `src/web/shared/{constants,types,guards}/` (`storage-keys.ts` no se mueve).
+    - Feature: `features/<f>/constants.ts`, `types.ts`, `guards.ts` (respeta ≤8 archivos por carpeta).
+    - Uso en un solo archivo: privado, sin `export`.
+      Todo lo que otro archivo importa vive en `constants`/`types`/`guards` y se importa desde ahí. Barrels solo como `index.ts` puro sin implementación.
+
 - **Pasos técnicos:**
   1. Re-scan con `rg` de `@typedef`, `any`, literales `/api/`, storage keys, header `X-ESP-Validation`, códigos de error, eventos (`email-source-changed`, `theme-changed`), firmas `mode|theme|state|status|tab|type|severity: string` y uniones inline repetidas; registrar el inventario antes en `STATUS.md`. Todo hallazgo fuera de estas categorías se escala.
   2. Crear `scripts/shared/contracts/` (`api-routes.ts`, `render-error.ts`, `events.ts`, `theme.ts`); server y client importan el archivo concreto, nunca un barrel.
@@ -249,6 +265,11 @@ rediseños ni alteraciones de los contratos CLI, filesystem, email o ESP.
   - Ninguna lectura de `localStorage`, `URLSearchParams`, `dataset` o JSON de red se convierte a unión con `as`; se usa type guard con fallback.
   - Valores de storage keys y rutas idénticos a los actuales (sin reset de preferencias ni cambio de API).
   - Cero `any`, cero `@typedef` en `.ts` y `consistent-type-imports` sin errores.
+  - Sin reexports en archivos de implementación; barrels únicamente como `index.ts` puro.
+  - Sin alias de símbolos ni tipos/constantes duplicados.
+  - Sin `Union | string` que colapse a `string`.
+  - Sin constantes ni tipos exportados sin consumidor real.
+  - Sin `enum` ni `const enum`.
 - **Validación automática:** lint, typecheck, test, formato, build, `validate-email`, `a11y-check`, hashes de `dist/*.html` idénticos al baseline y `git diff --check`.
 - **Validación manual:** Preview (render/source, viewport desktop/mobile/custom con persistencia tras recarga, dark/light, copy/download, error de render simulado y HMR) y Library (selección persistida y filtros por tipo).
 - **Evidencia requerida:** inventario antes/después del re-scan, lista de constantes creadas con sus consumidores, salida de los fixtures de guards y hashes.
