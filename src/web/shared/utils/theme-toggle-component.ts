@@ -15,6 +15,9 @@ export class ThemeToggle extends HTMLElement {
   private button!: HTMLButtonElement;
   private lightWrapper!: HTMLElement;
   private darkWrapper!: HTMLElement;
+  private handleThemeChanged = (): void => {
+    this.updateIcon();
+  };
 
   constructor() {
     super();
@@ -26,11 +29,11 @@ export class ThemeToggle extends HTMLElement {
     this.setupEventListeners();
     this.updateIcon();
     // Listen for theme changes from other instances
-    window.addEventListener("theme-changed", () => this.updateIcon());
+    window.addEventListener("theme-changed", this.handleThemeChanged);
   }
 
   disconnectedCallback(): void {
-    window.removeEventListener("theme-changed", () => this.updateIcon());
+    window.removeEventListener("theme-changed", this.handleThemeChanged);
   }
 
   /**

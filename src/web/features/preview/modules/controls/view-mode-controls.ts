@@ -4,21 +4,12 @@
  * recompilaciones redundantes, persistiendo el estado durante la sesión del navegador.
  */
 
-export const VIEW_MODE_KEY = "preview-view-mode";
+import { STORAGE_KEY_VIEW_MODE } from "../../../../shared/utils/storage-keys.ts";
+
+export const VIEW_MODE_KEY = STORAGE_KEY_VIEW_MODE;
 export const VIEW_MODE_RENDER = "render";
 export const VIEW_MODE_SOURCE = "source";
 
-/**
- * @typedef {Object} ViewModeElements
- * @property {HTMLButtonElement} renderBtn - Botón para activar vista renderizada.
- * @property {HTMLButtonElement} sourceBtn - Botón para activar código fuente.
- * @property {HTMLElement} iframe - Elemento iframe del template.
- * @property {HTMLElement} sourceContainer - Contenedor del visor de código fuente.
- * @property {HTMLElement} sourceCode - Elemento <code> que contiene el HTML escapado.
- * @property {HTMLElement | null} [skeleton] - Elemento DOM del skeleton inicial.
- * @property {HTMLElement | null} [previewFrame] - Elemento contenedor de previsualización / código.
- * @property {HTMLElement | null} [shell] - Elemento raíz o shell que contiene data-view-mode.
- */
 export type ViewModeElements = {
   renderBtn: HTMLButtonElement;
   sourceBtn: HTMLButtonElement;
@@ -30,23 +21,11 @@ export type ViewModeElements = {
   shell?: HTMLElement | null;
 };
 
-/**
- * @typedef {Object} ViewModeStorage
- * @property {(key: string) => string | null} getItem
- * @property {(key: string, value: string) => void} setItem
- */
 export type ViewModeStorage = {
   getItem: (key: string) => string | null;
   setItem: (key: string, value: string) => void;
 };
 
-/**
- * @typedef {Object} ViewModeController
- * @property {(mode: string) => void} applyViewMode - Aplica el modo de vista ("render" o "source").
- * @property {() => string} getViewMode - Obtiene el modo de vista actual.
- * @property {(html: string) => void} updateSourceHtml - Actualiza el HTML compilado en memoria y en el visor.
- * @property {() => string} getSourceHtml - Obtiene el HTML compilado en memoria.
- */
 export type ViewModeController = {
   applyViewMode: (mode: string) => void;
   getViewMode: () => string;
@@ -54,40 +33,32 @@ export type ViewModeController = {
   getSourceHtml: () => string;
 };
 
-/** @type {ViewModeStorage} */
-const memoryFallbackStorage = {
+const memoryFallbackStorage: ViewModeStorage = {
   getItem: () => null,
   setItem: () => {},
 };
 
-/**
- * Actualiza las clases CSS y atributos ARIA de un botón de alternancia.
- *
- * @param {HTMLButtonElement} button
- * @param {boolean} isSelected
- * @returns {void}
- */
-function setSelected(button: HTMLButtonElement, isSelected: boolean): void {
-  const selectedClasses = [
-    "bg-sky-500",
-    "text-white",
-    "hover:bg-sky-600",
-    "dark:bg-sky-500",
-    "dark:text-white",
-    "dark:hover:bg-sky-600",
-  ];
-  const unselectedClasses = [
-    "bg-white",
-    "dark:bg-slate-900",
-    "text-slate-600",
-    "dark:text-slate-300",
-    "hover:bg-slate-100",
-    "dark:hover:bg-slate-800",
-  ];
+const SELECTED_CLASSES = [
+  "bg-sky-500",
+  "text-white",
+  "hover:bg-sky-600",
+  "dark:bg-sky-500",
+  "dark:text-white",
+  "dark:hover:bg-sky-600",
+];
+const UNSELECTED_CLASSES = [
+  "bg-white",
+  "dark:bg-slate-900",
+  "text-slate-600",
+  "dark:text-slate-300",
+  "hover:bg-slate-100",
+  "dark:hover:bg-slate-800",
+];
 
+function setSelected(button: HTMLButtonElement, isSelected: boolean): void {
   if (button.classList && typeof button.classList.remove === "function") {
-    button.classList.remove(...selectedClasses, ...unselectedClasses);
-    button.classList.add(...(isSelected ? selectedClasses : unselectedClasses));
+    button.classList.remove(...SELECTED_CLASSES, ...UNSELECTED_CLASSES);
+    button.classList.add(...(isSelected ? SELECTED_CLASSES : UNSELECTED_CLASSES));
   }
   if (typeof button.setAttribute === "function") {
     button.setAttribute("aria-pressed", isSelected ? "true" : "false");
