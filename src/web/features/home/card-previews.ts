@@ -1,11 +1,5 @@
-/**
- * Carga un preview cuando su tarjeta se aproxima al viewport y oculta su
- * skeleton al terminar la carga.
- *
- * @param {HTMLIFrameElement} iframe
- * @returns {void}
- */
-export function loadTemplateCardPreview(iframe) {
+/** Carga un preview y revela su contenido cuando el iframe termina. */
+export function loadTemplateCardPreview(iframe: HTMLIFrameElement): void {
   const previewSource = iframe.dataset.previewSrc;
   if (!previewSource) return;
 
@@ -26,11 +20,10 @@ export function loadTemplateCardPreview(iframe) {
  * En navegadores sin IntersectionObserver se conserva una carga segura de
  * todos los previews en lugar de dejar tarjetas vacías.
  *
- * @param {Document | HTMLElement} [root=document]
- * @returns {void}
+ * @param root - Document or feature root used to find preview iframes.
  */
-export function initializeTemplateCardPreviews(root = document) {
-  const previews = [...root.querySelectorAll("iframe[data-preview-src]")];
+export function initializeTemplateCardPreviews(root: Document | HTMLElement = document): void {
+  const previews = [...root.querySelectorAll<HTMLIFrameElement>("iframe[data-preview-src]")];
   if (previews.length === 0) return;
 
   if (typeof IntersectionObserver === "undefined") {
@@ -42,7 +35,7 @@ export function initializeTemplateCardPreviews(root = document) {
     (entries) => {
       for (const entry of entries) {
         if (!entry.isIntersecting) continue;
-        const preview = /** @type {HTMLIFrameElement} */ (entry.target);
+        const preview = entry.target as HTMLIFrameElement;
         loadTemplateCardPreview(preview);
         observer.unobserve(preview);
       }
