@@ -435,7 +435,85 @@ rediseños ni alteraciones de los contratos CLI, filesystem, email o ESP.
 - **Análisis de mantenibilidad:** los contratos son archivos pequeños de responsabilidad única; la regla de ≥2 consumidores evita abstracciones preventivas; se respetan ≤250 líneas por archivo y ≤8 archivos por directorio.
 - **Implementador:** perfil TypeScript transversal, medio.
 - **Revisor independiente:** revisor técnico distinto, con foco en la frontera server↔client.
-- **Condición de escalamiento:** el re-scan supera aproximadamente el doble de la línea base, se requiere cambiar un valor persistido o un endpoint, o un guard exige dependencia nueva.
+- **Condición de escalamiento:** el re-scan encuentra más del doble de candidatos que el catálogo inicial, se requiere cambiar un valor persistido o un endpoint, o un guard exige dependencia nueva.
+
+#### Re-scan inicial (paso 1)
+
+Ejecutar desde la raíz; el resultado es el inventario "antes" y sustituye
+cualquier cifra previa:
+
+```bash
+rg -n '@typedef' -g '*.ts' src scripts
+rg -n ':\s*any\b|\bas any\b|<any>|Array<any>' -g '*.ts' src scripts
+rg -n "[\"'\`]/api/" -g '*.ts' -g '!*.test.ts' src scripts
+rg -n 'storage\.(get|set|remove)Item|localStorage|_KEY\s*=' -g '*.ts' -g '!storage-keys.ts' src/web
+rg -n 'X-ESP-Validation|RENDER_FAILED|email-source-changed|theme-changed' -g '*.ts' src scripts
+rg -n '\b(mode|theme|state|status|tab|type|severity)\??:\s*string\b' -g '*.ts' src scripts
+rg -n '"(dark|light)"\s*\|\s*"(dark|light)"' -g '*.ts' src scripts
+```
+
+La opcionalidad excesiva (tipos exportados con mayoría de props `?:`) se revisa
+a mano sobre los tipos que se toquen; no se automatiza.
+
+#### Catálogo inicial de candidatos
+
+Veredicto previsto según la regla de creación de `as const`; el re-scan lo
+confirma o corrige:
+
+| Candidato                                              | Ubicación prevista                                              | Veredicto previsto                                 |
+| ------------------------------------------------------ | --------------------------------------------------------------- | -------------------------------------------------- |
+| Rutas `/api/*`, header `X-ESP-Validation`              | `scripts/shared/contracts/api-routes.ts`                        | Contrato                                           |
+| `RENDER_FAILED`, mensaje y causas seguras de render    | `scripts/shared/contracts/render-error.ts`                      | Contrato                                           |
+| `email-source-changed`, `theme-changed`                | `scripts/shared/contracts/events.ts`                            | Contrato                                           |
+| `THEME` (`light`, `dark`)                              | `scripts/shared/contracts/theme.ts`                             | Contrato (web + `a11y-check.ts`)                   |
+| `VIEW_MODE`, `VIEWPORT_MODE`                           | `preview/modules/controls/`                                     | `as const` (persistidos)                           |
+| `COMPONENT_TYPE`, `SEVERITY`                           | `library/modules/`, `scripts/validators/`                       | `as const` (múltiples consumidores)                |
+| `MODAL_STATE`, `EXPORT_MODE`, `PREVIEW_SYNC_STATUS`    | `preview/modules/copy-html/`, `preview/modules/runtime/`        | `as const` solo si se confirman ≥2 archivos        |
+| `MobileTab`, `FormPropType`, `CreationMode`, `Runtime` | Módulo propietario                                              | Unión local salvo que aparezcan ≥2 archivos        |
+| Plantilla de nombre `/^[a-z0-9-]+$/`                   | Reutilizar `scripts/shared/io/path-safety.ts` vía contrato hoja | Mover la regex a contrato si el cliente la importa |
+| Clases de toggle duplicadas y `jse-theme-*`            | `src/web/shared/utils/` o módulo editor                         | Extraer solo si siguen duplicadas tras MHB-33      |
+
+Firmas a tipar `string` → unión: `ViewModeController`, `ViewportController`,
+callbacks de `theme-manager`, `getTheme` de `render-api` y `activeTab` de
+`mobile-tabs`.
+
+#### Idioma y reglas complementarias
+
+```ts
+export const VIEW_MODE = { RENDER: "render", SOURCE: "source" } as const;
+export type ViewMode = (typeof VIEW_MODE)[keyof typeof VIEW_MODE];
+
+const VIEW_MODES: readonly string[] = Object.values(VIEW_MODE);
+export function isViewMode(value: unknown): value is ViewMode {
+  return typeof value === "string" && VIEW_MODES.includes(value);
+}
+```
+
+- El type guard solo se escribe cuando existe lectura externa real
+  (storage, URL, `dataset` o red).
+- **Opcionalidad:** al tocar un tipo con mayoría de `?:`, hacer requeridas las
+  props que siempre se pasan; usar `Partial<T>` explícito para inputs con
+  defaults; separar en unión discriminada si mezcla casos; documentar el `?:`
+  legítimo.
+- **`any`:** `unknown` + narrowing para datos externos; tipo concreto para
+  eventos y callbacks; un `any` justificado solo con
+  `eslint-disable-next-line` y descripción `-- motivo`.
+
+#### Guards y descartes
+
+| Guard                                  | Regla ESLint                                                                                                                                                                   |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Cero `any`                             | `@typescript-eslint/no-explicit-any: "error"`                                                                                                                                  |
+| `import type` consistente              | `@typescript-eslint/consistent-type-imports: "error"`                                                                                                                          |
+| Cero `@typedef` en `.ts`               | `no-warning-comments: ["error", { terms: ["@typedef"], location: "anywhere" }]` en `**/*.ts`                                                                                   |
+| Contratos solo en su carpeta           | `no-restricted-syntax` con `Literal[value=/^\/api\//]`, `Literal[value='X-ESP-Validation']` y equivalentes; override que lo desactiva en `scripts/shared/contracts/**` y tests |
+| Storage keys solo en `storage-keys.ts` | `no-restricted-syntax` sobre literales pasados a `getItem`/`setItem`/`removeItem` en `src/web/**`                                                                              |
+| Contratos aislados y sin barrel en web | `no-restricted-imports`: `node:*` y `../*` en `scripts/shared/contracts/**`; `scripts/shared/index.ts` en `src/web/**`                                                         |
+
+Descartados como guard bloqueante por ruido o falsos positivos: ratio de props
+opcionales, número de tipos por archivo, strings repetidos en ≥2 archivos y
+"`string` donde exista `as const`" (no lo detecta `tsc`; queda como criterio de
+revisión).
 
 ### MHB-34 — Cierre total y modo estricto TypeScript
 

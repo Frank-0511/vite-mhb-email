@@ -5,7 +5,7 @@
 - ID activo: MHB-33
 - Estado: En revisión
 - Implementador: Perfil TypeScript/frontend
-- Revisor: Revisor UI independiente — revisión rechazada el 2026-09-22
+- Revisor: Revisor UI independiente — revisión pendiente de la reentrega (rechazo previo el 2026-09-22)
 - Rama: `feature/mhb-33`
 - Última actualización: 2026-09-23
 - Contrato activo: `docs/implementation/PLAN.md`
@@ -94,7 +94,9 @@
 - Hashes `dist/*.html` antes/después: idénticos; `example` `15df26c930ff71fc6bbae6dfef92233807185e628bb8f376c3885cbaba040b84`, `newsletter` `46d2ca012c6ed322c07216388d70da83cdb0d1fbc2f4656129fdfc36ac5797a8`, `password-reset` `cbc7a669473da4fe851cd19b7b53eb65db46457100d966eb58d4aaa96ae35c59`, `receipt` `e3778cd67de181b2d0d8fff1201170a8f7074f0b9ad9b5947e6076be713e4f7b`, `user-created` `8b6a9527bfd8757ba65b7f4db9f607299ff0c2ead12fed64f50feffe7de685ee`, `welcome` `82713780e64b5b87d793fefa766bd53a9f0a543c76505040f606891bbee3cb28`.
 - Recorrido browser 2026-09-23: Home, Preview y Library ejecutados en 375/768/1440 px y light/dark (18 combinaciones); los PNG de evidencia fueron temporales y se eliminaron. El CDN `vanilla-jsoneditor@3.11.0/standalone.js` responde 200; Preview emite solo el warning de API deprecada del constructor JSONEditor.
 - Alcance: no se observan rutas modificadas fuera de `src/web`, `eslint.config.js` y `STATUS.md`; quedan 21 JS/MJS fuera de `src/web`, asignados a MHB-34.
+- Observaciones para la revisión de MHB-33 (2026-09-23), contra el criterio "consumo estricto de `storage-keys.ts`": `viewport-controls.ts:5` redefine `"preview-viewport-mode"` en vez de importar `STORAGE_KEY_VIEWPORT_MODE`; `view-mode-controls.ts:7` define `VIEW_MODE_KEY` local; quedan `@typedef` duales en 6 archivos `.ts` de Preview; `theme-toggle-component.ts:29/33` registra y retira `theme-changed` con arrow functions distintas, por lo que el listener nunca se retira. Si no se corrigen en MHB-33, registrarlos como deuda explícita de MHB-37.
+- Plan: `PLAN.md` incorpora MHB-37 (contratos, constantes tipadas y guards de tipos) entre MHB-33 y MHB-34; MHB-34 pasa a depender de MHB-37.
 - Próxima acción inmediata: revisión independiente de MHB-33 con diff y evidencia; no marcar `Completada` sin aceptación.
 - Siguiente tarea del roadmap:
   - MHB-14 (`desbloqueado`): Evidencia de uso y compatibilidad.
-  - MHB-34 (`bloqueado`): Cierre total y modo estricto TypeScript; depende de la aceptación de MHB-33.
+  - MHB-37 (`bloqueado`): Contratos compartidos, constantes tipadas y guards de tipos; depende de la aceptación de MHB-33.
