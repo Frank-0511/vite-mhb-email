@@ -8,7 +8,7 @@
  *   bun cli --help   — Muestra la ayuda y sale
  */
 
-import { main } from "./index.ts";
+import { main } from "./main.ts";
 
 main().catch(async (err: unknown) => {
   const { c, paint } = await import("../shared/index.ts");
