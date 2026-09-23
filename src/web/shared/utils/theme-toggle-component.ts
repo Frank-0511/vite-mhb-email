@@ -4,7 +4,7 @@
  * Handles localStorage persistence and dispatches theme-changed events
  */
 
-import { STORAGE_KEY_APP_THEME } from "./storage-keys.js";
+import { STORAGE_KEY_APP_THEME } from "./storage-keys.ts";
 
 /**
  * @class ThemeToggle
@@ -12,12 +12,16 @@ import { STORAGE_KEY_APP_THEME } from "./storage-keys.js";
  * Usage: <theme-toggle></theme-toggle>
  */
 export class ThemeToggle extends HTMLElement {
+  private button!: HTMLButtonElement;
+  private lightWrapper!: HTMLElement;
+  private darkWrapper!: HTMLElement;
+
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
   }
 
-  connectedCallback() {
+  connectedCallback(): void {
     this.render();
     this.setupEventListeners();
     this.updateIcon();
@@ -25,14 +29,14 @@ export class ThemeToggle extends HTMLElement {
     window.addEventListener("theme-changed", () => this.updateIcon());
   }
 
-  disconnectedCallback() {
+  disconnectedCallback(): void {
     window.removeEventListener("theme-changed", () => this.updateIcon());
   }
 
   /**
    * Render the component UI in shadow DOM
    */
-  render() {
+  render(): void {
     const template = document.createElement("template");
     template.innerHTML = `
       <style>
@@ -123,16 +127,22 @@ export class ThemeToggle extends HTMLElement {
       </button>
     `;
 
-    this.shadowRoot.appendChild(template.content.cloneNode(true));
-    this.button = this.shadowRoot.querySelector("button");
-    this.lightWrapper = this.shadowRoot.getElementById("light-wrapper");
-    this.darkWrapper = this.shadowRoot.getElementById("dark-wrapper");
+    const shadowRoot = this.shadowRoot;
+    if (!shadowRoot) return;
+    shadowRoot.appendChild(template.content.cloneNode(true));
+    const button = shadowRoot.querySelector("button");
+    const lightWrapper = shadowRoot.getElementById("light-wrapper");
+    const darkWrapper = shadowRoot.getElementById("dark-wrapper");
+    if (!button || !lightWrapper || !darkWrapper) return;
+    this.button = button;
+    this.lightWrapper = lightWrapper;
+    this.darkWrapper = darkWrapper;
   }
 
   /**
    * Setup event listeners for theme toggling
    */
-  setupEventListeners() {
+  setupEventListeners(): void {
     this.button.addEventListener("click", () => {
       document.documentElement.classList.toggle("dark");
       const isDark = document.documentElement.classList.contains("dark");
@@ -146,7 +156,7 @@ export class ThemeToggle extends HTMLElement {
   /**
    * Update icon visibility based on current theme
    */
-  updateIcon() {
+  updateIcon(): void {
     const isDark = document.documentElement.classList.contains("dark");
     if (isDark) {
       this.lightWrapper.style.display = "none";
