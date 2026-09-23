@@ -3,6 +3,7 @@
  * Orquesta la edición de plantillas, renderizado en vivo y gestión de datos.
  */
 
+import { dataTemplateRoute } from "../../../../scripts/shared/contracts/routes/api-routes.ts";
 import "../../shared/components/ef-skeleton.ts";
 import { queryRequired } from "../../shared/utils/dom-helpers.ts";
 import { fetchJSON } from "../../shared/utils/http-helpers.ts";
@@ -14,7 +15,7 @@ import { setupMoreMenu } from "./modules/controls/more-menu.ts";
 import { setupTemplateThemeToggle } from "./modules/controls/theme-manager.ts";
 import { setupViewModeControls } from "./modules/controls/view-mode-controls.ts";
 import { setupPreviewViewport } from "./modules/controls/viewport-controls.ts";
-import { initCopyHtmlModal } from "./modules/copy-html/copy-html-modal.ts";
+import { initCopyHtmlModal } from "./modules/copy-html/index.ts";
 import { initializeEditor } from "./modules/editor/editor.ts";
 import { setupResetButton, setupSaveButton } from "./modules/editor/save-reset.ts";
 import type { EditorContent } from "./modules/render/render-api.ts";
@@ -28,8 +29,6 @@ import {
 import { markPreviewReady } from "./modules/runtime/preview-ready.ts";
 import { createPreviewStatus } from "./modules/runtime/preview-status.ts";
 import "./styles.css";
-
-export { getTemplateNameFromUrl, markPreviewReady, renderMissingTemplateError };
 
 /**
  * Orquesta la inicialización de todos los subsistemas del preview.
@@ -130,7 +129,7 @@ export async function initializePreview(): Promise<void> {
     templateName: activeTemplateName,
     hot: import.meta.hot,
     fetchLatestData: (name: string = activeTemplateName) =>
-      fetchJSON<Record<string, unknown>>(`/api/data?template=${name}`),
+      fetchJSON<Record<string, unknown>>(dataTemplateRoute(name)),
     editorAPI,
     renderAPI,
     renderCurrentTemplate,

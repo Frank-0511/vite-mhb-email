@@ -3,11 +3,12 @@
  * Handles persisting data to data.json and resetting to initial state
  */
 
+import { dataTemplateRoute } from "../../../../../../scripts/shared/contracts/routes/api-routes.ts";
 import { queryRequired } from "../../../../shared/utils/dom-helpers.ts";
 import { postJSON } from "../../../../shared/utils/http-helpers.ts";
 import type { EditorContent } from "./editor.ts";
 
-type SaveResetConfig = {
+export type SaveResetConfig = {
   templateName: string;
   getEditorContent?: () => EditorContent;
   setInitialData?: (data: Record<string, unknown>) => void;
@@ -15,16 +16,6 @@ type SaveResetConfig = {
   resetIframe?: (templateName: string) => void;
   onStatusChange?: (text: string, textColor: string, dotColor: string) => void;
 };
-
-/**
- * @typedef {Object} SaveResetConfig
- * @property {string} templateName
- * @property {Function} [getEditorContent] - Get current editor content
- * @property {Function} [setInitialData] - Update initial data in editor
- * @property {Function} [resetEditor] - Reset editor to initial state
- * @property {Function} [resetIframe] - Reset iframe to initial template
- * @property {Function} [onStatusChange] - Callback for status updates
- */
 
 /**
  * Setup save button handler
@@ -59,7 +50,7 @@ export function setupSaveButton(config: SaveResetConfig): void {
 
     try {
       const response = await postJSON<{ success: boolean }>(
-        `/api/data?template=${templateName}`,
+        dataTemplateRoute(templateName),
         parsedData,
       );
 

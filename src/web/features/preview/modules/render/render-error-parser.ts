@@ -3,28 +3,26 @@
  * Garantiza un allowlist estricto sin reflejar cuerpos HTML arbitrarios ni datos sensibles.
  */
 
-export const RENDER_ERROR_MESSAGE = "No se pudo renderizar el template.";
-
-export const SAFE_RENDER_CAUSES = new Set([
-  "El template contiene sintaxis inválida.",
-  "Fuente requerida no encontrada.",
-  "Fallo de compilación.",
-]);
-
-export const SAFE_RENDER_LOCATION_PATH = /^[a-z0-9][a-z0-9._-]*(?:\/[a-z0-9][a-z0-9._-]*)*$/;
-
-export type SafeRenderLocation = {
-  path: string;
-  line?: number;
-  column?: number;
-};
+import {
+  RENDER_ERROR_CODE,
+  RENDER_ERROR_MESSAGE,
+  SAFE_RENDER_LOCATION_PATH,
+} from "../../../../../../scripts/shared/contracts/constants/render-error.ts";
+import {
+  isRenderErrorCode,
+  isSafeRenderCause,
+} from "../../../../../../scripts/shared/contracts/guards/render-error.ts";
+import type {
+  RenderErrorCode,
+  RenderErrorLocation,
+} from "../../../../../../scripts/shared/contracts/types/render-error.ts";
 
 type RenderApiErrorOptions = {
   status: number;
-  code?: string;
+  code?: RenderErrorCode;
   message: string;
   cause?: string;
-  location?: SafeRenderLocation;
+  location?: RenderErrorLocation;
 };
 
 /**
@@ -32,9 +30,9 @@ type RenderApiErrorOptions = {
  * controlado del contrato de render.
  *
  * @param {unknown} location
- * @returns {SafeRenderLocation | undefined}
+ * @returns {RenderErrorLocation | undefined}
  */
-export function parseSafeRenderLocation(location: unknown): SafeRenderLocation | undefined {
+export function parseSafeRenderLocation(location: unknown): RenderErrorLocation | undefined {
   if (
     !location ||
     typeof location !== "object" ||
@@ -45,7 +43,7 @@ export function parseSafeRenderLocation(location: unknown): SafeRenderLocation |
     return undefined;
   }
 
-  const safeLocation: SafeRenderLocation = { path: location.path };
+  const safeLocation: RenderErrorLocation = { path: location.path };
   if (
     "line" in location &&
     typeof location.line === "number" &&
@@ -71,18 +69,24 @@ export function parseSafeRenderLocation(location: unknown): SafeRenderLocation |
  */
 export class RenderApiError extends Error {
   status: number;
-  code: string;
+  code: RenderErrorCode;
   cause: string | undefined;
-  location: SafeRenderLocation | undefined;
+  location: RenderErrorLocation | undefined;
 
   /**
    * @param {RenderApiErrorOptions} options
    */
-  constructor({ status, code = "RENDER_FAILED", message, cause, location }: RenderApiErrorOptions) {
+  constructor({
+    status,
+    code = RENDER_ERROR_CODE.FAILED,
+    message,
+    cause,
+    location,
+  }: RenderApiErrorOptions) {
     super(message);
     this.name = "RenderApiError";
     this.status = status;
-    this.code = code;
+    this.code = isRenderErrorCode(code) ? code : RENDER_ERROR_CODE.FAILED;
     this.cause = cause;
     this.location = location;
   }
@@ -115,20 +119,17 @@ export function parseRenderErrorResponse(response: unknown, body: string): Rende
         parsed.error &&
         typeof parsed.error === "object" &&
         parsed.error.version === 1 &&
-        parsed.error.code === "RENDER_FAILED" &&
+        parsed.error.code === RENDER_ERROR_CODE.FAILED &&
         typeof parsed.error.message === "string"
       ) {
         const err = parsed.error;
         const message = err.message === RENDER_ERROR_MESSAGE ? err.message : RENDER_ERROR_MESSAGE;
-        const cause =
-          typeof err.cause === "string" && SAFE_RENDER_CAUSES.has(err.cause)
-            ? err.cause
-            : undefined;
+        const cause = isSafeRenderCause(err.cause) ? err.cause : undefined;
         const location = parseSafeRenderLocation(err.location);
 
         return new RenderApiError({
           status,
-          code: "RENDER_FAILED",
+          code: RENDER_ERROR_CODE.FAILED,
           message,
           cause,
           location,
@@ -141,7 +142,7 @@ export function parseRenderErrorResponse(response: unknown, body: string): Rende
 
   return new RenderApiError({
     status,
-    code: "RENDER_FAILED",
+    code: RENDER_ERROR_CODE.FAILED,
     message: RENDER_ERROR_MESSAGE,
     cause: undefined,
     location: undefined,

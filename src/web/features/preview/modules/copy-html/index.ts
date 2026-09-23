@@ -1,4 +1,7 @@
-/** @fileoverview Fachada compatible del diálogo de copia y descarga de HTML. */
+/**
+ * @fileoverview Punto de entrada y barrel puro del módulo copy-html.
+ */
+
 import "./copy-html-modal.css";
 
 export { createCopyHtmlModalController } from "./copy-html-controller.ts";

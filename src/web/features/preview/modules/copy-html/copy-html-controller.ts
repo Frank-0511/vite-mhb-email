@@ -1,4 +1,6 @@
+import { copyHtmlTemplateRoute } from "../../../../../../scripts/shared/contracts/routes/api-routes.ts";
 import { postJSON } from "../../../../shared/utils/http-helpers.ts";
+import type { ModalState } from "../../types.ts";
 import type { ValidationResult } from "./copy-html-formatters.ts";
 import {
   copyTextToClipboard,
@@ -9,8 +11,7 @@ import {
 } from "./copy-html-formatters.ts";
 import type { DownloadHtmlOptions, DownloadHtmlResult } from "./html-download.ts";
 import { downloadHtml } from "./html-download.ts";
-
-import type { ModalState, RenderModalStateOptions } from "./copy-html-view.ts";
+import type { RenderModalStateOptions } from "./copy-html-view.ts";
 
 type CopyHtmlApiResponse = {
   success: boolean;
@@ -45,7 +46,7 @@ export function createCopyHtmlModalController({
     renderState(state, options);
   };
   const requestHtml = (build: boolean): Promise<CopyHtmlApiResponse> =>
-    postJsonFn(`/api/copy-html?template=${encodeURIComponent(templateName)}`, { build });
+    postJsonFn(copyHtmlTemplateRoute(templateName), { build });
   async function retryClipboard() {
     if (await copyToClipboard(lastHtml))
       transition("success", { message: "✅ HTML copiado al portapapeles." });

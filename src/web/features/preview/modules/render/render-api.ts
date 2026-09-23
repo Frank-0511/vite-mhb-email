@@ -3,6 +3,13 @@
  * Orquesta peticiones de renderizado, invalidación de caché y debounce de cambios.
  */
 
+import { HEADER_X_ESP_VALIDATION } from "../../../../../../scripts/shared/contracts/constants/api-routes.ts";
+import { RENDER_ERROR_CODE } from "../../../../../../scripts/shared/contracts/constants/render-error.ts";
+import {
+  invalidateCacheRoute,
+  renderTemplateRoute,
+} from "../../../../../../scripts/shared/contracts/routes/api-routes.ts";
+import type { Theme } from "../../../../../../scripts/shared/contracts/types/theme.ts";
 import {
   createDebounceTimer,
   fetchText,
@@ -10,8 +17,6 @@ import {
 } from "../../../../shared/utils/http-helpers.ts";
 import { getTemplateTheme } from "../../../../shared/utils/theme-helpers.ts";
 import { parseRenderErrorResponse, RenderApiError } from "./render-error-parser.ts";
-
-export { parseRenderErrorResponse, RenderApiError };
 
 type ESPValidationHeader = {
   missing?: string[];
@@ -23,7 +28,7 @@ type RenderAPIConfig = {
   onError: (error: RenderApiError) => void;
   onValidation?: (validation: ESPValidationHeader) => void;
   onStatusChange: (text: string, textColor: string, dotColor: string) => void;
-  getTheme?: () => string;
+  getTheme?: () => Theme;
 };
 
 export type EditorContent = {
@@ -52,10 +57,8 @@ export function createRenderAPI(config: RenderAPIConfig): RenderAPIClient {
 
   /**
    * Obtiene el tema activo ('light' o 'dark').
-   *
-   * @returns {string}
    */
-  function getCurrentTheme() {
+  function getCurrentTheme(): Theme {
     if (getTheme) return getTheme();
     return getTemplateTheme();
   }
@@ -73,7 +76,7 @@ export function createRenderAPI(config: RenderAPIConfig): RenderAPIClient {
     const theme = getCurrentTheme();
     let response;
     try {
-      response = await sendRequest(`/api/render?template=${templateName}&theme=${theme}`, {
+      response = await sendRequest(renderTemplateRoute(templateName, theme), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -84,7 +87,7 @@ export function createRenderAPI(config: RenderAPIConfig): RenderAPIClient {
       onError(
         new RenderApiError({
           status: 0,
-          code: "RENDER_FAILED",
+          code: RENDER_ERROR_CODE.FAILED,
           message: "No se pudo conectar con el servidor de render.",
         }),
       );
@@ -100,7 +103,7 @@ export function createRenderAPI(config: RenderAPIConfig): RenderAPIClient {
       return;
     }
 
-    const validationHeader = response.headers.get("X-ESP-Validation");
+    const validationHeader = response.headers.get(HEADER_X_ESP_VALIDATION);
     if (onValidation) {
       try {
         onValidation(validationHeader ? JSON.parse(validationHeader) : { missing: [], unused: [] });
@@ -119,7 +122,7 @@ export function createRenderAPI(config: RenderAPIConfig): RenderAPIClient {
    * @returns {Promise<void>}
    */
   async function invalidateTemplateCache(templateName: string): Promise<void> {
-    await fetchText(`/api/cache/invalidate?template=${templateName}`, {
+    await fetchText(invalidateCacheRoute(templateName), {
       method: "POST",
     });
   }

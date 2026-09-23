@@ -3,6 +3,7 @@
  * Handles app theme and template theme toggle
  */
 
+import type { Theme } from "../../../../../../scripts/shared/contracts/types/theme.ts";
 import { queryRequired, querySafe } from "../../../../shared/utils/dom-helpers.ts";
 import {
   isTemplateThemeDark,
@@ -15,7 +16,7 @@ import {
  * @param {Function} config.onThemeChange - Callback when theme changes
  * @returns {void}
  */
-export function setupTemplateThemeToggle(config: { onThemeChange: (theme: string) => void }): void {
+export function setupTemplateThemeToggle(config: { onThemeChange: (theme: Theme) => void }): void {
   const { onThemeChange } = config;
 
   const templateToggleBtn = queryRequired("theme-toggle-template", "Theme Manager");

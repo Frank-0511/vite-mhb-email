@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { createRenderAPI, parseRenderErrorResponse, RenderApiError } from "./render-api.ts";
+import { createRenderAPI } from "./render-api.ts";
+import { parseRenderErrorResponse, RenderApiError } from "./render-error-parser.ts";
 
 /**
  * Crea una respuesta simulada compatible con Response.
@@ -43,7 +44,7 @@ function captureConsoleError() {
   return calls;
 }
 
-describe("render-api (cliente de render y re-exports)", () => {
+describe("render-api (cliente de render)", () => {
   const originalFetch = globalThis.fetch;
   const originalConsoleError = console.error;
 
@@ -52,7 +53,7 @@ describe("render-api (cliente de render y re-exports)", () => {
     console.error = originalConsoleError;
   });
 
-  test("re-exporta RenderApiError y parseRenderErrorResponse", () => {
+  test("instancia RenderApiError correctamente en parseRenderErrorResponse", () => {
     expect(RenderApiError).toBeDefined();
     expect(parseRenderErrorResponse).toBeDefined();
 

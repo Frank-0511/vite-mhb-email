@@ -17,11 +17,6 @@ export function isSafeDownloadTemplateName(templateName: unknown): boolean {
   return typeof templateName === "string" && SAFE_TEMPLATE_NAME_PATTERN.test(templateName);
 }
 
-/**
- * @typedef {Object} DownloadHtmlOptions
- * @property {string} templateName - Nombre del template ya validado.
- * @property {string} html - Contenido HTML final que será empaquetado en el Blob.
- */
 export type DownloadHtmlOptions = {
   templateName: string;
   html: string;

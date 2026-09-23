@@ -4,6 +4,8 @@
  */
 
 import { JSONEditor } from "https://cdn.jsdelivr.net/npm/vanilla-jsoneditor@3.11.0/standalone.js";
+import { EVENTS } from "../../../../../../scripts/shared/contracts/constants/events.ts";
+import { dataTemplateRoute } from "../../../../../../scripts/shared/contracts/routes/api-routes.ts";
 import { fetchJSON } from "../../../../shared/utils/http-helpers.ts";
 import { filterEditorMenuItems } from "./editor-menu-filter.ts";
 
@@ -12,7 +14,7 @@ export type EditorContent = {
   text: string;
 };
 
-type EditorConfig = {
+export type EditorConfig = {
   templateName: string;
   container: HTMLElement;
   onChange: (data: Record<string, unknown>) => void;
@@ -26,14 +28,6 @@ export type EditorAPI = {
   getInitialData: () => Record<string, unknown>;
   setInitialData: (data: Record<string, unknown>) => void;
 };
-
-/**
- * @typedef {Object} EditorConfig
- * @property {string} templateName
- * @property {HTMLElement} container - Container for the editor
- * @property {Function} onChange - Callback when JSON changes
- * @property {Function} onStatusChange - Callback for UI status updates
- */
 
 /**
  * Carga bajo demanda la hoja de estilos de tema oscuro para Vanilla JSONEditor.
@@ -80,7 +74,7 @@ export async function initializeEditor(config: EditorConfig): Promise<EditorAPI>
   updateThemeClass();
 
   // Listen for app theme changes
-  window.addEventListener("theme-changed", updateThemeClass);
+  window.addEventListener(EVENTS.THEME_CHANGED, updateThemeClass);
 
   // Create editor instance
   const editor: InstanceType<typeof JSONEditor> = new JSONEditor({
@@ -117,7 +111,7 @@ export async function initializeEditor(config: EditorConfig): Promise<EditorAPI>
 
   // Load initial data
   try {
-    const data = await fetchJSON(`/api/data?template=${templateName}`);
+    const data = await fetchJSON(dataTemplateRoute(templateName));
     initialData = data as Record<string, unknown>;
     editor.updateProps({ mode: "text", content: { json: data } });
     isFirstChange = true;

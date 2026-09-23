@@ -1,12 +1,11 @@
 import { beforeEach, describe, expect, mock, test } from "bun:test";
 
 import { createMockElement, createMockStorage } from "../runtime/test-helpers.ts";
+import { STORAGE_KEY_VIEW_MODE } from "../../../../shared/utils/storage-keys.ts";
+import { VIEW_MODE } from "../../constants.ts";
 import {
   initViewModeControls,
   setupViewModeControls,
-  VIEW_MODE_KEY,
-  VIEW_MODE_RENDER,
-  VIEW_MODE_SOURCE,
   type ViewModeElements,
   type ViewModeStorage,
 } from "./view-mode-controls.ts";
@@ -56,7 +55,7 @@ describe("view-mode-controls (MHB-17)", () => {
   test("inicia por defecto en modo render cuando el almacenamiento de sesión está vacío", () => {
     const controller = initDefault();
 
-    expect(controller.getViewMode()).toBe(VIEW_MODE_RENDER);
+    expect(controller.getViewMode()).toBe(VIEW_MODE.RENDER);
     expect(renderBtn.getAttribute("aria-pressed")).toBe("true");
     expect(sourceBtn.getAttribute("aria-pressed")).toBe("false");
     expect(renderBtn.classList.contains("bg-sky-500")).toBe(true);
@@ -66,11 +65,11 @@ describe("view-mode-controls (MHB-17)", () => {
   });
 
   test("restaura modo source si fue previamente guardado en la sesión activa", () => {
-    mockStorage.setItem(VIEW_MODE_KEY, VIEW_MODE_SOURCE);
+    mockStorage.setItem(STORAGE_KEY_VIEW_MODE, VIEW_MODE.SOURCE);
 
     const controller = initDefault();
 
-    expect(controller.getViewMode()).toBe(VIEW_MODE_SOURCE);
+    expect(controller.getViewMode()).toBe(VIEW_MODE.SOURCE);
     expect(renderBtn.getAttribute("aria-pressed")).toBe("false");
     expect(sourceBtn.getAttribute("aria-pressed")).toBe("true");
     expect(sourceBtn.classList.contains("bg-sky-500")).toBe(true);
@@ -85,8 +84,8 @@ describe("view-mode-controls (MHB-17)", () => {
     // Clic en botón Código Fuente
     sourceBtn.trigger("click");
 
-    expect(controller.getViewMode()).toBe(VIEW_MODE_SOURCE);
-    expect(mockStorage.setItem).toHaveBeenCalledWith(VIEW_MODE_KEY, VIEW_MODE_SOURCE);
+    expect(controller.getViewMode()).toBe(VIEW_MODE.SOURCE);
+    expect(mockStorage.setItem).toHaveBeenCalledWith(STORAGE_KEY_VIEW_MODE, VIEW_MODE.SOURCE);
     expect(iframe.classList.contains("hidden")).toBe(true);
     expect(sourceContainer.classList.contains("hidden")).toBe(false);
     expect(sourceBtn.getAttribute("aria-pressed")).toBe("true");
@@ -95,8 +94,8 @@ describe("view-mode-controls (MHB-17)", () => {
     // Clic de vuelta en botón Render
     renderBtn.trigger("click");
 
-    expect(controller.getViewMode()).toBe(VIEW_MODE_RENDER);
-    expect(mockStorage.setItem).toHaveBeenCalledWith(VIEW_MODE_KEY, VIEW_MODE_RENDER);
+    expect(controller.getViewMode()).toBe(VIEW_MODE.RENDER);
+    expect(mockStorage.setItem).toHaveBeenCalledWith(STORAGE_KEY_VIEW_MODE, VIEW_MODE.RENDER);
     expect(iframe.classList.contains("hidden")).toBe(false);
     expect(sourceContainer.classList.contains("hidden")).toBe(true);
     expect(renderBtn.getAttribute("aria-pressed")).toBe("true");
@@ -127,9 +126,9 @@ describe("view-mode-controls (MHB-17)", () => {
       controller.updateSourceHtml("<div>Compiled Template</div>");
 
       // Alternar varias veces
-      controller.applyViewMode(VIEW_MODE_SOURCE);
-      controller.applyViewMode(VIEW_MODE_RENDER);
-      controller.applyViewMode(VIEW_MODE_SOURCE);
+      controller.applyViewMode(VIEW_MODE.SOURCE);
+      controller.applyViewMode(VIEW_MODE.RENDER);
+      controller.applyViewMode(VIEW_MODE.SOURCE);
 
       // Ninguna petición de red/recompilación debe haberse disparado
       expect(mockFetch).not.toHaveBeenCalled();
@@ -146,7 +145,7 @@ describe("view-mode-controls (MHB-17)", () => {
 
     const controller = initDefault();
 
-    controller.applyViewMode(VIEW_MODE_SOURCE);
+    controller.applyViewMode(VIEW_MODE.SOURCE);
 
     // Ni iframe ni sourceContainer deben quitar 'hidden' mientras el skeleton esté visible
     expect(sourceContainer.classList.contains("hidden")).toBe(true);
@@ -168,8 +167,8 @@ describe("view-mode-controls (MHB-17)", () => {
       const controller = initDefault({}, errorStorage);
 
       // No debe lanzar excepción al cambiar de modo
-      controller.applyViewMode(VIEW_MODE_SOURCE);
-      expect(controller.getViewMode()).toBe(VIEW_MODE_SOURCE);
+      controller.applyViewMode(VIEW_MODE.SOURCE);
+      expect(controller.getViewMode()).toBe(VIEW_MODE.SOURCE);
     }).not.toThrow();
   });
 
@@ -185,12 +184,12 @@ describe("view-mode-controls (MHB-17)", () => {
     expect(previewFrame.classList.contains("is-source-mode")).toBe(false);
     expect(shell.getAttribute("data-view-mode")).toBe("render");
 
-    controller.applyViewMode(VIEW_MODE_SOURCE);
+    controller.applyViewMode(VIEW_MODE.SOURCE);
 
     expect(previewFrame.classList.contains("is-source-mode")).toBe(true);
     expect(shell.getAttribute("data-view-mode")).toBe("source");
 
-    controller.applyViewMode(VIEW_MODE_RENDER);
+    controller.applyViewMode(VIEW_MODE.RENDER);
 
     expect(previewFrame.classList.contains("is-source-mode")).toBe(false);
     expect(shell.getAttribute("data-view-mode")).toBe("render");
