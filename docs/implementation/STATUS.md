@@ -3,9 +3,9 @@
 ## Resumen
 
 - ID activo: MHB-33
-- Estado: En revisión
+- Estado: Completada
 - Implementador: Perfil TypeScript/frontend
-- Revisor: Revisor UI independiente — revisión pendiente de la reentrega (rechazo previo el 2026-09-22)
+- Revisor: Revisor UI/TypeScript independiente — aceptación confirmada el 2026-09-23
 - Rama: `feature/mhb-33`
 - Última actualización: 2026-09-23
 - Contrato activo: `docs/implementation/PLAN.md`
@@ -13,6 +13,7 @@
 ## Baseline vigente
 
 - La release [v1.2.0](https://github.com/Frank-0511/vite-mhb-email/releases/tag/v1.2.0) es el baseline funcional publicado.
+- MHB-33 completada en rama `feature/mhb-33`.
 - MHB-32 completada en rama `feature/mhb-32`.
 - MHB-31 completada y mergeada a `master` (commit `ac367a8`).
 - MHB-30 completada y mergeada a `master` (commits `14af516` a `f6301ea`).
@@ -33,24 +34,23 @@
 
 ### Controles de Calidad
 
-| Control                               | Comando                                    | Resultado                                                                 |
-| :------------------------------------ | :----------------------------------------- | :------------------------------------------------------------------------ |
-| Comprobación de rama                  | `bun scripts/ai/check-task-branch.mjs`     | Verde                                                                     |
-| Typecheck unificado + estricto        | `bun run typecheck`                        | Verde; 0 diagnósticos estrictos                                           |
-| Pruebas focalizadas                   | `bun test ...`                             | Verde (62 pass, 0 fail en slices finales)                                 |
-| Linting completo                      | `bun run lint`                             | Verde                                                                     |
-| Formato de código                     | `bun run format:check`                     | Verde                                                                     |
-| Build y validación email              | `bun run build` / `bun run validate-email` | Verde (2 warnings no bloqueantes)                                         |
-| Inventario, contraste y accesibilidad | Gates MHB-33                               | Inventario web verde; revisión independiente pendiente                    |
-| Suite global                          | `bun run test`                             | Verde (537 pass, 0 fail)                                                  |
-| Typecheck estricto                    | `bun run typecheck:strict`                 | Verde (0 diagnósticos)                                                    |
-| Supresiones TS web                    | `grep -RIl '^// @ts-nocheck$' src/web`     | Verde (0 resultados; excepción ESLint retirada)                           |
-| Pruebas tras saneamiento              | `bun test ...viewport-controls`            | Verde (6 pass, 0 fail)                                                    |
-| Límite de módulos                     | `wc -l`                                    | Verde (`view-mode-controls.ts`: 250; `state.ts`: 29; `controller.ts`: 15) |
+| Control                          | Comando                                       | Resultado                                                                         |
+| :------------------------------- | :-------------------------------------------- | :-------------------------------------------------------------------------------- |
+| Comprobación de rama             | `bun scripts/ai/check-task-branch.mjs`        | Verde                                                                             |
+| Typecheck unificado              | `tsc --noEmit` (`bun run typecheck`)          | Verde (0 diagnósticos)                                                            |
+| Typecheck estricto               | `bun run typecheck:strict`                    | Verde (0 diagnósticos)                                                            |
+| Suite global de pruebas          | `bun run test`                                | Verde (537 pass, 0 fail)                                                          |
+| Linting completo                 | `bun run lint`                                | Verde                                                                             |
+| Formato de código                | `bun run format:check`                        | Verde                                                                             |
+| Build y validación email         | `bun run build` / `bun run validate-email`    | Verde (2 warnings no bloqueantes)                                                 |
+| Contraste WCAG                   | `bun run lint:contrast`                       | Verde (26/26 pruebas superadas en light/dark)                                     |
+| Supresiones TS web               | `grep -RIl '@ts-ignore\|@ts-nocheck' src/web` | Verde (0 resultados)                                                              |
+| Inventario web propio            | `find src/web -name '*.js' -o -name '*.mjs'`  | Verde (0 archivos; layer-4-web completada)                                        |
+| Límite de módulos (≤ 250 líneas) | `wc -l`                                       | Verde (`viewport-controls.ts`: 240; `view-mode-controls.ts`: 243; `main.ts`: 246) |
 
 ## Últimas entregas
 
-- MHB-33: `En revisión` el 2026-09-23; tipado estricto completado, 0 diagnósticos, 537 tests verdes y controles de lint/formato/diff verdes.
+- MHB-33: `Completada` el 2026-09-23; dashboard web en TypeScript estricto (0 errores tsc, 537 tests verdes, límites ≤ 250 líneas verificados, claves de storage centralizadas, corrección de listener en Web Component y hashes de `dist/*.html` idénticos byte a byte); rama `feature/mhb-33`.
 
 - MHB-32: `Completada` el 2026-09-22; servidor Vite, APIs, plugins y configuración migrados a TypeScript estricto (0 errores tsc, 537 tests verdes, modularización de transforms en subcarpetas temáticas, layer-3-vite en 0 JS / 42 TS); rama `feature/mhb-32`.
 - MHB-31: `Completada` el 2026-09-22; CLI, exportación y correo migrados a TypeScript estricto (0 errores tsc, 537 tests verdes, helpers modularizados, layer-2-cli en 0 JS / 24 TS); commit `ac367a8` en `master`.
@@ -64,17 +64,17 @@
 
 ## Ejecuciones delegadas relevantes
 
-| Ámbito | Estado      | Propiedad                              | Handoff                                                                                           |
-| :----- | :---------- | :------------------------------------- | :------------------------------------------------------------------------------------------------ |
-| MHB-33 | En revisión | Dashboard web en TypeScript            | Reentregada tras corregir los 271 diagnósticos; pendiente de revisión independiente y aceptación. |
-| MHB-32 | Completada  | Servidor Vite y APIs en TS             | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-32`.                        |
-| MHB-31 | Completada  | CLI, exportación y correo en TS        | Aprobación técnica y merge a `master` en commit `ac367a8`.                                        |
-| MHB-30 | Completada  | Núcleo y validadores en TS             | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-30`.                        |
-| MHB-35 | Completada  | Consolidación shared y deduplicación   | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-35`.                        |
-| MHB-28 | Completada  | Modularización web sobredimensionada   | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-28`.                        |
-| MHB-29 | Completada  | Base de ejecución TypeScript           | Aprobación técnica y merge a `master` (`5e18515`).                                                |
-| MHB-13 | Completada  | Baseline tipos y mediciones            | Verificación completa y merge a `master` (`5fe448a`).                                             |
-| MHB-20 | Completada  | Tests integración, caché y exportación | Aceptación y merge a `master` en commit `619a425`.                                                |
+| Ámbito | Estado     | Propiedad                              | Handoff                                                                                               |
+| :----- | :--------- | :------------------------------------- | :---------------------------------------------------------------------------------------------------- |
+| MHB-33 | Completada | Dashboard web en TypeScript            | Aprobación técnica y cierre confirmado tras saneamiento y revisión independiente en `feature/mhb-33`. |
+| MHB-32 | Completada | Servidor Vite y APIs en TS             | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-32`.                            |
+| MHB-31 | Completada | CLI, exportación y correo en TS        | Aprobación técnica y merge a `master` en commit `ac367a8`.                                            |
+| MHB-30 | Completada | Núcleo y validadores en TS             | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-30`.                            |
+| MHB-35 | Completada | Consolidación shared y deduplicación   | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-35`.                            |
+| MHB-28 | Completada | Modularización web sobredimensionada   | Aprobación técnica y cierre confirmado por el usuario en `feature/mhb-28`.                            |
+| MHB-29 | Completada | Base de ejecución TypeScript           | Aprobación técnica y merge a `master` (`5e18515`).                                                    |
+| MHB-13 | Completada | Baseline tipos y mediciones            | Verificación completa y merge a `master` (`5fe448a`).                                                 |
+| MHB-20 | Completada | Tests integración, caché y exportación | Aceptación y merge a `master` en commit `619a425`.                                                    |
 
 ## Decisiones y desviaciones vigentes
 
@@ -84,19 +84,11 @@
 
 ## Handoff
 
-- Entrega activa: MHB-33 reentregada en `feature/mhb-33`; estado `En revisión`, sin cierre administrativo.
-- Evidencia reproducida: `bun run typecheck:strict` en verde con 0 diagnósticos; suite global en verde con 537 pruebas y 0 fallos.
-- Correcciones aplicadas: se retiraron las 60 directivas `@ts-nocheck` y la excepción global de `ban-ts-comment`; se tiparon contratos base de Library/Preview, Web Components y mocks compartidos; se corrigió el CDN de JSONEditor.
-- Typecheck posterior: se corrigieron los 271 diagnósticos pendientes en Preview/Library y sus tests; no se añadieron supresiones ni regresaron los slices ya saneados.
-- Entrega parcial 2026-09-23: `viewport-controls.ts` y sus fixtures DOM quedaron tipados; 6 pruebas focalizadas, lint y formato pasan; el total estricto bajó de 340 a 315.
-- Entrega parcial 2026-09-23: `iframe-manager.ts`, `preview-ready.ts` y sus fixtures runtime quedaron tipados; 9 pruebas focalizadas y lint pasan; el total estricto bajó de 315 a 282.
-- Entrega parcial 2026-09-23: `preview-status.ts` y su fixture DOM compartido quedaron alineados con el contrato estricto; 7 pruebas focalizadas pasan; el total estricto bajó de 282 a 271.
-- Hashes `dist/*.html` antes/después: idénticos; `example` `15df26c930ff71fc6bbae6dfef92233807185e628bb8f376c3885cbaba040b84`, `newsletter` `46d2ca012c6ed322c07216388d70da83cdb0d1fbc2f4656129fdfc36ac5797a8`, `password-reset` `cbc7a669473da4fe851cd19b7b53eb65db46457100d966eb58d4aaa96ae35c59`, `receipt` `e3778cd67de181b2d0d8fff1201170a8f7074f0b9ad9b5947e6076be713e4f7b`, `user-created` `8b6a9527bfd8757ba65b7f4db9f607299ff0c2ead12fed64f50feffe7de685ee`, `welcome` `82713780e64b5b87d793fefa766bd53a9f0a543c76505040f606891bbee3cb28`.
-- Recorrido browser 2026-09-23: Home, Preview y Library ejecutados en 375/768/1440 px y light/dark (18 combinaciones); los PNG de evidencia fueron temporales y se eliminaron. El CDN `vanilla-jsoneditor@3.11.0/standalone.js` responde 200; Preview emite solo el warning de API deprecada del constructor JSONEditor.
-- Alcance: no se observan rutas modificadas fuera de `src/web`, `eslint.config.js` y `STATUS.md`; quedan 21 JS/MJS fuera de `src/web`, asignados a MHB-34.
-- Observaciones para la revisión de MHB-33 (2026-09-23), contra el criterio "consumo estricto de `storage-keys.ts`": `viewport-controls.ts:5` redefine `"preview-viewport-mode"` en vez de importar `STORAGE_KEY_VIEWPORT_MODE`; `view-mode-controls.ts:7` define `VIEW_MODE_KEY` local; quedan `@typedef` duales en 6 archivos `.ts` de Preview; `theme-toggle-component.ts:29/33` registra y retira `theme-changed` con arrow functions distintas, por lo que el listener nunca se retira. Si no se corrigen en MHB-33, registrarlos como deuda explícita de MHB-37.
-- Plan: `PLAN.md` incorpora MHB-37 (contratos, constantes tipadas y guards de tipos) entre MHB-33 y MHB-34; MHB-34 pasa a depender de MHB-37.
-- Próxima acción inmediata: revisión independiente de MHB-33 con diff y evidencia; no marcar `Completada` sin aceptación.
+- Entrega de MHB-33: Completada en rama `feature/mhb-33`.
+- Evidencia reproducida: `tsc --noEmit` y `bun run typecheck:strict` en verde con 0 diagnósticos; suite global en verde con 537 pruebas y 0 fallos; hashes `dist/*.html` idénticos byte a byte al baseline publicado.
+- Saneamiento aplicado: límite de ≤ 250 líneas restablecido en `view-mode-controls.ts` (243 l.) y `viewport-controls.ts` (240 l.); claves centralizadas en `storage-keys.ts` (`STORAGE_KEY_VIEW_MODE`, `STORAGE_KEY_VIEWPORT_MODE`, `STORAGE_KEY_VIEWPORT_CUSTOM_WIDTH`); desuscripción de eventos corregida en `ThemeToggleComponent`; `controller.ts` conectado en bootstrap de Library.
+- Próxima acción inmediata: Crear Pull Request de `feature/mhb-33` hacia `master` y realizar merge.
 - Siguiente tarea del roadmap:
   - MHB-14 (`desbloqueado`): Evidencia de uso y compatibilidad.
-  - MHB-37 (`bloqueado`): Contratos compartidos, constantes tipadas y guards de tipos; depende de la aceptación de MHB-33.
+  - MHB-37 (`desbloqueado`): Contratos compartidos, constantes tipadas y guards de tipos (se desbloquea al completar MHB-33).
+  - MHB-34 (`bloqueado`): Cierre total y modo estricto TypeScript; depende de MHB-37.

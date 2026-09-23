@@ -27,8 +27,7 @@ describe("iframe-manager", () => {
   });
 
   afterEach(() => {
-    // @ts-expect-error Bun test cleanup deletes the global storage binding.
-    delete globalThis.localStorage;
+    Reflect.deleteProperty(globalThis, "localStorage");
   });
 
   test("updateContent escribe HTML en el documento, oculta el skeleton y muestra el iframe", () => {

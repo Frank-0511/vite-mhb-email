@@ -13,7 +13,8 @@ import { formRenderer } from "./modules/form-renderer.ts";
 import { listRenderer } from "./modules/list-renderer.ts";
 import { previewManager } from "./modules/preview.ts";
 import { search } from "./modules/search.ts";
-import { createLibraryState, type LibraryComponent } from "./modules/state.ts";
+import { createLibraryController, type LibraryController } from "./modules/controller.ts";
+import { createLibraryState, type LibraryComponent, type LibraryState } from "./modules/state.ts";
 import "./styles/library.css";
 
 /**
@@ -209,21 +210,30 @@ class ComponentLibraryApp {
     // Maintain selection highlight after list re-render
     this.maintainSelection();
   }
+
+  getState(): LibraryState {
+    return {
+      currentComponent: this.currentComponent,
+      currentVariant: this.currentVariant,
+      currentType: this.currentType,
+      formData: this.formData,
+      allComponents: this.allComponents,
+    };
+  }
 }
 
 /**
  * Boot shared preview assets and start the component library
  * only when the library DOM is present
- *
- * @returns {void}
  */
-function initializeComponentLibraryApp() {
+function initializeComponentLibraryApp(): void {
   initLucideIcons();
 
   if (!querySafe("component-list")) return;
 
   const app = new ComponentLibraryApp();
-  app.init().catch((error) => {
+  const controller: LibraryController = createLibraryController(app.getState(), () => app.init());
+  controller.initialize().catch((error) => {
     console.error("Error initializing component library:", error);
   });
 }

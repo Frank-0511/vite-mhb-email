@@ -1,9 +1,11 @@
+import {
+  STORAGE_KEY_VIEWPORT_MODE,
+  STORAGE_KEY_VIEWPORT_CUSTOM_WIDTH,
+} from "../../../../shared/utils/storage-keys.ts";
+
 const CUSTOM_WIDTH_MIN = 280;
 const CUSTOM_WIDTH_MAX = 1200;
 const DEFAULT_DESKTOP_WIDTH = 600;
-
-const VIEWPORT_MODE_KEY = "preview-viewport-mode";
-const VIEWPORT_CUSTOM_WIDTH_KEY = "preview-viewport-custom-width";
 
 const VIEWPORT_PRESETS = {
   desktop: DEFAULT_DESKTOP_WIDTH,
@@ -40,11 +42,23 @@ const memoryFallbackStorage: ViewportStorage = {
   setItem: () => {},
 };
 
-/**
- * @param {unknown} width
- * @param {number} fallbackWidth
- * @returns {number}
- */
+const SELECTED_CLASSES = [
+  "bg-sky-500",
+  "text-white",
+  "hover:bg-sky-600",
+  "dark:bg-sky-500",
+  "dark:text-white",
+  "dark:hover:bg-sky-600",
+];
+const UNSELECTED_CLASSES = [
+  "bg-white",
+  "dark:bg-slate-900",
+  "text-slate-600",
+  "dark:text-slate-300",
+  "hover:bg-slate-100",
+  "dark:hover:bg-slate-800",
+];
+
 export function clampViewportWidth(width: unknown, fallbackWidth = DEFAULT_DESKTOP_WIDTH): number {
   const parsed = Number(width);
   const fallback = Number.isFinite(fallbackWidth) ? fallbackWidth : DEFAULT_DESKTOP_WIDTH;
@@ -58,9 +72,6 @@ export function clampViewportWidth(width: unknown, fallbackWidth = DEFAULT_DESKT
  * Returns a width only when the current input is complete enough to apply live.
  * Partial values below the minimum are intentionally ignored so typing "1024"
  * is not interrupted by clamping "1" to "280".
- *
- * @param {string} inputValue
- * @returns {number | null}
  */
 export function getLiveCustomViewportWidth(inputValue: string): number | null {
   if (inputValue.trim() === "") return null;
@@ -74,11 +85,6 @@ export function getLiveCustomViewportWidth(inputValue: string): number | null {
   return rounded;
 }
 
-/**
- * @param {string} inputValue
- * @param {number} fallbackWidth
- * @returns {number}
- */
 export function getCommittedCustomViewportWidth(
   inputValue: string,
   fallbackWidth = DEFAULT_DESKTOP_WIDTH,
@@ -88,13 +94,7 @@ export function getCommittedCustomViewportWidth(
   return clampViewportWidth(inputValue, fallbackWidth);
 }
 
-/**
- * Initializes the preview viewport controls.
- *
- * @param {ViewportControlElements} elements
- * @param {ViewportStorage} storage
- * @returns {ViewportController}
- */
+/** Initializes the preview viewport controls. */
 export function initViewportControls(
   elements: ViewportControlElements,
   storage = typeof window !== "undefined"
@@ -103,49 +103,17 @@ export function initViewportControls(
       ? localStorage
       : memoryFallbackStorage,
 ): ViewportController {
-  /**
-   * @param {HTMLButtonElement} button
-   * @param {boolean} isSelected
-   * @returns {void}
-   */
   function setSelected(button: HTMLButtonElement, isSelected: boolean): void {
-    const selectedClasses = [
-      "bg-sky-500",
-      "text-white",
-      "hover:bg-sky-600",
-      "dark:bg-sky-500",
-      "dark:text-white",
-      "dark:hover:bg-sky-600",
-    ];
-    const unselectedClasses = [
-      "bg-white",
-      "dark:bg-slate-900",
-      "text-slate-600",
-      "dark:text-slate-300",
-      "hover:bg-slate-100",
-      "dark:hover:bg-slate-800",
-    ];
-
-    button.classList.remove(...selectedClasses, ...unselectedClasses);
-    button.classList.add(...(isSelected ? selectedClasses : unselectedClasses));
+    button.classList.remove(...SELECTED_CLASSES, ...UNSELECTED_CLASSES);
+    button.classList.add(...(isSelected ? SELECTED_CLASSES : UNSELECTED_CLASSES));
   }
 
-  /**
-   * @param {string} active
-   * @returns {void}
-   */
   function setActiveViewportButton(active: string): void {
     setSelected(elements.desktopButton, active === "desktop");
     setSelected(elements.mobileButton, active === "mobile");
     setSelected(elements.customButton, active === "custom");
   }
 
-  /**
-   * @param {string} mode
-   * @param {string | number} [customWidth]
-   * @param {{ syncInput?: boolean }} [options]
-   * @returns {void}
-   */
   function applyViewport(
     mode: string,
     customWidth?: string | number,
@@ -171,25 +139,25 @@ export function initViewportControls(
 
     setActiveViewportButton(resolvedMode);
 
-    storage.setItem(VIEWPORT_MODE_KEY, resolvedMode);
+    storage.setItem(STORAGE_KEY_VIEWPORT_MODE, resolvedMode);
     if (resolvedMode === "custom") {
-      storage.setItem(VIEWPORT_CUSTOM_WIDTH_KEY, String(width));
+      storage.setItem(STORAGE_KEY_VIEWPORT_CUSTOM_WIDTH, String(width));
     }
   }
 
-  /**
-   * @returns {void}
-   */
   function commitCustomInput(): void {
-    const fallbackWidth = Number.parseInt(storage.getItem(VIEWPORT_CUSTOM_WIDTH_KEY) || "", 10);
+    const fallbackWidth = Number.parseInt(
+      storage.getItem(STORAGE_KEY_VIEWPORT_CUSTOM_WIDTH) || "",
+      10,
+    );
     const width = getCommittedCustomViewportWidth(elements.customInput.value, fallbackWidth);
 
     applyViewport("custom", width);
   }
 
-  const savedViewportMode = storage.getItem(VIEWPORT_MODE_KEY) || "desktop";
+  const savedViewportMode = storage.getItem(STORAGE_KEY_VIEWPORT_MODE) || "desktop";
   const savedCustomWidth =
-    storage.getItem(VIEWPORT_CUSTOM_WIDTH_KEY) || String(DEFAULT_DESKTOP_WIDTH);
+    storage.getItem(STORAGE_KEY_VIEWPORT_CUSTOM_WIDTH) || String(DEFAULT_DESKTOP_WIDTH);
 
   applyViewport(savedViewportMode, savedCustomWidth);
 
@@ -197,7 +165,7 @@ export function initViewportControls(
   elements.mobileButton.addEventListener("click", () => applyViewport("mobile"));
   elements.customButton.addEventListener("click", () => {
     const storedCustomWidth =
-      storage.getItem(VIEWPORT_CUSTOM_WIDTH_KEY) ||
+      storage.getItem(STORAGE_KEY_VIEWPORT_CUSTOM_WIDTH) ||
       elements.customInput.value ||
       String(DEFAULT_DESKTOP_WIDTH);
     applyViewport("custom", storedCustomWidth);

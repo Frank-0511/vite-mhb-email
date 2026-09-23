@@ -17,3 +17,6 @@ export const STORAGE_KEY_VIEWPORT_MODE = "preview-viewport-mode";
 
 /** Preview: Custom viewport width when mode is "custom" */
 export const STORAGE_KEY_VIEWPORT_CUSTOM_WIDTH = "preview-viewport-custom-width";
+
+/** Preview: View mode preference (render|source), default is render */
+export const STORAGE_KEY_VIEW_MODE = "preview-view-mode";
