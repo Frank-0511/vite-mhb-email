@@ -5,12 +5,12 @@
 import { relative, resolve, sep } from "node:path";
 import type { HmrContext, Plugin, ViteDevServer } from "vite";
 import { EVENTS } from "../../shared/contracts/constants/events.ts";
-import { setupCacheApi } from "./cache.ts";
-import { setupComponentsApi } from "./components.ts";
-import { setupCopyHtmlApi } from "./copy-html.ts";
-import { setupDataApi } from "./data.ts";
-import { setupRenderApi } from "./render.ts";
-import { setupTemplateApi } from "./templates.ts";
+import { setupCacheApi } from "../api/cache.ts";
+import { setupComponentsApi } from "../api/components.ts";
+import { setupCopyHtmlApi } from "../api/copy-html.ts";
+import { setupDataApi } from "../api/data.ts";
+import { setupRenderApi } from "../api/render.ts";
+import { setupTemplateApi } from "../api/templates.ts";
 
 const EMAIL_SOURCE_PATHS = [
   "src/emails/templates",

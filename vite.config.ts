@@ -2,7 +2,7 @@ import { resolve } from "node:path";
 import { defineConfig } from "vite";
 import { dashboardPlugin } from "./scripts/vite/plugins/dashboard.ts";
 import { lucideInlinePlugin } from "./scripts/vite/plugins/lucide-inline.ts";
-import { maizzlePlugin } from "./scripts/vite/api/maizzle-index.ts";
+import { maizzlePlugin } from "./scripts/vite/plugins/maizzle-dev-server.ts";
 import { createPageResolverPlugin } from "./scripts/vite/plugins/page-resolver.ts";
 
 const rootDir = __dirname;
