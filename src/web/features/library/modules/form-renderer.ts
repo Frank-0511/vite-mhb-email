@@ -1,4 +1,4 @@
-import type { LibraryComponent } from "./state.ts";
+import type { LibraryComponent } from "../types.ts";
 
 const INPUT_BASE_CLASS =
   "w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded text-sm font-inherit bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 transition-all focus:outline-none focus:border-cyan-500 dark:focus:border-cyan-400 focus:ring-4 focus:ring-cyan-500/10 dark:focus:ring-cyan-400/10";

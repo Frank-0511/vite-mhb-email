@@ -1,6 +1,6 @@
 /** Controller contract for the component library feature. */
 
-import type { LibraryState } from "./state.ts";
+import type { LibraryState } from "../types.ts";
 
 export interface LibraryController {
   readonly state: LibraryState;

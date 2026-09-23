@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, mock, test } from "bun:test";
+import type { LibraryComponentType } from "../types.ts";
 import { previewManager } from "./preview.ts";
 
 /**
@@ -63,7 +64,7 @@ describe("previewManager", () => {
   });
 
   test("showSkeleton falls back to organisms for an unrecognized type", () => {
-    previewManager.showSkeleton("bogus");
+    previewManager.showSkeleton("bogus" as unknown as LibraryComponentType);
 
     expect(skeleton.dataset.type).toBe("organisms");
   });

@@ -1,13 +1,19 @@
 // Components management module
+import { API_ROUTES } from "../../../../../scripts/shared/contracts/constants/api-routes.ts";
+import {
+  componentDetailRoute,
+  componentRenderRoute,
+} from "../../../../../scripts/shared/contracts/routes/api-routes.ts";
 import { fetchJSON, postText } from "../../../shared/utils/http-helpers.ts";
-import type { LibraryComponent, LibraryComponentType, LibraryGroup } from "./state.ts";
+import { COMPONENT_TYPE } from "../constants.ts";
+import type { LibraryComponent, LibraryComponentType, LibraryGroup } from "../types.ts";
 
 export const componentsManager = {
   all: [] as LibraryComponent[],
 
   async loadAll(): Promise<LibraryComponent[]> {
     try {
-      this.all = await fetchJSON<LibraryComponent[]>("/api/components");
+      this.all = await fetchJSON<LibraryComponent[]>(API_ROUTES.COMPONENTS);
       return this.all;
     } catch (err) {
       console.error("Error loading components:", err);
@@ -24,31 +30,37 @@ export const componentsManager = {
    */
   getType(path?: string): LibraryComponentType {
     const p = path || "";
-    if (p.includes("/atoms/")) return "atoms";
-    if (p.includes("/molecules/")) return "molecules";
-    if (p.includes("/organisms/")) return "organisms";
-    return "templates";
+    if (p.includes(`/${COMPONENT_TYPE.ATOMS}/`)) return COMPONENT_TYPE.ATOMS;
+    if (p.includes(`/${COMPONENT_TYPE.MOLECULES}/`)) return COMPONENT_TYPE.MOLECULES;
+    if (p.includes(`/${COMPONENT_TYPE.ORGANISMS}/`)) return COMPONENT_TYPE.ORGANISMS;
+    return COMPONENT_TYPE.TEMPLATES;
   },
 
   groupByType(components: LibraryComponent[]): LibraryGroup[] {
     const groups: Record<LibraryComponentType, LibraryGroup> = {
-      atoms: { type: "atoms", name: "Atoms", icon: "building-columns", itemIcon: "box", items: [] },
-      molecules: {
-        type: "molecules",
+      [COMPONENT_TYPE.ATOMS]: {
+        type: COMPONENT_TYPE.ATOMS,
+        name: "Atoms",
+        icon: "building-columns",
+        itemIcon: "box",
+        items: [],
+      },
+      [COMPONENT_TYPE.MOLECULES]: {
+        type: COMPONENT_TYPE.MOLECULES,
         name: "Molecules",
         icon: "molecule2",
         itemIcon: "puzzle",
         items: [],
       },
-      organisms: {
-        type: "organisms",
+      [COMPONENT_TYPE.ORGANISMS]: {
+        type: COMPONENT_TYPE.ORGANISMS,
         name: "Organisms",
         icon: "layers",
         itemIcon: "component",
         items: [],
       },
-      templates: {
-        type: "templates",
+      [COMPONENT_TYPE.TEMPLATES]: {
+        type: COMPONENT_TYPE.TEMPLATES,
         name: "Templates",
         icon: "package",
         itemIcon: "file-text",
@@ -67,7 +79,7 @@ export const componentsManager = {
 
   async loadFull(componentId: string): Promise<LibraryComponent | null> {
     try {
-      return await fetchJSON<LibraryComponent>(`/api/components/${componentId}`);
+      return await fetchJSON<LibraryComponent>(componentDetailRoute(componentId));
     } catch (err) {
       console.error("Error loading component schema:", err);
       return null;
@@ -76,7 +88,7 @@ export const componentsManager = {
 
   async render(componentId: string, variant: string, props: Record<string, unknown>) {
     try {
-      return await postText(`/api/components/${componentId}/render`, { variant, props });
+      return await postText(componentRenderRoute(componentId), { variant, props });
     } catch (err) {
       console.error("Error rendering component:", err);
       return null;

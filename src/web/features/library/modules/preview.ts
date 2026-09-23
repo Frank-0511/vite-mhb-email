@@ -1,8 +1,9 @@
 // Preview manager module
+import { componentRenderRoute } from "../../../../../scripts/shared/contracts/routes/api-routes.ts";
 import { postText } from "../../../shared/utils/http-helpers.ts";
-import type { LibraryComponentType } from "./state.ts";
-
-const SKELETON_TYPES = new Set(["atoms", "molecules", "organisms", "templates"]);
+import { COMPONENT_TYPE } from "../constants.ts";
+import { isComponentType } from "../guards.ts";
+import type { LibraryComponentType } from "../types.ts";
 
 export const previewManager = {
   iframe: null as HTMLIFrameElement | null,
@@ -33,7 +34,7 @@ export const previewManager = {
     if (showLoading) this.showSkeleton(type);
 
     try {
-      const html = await postText(`/api/components/${componentId}/render`, { variant, props });
+      const html = await postText(componentRenderRoute(componentId), { variant, props });
       iframe.srcdoc = html;
 
       // Adjust iframe height to content
@@ -74,9 +75,9 @@ export const previewManager = {
    *   "organisms" when omitted or unrecognized.
    * @returns {void}
    */
-  showSkeleton(type?: LibraryComponentType | string): void {
+  showSkeleton(type?: LibraryComponentType): void {
     if (!this.skeleton || !this.emptyPreview || !this.iframe) return;
-    this.skeleton.dataset.type = type && SKELETON_TYPES.has(type) ? type : "organisms";
+    this.skeleton.dataset.type = isComponentType(type) ? type : COMPONENT_TYPE.ORGANISMS;
     this.emptyPreview.style.display = "none";
     this.iframe.style.display = "none";
     this.skeleton.style.display = "block";
