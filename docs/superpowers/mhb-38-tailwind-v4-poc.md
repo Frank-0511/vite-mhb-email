@@ -87,7 +87,7 @@ aporta las utilidades Outlook.
 **Otras piezas afectadas:**
 
 - `scripts/vite/services/render/maizzle-compiler.ts` y `component-preview-renderer.ts`.
-- `scripts/vite/api/maizzle-index.ts`, `scripts/vite/services/cache/preview-cache.ts` y `scripts/shared/io/paths.ts` (referencias a `tailwind.email.config.js`).
+- `scripts/vite/plugins/maizzle-dev-server.ts`, `scripts/vite/services/cache/preview-cache.ts` y `scripts/shared/io/paths.ts` (referencias a `tailwind.email.config.js`).
 - `src/web/features/preview/modules/runtime/preview-hmr.ts`.
 - El flatten y la limpieza de `maizzle.config.js`, y `getEmailComponentFolders`.
 
