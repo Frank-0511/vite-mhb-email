@@ -7,7 +7,7 @@ import {
   ruleById,
   writeTemplateFile,
   writeTemplateSource,
-} from "../../test-fixtures.ts";
+} from "../../rules.fixtures.ts";
 
 afterEach(cleanupContexts);
 

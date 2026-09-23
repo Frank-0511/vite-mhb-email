@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { cleanupContexts, createContext, ruleById } from "../../test-fixtures.ts";
+import { cleanupContexts, createContext, ruleById } from "../../rules.fixtures.ts";
 
 afterEach(cleanupContexts);
 

@@ -1,12 +1,12 @@
 import { colorSchemeMeta, doctypePresent, metaCharset, noJsInEmail } from "./structure/document.ts";
 import cssClassVsInline from "./structure/css-class-vs-inline.ts";
 import cssUnsupportedProps from "./structure/css-unsupported-props.ts";
-import maxWidthCheck from "./structure/max-width-check.ts";
+import maxWidthCheck from "./structure/max-width.ts";
 import nestedTablesDepth from "./structure/nested-tables-depth.ts";
 import imgAlt from "./accessibility/img-alt.ts";
 import imgDimensions from "./accessibility/img-dimensions.ts";
 import linkTargets from "./accessibility/link-targets.ts";
-import espVariables from "./content/esp-variables-rule.ts";
+import espVariables from "./content/esp-variables.ts";
 import unsubscribeLink from "./content/unsubscribe-link.ts";
 import type { Issue, Rule, RuleContext } from "../context.ts";
 

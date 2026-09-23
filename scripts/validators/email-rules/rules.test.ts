@@ -5,7 +5,7 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { Severity } from "./context.ts";
 import { rules, runRules } from "./rules/index.ts";
-import { cleanHtml, cleanupContexts, createContext } from "./test-fixtures.ts";
+import { cleanHtml, cleanupContexts, createContext } from "./rules.fixtures.ts";
 
 afterEach(cleanupContexts);
 
