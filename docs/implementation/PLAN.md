@@ -28,17 +28,17 @@ y cierre independientes.
 
 ## Backlog activo
 
-| ID     | Entregable                                             | Estado    | Dependencia vigente                   |
-| ------ | ------------------------------------------------------ | --------- | ------------------------------------- |
-| MHB-37 | Contratos, constantes tipadas y guards de tipos        | Pendiente | Satisfecha                            |
-| MHB-39 | Convenciones de nombres de archivo y linting con tipos | Pendiente | MHB-37                                |
-| MHB-34 | Cierre total y modo estricto TypeScript                | Pendiente | MHB-39                                |
-| MHB-36 | Compatibilidad multi-package-manager                   | Pendiente | MHB-34                                |
-| MHB-14 | Evidencia de uso y compatibilidad                      | Pendiente | Flujo de producto publicado           |
-| MHB-15 | Documentación, capturas y release posterior            | Pendiente | MHB-14, MHB-34 y MHB-36               |
-| MHB-16 | Demo candidata pre-renderizada                         | Opcional  | MHB-15                                |
-| MHB-23 | Ampliar biblioteca de componentes                      | Opcional  | Caso de uso aprobado                  |
-| MHB-38 | Migración en bloque a Maizzle 6 y Tailwind v4          | Pendiente | MHB-34, MHB-36 y ventana ≥ 2027-01-15 |
+| ID     | Entregable                                             | Estado     | Dependencia vigente                   |
+| ------ | ------------------------------------------------------ | ---------- | ------------------------------------- |
+| MHB-37 | Contratos, constantes tipadas y guards de tipos        | Pendiente  | Satisfecha                            |
+| MHB-39 | Convenciones de nombres de archivo y linting con tipos | Completada | MHB-37                                |
+| MHB-34 | Cierre total y modo estricto TypeScript                | Pendiente  | MHB-39                                |
+| MHB-36 | Compatibilidad multi-package-manager                   | Pendiente  | MHB-34                                |
+| MHB-14 | Evidencia de uso y compatibilidad                      | Pendiente  | Flujo de producto publicado           |
+| MHB-15 | Documentación, capturas y release posterior            | Pendiente  | MHB-14, MHB-34 y MHB-36               |
+| MHB-16 | Demo candidata pre-renderizada                         | Opcional   | MHB-15                                |
+| MHB-23 | Ampliar biblioteca de componentes                      | Opcional   | Caso de uso aprobado                  |
+| MHB-38 | Migración en bloque a Maizzle 6 y Tailwind v4          | Pendiente  | MHB-34, MHB-36 y ventana ≥ 2027-01-15 |
 
 ## Invariantes de calidad, arquitectura y refactor integrado
 
