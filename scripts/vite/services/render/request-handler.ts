@@ -24,7 +24,7 @@ import {
   type PreviewCacheManager,
 } from "../cache/index.ts";
 import { compileTemplate as defaultCompileTemplate } from "./maizzle-compiler.ts";
-import { normalizeRenderError as defaultNormalizeRenderError } from "./render-error.ts";
+import { normalizeRenderError as defaultNormalizeRenderError } from "./error.ts";
 
 export interface RenderCacheAdapter {
   isCacheValid: (templateName: string, meta: { theme: Theme; dataHash: string }) => boolean;

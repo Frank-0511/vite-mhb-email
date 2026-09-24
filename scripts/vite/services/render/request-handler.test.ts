@@ -2,7 +2,7 @@ import { afterAll, describe, expect, test } from "bun:test";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { simulateRequest as request } from "../../test-helpers.ts";
-import { createRenderRequestHandler } from "./render-request-handler.ts";
+import { createRenderRequestHandler } from "./request-handler.ts";
 
 const originalConsole = {
   log: console.log,
