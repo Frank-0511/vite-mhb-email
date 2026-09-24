@@ -6,7 +6,7 @@
  * Genera PNG automáticamente con el navegador gestionado por Puppeteer.
  *
  * Uso:
- *   bun run export-screenshot nombre-template
+ *   bun run export:screenshot nombre-template
  */
 
 import fs from "fs-extra";
@@ -25,7 +25,7 @@ try {
   console.error(
     paint(c.red + c.bold, "❌ Error:") +
       paint(c.dim, " El nombre del template debe usar solo minúsculas, números y guiones.\n") +
-      paint(c.cyan, "   Uso: bun run export-screenshot nombre-template\n"),
+      paint(c.cyan, "   Uso: bun run export:screenshot nombre-template\n"),
   );
   process.exit(1);
 }

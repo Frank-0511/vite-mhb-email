@@ -119,14 +119,14 @@ describe("entrypoints de template", () => {
   });
 
   test("el exportador rechaza traversal antes de leer dist", () => {
-    const result = runScript("scripts/export/export-screenshot.ts", traversalProbe());
+    const result = runScript("scripts/export/screenshot.ts", traversalProbe());
 
     expect(result.status).toBe(1);
     expect(result.stderr).toContain("nombre del template");
   });
 
   test("el exportador rechaza un argumento ausente", () => {
-    const result = runScript("scripts/export/export-screenshot.ts");
+    const result = runScript("scripts/export/screenshot.ts");
 
     expect(result.status).toBe(1);
     expect(result.stderr).toContain("nombre del template");
