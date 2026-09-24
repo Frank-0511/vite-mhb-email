@@ -114,7 +114,7 @@ export async function exportScreenshot(rl: Interface): Promise<void> {
   }
 
   console.log();
-  const code = await run("bun", ["scripts/export/export-screenshot.ts", templateName]);
+  const code = await run("bun", ["scripts/export/screenshot.ts", templateName]);
   if (code !== 0) {
     console.log(paint(c.red, `\n  ❌ Error al exportar la imagen (código ${code}).\n`));
   }

@@ -47,7 +47,7 @@
     "build": "bun scripts/build/build.ts",
     "build-selective": "bun scripts/build/selective.ts",
     "generate:email": "bun scripts/generators/generate-email.ts",
-    "export:screenshot": "bun scripts/export/export-screenshot.ts",
+    "export:screenshot": "bun scripts/export/screenshot.ts",
     "check-size": "bun scripts/validators/check-html-size.ts",
     "validate-email": "bun scripts/validators/validate-email-html.ts",
     "benchmark": "bun scripts/perf/measure-benchmarks.ts",

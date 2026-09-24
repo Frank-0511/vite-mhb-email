@@ -75,7 +75,7 @@ scripts/
 ├── validators/         # Quality gates: validate-email-html.js, a11y-check.js, validate-contrast.js, check-html-size.js, validate-json.js
 ├── esp/                # Motor de variables ESP: esp-variables.js, esp-sources.js, esp-validator.js
 ├── cli/                # CLI interactivo: cli.js, index.js, actions.js, helpers.js, ui.js
-├── export/             # Export PNG con el navegador incluido de Puppeteer: export-screenshot.js
+├── export/             # Export PNG con el navegador incluido de Puppeteer: screenshot.ts
 ├── generators/         # Generador de templates (g:email)
 ├── mail/               # Transports de prueba (Mailtrap, Mailtester, Gmail)
 ├── shared/             # Utilidades: handlebars, paths, env, path-safety
