@@ -4,9 +4,9 @@ import {
   filterEditorMenuItems,
   isTransformMenuItem,
   isTreeOrTableMenuItem,
-} from "./editor-menu-filter.ts";
+} from "./menu-filter.ts";
 
-describe("editor-menu-filter", () => {
+describe("menu-filter", () => {
   describe("isTransformMenuItem", () => {
     test.each([
       [{ title: "Transform" }, true],
