@@ -1,6 +1,7 @@
 import { createCopyHtmlModalController } from "./controller.ts";
 import { formatErrorMessage } from "./formatters.ts";
 import { renderModalState, updateExportModeView } from "./view.ts";
+import "./copy-html-modal.css";
 
 type DialogOptions = {
   templateName: string;

@@ -1,9 +1,6 @@
 /**
  * @fileoverview Punto de entrada y barrel puro del módulo copy-html.
  */
-
-import "./copy-html-modal.css";
-
 export { createCopyHtmlModalController } from "./controller.ts";
 export { initCopyHtmlDialog as initCopyHtmlModal } from "./dialog.ts";
 export {
