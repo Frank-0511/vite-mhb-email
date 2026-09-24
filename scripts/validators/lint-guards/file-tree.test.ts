@@ -23,8 +23,6 @@ const KNOWN_LEGACY_PREFIX_EXCEPTIONS = new Set([
   "scripts/vite/services/render/render-request-handler.test.ts",
   "scripts/inventory/inventory-reporter.ts",
   "scripts/inventory/inventory-parser.ts",
-  "scripts/build/build-render-cache-export-transactional.test.ts",
-  "scripts/build/build-render-cache-export-marketing.test.ts",
   "scripts/export/export-screenshot.ts",
   "src/web/features/preview/modules/render/render-error-view.ts",
   "src/web/features/preview/modules/render/render-api.test.ts",
