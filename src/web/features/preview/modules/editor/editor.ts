@@ -7,7 +7,7 @@ import { JSONEditor } from "https://cdn.jsdelivr.net/npm/vanilla-jsoneditor@3.11
 import { EVENTS } from "../../../../../../scripts/shared/contracts/constants/events.ts";
 import { dataTemplateRoute } from "../../../../../../scripts/shared/contracts/routes/api-routes.ts";
 import { fetchJSON } from "../../../../shared/utils/http-helpers.ts";
-import { filterEditorMenuItems } from "./editor-menu-filter.ts";
+import { filterEditorMenuItems } from "./menu-filter.ts";
 
 export type EditorContent = {
   json?: Record<string, unknown>;

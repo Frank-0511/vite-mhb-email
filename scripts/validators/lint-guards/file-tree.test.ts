@@ -11,16 +11,6 @@ const PROJECT_ROOT = join(import.meta.dirname ?? ".", "../../..");
 const ROOT_DIRS = ["scripts", "src"];
 const EXCLUDED_DIRS = new Set(["node_modules", "dist", ".cache", ".git"]);
 
-/**
- * Excepciones documentadas para archivos existentes que conservan el prefijo de la carpeta
- * padre pero no formaban parte del alcance de renombres en MHB-39 (B1).
- * TODO(mhb-40): Evaluar renombrar estos archivos en una tarea dedicada.
- */
-const KNOWN_LEGACY_PREFIX_EXCEPTIONS = new Set([
-  "src/web/features/preview/modules/editor/editor-menu-filter.ts",
-  "src/web/features/preview/modules/editor/editor-menu-filter.test.ts",
-]);
-
 interface DiscoveredFile {
   relativePath: string;
   absolutePath: string;
@@ -148,16 +138,14 @@ describe("Validación de estructura del árbol de archivos", () => {
       expect(violations).toEqual([]);
     });
 
-    test("ningún archivo repite el nombre de la carpeta padre como prefijo sin excepción documentada", () => {
+    test("ningún archivo repite el nombre de la carpeta padre como prefijo", () => {
       const { files } = scanTree();
       const violations: string[] = [];
 
       for (const file of files) {
         const prefix = `${file.dirName}-`;
         if (file.fileName.startsWith(prefix)) {
-          if (!KNOWN_LEGACY_PREFIX_EXCEPTIONS.has(file.relativePath)) {
-            violations.push(`${file.relativePath}: repite prefijo '${prefix}' de la carpeta padre`);
-          }
+          violations.push(`${file.relativePath}: repite prefijo '${prefix}' de la carpeta padre`);
         }
       }
 
