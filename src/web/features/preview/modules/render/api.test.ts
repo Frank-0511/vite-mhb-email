@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { createRenderAPI } from "./render-api.ts";
-import { parseRenderErrorResponse, RenderApiError } from "./render-error-parser.ts";
+import { createRenderAPI } from "./api.ts";
+import { parseRenderErrorResponse, RenderApiError } from "./error-parser.ts";
 
 /**
  * Crea una respuesta simulada compatible con Response.

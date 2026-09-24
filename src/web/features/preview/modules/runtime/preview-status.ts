@@ -3,7 +3,7 @@
  */
 
 import { queryRequired, querySafe } from "../../../../shared/utils/dom-helpers.ts";
-import { createRenderErrorView } from "../render/render-error-view.ts";
+import { createRenderErrorView } from "../render/error-view.ts";
 
 type ESPValidationData = {
   missing?: string[];
