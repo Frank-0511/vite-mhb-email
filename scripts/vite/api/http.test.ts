@@ -3,6 +3,7 @@
  */
 
 import { describe, expect, test } from "bun:test";
+import { EventEmitter } from "node:events";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import {
   asyncHandler,
@@ -13,21 +14,25 @@ import {
   sendText,
 } from "./http.ts";
 
-function createMockResponse(initialHeadersSent = false) {
+function createMockResponse(initialHeadersSent = false, onEnd?: () => void) {
   let body = "";
+  let headersSent = initialHeadersSent;
   const headers = new Map<string, string>();
 
   const res = {
     statusCode: 200,
-    headersSent: initialHeadersSent,
+    get headersSent() {
+      return headersSent;
+    },
     setHeader(name: string, value: string) {
       headers.set(name.toLowerCase(), value);
     },
-    end(chunk?: string | Buffer) {
+    end(chunk?: unknown) {
       if (chunk) {
-        body += chunk.toString();
+        body += String(chunk);
       }
-      res.headersSent = true;
+      headersSent = true;
+      onEnd?.();
     },
     get body() {
       return body;
@@ -35,9 +40,12 @@ function createMockResponse(initialHeadersSent = false) {
     get headers() {
       return headers;
     },
-  } as unknown as ServerResponse & { body: string; headers: Map<string, string> };
+  };
 
-  return res;
+  return res as unknown as ServerResponse & {
+    body: string;
+    headers: Map<string, string>;
+  };
 }
 
 describe("asyncHandler", () => {
@@ -79,13 +87,9 @@ describe("asyncHandler", () => {
   test("rechazo con headers ya enviados: finaliza respuesta sin sobrescribir con JSON 500", async () => {
     let endCalled = false;
     const req = {} as IncomingMessage;
-    const res = createMockResponse(true);
-
-    const originalEnd = res.end.bind(res);
-    res.end = (chunk?: string | Buffer) => {
+    const res = createMockResponse(true, () => {
       endCalled = true;
-      return originalEnd(chunk);
-    };
+    });
 
     const handler = asyncHandler(async () => {
       await Promise.resolve();
@@ -127,19 +131,18 @@ describe("helpers HTTP", () => {
   });
 
   test("readRequestBody y readJsonBody leen el stream del request", async () => {
-    const { EventEmitter } = await import("node:events");
-    const emitter = new EventEmitter() as unknown as IncomingMessage;
-    const readPromise = readJsonBody(emitter);
-    (emitter as unknown as EventEmitter).emit("data", Buffer.from('{"hello":'));
-    (emitter as unknown as EventEmitter).emit("data", Buffer.from('"world"}'));
-    (emitter as unknown as EventEmitter).emit("end");
+    const emitter = new EventEmitter();
+    const readPromise = readJsonBody(emitter as unknown as IncomingMessage);
+    emitter.emit("data", Buffer.from('{"hello":'));
+    emitter.emit("data", Buffer.from('"world"}'));
+    emitter.emit("end");
     const parsed = await readPromise;
     expect(parsed).toEqual({ hello: "world" });
 
-    const rawEmitter = new EventEmitter() as unknown as IncomingMessage;
-    const rawPromise = readRequestBody(rawEmitter);
-    (rawEmitter as unknown as EventEmitter).emit("data", "texto plano");
-    (rawEmitter as unknown as EventEmitter).emit("end");
+    const rawEmitter = new EventEmitter();
+    const rawPromise = readRequestBody(rawEmitter as unknown as IncomingMessage);
+    rawEmitter.emit("data", "texto plano");
+    rawEmitter.emit("end");
     const raw = await rawPromise;
     expect(raw).toBe("texto plano");
   });
