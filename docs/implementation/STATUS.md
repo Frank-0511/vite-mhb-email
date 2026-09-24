@@ -3,13 +3,13 @@
 ## Resumen
 
 - ID activo: MHB-39
-- Estado: En revisión
+- Estado: Completada
 - Implementador: Perfil TypeScript transversal
 - Revisor: Revisor técnico independiente
 - Rama: `feature/mhb-39`
 - Última actualización: 2026-09-24
 - Contrato activo: `docs/implementation/PLAN.md` (MHB-39)
-- Nota de cierre de implementación: Finalizada la implementación y corrección de hallazgos de MHB-39. Se estandarizaron convenciones de nombres mediante 48 renombres con `git mv` eliminando toda redundancia de carpeta, se garantizó que los barrels `index.ts` sean puros (lógica extraída a `registry.ts`), se añadieron tests y manejo seguro de `res.headersSent` en `asyncHandler`, se ajustó `require-await` en ESLint (error en JS/MJS, off en TS) y se validaron los límites de archivo/carpeta y 0 hallazgos en linting con tipos.
+- Nota de cierre: Tarea completada y autorizada por el usuario tras validación de controles y smoke manual. Se estandarizaron convenciones de nombres mediante 48 renombres con `git mv` eliminando toda redundancia de carpeta, se garantizó que los barrels `index.ts` sean puros (lógica extraída a `registry.ts`), se añadieron tests y manejo seguro de `res.headersSent` en `asyncHandler`, se ajustó `require-await` en ESLint (error en JS/MJS, off en TS) y se validaron los límites de archivo/carpeta y 0 hallazgos en linting con tipos.
 
 ## Baseline vigente
 
@@ -120,6 +120,24 @@
 | `src/web/features/preview/modules/render/render-error-view.test.ts`       | `src/web/features/preview/modules/render/error-view.test.ts`         |
 | `src/web/features/preview/modules/render/render-error-view.ts`            | `src/web/features/preview/modules/render/error-view.ts`              |
 
+## Revisión de cierre (MHB-39)
+
+- Criterios de aceptación comprobados: 48 renombres de archivos aplicados con `git mv` sin redundancia de carpeta ni nombres genéricos; barrels `index.ts` puros y reexportadores; validación automatizada en `file-tree.test.ts` de límites (≤ 250 prod / ≤ 400 test, máx 8 por carpeta); 0 hallazgos en linting con tipos (`no-floating-promises`, `no-misused-promises`, `await-thenable`, `no-redundant-type-constituents`, `require-await`); `asyncHandler` con verificación de `res.headersSent` y suite co-locada `http.test.ts` pasando al 100%.
+- Controles automáticos: `check:task-branch`, `typecheck`, `test` (598 pass, 0 fail en 78 archivos), `lint`, `format:check`, `build`, `validate-email`, `agents:check` y `git diff --check` en verde.
+- Controles manuales y smoke: build idempotente sin diffs en `dist/`; endpoints `/api/templates`, `/api/data`, `/api/components`, `/api/cache/invalidate`, `/api/render` y `/api/copy-html` respondiendo HTTP 200 en desarrollo.
+- Evidencia revisada: rama `feature/mhb-39`.
+- Decisión del revisor: `Completada` (2026-09-24), autorizada por el usuario tras validación exhaustiva de controles.
+
+## Últimas entregas
+
+- MHB-39: `Completada` el 2026-09-24; estandarización de 48 renombres `git mv` (cero prefijos redundantes), barrels `index.ts` puros, test de árbol `file-tree.test.ts`, linting con tipos en ESLint con 0 hallazgos y `asyncHandler` seguro.
+
+## Ejecuciones delegadas relevantes
+
+| Ámbito | Estado     | Propiedad                   | Handoff                                               |
+| :----- | :--------- | :-------------------------- | :---------------------------------------------------- |
+| MHB-39 | Completada | Nombres y linting con tipos | Verificación completa y aceptada en `feature/mhb-39`. |
+
 ## Decisiones y desviaciones vigentes
 
 - **Dependencia de desarrollo:** Autorizada `eslint-plugin-check-file@3.3.2` fijada exacta para forzar kebab-case y blocklist de helpers/utils.
@@ -130,7 +148,7 @@
 
 ## Handoff
 
-- Próxima acción inmediata: Revisión técnica independiente de MHB-39 para confirmar cierre.
+- Próxima acción inmediata: merge de `feature/mhb-39` a `master`.
 - Siguiente tarea del roadmap:
   - MHB-34 (`desbloqueada` tras MHB-39): Cierre total y modo estricto TypeScript.
   - MHB-14 (`desbloqueado`): Evidencia de uso y compatibilidad.
