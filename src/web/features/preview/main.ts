@@ -18,8 +18,8 @@ import { setupPreviewViewport } from "./modules/controls/viewport-controls.ts";
 import { initCopyHtmlModal } from "./modules/copy-html/index.ts";
 import { initializeEditor } from "./modules/editor/editor.ts";
 import { setupResetButton, setupSaveButton } from "./modules/editor/save-reset.ts";
-import type { EditorContent } from "./modules/render/render-api.ts";
-import { createRenderAPI } from "./modules/render/render-api.ts";
+import type { EditorContent } from "./modules/render/api.ts";
+import { createRenderAPI } from "./modules/render/api.ts";
 import { createIframeManager } from "./modules/runtime/iframe-manager.ts";
 import { setupPreviewHmr } from "./modules/runtime/preview-hmr.ts";
 import {

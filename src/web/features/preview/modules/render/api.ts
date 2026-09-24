@@ -16,7 +16,7 @@ import {
   sendRequest,
 } from "../../../../shared/utils/http-helpers.ts";
 import { getTemplateTheme } from "../../../../shared/utils/theme-helpers.ts";
-import { parseRenderErrorResponse, RenderApiError } from "./render-error-parser.ts";
+import { parseRenderErrorResponse, RenderApiError } from "./error-parser.ts";
 
 type ESPValidationHeader = {
   missing?: string[];

@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { createMockElement } from "../runtime/test-helpers.ts";
-import { createRenderErrorView } from "./render-error-view.ts";
+import { createRenderErrorView } from "./error-view.ts";
 
 const createMockDomElement = (id = "") => createMockElement([], { id, hidden: true });
 

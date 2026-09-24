@@ -4,7 +4,7 @@ import {
   parseRenderErrorResponse,
   parseSafeRenderLocation,
   RenderApiError,
-} from "./render-error-parser.ts";
+} from "./error-parser.ts";
 
 describe("render-error-parser (parser seguro de errores de render)", () => {
   describe("parseSafeRenderLocation", () => {
