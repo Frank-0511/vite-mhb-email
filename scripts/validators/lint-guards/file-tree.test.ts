@@ -17,10 +17,6 @@ const EXCLUDED_DIRS = new Set(["node_modules", "dist", ".cache", ".git"]);
  * TODO(mhb-40): Evaluar renombrar estos archivos en una tarea dedicada.
  */
 const KNOWN_LEGACY_PREFIX_EXCEPTIONS = new Set([
-  "scripts/vite/services/render/render-request-handler.ts",
-  "scripts/vite/services/render/render-error.test.ts",
-  "scripts/vite/services/render/render-error.ts",
-  "scripts/vite/services/render/render-request-handler.test.ts",
   "src/web/features/preview/modules/render/render-error-view.ts",
   "src/web/features/preview/modules/render/render-api.test.ts",
   "src/web/features/preview/modules/render/render-error-parser.ts",
