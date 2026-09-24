@@ -6,10 +6,17 @@
 import { describe, expect, test } from "bun:test";
 import { readdirSync, readFileSync } from "node:fs";
 import { basename, join, relative } from "node:path";
+import ts from "typescript";
 
 const PROJECT_ROOT = join(import.meta.dirname ?? ".", "../../..");
 const ROOT_DIRS = ["scripts", "src"];
 const EXCLUDED_DIRS = new Set(["node_modules", "dist", ".cache", ".git"]);
+
+function countLines(content: string): number {
+  if (content.length === 0) return 0;
+  const normalized = content.endsWith("\n") ? content.slice(0, -1) : content;
+  return normalized.split("\n").length;
+}
 
 interface DiscoveredFile {
   relativePath: string;
@@ -48,7 +55,9 @@ function scanTree(): { files: DiscoveredFile[]; directories: DiscoveredDir[] } {
           entry.name.endsWith(".test.ts") ||
           entry.name.endsWith(".spec.ts") ||
           entry.name.endsWith(".test.js") ||
-          entry.name.endsWith(".spec.js");
+          entry.name.endsWith(".spec.js") ||
+          entry.name.endsWith(".fixtures.ts") ||
+          entry.name === "test-helpers.ts";
 
         files.push({
           relativePath: relPath,
@@ -85,7 +94,7 @@ describe("Validación de estructura del árbol de archivos", () => {
 
       for (const file of files) {
         const content = readFileSync(file.absolutePath, "utf-8");
-        const lines = content.split("\n").length;
+        const lines = countLines(content);
         const limit = file.isTest ? 400 : 250;
 
         if (lines > limit) {
@@ -146,6 +155,38 @@ describe("Validación de estructura del árbol de archivos", () => {
         const prefix = `${file.dirName}-`;
         if (file.fileName.startsWith(prefix)) {
           violations.push(`${file.relativePath}: repite prefijo '${prefix}' de la carpeta padre`);
+        }
+      }
+
+      expect(violations).toEqual([]);
+    });
+  });
+
+  describe("Barrels puros", () => {
+    test("todo index.ts contiene únicamente reexports 'export ... from' y comentarios", () => {
+      const { files } = scanTree();
+      const violations: string[] = [];
+
+      for (const file of files) {
+        if (file.fileName !== "index.ts") continue;
+
+        const content = readFileSync(file.absolutePath, "utf-8");
+        const sourceFile = ts.createSourceFile(
+          file.relativePath,
+          content,
+          ts.ScriptTarget.Latest,
+          true,
+        );
+
+        for (const statement of sourceFile.statements) {
+          const isReExport =
+            ts.isExportDeclaration(statement) && Boolean(statement.moduleSpecifier);
+
+          if (!isReExport) {
+            violations.push(
+              `${file.relativePath}: sentencia no permitida en barrel puro (${ts.SyntaxKind[statement.kind]})`,
+            );
+          }
         }
       }
 
