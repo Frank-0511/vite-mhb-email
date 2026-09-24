@@ -60,6 +60,10 @@ export function asyncHandler(
 ): (req: IncomingMessage, res: ServerResponse, next: () => void) => void {
   return (req, res, next) => {
     fn(req, res, next).catch((err: unknown) => {
+      if (res.headersSent) {
+        res.end();
+        return;
+      }
       sendJson(res, 500, { error: err instanceof Error ? err.message : String(err) });
     });
   };
