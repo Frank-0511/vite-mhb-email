@@ -72,15 +72,15 @@ export default [
       "prefer-const": "error",
       "no-var": "error",
       "no-console": "off",
-      "require-await": "off",
     },
   },
 
-  // Regla no-unused-vars para JS/MJS
+  // Reglas para JS/MJS
   {
     files: ["**/*.js", "**/*.mjs"],
     rules: {
       "no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+      "require-await": "error",
     },
   },
 
@@ -111,6 +111,7 @@ export default [
       ],
       "@typescript-eslint/await-thenable": "error",
       "@typescript-eslint/no-redundant-type-constituents": "error",
+      "require-await": "off",
       "@typescript-eslint/require-await": "error",
       "@typescript-eslint/return-await": ["error", "in-try-catch"],
     },
