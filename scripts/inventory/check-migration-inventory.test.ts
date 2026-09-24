@@ -6,10 +6,10 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "bun:test";
 import { checkInventory } from "./check-migration-inventory.ts";
-import type { BaselineData } from "./inventory-parser.ts";
-import { matchesLayer } from "./inventory-parser.ts";
-import type { InventoryResults } from "./inventory-reporter.ts";
-import { formatInventoryReport } from "./inventory-reporter.ts";
+import type { BaselineData } from "./parser.ts";
+import { matchesLayer } from "./parser.ts";
+import type { InventoryResults } from "./reporter.ts";
+import { formatInventoryReport } from "./reporter.ts";
 
 describe("check-migration-inventory (MHB-29)", () => {
   describe("matchesLayer", () => {
