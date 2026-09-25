@@ -331,9 +331,11 @@ cp .env.example .env
 
 ### Mailtrap
 
+Solo requiere tu API token o API key (Sandbox o Email Sending). Si no configuras `MAILTRAP_INBOX_ID`, se detectará automáticamente tu inbox de Sandbox o se usará la Sending API.
+
 ```env
-MAILTRAP_API_TOKEN=
-MAILTRAP_INBOX_ID=
+MAILTRAP_API_TOKEN=     # o MAILTRAP_API_KEY=
+MAILTRAP_INBOX_ID=      # opcional
 MAILTRAP_FROM_EMAIL=
 MAILTRAP_FROM_NAME=
 MAILTRAP_TO_EMAIL=

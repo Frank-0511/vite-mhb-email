@@ -80,8 +80,9 @@ describe("mail subsystem", () => {
   });
 
   describe("sendToMailtrap", () => {
-    test("rechaza si MAILTRAP_API_TOKEN no está configurado", async () => {
+    test("rechaza si MAILTRAP_API_TOKEN ni MAILTRAP_API_KEY están configurados", async () => {
       delete process.env.MAILTRAP_API_TOKEN;
+      delete process.env.MAILTRAP_API_KEY;
       delete process.env.MAILTRAP_INBOX_ID;
 
       await expect(
@@ -95,19 +96,123 @@ describe("mail subsystem", () => {
       ).rejects.toThrow("MAILTRAP_API_TOKEN no configurado en .env");
     });
 
-    test("rechaza si MAILTRAP_INBOX_ID no está configurado", async () => {
-      process.env.MAILTRAP_API_TOKEN = "valid-token-123";
+    test("permite enviar usando MAILTRAP_API_KEY alternativo si MAILTRAP_API_TOKEN no existe", async () => {
+      delete process.env.MAILTRAP_API_TOKEN;
+      process.env.MAILTRAP_API_KEY = "valid-api-key-456";
+      process.env.MAILTRAP_INBOX_ID = "12345";
+
+      let capturedUrl = "";
+      let capturedAuth = "";
+      const mockFetch = (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+        capturedUrl = String(input);
+        capturedAuth = (init?.headers as Record<string, string>)?.Authorization ?? "";
+        return Promise.resolve(
+          new Response(JSON.stringify({ success: true }), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          }),
+        );
+      };
+
+      const result = await sendToMailtrap({
+        html: "<p>test</p>",
+        subject: "Test",
+        to: "dest@example.com",
+        fromEmail: "sender@example.com",
+        fromName: "Sender",
+        fetchFn: mockFetch as unknown as typeof fetch,
+      });
+
+      expect(result).toEqual({ success: true });
+      expect(capturedUrl).toBe("https://sandbox.api.mailtrap.io/api/send/12345");
+      expect(capturedAuth).toBe("Bearer valid-api-key-456");
+    });
+
+    test("descubre automáticamente el inbox si MAILTRAP_INBOX_ID no está configurado", async () => {
+      process.env.MAILTRAP_API_TOKEN = "sandbox-token";
       delete process.env.MAILTRAP_INBOX_ID;
 
-      await expect(
-        sendToMailtrap({
-          html: "<p>test</p>",
-          subject: "Test",
-          to: "dest@example.com",
-          fromEmail: "sender@example.com",
-          fromName: "Sender",
-        }),
-      ).rejects.toThrow("MAILTRAP_INBOX_ID no configurado en .env");
+      const calledUrls: string[] = [];
+      const mockFetch = (input: RequestInfo | URL): Promise<Response> => {
+        const url = String(input);
+        calledUrls.push(url);
+
+        if (url === "https://mailtrap.io/api/accounts") {
+          return Promise.resolve(
+            new Response(JSON.stringify([{ id: 88 }]), {
+              status: 200,
+              headers: { "Content-Type": "application/json" },
+            }),
+          );
+        }
+        if (url === "https://mailtrap.io/api/accounts/88/inboxes") {
+          return Promise.resolve(
+            new Response(JSON.stringify([{ id: 54321, name: "Auto Inbox" }]), {
+              status: 200,
+              headers: { "Content-Type": "application/json" },
+            }),
+          );
+        }
+        if (url === "https://sandbox.api.mailtrap.io/api/send/54321") {
+          return Promise.resolve(
+            new Response(JSON.stringify({ success: true, message_ids: ["msg-1"] }), {
+              status: 200,
+              headers: { "Content-Type": "application/json" },
+            }),
+          );
+        }
+        return Promise.resolve(new Response("Not found", { status: 404 }));
+      };
+
+      const result = await sendToMailtrap({
+        html: "<p>test</p>",
+        subject: "Test",
+        to: "dest@example.com",
+        fromEmail: "sender@example.com",
+        fromName: "Sender",
+        fetchFn: mockFetch as unknown as typeof fetch,
+      });
+
+      expect(result).toEqual({ success: true, message_ids: ["msg-1"] });
+      expect(calledUrls).toContain("https://mailtrap.io/api/accounts");
+      expect(calledUrls).toContain("https://mailtrap.io/api/accounts/88/inboxes");
+      expect(calledUrls).toContain("https://sandbox.api.mailtrap.io/api/send/54321");
+    });
+
+    test("recurre a la API de Sending si no se descubren inboxes de Sandbox", async () => {
+      process.env.MAILTRAP_API_TOKEN = "sending-api-token";
+      delete process.env.MAILTRAP_INBOX_ID;
+
+      let capturedUrl = "";
+      const mockFetch = (input: RequestInfo | URL): Promise<Response> => {
+        const url = String(input);
+        capturedUrl = url;
+
+        if (url === "https://mailtrap.io/api/accounts") {
+          return Promise.resolve(new Response("Unauthorized", { status: 401 }));
+        }
+        if (url === "https://send.api.mailtrap.io/api/send") {
+          return Promise.resolve(
+            new Response(JSON.stringify({ success: true }), {
+              status: 200,
+              headers: { "Content-Type": "application/json" },
+            }),
+          );
+        }
+        return Promise.resolve(new Response("Not found", { status: 404 }));
+      };
+
+      const result = await sendToMailtrap({
+        html: "<p>test</p>",
+        subject: "Test",
+        to: "dest@example.com",
+        fromEmail: "sender@example.com",
+        fromName: "Sender",
+        fetchFn: mockFetch as unknown as typeof fetch,
+      });
+
+      expect(result).toEqual({ success: true });
+      expect(capturedUrl).toBe("https://send.api.mailtrap.io/api/send");
     });
 
     test("realiza la petición POST esperada con los headers de autorización y payload JSON", async () => {

@@ -41,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   con check agregado `CI Pipeline`, cancelación de ejecuciones obsoletas, caché de
   `node_modules` y sin ejecuciones duplicadas push/PR en ramas de feature (MHB-41).
 
+- Integración con Mailtrap simplificada: autenticación flexible con `MAILTRAP_API_TOKEN` o `MAILTRAP_API_KEY`, descubrimiento automático del inbox de Sandbox vía API de cuentas y fallback transparente a Mailtrap Email Sending API sin requerir `MAILTRAP_INBOX_ID` obligatorio.
 - Activación de linting con tipos en ESLint sobre `tsconfig.strict.json` para
   reglas estrictas de promesas y tipos redundantes con cero advertencias (MHB-39).
 - Manejo de `res.headersSent` y envoltorio seguro en `asyncHandler` para APIs
