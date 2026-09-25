@@ -3,7 +3,7 @@
 ## Resumen
 
 - ID activo: MHB-41
-- Estado: En progreso
+- Estado: En revisión
 - Implementador: Perfil tooling/CI
 - Revisor: Revisor técnico de build y email
 - Rama: `feature/mhb-41`
@@ -19,32 +19,36 @@
 ## Entrega activa (MHB-41: Gate del contrato de salida y validadores en CI)
 
 - **Hechos de implementación:**
-  1. Inicio de implementación de MHB-41 tras verificación de baseline limpio y sin divergencia en `dist/*.html`.
+  1. Creado módulo `scripts/validators/dist-baseline/` (`snapshot`, `compare`, `baseline-guard`, `check`, `update`, `baseline.json`) con 23 tests unitarios y fixtures deterministas.
+  2. Añadidos scripts `check:dist-baseline` y `update:dist-baseline` a `package.json`.
+  3. Modificados entrypoints CLI de `validate-email-html.ts` y `check-html-size.ts` para retornar código 1 ante errores (> 102 KB) en CI, con tests unitarios.
+  4. Configurado `.github/workflows/ci.yml` con: `git diff --exit-code -- dist/`, `validate-email`, `check:dist-baseline`, `check-size`, `check:inventory` (informe).
+  5. Verificación manual en CI completada: verde inicial ([`36099115433`](https://github.com/Frank-0511/vite-mhb-email/actions/runs/36099115433)), rojo forzado ([`36099267303`](https://github.com/Frank-0511/vite-mhb-email/actions/runs/36099267303)) y verde tras revert ([`36099402152`](https://github.com/Frank-0511/vite-mhb-email/actions/runs/36099402152)) sin incremento en tiempo de pipeline (1m1s vs 1m3s).
 - **Riesgos residuales:**
-  1. Potencial no determinismo de hashes entre macOS (local) y Linux (CI); mitigado mediante spike en el paso 1.
+  1. Ninguno identificado. Determinismo multiplataforma comprobado entre macOS local y runner Linux en GitHub Actions.
 - **Bloqueos y desviaciones:**
   - Sin bloqueos vigentes. Desviaciones aprobadas por el usuario (D1–D4):
-    - D1: Modificación de entrypoint CLI de `validate-email-html.ts` y `check-html-size.ts` para retornar código 1 ante errores o archivos > 102 KB.
+    - D1: Modificación de entrypoints CLI de `validate-email-html.ts` y `check-html-size.ts` para retornar código 1 ante errores o archivos > 102 KB.
     - D2: Entrada de MHB-41 en `CHANGELOG.md` bajo `[Unreleased]`.
     - D3: En `docs/ai/AGENTS.md`, reemplazar comparación manual por `bun run check:dist-baseline` y sincronizar adaptadores.
     - D4: Push de `feature/mhb-41` a `origin` para el spike del paso 1, el commit rojo del paso 8 y su revert.
 
 ### Controles de Calidad
 
-| Control                | Comando                         | Resultado             |
-| :--------------------- | :------------------------------ | :-------------------- |
-| Comprobación de rama   | `bun run check:task-branch`     | Pasó (feature/mhb-41) |
-| Formato de código      | `bun run format:check`          | Pendiente             |
-| Typecheck unificado    | `bun run typecheck`             | Pendiente             |
-| Suite de pruebas       | `bun run test`                  | Pendiente             |
-| Linting completo       | `bun run lint`                  | Pendiente             |
-| Build y salida dist    | `bun run build`                 | Pasó (6 templates)    |
-| Baseline dist local    | `git diff --exit-code -- dist/` | Pasó (0 diff)         |
-| Validación email       | `bun run validate-email`        | Pasó (0 errores)      |
-| Gate baseline dist     | `bun run check:dist-baseline`   | Pendiente             |
-| Chequeo tamaño HTML    | `bun run check-size`            | Pendiente             |
-| Adaptadores de agentes | `bun run agents:check`          | Pasó                  |
-| Diff de Git            | `git diff --check`              | Pendiente             |
+| Control                | Comando                         | Resultado               |
+| :--------------------- | :------------------------------ | :---------------------- |
+| Comprobación de rama   | `bun run check:task-branch`     | Pasó (`feature/mhb-41`) |
+| Formato de código      | `bun run format:check`          | Pasó (0 archivos)       |
+| Typecheck unificado    | `bun run typecheck`             | Pasó (0 errores)        |
+| Suite de pruebas       | `bun run test`                  | Pasó (151 pass, 0 fail) |
+| Linting completo       | `bun run lint`                  | Pasó (0 errores)        |
+| Build y salida dist    | `bun run build`                 | Pasó (6 templates)      |
+| Baseline dist local    | `git diff --exit-code -- dist/` | Pasó (0 diff)           |
+| Validación email       | `bun run validate-email`        | Pasó (0 errores)        |
+| Gate baseline dist     | `bun run check:dist-baseline`   | Pasó (coincidencia)     |
+| Chequeo tamaño HTML    | `bun run check-size`            | Pasó (todos <= 102 KB)  |
+| Adaptadores de agentes | `bun run agents:check`          | Pasó (7 targets)        |
+| Diff de Git            | `git diff --check`              | Pasó (0 issues)         |
 
 ## Últimas entregas
 
@@ -53,10 +57,10 @@
 
 ## Ejecuciones delegadas relevantes
 
-| Ámbito | Estado      | Propiedad             | Handoff                                              |
-| :----- | :---------- | :-------------------- | :--------------------------------------------------- |
-| MHB-41 | En progreso | Tooling y CI          | Implementación activa en rama `feature/mhb-41`.      |
-| MHB-40 | Completada  | Gobernanza y revisión | Revisión aprobada y fusionada a `master` (ver HIST). |
+| Ámbito | Estado      | Propiedad             | Handoff                                                     |
+| :----- | :---------- | :-------------------- | :---------------------------------------------------------- |
+| MHB-41 | En revisión | Tooling y CI          | Entregada a revisión técnica independiente (`task-review`). |
+| MHB-40 | Completada  | Gobernanza y revisión | Revisión aprobada y fusionada a `master` (ver HIST).        |
 
 ## Decisiones y desviaciones vigentes
 
@@ -73,6 +77,6 @@
 
 ## Handoff
 
-- Próxima acción inmediata: Implementar paso 1 (spike de determinismo en CI con `git diff --exit-code -- dist/`).
+- Próxima acción inmediata: Revisión técnica independiente de MHB-41 siguiendo el procedimiento de la skill `task-review`.
 - Siguiente tarea del roadmap:
-  - MHB-45 (`bloqueada`, depende de MHB-41): Protección de `master` y política de Dependabot.
+  - MHB-45 (`bloqueada`, depende de la aprobación y cierre de MHB-41): Protección de `master` y política de Dependabot.
