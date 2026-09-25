@@ -59,3 +59,6 @@ jobs:
 
       - name: Check HTML size
         run: bun run check-size
+
+      - name: Check migration inventory
+        run: bun run check:inventory
