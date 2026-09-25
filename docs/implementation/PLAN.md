@@ -41,25 +41,25 @@ y cierre independientes.
 
 ## Backlog activo
 
-| ID     | Entregable                                             | Estado     | Dependencia vigente                   |
-| ------ | ------------------------------------------------------ | ---------- | ------------------------------------- |
-| MHB-37 | Contratos, constantes tipadas y guards de tipos        | Completada | Satisfecha                            |
-| MHB-39 | Convenciones de nombres de archivo y linting con tipos | Completada | MHB-37                                |
-| MHB-40 | Gobernanza de agentes y revisión independiente         | Pendiente  | MHB-39                                |
-| MHB-41 | Gate del contrato de salida y validadores en CI        | Pendiente  | MHB-40                                |
-| MHB-45 | Protección de `master` y política de Dependabot        | Pendiente  | MHB-41                                |
-| MHB-44 | Compatibilidad del HTML exportado con clientes reales  | Pendiente  | MHB-45                                |
-| MHB-46 | Endurecimiento de la API local del servidor Vite       | Pendiente  | MHB-44                                |
-| MHB-47 | Contrato de integración ESP y perfil SendGrid          | Pendiente  | MHB-46                                |
-| MHB-42 | Spike de loaders y decisión de excepciones JS          | Pendiente  | MHB-47                                |
-| MHB-34 | Cierre total y modo estricto TypeScript                | Pendiente  | MHB-42                                |
-| MHB-43 | Higiene de dependencias                                | Pendiente  | MHB-34                                |
-| MHB-36 | Compatibilidad multi-package-manager                   | Pendiente  | MHB-43                                |
-| MHB-14 | Evidencia de uso y compatibilidad                      | Pendiente  | MHB-44                                |
-| MHB-15 | Documentación, capturas y release posterior            | Pendiente  | MHB-14 y MHB-36                       |
-| MHB-16 | Demo candidata pre-renderizada                         | Opcional   | MHB-15                                |
-| MHB-23 | Ampliar biblioteca de componentes                      | Opcional   | Caso de uso aprobado                  |
-| MHB-38 | Migración en bloque a Maizzle 6 y Tailwind v4          | Pendiente  | MHB-34, MHB-36 y ventana ≥ 2027-01-15 |
+| ID     | Entregable                                             | Estado      | Dependencia vigente                   |
+| ------ | ------------------------------------------------------ | ----------- | ------------------------------------- |
+| MHB-37 | Contratos, constantes tipadas y guards de tipos        | Completada  | Satisfecha                            |
+| MHB-39 | Convenciones de nombres de archivo y linting con tipos | Completada  | MHB-37                                |
+| MHB-40 | Gobernanza de agentes y revisión independiente         | Completada  | MHB-39                                |
+| MHB-41 | Gate del contrato de salida y validadores en CI        | Completada  | MHB-40                                |
+| MHB-45 | Protección de `master` y política de Dependabot        | En progreso | MHB-41                                |
+| MHB-44 | Compatibilidad del HTML exportado con clientes reales  | Pendiente   | MHB-45                                |
+| MHB-46 | Endurecimiento de la API local del servidor Vite       | Pendiente   | MHB-44                                |
+| MHB-47 | Contrato de integración ESP y perfil SendGrid          | Pendiente   | MHB-46                                |
+| MHB-42 | Spike de loaders y decisión de excepciones JS          | Pendiente   | MHB-47                                |
+| MHB-34 | Cierre total y modo estricto TypeScript                | Pendiente   | MHB-42                                |
+| MHB-43 | Higiene de dependencias                                | Pendiente   | MHB-34                                |
+| MHB-36 | Compatibilidad multi-package-manager                   | Pendiente   | MHB-43                                |
+| MHB-14 | Evidencia de uso y compatibilidad                      | Pendiente   | MHB-44                                |
+| MHB-15 | Documentación, capturas y release posterior            | Pendiente   | MHB-14 y MHB-36                       |
+| MHB-16 | Demo candidata pre-renderizada                         | Opcional    | MHB-15                                |
+| MHB-23 | Ampliar biblioteca de componentes                      | Opcional    | Caso de uso aprobado                  |
+| MHB-38 | Migración en bloque a Maizzle 6 y Tailwind v4          | Pendiente   | MHB-34, MHB-36 y ventana ≥ 2027-01-15 |
 
 ## Invariantes de calidad, arquitectura y refactor integrado
 
