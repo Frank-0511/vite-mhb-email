@@ -19,12 +19,24 @@ description: Verificar tareas, ejecutar comandos permitidos, preparar ramas o co
   visual que el texto no pueda confirmar (contraste computado, layout, foco).
 - Mantener build idempotente, restaurar mutaciones temporales y emitir errores
   accionables con código distinto de cero.
+- La comparación de `dist/*.html` contra el baseline es un paso obligatorio de
+  verificación (manual hasta que MHB-41 la automatice).
+- Cada criterio de aceptación de un ID nuevo o ajustado se asocia a un comando o
+  test que falle si no se cumple; lo no automatizable se declara explícitamente
+  como revisión manual.
+- Un ID que borra o renombra archivos debe actualizar, en el mismo ID, las rutas
+  citadas por los contratos pendientes de `PLAN.md`.
+- Prohibido añadir `ignores` o exclusiones de ESLint, directivas `eslint-disable`,
+  `@ts-ignore`/`@ts-expect-error`, exclusiones de `tsconfig*.json` o tests `skip`/`todo`
+  sin registrarlos como desviación aprobada en `STATUS.md`.
 - Para cada MHB usar una rama `feature/<id-en-minusculas>` y PR directo a
   `master`. Antes de editar, ejecutar `bun run check:task-branch`; crear o
   cambiar a la rama requerida si falla. El hook pre-commit aplica el mismo
   guard. No mezclar tareas ni incrementar versión por tarea.
 - Antes de commit, revisar diff. No versionar logs o artefactos no solicitados,
   no reescribir historial ni revertir cambios ajenos.
+- Cada ID con efecto observable (comandos, dependencias, output, UI, CI) añade su
+  entrada en `CHANGELOG.md` bajo `[Unreleased]` antes de pasar a `En revisión`.
 - Entregar el ID a `En revisión`; un revisor independiente confirma aceptación,
   diff, pruebas y ausencia de desviaciones antes de `Completada`.
 - Al confirmar el usuario que la tarea quedó completa, eliminar, antes de

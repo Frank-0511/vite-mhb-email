@@ -5,11 +5,14 @@ description: Aplicar calidad, seguridad, JSDoc, validación runtime, errores, de
 
 # Calidad y seguridad
 
-- Añadir JSDoc a funciones exportadas, async, middlewares, helpers de
-  filesystem/JSON/HTML y contratos compartidos. Preferir `Record<string, unknown>`
-  o typedefs a `Object` y explicar cualquier `any`.
-- Mantener ESLint sobre `scripts/`, `src/web/`, `vite.config.js` y
-  `maizzle.config.js`. No desactivar reglas inline sin razón local.
+- Añadir JSDoc descriptivo a funciones exportadas, async, middlewares, helpers de
+  filesystem/JSON/HTML y contratos compartidos. En TypeScript (`.ts`), se prohíbe
+  `any` y `@typedef` en JSDoc (usar `type`/`interface` nativos y `unknown` con narrowing).
+- Mantener ESLint sobre `scripts/`, `src/web/`, `vite.config.js` y `maizzle.config.js`.
+  Prohibido añadir `ignores` o exclusiones de ESLint, directivas `eslint-disable`,
+  `@ts-ignore`/`@ts-expect-error`, exclusiones de `tsconfig*.json` o tests `skip`/`todo`
+  sin registrarlos como desviación aprobada en `STATUS.md`.
+- Todo archivo fuente nuevo es `.ts`, salvo la allowlist que fije MHB-42.
 - Aplicar linting con tipos sobre `tsconfig.strict.json` (reglas `@typescript-eslint`:
   `no-floating-promises`, `no-misused-promises`, `await-thenable`,
   `no-redundant-type-constituents`, `require-await`, `return-await`).

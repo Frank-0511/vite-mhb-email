@@ -35,6 +35,14 @@ description: Actualizar docs/implementation/STATUS.md de EmailForge Toolkit dura
 - No registrar `Completada`: esa decisión pertenece al revisor indicado.
 - Registrar decisiones técnicas locales, no cambios de producto, IDs o
   aceptación; esos requieren actualizar el contrato de implementación.
+- Toda exclusión de ESLint (`ignores`), directiva `eslint-disable`,
+  `@ts-ignore`/`@ts-expect-error`, exclusión de `tsconfig*.json` o test
+  `skip`/`todo` es una desviación obligatoria: debe registrarse explícitamente
+  en `## Decisiones y desviaciones vigentes` con su justificación técnica; en
+  caso contrario, la tarea queda bloqueada.
+- Cada criterio de aceptación de un ID nuevo o ajustado debe asociarse a un
+  comando o test que falle si no se cumple; lo no automatizable se declara
+  explícitamente como revisión manual con su procedimiento de verificación.
 - Al cerrar una tarea, agregar también una línea resumida de esa entrega en
   `## Últimas entregas`, conservando el formato y orden cronológico inverso de
   las líneas existentes. La sección detallada de la tarea no sustituye ese
