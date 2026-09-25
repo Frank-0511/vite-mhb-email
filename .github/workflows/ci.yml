@@ -44,3 +44,6 @@ jobs:
 
       - name: Build
         run: bun run build
+
+      - name: Verify dist matches build
+        run: git diff --exit-code -- dist/
