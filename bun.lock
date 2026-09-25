@@ -6,7 +6,7 @@
       "name": "vite-mhb-email",
       "dependencies": {
         "handlebars": "4.7.9",
-        "lucide": "1.14.0",
+        "lucide": "1.47.0",
       },
       "devDependencies": {
         "@eslint/js": "10.0.1",
@@ -797,7 +797,7 @@
 
     "lru-cache": ["lru-cache@11.3.5", "", {}, "sha512-NxVFwLAnrd9i7KUBxC4DrUhmgjzOs+1Qm50D3oF1/oL+r1NpZ4gA7xvG0/zJ8evR7zIKn4vLf7qTNduWFtCrRw=="],
 
-    "lucide": ["lucide@1.14.0", "", {}, "sha512-IoRC3lHwemJWvsXKcHK90hkgY4h1HGztBL63w2XwFtIu8gFDPp4/kiuqVtlN3vaM9bxsLQ4ZUBJfGsbKFaB2IA=="],
+    "lucide": ["lucide@1.47.0", "", {}, "sha512-gJoVJM5fvpBDGZTvhpJS9IEurz85HbD+wgOlCkXCIw35tHrqTxSdIYUN9sXvs7Aw3NCl67A+nlotNyoU4u7zOQ=="],
 
     "maizzle": ["maizzle@1.2.4", "", { "dependencies": { "@clack/prompts": "^1.2.0", "commander": "^15.0.0", "giget": "^3.2.0", "nypm": "^0.6.5", "picocolors": "^1.1.1" }, "bin": { "maizzle": "bin/maizzle.mjs" } }, "sha512-Q++tEN+RRLMRhsxySqmoj44wZyA5ksHpExILt6d5cGAM/ftXI73SFhQ2Cs+ME7noeL2VQwlYNAnkuuWnJuhTUw=="],
 
