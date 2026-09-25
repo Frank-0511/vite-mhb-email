@@ -56,3 +56,6 @@ jobs:
 
       - name: Check dist baseline
         run: bun run check:dist-baseline
+
+      - name: Check HTML size
+        run: bun run check-size
