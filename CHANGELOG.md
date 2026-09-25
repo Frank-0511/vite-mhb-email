@@ -33,6 +33,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Manejo de `res.headersSent` y envoltorio seguro en `asyncHandler` para APIs
   locales de Vite (MHB-39).
 
+### Corregido
+
+- Saneamiento incompleto en `stripPropsScript` que podía reintroducir un bloque
+  `<script>` anidado tras un único reemplazo (CodeQL `js/incomplete-multi-character-sanitization`, MHB-41).
+- Validación por subcadena del destinatario de mail-tester.com que podía
+  burlarse con dominios maliciosos que la contuvieran en otra posición
+  (CodeQL `js/incomplete-url-substring-sanitization`, MHB-41).
+
 ## [1.2.0] - 2026-09-18
 
 ### Añadido

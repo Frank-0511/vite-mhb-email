@@ -36,7 +36,7 @@ export async function sendToMailtester(rl: Interface): Promise<void> {
 
   // 1. Dirección de mail-tester
   const mailtesterAddr = await prompt(rl, "Dirección de mail-tester.com", mailtesterDefault);
-  if (!mailtesterAddr || !mailtesterAddr.includes("mail-tester.com")) {
+  if (!mailtesterAddr || !/^[^@\s]+@mail-tester\.com$/i.test(mailtesterAddr)) {
     console.log(
       paint(
         c.red,
