@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "templates": {
+    "example.html": {
+      "sha256": "15df26c930ff71fc6bbae6dfef92233807185e628bb8f376c3885cbaba040b84",
+      "espVariables": ["title", "unsubscribe_url"]
+    },
+    "newsletter.html": {
+      "sha256": "46d2ca012c6ed322c07216388d70da83cdb0d1fbc2f4656129fdfc36ac5797a8",
+      "espVariables": [
+        "issue_date",
+        "issue_number",
+        "preferences_url",
+        "read_article_url",
+        "subscriber_name",
+        "unsubscribe_url"
+      ]
+    },
+    "password-reset.html": {
+      "sha256": "cbc7a669473da4fe851cd19b7b53eb65db46457100d966eb58d4aaa96ae35c59",
+      "espVariables": [
+        "expiration_minutes",
+        "reset_url",
+        "support_url",
+        "unsubscribe_url",
+        "user_name"
+      ]
+    },
+    "receipt.html": {
+      "sha256": "e3778cd67de181b2d0d8fff1201170a8f7074f0b9ad9b5947e6076be713e4f7b",
+      "espVariables": [
+        "customer_name",
+        "item_1_name",
+        "item_1_price",
+        "item_2_name",
+        "item_2_price",
+        "order_date",
+        "order_number",
+        "payment_method",
+        "receipt_url",
+        "subtotal",
+        "tax",
+        "total_amount",
+        "unsubscribe_url"
+      ]
+    },
+    "user-created.html": {
+      "sha256": "8b6a9527bfd8757ba65b7f4db9f607299ff0c2ead12fed64f50feffe7de685ee",
+      "espVariables": ["email", "first_name", "login_url", "temp_password", "unsubscribe_url"]
+    },
+    "welcome.html": {
+      "sha256": "82713780e64b5b87d793fefa766bd53a9f0a543c76505040f606891bbee3cb28",
+      "espVariables": ["buttonUrl", "dashboard_url", "first_name", "unsubscribe_url"]
+    }
+  }
+}
