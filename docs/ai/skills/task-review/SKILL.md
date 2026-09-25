@@ -20,8 +20,10 @@ description: Procedimiento de revisión técnica independiente de tareas complet
    - Ejecutar la suite completa de gates del proyecto:
      `bun run check:task-branch`, `bun run lint`, `bun run typecheck`,
      `bun run test`, `bun run format:check`, `bun run build`,
-     `bun run validate-email`, `bun run agents:check` y `git diff --check`.
+     `bun run validate-email`, `bun run check:dist-baseline`,
+     `bun run check-size`, `bun run agents:check` y `git diff --check`.
    - Si algún control falla, la entrega no puede aprobarse.
+   - Confirmar que los jobs requeridos en CI para MHB-45 coincidan con `CI Pipeline` (`ci.yml`) y `Accessibility & Contrast Audit` (`audit.yml`).
 
 2. **Auditoría profunda del diff (`git diff master...HEAD`):**
    - Buscar exclusiones o supresiones no autorizadas:
@@ -42,7 +44,8 @@ description: Procedimiento de revisión técnica independiente de tareas complet
    - Inspeccionar `git diff master...HEAD -- dist/`.
    - Comprobar que ninguna variable ESP `{{ }}` ni bloque Handlebars haya sido
      consumido o alterado sin autorización explícita del ID.
-   - Comparar hashes de `dist/*.html` contra el baseline registrado.
+   - Comparar hashes de `dist/*.html` y variables ESP contra el baseline registrado
+     mediante `bun run check:dist-baseline`.
 
 4. **Integridad de rutas y contratos en PLAN.md:**
    - Si la tarea eliminó o renombró archivos, comprobar que todas las rutas
