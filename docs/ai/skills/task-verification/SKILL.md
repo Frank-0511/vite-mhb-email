@@ -19,8 +19,10 @@ description: Verificar tareas, ejecutar comandos permitidos, preparar ramas o co
   visual que el texto no pueda confirmar (contraste computado, layout, foco).
 - Mantener build idempotente, restaurar mutaciones temporales y emitir errores
   accionables con código distinto de cero.
-- La comparación de `dist/*.html` contra el baseline es un paso obligatorio de
-  verificación (manual hasta que MHB-41 la automatice).
+- La comparación de `dist/*.html` contra el baseline se automatiza mediante
+  `bun run check:dist-baseline` (requerido en todo gate de salida).
+- Los jobs de CI requeridos para verificación en MHB-45 son `CI Pipeline`
+  (`.github/workflows/ci.yml`) y `Accessibility & Contrast Audit` (`.github/workflows/audit.yml`).
 - Cada criterio de aceptación de un ID nuevo o ajustado se asocia a un comando o
   test que falle si no se cumple; lo no automatizable se declara explícitamente
   como revisión manual.

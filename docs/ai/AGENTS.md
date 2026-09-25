@@ -82,8 +82,8 @@ asignado.
   como revisión manual.
 - Un ID que borra o renombra archivos debe actualizar, en el mismo ID, las rutas
   citadas por los contratos pendientes de `PLAN.md`.
-- La comparación de `dist/*.html` contra el baseline es un paso obligatorio de
-  verificación (manual hasta que MHB-41 la automatice).
+- La comparación de `dist/*.html` contra el baseline se automatiza mediante
+  `bun run check:dist-baseline` (requerido en todo gate de salida).
 - Cada ID con efecto observable (comandos, dependencias, output, UI, CI) añade su
   entrada en `CHANGELOG.md` bajo `[Unreleased]` antes de pasar a `En revisión`.
 - Menos es más: preferir eliminar código muerto o simplificar antes que agregar
@@ -107,6 +107,7 @@ asignado.
 | Pruebas                 | `bun run test`                  |
 | Build                   | `bun run build`                 |
 | Validar email           | `bun run validate-email`        |
+| Chequear baseline dist  | `bun run check:dist-baseline`   |
 | Formato                 | `bun run format:check`          |
 | Comprobar rama MHB      | `bun run check:task-branch`     |
 | Sincronizar adaptadores | `bun run agents:sync`           |
