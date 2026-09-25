@@ -1,0 +1,4 @@
+interface:
+  display_name: "Revisión técnica independiente"
+  short_description: "Audita entregas de tareas, ejecuta gates y emite veredictos"
+  default_prompt: "Usa $task-review para auditar de forma independiente una entrega en revisión antes de marcarla como completada."
