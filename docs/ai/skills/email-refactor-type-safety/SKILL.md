@@ -27,9 +27,7 @@ description: Refactorizar módulos, extraer JavaScript embebido, modularizar fro
   de `localStorage`, parámetros de URL o respuestas de red.
 - Cero `any` y cero `@typedef`: en TypeScript (`.ts`) está prohibido `any` (usar `unknown` o
   tipos estrictos) y las etiquetas `@typedef` en JSDoc (usar `type` o `interface` nativos).
-- Conservar JavaScript ESM con JSDoc donde aplique. No migrar globalmente a TypeScript sin
-  autorización. Usar `allowJs`/`checkJs` y `bun run typecheck` solo en el alcance
-  aprobado.
+- Migración completa a TypeScript estricto: todo archivo fuente nuevo es `.ts`, salvo la allowlist que fije MHB-42. La coexistencia de archivos `.js`/`.mjs` es transitoria hacia MHB-34; no añadir nuevo código JavaScript.
 - Priorizar contratos de APIs Vite, schemas, render, validadores, build, CLI,
   filesystem y datos de template. Type safety no sustituye validación runtime.
 

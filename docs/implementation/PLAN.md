@@ -336,7 +336,7 @@ confirma o corrige:
 | Rutas `/api/*`, header `X-ESP-Validation`              | `scripts/shared/contracts/api-routes.ts`                        | Contrato                                           |
 | `RENDER_FAILED`, mensaje y causas seguras de render    | `scripts/shared/contracts/render-error.ts`                      | Contrato                                           |
 | `email-source-changed`, `theme-changed`                | `scripts/shared/contracts/events.ts`                            | Contrato                                           |
-| `THEME` (`light`, `dark`)                              | `scripts/shared/contracts/theme.ts`                             | Contrato (web + `a11y-check.ts`)                   |
+| `THEME` (`light`, `dark`)                              | `scripts/shared/contracts/theme.ts`                             | Contrato (web + `check-a11y.ts`)                   |
 | `VIEW_MODE`, `VIEWPORT_MODE`                           | `preview/modules/controls/`                                     | `as const` (persistidos)                           |
 | `COMPONENT_TYPE`, `SEVERITY`                           | `library/modules/`, `scripts/validators/`                       | `as const` (múltiples consumidores)                |
 | `MODAL_STATE`, `EXPORT_MODE`, `PREVIEW_SYNC_STATUS`    | `preview/modules/copy-html/`, `preview/modules/runtime/`        | `as const` solo si se confirman ≥2 archivos        |
