@@ -43,7 +43,7 @@ y cierre independientes.
 
 | ID     | Entregable                                             | Estado     | Dependencia vigente                   |
 | ------ | ------------------------------------------------------ | ---------- | ------------------------------------- |
-| MHB-37 | Contratos, constantes tipadas y guards de tipos        | Pendiente  | Satisfecha                            |
+| MHB-37 | Contratos, constantes tipadas y guards de tipos        | Completada | Satisfecha                            |
 | MHB-39 | Convenciones de nombres de archivo y linting con tipos | Completada | MHB-37                                |
 | MHB-40 | Gobernanza de agentes y revisión independiente         | Pendiente  | MHB-39                                |
 | MHB-41 | Gate del contrato de salida y validadores en CI        | Pendiente  | MHB-40                                |
