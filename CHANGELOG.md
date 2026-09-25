@@ -1,11 +1,37 @@
 # Changelog
 
+<!-- markdownlint-configure-file { "MD024": { "siblings_only": true } } -->
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Añadido
+
+- Contratos compartidos y constantes tipadas aisladas en `scripts/shared/contracts/`
+  con guards de ESLint contra magic strings y `@typedef` en TypeScript (MHB-37).
+- Reglas estructurales de nombres y árbol de archivos (`eslint-plugin-check-file`
+  y `scripts/validators/lint-guards/file-tree.test.ts`) que limitan tamaños de
+  archivo (≤ 250 líneas prod / ≤ 400 test) y número de ficheros por carpeta (MHB-39).
+- Procedimiento ejecutable de revisión técnica independiente (`task-review`) y
+  gestión de versiones y Go/No-Go (`release-management`) como skills obligatorias (MHB-40).
+- Reglas de gobernanza para agentes contra supresiones no autorizadas de lint/tipos,
+  asociación de criterios a comandos y verificación obligatoria de baseline (MHB-40).
+
+### Cambiado
+
+- Estandarización de 48 nombres de archivo a `kebab-case` eliminando prefijos
+  redundantes de carpeta padre y unificación de barrels `index.ts` puros (MHB-39).
+
+### Mejorado
+
+- Activación de linting con tipos en ESLint sobre `tsconfig.strict.json` para
+  reglas estrictas de promesas y tipos redundantes con cero advertencias (MHB-39).
+- Manejo de `res.headersSent` y envoltorio seguro en `asyncHandler` para APIs
+  locales de Vite (MHB-39).
 
 ## [1.2.0] - 2026-09-18
 
