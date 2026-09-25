@@ -23,15 +23,17 @@
   2. Añadidos scripts `check:dist-baseline` y `update:dist-baseline` a `package.json`.
   3. Modificados entrypoints CLI de `validate-email-html.ts` y `check-html-size.ts` para retornar código 1 ante errores (> 102 KB) en CI, con tests unitarios.
   4. Configurado `.github/workflows/ci.yml` con: `git diff --exit-code -- dist/`, `validate-email`, `check:dist-baseline`, `check-size`, `check:inventory` (informe).
-  5. Verificación manual en CI completada: verde inicial ([`36099115433`](https://github.com/Frank-0511/vite-mhb-email/actions/runs/36099115433)), rojo forzado ([`36099267303`](https://github.com/Frank-0511/vite-mhb-email/actions/runs/36099267303)) y verde tras revert ([`36099402152`](https://github.com/Frank-0511/vite-mhb-email/actions/runs/36099402152)) sin incremento en tiempo de pipeline (1m1s vs 1m3s).
+  5. Optimización de `ci.yml` (D5): jobs paralelos `Format & Lint`, `Typecheck`, `Test` y `Build & Validate` agregados por el check `CI Pipeline`; `push` solo en `master` (los PR cubren las ramas), `concurrency` con cancelación, caché de `node_modules` y `PUPPETEER_SKIP_DOWNLOAD`.
+  6. Verificación manual en CI completada: verde inicial ([`36099115433`](https://github.com/Frank-0511/vite-mhb-email/actions/runs/36099115433)), rojo forzado ([`36099267303`](https://github.com/Frank-0511/vite-mhb-email/actions/runs/36099267303)) y verde tras revert ([`36099402152`](https://github.com/Frank-0511/vite-mhb-email/actions/runs/36099402152)) sin incremento en tiempo de pipeline (1m1s vs 1m3s).
 - **Riesgos residuales:**
   1. Ninguno identificado. Determinismo multiplataforma comprobado entre macOS local y runner Linux en GitHub Actions.
 - **Bloqueos y desviaciones:**
-  - Sin bloqueos vigentes. Desviaciones aprobadas por el usuario (D1–D4):
+  - Sin bloqueos vigentes. Desviaciones aprobadas por el usuario (D1–D5):
     - D1: Modificación de entrypoints CLI de `validate-email-html.ts` y `check-html-size.ts` para retornar código 1 ante errores o archivos > 102 KB.
     - D2: Entrada de MHB-41 en `CHANGELOG.md` bajo `[Unreleased]`.
     - D3: En `docs/ai/AGENTS.md`, reemplazar comparación manual por `bun run check:dist-baseline` y sincronizar adaptadores.
     - D4: Push de `feature/mhb-41` a `origin` para el spike del paso 1, el commit rojo del paso 8 y su revert.
+    - D5: Paralelizar y cachear `ci.yml` dentro de MHB-41 (sin ID nuevo), conservando `CI Pipeline` como check agregado requerido.
 
 ### Controles de Calidad
 
@@ -68,6 +70,7 @@
 - **D2 (Aprobada 2026-09-25):** Entrada de MHB-41 en `CHANGELOG.md` bajo `[Unreleased]`.
 - **D3 (Aprobada 2026-09-25):** Reemplazar «manual hasta que MHB-41 la automatice» en `docs/ai/` por `bun run check:dist-baseline`; ejecutar `agents:sync` y `agents:check`.
 - **D4 (Aprobada 2026-09-25):** Push de rama `feature/mhb-41` a origin para spike paso 1 y validación manual paso 8 (commit rojo y revert).
+- **D5 (Aprobada 2026-09-25):** Optimizar tiempo de `ci.yml` en MHB-41: jobs paralelos con check agregado `CI Pipeline`, `push` limitado a `master`, `concurrency` y caché de `node_modules`. El CI de ramas de feature corre vía PR.
 - **Directiva MD024 en Changelog:** Se añade directiva de archivo `markdownlint-configure-file { "MD024": { "siblings_only": true } }` en `CHANGELOG.md` para permitir subtítulos estándar de Keep a Changelog (`### Añadido`, etc.) entre versiones distintas.
 - **Dependencia de desarrollo:** Autorizada `eslint-plugin-check-file@3.3.2` fijada exacta para forzar kebab-case y blocklist de helpers/utils.
 - **Linting con tipos:** Configurado sobre `tsconfig.strict.json` en ESLint sin alterar los archivos `tsconfig*.json`.
