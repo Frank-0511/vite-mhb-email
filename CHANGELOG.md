@@ -26,9 +26,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   el baseline versionado `baseline.json` (MHB-41).
 - Pasos de validación en el pipeline de CI (`CI Pipeline`): verificación estricta de `dist/` contra build
   (`git diff --exit-code`), `validate-email`, `check:dist-baseline`, `check-size` y `check:inventory` (MHB-41).
+- Protección de rama `master` en GitHub con checks requeridos (`CI Pipeline` y `Accessibility & Contrast Audit`), historial lineal obligatorio (`required_linear_history`), `enforce_admins` y PR obligatorio sin bypass (MHB-45).
+- Soporte para ecosistema `github-actions` en Dependabot y agrupación de dependencias dev (`dev-dependencies` y `actions`) para actualizaciones minor y patch (MHB-45).
 
 ### Cambiado
 
+- Restricción del workflow de auto-merge de Dependabot con rebase (`--rebase`), eliminación del paso de aprobación ciega y exclusión de dependencias críticas del pipeline de email (`@maizzle/*`, `maizzle`, `tailwindcss`, `postcss`, `autoprefixer`, `juice`, `handlebars`) para revisión manual obligatoria (MHB-45).
 - Estandarización de 48 nombres de archivo a `kebab-case` eliminando prefijos
   redundantes de carpeta padre y unificación de barrels `index.ts` puros (MHB-39).
 
