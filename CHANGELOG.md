@@ -40,6 +40,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Validación por subcadena del destinatario de mail-tester.com que podía
   burlarse con dominios maliciosos que la contuvieran en otra posición
   (CodeQL `js/incomplete-url-substring-sanitization`, MHB-41).
+- Bloque `permissions: contents: read` explícito en `ci.yml` y `audit.yml`
+  para limitar el alcance por defecto del `GITHUB_TOKEN`
+  (CodeQL `actions/missing-workflow-permissions`, MHB-41).
 
 ## [1.2.0] - 2026-09-18
 
