@@ -2,14 +2,13 @@
 
 ## Resumen
 
-- ID activo: MHB-39
-- Estado: Completada
-- Implementador: Perfil TypeScript transversal
-- Revisor: Revisor técnico independiente
-- Rama: `feature/mhb-39`
+- ID activo: MHB-40
+- Estado: En revisión
+- Implementador: Perfil gobernanza/documentación
+- Revisor: Revisor independiente (orquestador)
+- Rama: `feature/mhb-40`
 - Última actualización: 2026-09-24
-- Contrato activo: `docs/implementation/PLAN.md` (MHB-39)
-- Nota de cierre: Tarea completada y autorizada por el usuario tras validación de controles y smoke manual. Se estandarizaron convenciones de nombres mediante 48 renombres con `git mv` eliminando toda redundancia de carpeta, se garantizó que los barrels `index.ts` sean puros (lógica extraída a `registry.ts`), se añadieron tests y manejo seguro de `res.headersSent` en `asyncHandler`, se ajustó `require-await` en ESLint (error en JS/MJS, off en TS) y se validaron los límites de archivo/carpeta y 0 hallazgos en linting con tipos.
+- Contrato activo: `docs/implementation/PLAN.md` (MHB-40)
 
 ## Baseline vigente
 
@@ -17,116 +16,52 @@
 - La migración a TypeScript por capas (núcleo, CLI, servidor Vite y dashboard web) está completada y mergeada a `master`; la trazabilidad de los IDs cerrados vive en Git.
 - Las variables ESP `{{ }}` se preservan en el HTML final; `[[ page.* ]]` queda reservado para Maizzle.
 
-## Entrega activa (MHB-39: Convenciones de nombres de archivo y linting con tipos)
+## Entrega activa (MHB-40: Gobernanza de agentes y revisión independiente)
 
 - **Hechos de implementación:**
-  1. Renombrados 48 archivos con `git mv` eliminando prefijos redundantes de carpeta en su totalidad (cero excepciones).
-  2. Extraída lógica de `scripts/validators/email-rules/rules/index.ts` a `registry.ts` garantizando que todo `index.ts` sea un barrel puro con reexports.
-  3. Actualizado `scripts/validators/lint-guards/file-tree.test.ts` (196 líneas) validando límites (250 prod / 400 test, reconociendo `*.fixtures.ts` y `test-helpers.ts`), max 8 archivos por carpeta, sin nombres genéricos, sin prefijos redundantes y barrels puros.
-  4. Activado linting con tipos en `eslint.config.js` (`project: ["./tsconfig.strict.json"]`) reduciendo a 0 los hallazgos en todas las reglas tipadas. Ajustado `require-await` como error en JS/MJS y off en TS.
-  5. Mejorado `asyncHandler` en `scripts/vite/api/http.ts` con manejo de `res.headersSent` y test co-locado `http.test.ts` con cobertura completa.
+  1. Corregidas 5 contradicciones históricas en `docs/ai/` y `PLAN.md` (eliminadas referencias a JS/allowJs, typedefs, any, `storage-keys.js` e `IMPLEMENTATION-PLAN.md`).
+  2. Incorporadas 6 reglas de gobernanza en `AGENTS.md`, `email-quality-gates`, `task-verification` y `task-status-management` (supresiones registradas, `.ts` obligatorio, criterios con comando, actualización de rutas, baseline de dist y CHANGELOG unreleased).
+  3. Creadas skills canónicas `task-review` (procedimiento del revisor independiente) y `release-management` (congelamiento de alcance, checklist Go/No-Go y SemVer) con sus `agents/openai.yaml`.
+  4. Sincronizados y verificados los adaptadores en los 7 targets declarados mediante `bun run agents:sync` y `bun run agents:check`.
+  5. Documentadas entradas retroactivas de MHB-37, MHB-39 y MHB-40 en `CHANGELOG.md` bajo `[Unreleased]` y ejecutado ensayo de `task-review` sobre el diff de MHB-39.
 - **Riesgos residuales:**
-  1. Incremento medido en `lint:js` de +1.95s (de 1.81s a 3.76s) debido al análisis semántico de `parserOptions.project`, balanceado por la erradicación completa de promesas flotantes y tipos redundantes.
+  1. Riesgo bajo de que un implementador omita registrar una supresión temporal; mitigado por el procedimiento de auditoría profunda de diff en `task-review`.
+- **Bloqueos y desviaciones:**
+  - Sin bloqueos ni desviaciones vigentes.
 
 ### Controles de Calidad
 
-| Control                  | Comando                                | Resultado                          |
-| :----------------------- | :------------------------------------- | :--------------------------------- |
-| Comprobación de rama     | `bun scripts/ai/check-task-branch.mjs` | Pasó (feature/mhb-39)              |
-| Typecheck unificado      | `tsc --noEmit` (`bun run typecheck`)   | Pasó (0 errores en ambos tsconfig) |
-| Suite global de pruebas  | `bun run test`                         | Pasó (598 tests, 78 suites)        |
-| Linting completo         | `bun run lint`                         | Pasó (HTML, JS, MD, JSON, CSS)     |
-| Formato de código        | `bun run format:check`                 | Pasó (100% Prettier)               |
-| Build y validación email | `bun run build`                        | Pasó (6 templates, 0 errores)      |
-| Validación email         | `bun run validate-email`               | Pasó (0 errores)                   |
-| Adaptadores de agentes   | `bun run agents:check`                 | Pasó (7 targets declarados)        |
-| Diff de Git              | `git diff --check`                     | Pasó (limpio)                      |
+| Control                 | Comando                                                                                                                | Resultado                      |
+| :---------------------- | :--------------------------------------------------------------------------------------------------------------------- | :----------------------------- |
+| Comprobación de rama    | `bun run check:task-branch`                                                                                            | Pasó (feature/mhb-40)          |
+| Barrido contradicciones | `grep -rnE "Conservar JavaScript ESM\|No migrar globalmente\|typedefs\|IMPLEMENTATION-PLAN\|storage-keys\.js" docs/ai` | Pasó (0 hallazgos)             |
+| Linting Markdown        | `bun run lint:md`                                                                                                      | Pasó (0 errores en 87 files)   |
+| Formato de código       | `bun run format:check`                                                                                                 | Pasó (100% Prettier)           |
+| Adaptadores de agentes  | `bun run agents:check`                                                                                                 | Pasó (7 targets declarados)    |
+| Typecheck unificado     | `bun run typecheck`                                                                                                    | Pasó (0 errores)               |
+| Suite de pruebas        | `bun run test`                                                                                                         | Pasó (598 tests, 78 suites)    |
+| Linting completo        | `bun run lint`                                                                                                         | Pasó (HTML, JS, MD, JSON, CSS) |
+| Build y salida dist     | `bun run build`                                                                                                        | Pasó (6 templates, 0 diff)     |
+| Validación email        | `bun run validate-email`                                                                                               | Pasó (0 errores)               |
+| Diff de Git             | `git diff --check`                                                                                                     | Pasó (limpio)                  |
 
 ### Evidencia de Validación
 
-#### Conteo de hallazgos por regla con tipos
+#### Contradicciones corregidas
 
-| Regla con tipos                                      | Antes (`master`) | Después (`HEAD`) |
-| :--------------------------------------------------- | :--------------: | :--------------: |
-| `@typescript-eslint/no-floating-promises`            |        8         |        0         |
-| `@typescript-eslint/no-misused-promises`             |        2         |        0         |
-| `@typescript-eslint/await-thenable`                  |        1         |        0         |
-| `@typescript-eslint/no-redundant-type-constituents`  |        9         |        0         |
-| `@typescript-eslint/require-await` / `require-await` |        0         |        0         |
-| `@typescript-eslint/return-await`                    |        0         |        0         |
-| **Total**                                            |      **20**      |      **0**       |
+| Archivo                                              | Hallazgo previo                              | Acción aplicada                                   |
+| :--------------------------------------------------- | :------------------------------------------- | :------------------------------------------------ |
+| `docs/ai/skills/email-refactor-type-safety/SKILL.md` | Conservar JS ESM / no migrar globalmente     | Reemplazado por cierre TS estricto y nuevos `.ts` |
+| `docs/ai/skills/email-quality-gates/SKILL.md`        | typedefs y explicar cualquier any            | Prohibido any y `@typedef` en `.ts`               |
+| `docs/ai/AGENTS.md`                                  | `storage-keys.js` / `IMPLEMENTATION-PLAN.md` | Corregido a `.ts` y `PLAN.md`                     |
+| `docs/implementation/PLAN.md`                        | `a11y-check.ts`                              | Corregido a `check-a11y.ts`                       |
 
-#### Validación manual
+#### Ensayo de `task-review` sobre MHB-39
 
-- **Build limpio e idempotente:** `bun run build` ejecutado 2 veces consecutivas sin diffs en `dist/`.
-- **Endpoints Vite (`bun run dev`):**
-  - `GET /api/templates` → HTTP 200
-  - `GET /api/data?template=welcome` → HTTP 200
-  - `GET /api/components` → HTTP 200
-  - `POST /api/cache/invalidate?template=welcome` → HTTP 200
-  - `GET /api/render?template=welcome` → HTTP 200
-  - `POST /api/copy-html?template=welcome` → HTTP 200
-
-#### Tabla de renombres aplicados (48 archivos)
-
-| Ruta anterior                                                             | Ruta nueva                                                           |
-| :------------------------------------------------------------------------ | :------------------------------------------------------------------- |
-| `scripts/build/build-helper.test.ts`                                      | `scripts/build/ensure-build.test.ts`                                 |
-| `scripts/build/build-helper.ts`                                           | `scripts/build/ensure-build.ts`                                      |
-| `scripts/build/build-render-cache-export-marketing.test.ts`               | `scripts/build/render-cache-export-marketing.test.ts`                |
-| `scripts/build/build-render-cache-export-transactional.test.ts`           | `scripts/build/render-cache-export-transactional.test.ts`            |
-| `scripts/build/build-render-cache-export.test-fixtures.ts`                | `scripts/build/render-cache-export.fixtures.ts`                      |
-| `scripts/build/build-selective.test.ts`                                   | `scripts/build/selective.test.ts`                                    |
-| `scripts/build/build-selective.ts`                                        | `scripts/build/selective.ts`                                         |
-| `scripts/cli/index.ts`                                                    | `scripts/cli/main.ts`                                                |
-| `scripts/esp/esp-constants.ts`                                            | `scripts/esp/constants.ts`                                           |
-| `scripts/esp/esp-data-filter.test.ts`                                     | `scripts/esp/data-filter.test.ts`                                    |
-| `scripts/esp/esp-data-filter.ts`                                          | `scripts/esp/data-filter.ts`                                         |
-| `scripts/esp/esp-extractor.test.ts`                                       | `scripts/esp/extractor.test.ts`                                      |
-| `scripts/esp/esp-extractor.ts`                                            | `scripts/esp/extractor.ts`                                           |
-| `scripts/esp/esp-frontmatter.test.ts`                                     | `scripts/esp/frontmatter.test.ts`                                    |
-| `scripts/esp/esp-frontmatter.ts`                                          | `scripts/esp/frontmatter.ts`                                         |
-| `scripts/esp/esp-sources.test.ts`                                         | `scripts/esp/sources.test.ts`                                        |
-| `scripts/esp/esp-sources.ts`                                              | `scripts/esp/sources.ts`                                             |
-| `scripts/esp/esp-variables.test.ts`                                       | `scripts/esp/validator.test.ts`                                      |
-| `scripts/esp/esp-validator.ts`                                            | `scripts/esp/validator.ts`                                           |
-| `scripts/export/index.ts`                                                 | `scripts/export/main.ts`                                             |
-| `scripts/export/export-screenshot.ts`                                     | `scripts/export/screenshot.ts`                                       |
-| `scripts/inventory/inventory-parser.ts`                                   | `scripts/inventory/parser.ts`                                        |
-| `scripts/inventory/inventory-reporter.ts`                                 | `scripts/inventory/reporter.ts`                                      |
-| `scripts/validators/a11y-check.ts`                                        | `scripts/validators/check-a11y.ts`                                   |
-| `scripts/validators/email-rules/test-fixtures.ts`                         | `scripts/validators/email-rules/rules.fixtures.ts`                   |
-| `scripts/validators/email-rules/rules/content/esp-variables-rule.test.ts` | `scripts/validators/email-rules/rules/content/esp-variables.test.ts` |
-| `scripts/validators/email-rules/rules/content/esp-variables-rule.ts`      | `scripts/validators/email-rules/rules/content/esp-variables.ts`      |
-| `scripts/validators/email-rules/rules/structure/max-width-check.test.ts`  | `scripts/validators/email-rules/rules/structure/max-width.test.ts`   |
-| `scripts/validators/email-rules/rules/structure/max-width-check.ts`       | `scripts/validators/email-rules/rules/structure/max-width.ts`        |
-| `scripts/vite/api/maizzle-index.ts`                                       | `scripts/vite/plugins/maizzle-dev-server.ts`                         |
-| `scripts/vite/services/render/render-error.test.ts`                       | `scripts/vite/services/render/error.test.ts`                         |
-| `scripts/vite/services/render/render-error.ts`                            | `scripts/vite/services/render/error.ts`                              |
-| `scripts/vite/services/render/render-request-handler.test.ts`             | `scripts/vite/services/render/request-handler.test.ts`               |
-| `scripts/vite/services/render/render-request-handler.ts`                  | `scripts/vite/services/render/request-handler.ts`                    |
-| `src/web/features/preview/modules/copy-html/copy-html-controller.test.ts` | `src/web/features/preview/modules/copy-html/controller.test.ts`      |
-| `src/web/features/preview/modules/copy-html/copy-html-controller.ts`      | `src/web/features/preview/modules/copy-html/controller.ts`           |
-| `src/web/features/preview/modules/copy-html/copy-html-dialog.ts`          | `src/web/features/preview/modules/copy-html/dialog.ts`               |
-| `src/web/features/preview/modules/copy-html/copy-html-formatters.test.ts` | `src/web/features/preview/modules/copy-html/formatters.test.ts`      |
-| `src/web/features/preview/modules/copy-html/copy-html-formatters.ts`      | `src/web/features/preview/modules/copy-html/formatters.ts`           |
-| `src/web/features/preview/modules/copy-html/copy-html-view.ts`            | `src/web/features/preview/modules/copy-html/view.ts`                 |
-| `src/web/features/preview/modules/editor/editor-menu-filter.test.ts`      | `src/web/features/preview/modules/editor/menu-filter.test.ts`        |
-| `src/web/features/preview/modules/editor/editor-menu-filter.ts`           | `src/web/features/preview/modules/editor/menu-filter.ts`             |
-| `src/web/features/preview/modules/render/render-api.test.ts`              | `src/web/features/preview/modules/render/api.test.ts`                |
-| `src/web/features/preview/modules/render/render-api.ts`                   | `src/web/features/preview/modules/render/api.ts`                     |
-| `src/web/features/preview/modules/render/render-error-parser.test.ts`     | `src/web/features/preview/modules/render/error-parser.test.ts`       |
-| `src/web/features/preview/modules/render/render-error-parser.ts`          | `src/web/features/preview/modules/render/error-parser.ts`            |
-| `src/web/features/preview/modules/render/render-error-view.test.ts`       | `src/web/features/preview/modules/render/error-view.test.ts`         |
-| `src/web/features/preview/modules/render/render-error-view.ts`            | `src/web/features/preview/modules/render/error-view.ts`              |
-
-## Revisión de cierre (MHB-39)
-
-- Criterios de aceptación comprobados: 48 renombres de archivos aplicados con `git mv` sin redundancia de carpeta ni nombres genéricos; barrels `index.ts` puros y reexportadores; validación automatizada en `file-tree.test.ts` de límites (≤ 250 prod / ≤ 400 test, máx 8 por carpeta); 0 hallazgos en linting con tipos (`no-floating-promises`, `no-misused-promises`, `await-thenable`, `no-redundant-type-constituents`, `require-await`); `asyncHandler` con verificación de `res.headersSent` y suite co-locada `http.test.ts` pasando al 100%.
-- Controles automáticos: `check:task-branch`, `typecheck`, `test` (598 pass, 0 fail en 78 archivos), `lint`, `format:check`, `build`, `validate-email`, `agents:check` y `git diff --check` en verde.
-- Controles manuales y smoke: build idempotente sin diffs en `dist/`; endpoints `/api/templates`, `/api/data`, `/api/components`, `/api/cache/invalidate`, `/api/render` y `/api/copy-html` respondiendo HTTP 200 en desarrollo.
-- Evidencia revisada: rama `feature/mhb-39`.
-- Decisión del revisor: `Completada` (2026-09-24), autorizada por el usuario tras validación exhaustiva de controles.
+- **Diff (`2f3600b..b512883`):** 0 supresiones no autorizadas (`eslint-disable`, `@ts-ignore`), 0 archivos `.js`/`.mjs` nuevos.
+- **Salida:** 0 diff en `dist/*.html`, variables ESP `{{ }}` preservadas.
+- **Árbol:** `file-tree.test.ts` pasando al 100% (límites prod ≤ 250 / test ≤ 400 respetados).
+- **Veredicto del ensayo:** Aprobado.
 
 ## Últimas entregas
 
@@ -134,12 +69,14 @@
 
 ## Ejecuciones delegadas relevantes
 
-| Ámbito | Estado     | Propiedad                   | Handoff                                               |
-| :----- | :--------- | :-------------------------- | :---------------------------------------------------- |
-| MHB-39 | Completada | Nombres y linting con tipos | Verificación completa y aceptada en `feature/mhb-39`. |
+| Ámbito | Estado      | Propiedad                   | Handoff                                               |
+| :----- | :---------- | :-------------------------- | :---------------------------------------------------- |
+| MHB-40 | En revisión | Gobernanza y revisión       | Entrega completa a revisión técnica independiente.    |
+| MHB-39 | Completada  | Nombres y linting con tipos | Verificación completa y aceptada en `feature/mhb-39`. |
 
 ## Decisiones y desviaciones vigentes
 
+- **Directiva MD024 en Changelog:** Se añade directiva de archivo `markdownlint-configure-file { "MD024": { "siblings_only": true } }` en `CHANGELOG.md` para permitir subtítulos estándar de Keep a Changelog (`### Añadido`, etc.) entre versiones distintas.
 - **Dependencia de desarrollo:** Autorizada `eslint-plugin-check-file@3.3.2` fijada exacta para forzar kebab-case y blocklist de helpers/utils.
 - **Linting con tipos:** Configurado sobre `tsconfig.strict.json` en ESLint sin alterar los archivos `tsconfig*.json`.
 - **Envoltorio async de middlewares:** Todo handler async en endpoints Vite se envuelve con `asyncHandler` en `scripts/vite/api/http.ts` para captura determinista de excepciones y respuesta JSON 500, verificando `res.headersSent`.
@@ -148,8 +85,6 @@
 
 ## Handoff
 
-- Próxima acción inmediata: merge de `feature/mhb-39` a `master`.
+- Próxima acción inmediata: revisión técnica independiente (orquestador) aplicando la skill `task-review`.
 - Siguiente tarea del roadmap:
-  - MHB-34 (`desbloqueada` tras MHB-39): Cierre total y modo estricto TypeScript.
-  - MHB-14 (`desbloqueado`): Evidencia de uso y compatibilidad.
-  - MHB-38 (`programada`): Migración en bloque a Maizzle 6 + Tailwind v4.
+  - MHB-41 (`bloqueada` hasta completar MHB-40): Gate del contrato de salida y validadores en CI.
