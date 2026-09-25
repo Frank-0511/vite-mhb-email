@@ -9,5 +9,11 @@
  * @returns HTML sin el bloque script props.
  */
 export function stripPropsScript(html: string): string {
-  return html.replace(/<script\s+props[^>]*>[\s\S]*?<\/script>/i, "");
+  let previous: string;
+  let current = html;
+  do {
+    previous = current;
+    current = current.replace(/<script\s+props[^>]*>[\s\S]*?<\/script>/gi, "");
+  } while (current !== previous);
+  return current;
 }
