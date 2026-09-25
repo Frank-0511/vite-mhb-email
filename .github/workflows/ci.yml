@@ -50,3 +50,6 @@ jobs:
 
       - name: Verify dist matches build
         run: git diff --exit-code -- dist/
+
+      - name: Validate email compatibility
+        run: bun run validate-email
