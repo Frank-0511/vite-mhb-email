@@ -28,10 +28,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (`git diff --exit-code`), `validate-email`, `check:dist-baseline`, `check-size` y `check:inventory` (MHB-41).
 - Protección de rama `master` en GitHub con checks requeridos (`CI Pipeline` y `Accessibility & Contrast Audit`), historial lineal obligatorio (`required_linear_history`), `enforce_admins` y PR obligatorio sin bypass (MHB-45).
 - Soporte para ecosistema `github-actions` en Dependabot y agrupación de dependencias dev (`dev-dependencies` y `actions`) para actualizaciones minor y patch (MHB-45).
+- Reglas de `validate-email` (ERROR) contra colores CSS Color 4 no soportados por Outlook (`css-color-format`), unidades relativas `rem`/`em` en CSS de email (`css-relative-units`), imágenes SVG (`img-svg-source`), hosts de imagen fuera de allowlist (`img-host-allowlist`) y bloques `<style>` que superan el límite de 8192 bytes de Gmail (`style-block-size`); regla WARNING para enlaces/imágenes hacia dominios de ejemplo (`example-domains`) (MHB-44).
+- Allowlist tipada de hosts de imagen permitidos en email (`EMAIL_IMAGE_HOST_ALLOWLIST`) y límite de bytes por bloque `<style>` (`EMAIL_STYLE_BLOCK_MAX_BYTES`) en `scripts/shared/contracts/constants/email-assets.ts` (MHB-44).
 
 ### Cambiado
 
 - Restricción del workflow de auto-merge de Dependabot con rebase (`--rebase`), eliminación del paso de aprobación ciega y exclusión de dependencias críticas del pipeline de email (`@maizzle/*`, `maizzle`, `tailwindcss`, `postcss`, `autoprefixer`, `juice`, `handlebars`) para revisión manual obligatoria (MHB-45).
+- `maizzle.config.js`: `css.inline.removeInlinedSelectors` vuelve a `true` (default de Maizzle). El valor `false` anterior conservaba en el `<style>` de salida todos los selectores aunque ya estuvieran aplicados inline, duplicando el CSS y superando en 4 de 6 templates el límite de 8192 bytes por bloque que aplica Gmail; `dist/*.html` regenerado sin cambios de variables ESP ni de diseño (MHB-44).
 - Estandarización de 48 nombres de archivo a `kebab-case` eliminando prefijos
   redundantes de carpeta padre y unificación de barrels `index.ts` puros (MHB-39).
 

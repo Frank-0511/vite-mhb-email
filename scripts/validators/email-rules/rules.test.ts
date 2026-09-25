@@ -54,6 +54,36 @@ const cases: TestCase[] = [
     positive: cleanHtml,
     negative: "<style>.one { color: red; }</style>",
   },
+  {
+    ruleId: "css-color-format",
+    positive: cleanHtml,
+    negative: '<div style="color: rgb(255 255 255 / 1)"></div>',
+  },
+  {
+    ruleId: "css-relative-units",
+    positive: cleanHtml,
+    negative: '<p style="margin-top: 0.625rem">x</p>',
+  },
+  {
+    ruleId: "style-block-size",
+    positive: cleanHtml,
+    negative: `<style>${"a{color:#fff}".repeat(700)}</style>`,
+  },
+  {
+    ruleId: "img-svg-source",
+    positive: cleanHtml,
+    negative: '<img src="https://cdn.jsdelivr.net/icon.svg" alt="x">',
+  },
+  {
+    ruleId: "img-host-allowlist",
+    positive: cleanHtml,
+    negative: '<img src="https://api.iconify.design/lucide:rocket.png" alt="x">',
+  },
+  {
+    ruleId: "example-domains",
+    positive: cleanHtml,
+    negative: '<a href="https://example.com/terms">Términos</a>',
+  },
 ];
 
 describe("registro de reglas de compatibilidad", () => {

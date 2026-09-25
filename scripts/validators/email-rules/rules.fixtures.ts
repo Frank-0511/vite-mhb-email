@@ -9,7 +9,7 @@ import { rules } from "./rules/index.ts";
 import type { Rule, RuleContext } from "./context.ts";
 
 export const cleanHtml =
-  '<!doctype html><html><head><meta charset="utf-8"></head><body><a href="https://example.com/unsubscribe">Unsubscribe</a><img src="x" width="1" height="1" alt="x"></body></html>';
+  '<!doctype html><html><head><meta charset="utf-8"></head><body><a href="https://miempresa.com/unsubscribe">Unsubscribe</a><img src="https://cdn.jsdelivr.net/gh/org/repo/icon.png" width="1" height="1" alt="x"></body></html>';
 
 const temporaryDirectories: string[] = [];
 
