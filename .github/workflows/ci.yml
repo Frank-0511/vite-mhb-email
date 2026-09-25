@@ -53,3 +53,6 @@ jobs:
 
       - name: Validate email compatibility
         run: bun run validate-email
+
+      - name: Check dist baseline
+        run: bun run check:dist-baseline
