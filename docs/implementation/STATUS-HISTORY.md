@@ -4,6 +4,43 @@ Este documento almacena el histórico de revisiones de cierre, tablas de validac
 
 ---
 
+## MHB-45 — Protección de `master` y política de Dependabot
+
+- **Fecha de cierre:** 2026-09-25
+- **Estado:** Completada
+- **Implementador:** Perfil CI/seguridad
+- **Revisor independiente:** Orquestador (checkout limpio de `feature/mhb-45` @ `1b9be53`)
+- **Rama:** `feature/mhb-45`
+- **Contrato:** `docs/implementation/PLAN.md` (MHB-45)
+
+### Hechos de implementación (MHB-45)
+
+1. Protección aplicada a `master` vía GitHub API: checks requeridos estrictos (`CI Pipeline`, `Accessibility & Contrast Audit`), `enforce_admins: true`, `required_linear_history: true`, PR obligatorio (0 aprobaciones, mantenedor único), sin force-push ni borrado.
+2. Auto-merge de Dependabot restringido en `.github/workflows/dependabot-automerge.yml`: clasificación previa por `MANUAL_REVIEW_DEPS`, fusión con `--rebase`, sin paso de aprobación automática, exclusión obligatoria de dependencias del pipeline de email (`@maizzle/*`, `maizzle`, `tailwindcss`, `postcss`, `autoprefixer`, `juice`, `handlebars`).
+3. `.github/dependabot.yml` con ecosistema `github-actions` (semanal) y grupos `dev-dependencies`/`actions` (minor/patch), excluyendo paquetes críticos del agrupamiento.
+4. Bloqueo comprobado en GitHub real con PR desechable #45 (`test/mhb-45-red-check`): `CI Pipeline` FAILURE y `mergeStateStatus: BLOCKED`; PR cerrado y rama remota borrada (D2).
+5. `CHANGELOG.md` actualizado bajo `[Unreleased]` (D1).
+
+### Controles de calidad (MHB-45)
+
+Todos los controles pasaron en checkout limpio de `feature/mhb-45`: `check:task-branch`, `lint` (html/js/md/json/css), `typecheck` (tsc + tsc estricto), `test` (634 pass, 0 fail), `format:check`, `build` (6 templates), `validate-email` (0 errores, 2 warnings preexistentes de MHB-44), `check:dist-baseline` (`dist/` coincide, sin diff), `check-size` (todos bajo 102 KB), `agents:check` (7 targets) y `git diff --check` (limpio).
+
+### Desviaciones aprobadas (MHB-45)
+
+- D1: entrada de MHB-45 en `CHANGELOG.md` bajo `[Unreleased]`.
+- D2: push de rama desechable `test/mhb-45-red-check` y PR #45 con check rojo intencional contra `master`, cerrado y borrado tras la evidencia.
+
+### Revisión de cierre (MHB-45)
+
+- **Procedimiento:** `task-review` sobre checkout de `feature/mhb-45` @ `1b9be53`, re-ejecutando la suite completa de gates sin asumir lo declarado en `STATUS.md`.
+- **Auditoría de diff `master...HEAD`:** sin `eslint-disable`, `@ts-ignore`/`@ts-expect-error`, exclusiones de `tsconfig*`, tests `skip`/`todo` ni archivos `.js`/`.mjs` nuevos; superficies tocadas coinciden con las autorizadas (`.github/dependabot.yml`, `.github/workflows/dependabot-automerge.yml`, `CHANGELOG.md`, `docs/implementation/STATUS.md`/`STATUS-HISTORY.md`); actualización menor de la tabla de estado en `PLAN.md` para reflejar cierres previos (MHB-40/41), sin cambio de contrato.
+- **Contrato de salida:** sin diff en `dist/`; `check:dist-baseline` en coincidencia exacta; variables ESP `{{ }}` intactas.
+- **Verificación independiente en GitHub:** `gh api .../branches/master/protection` confirma `CI Pipeline` y `Accessibility & Contrast Audit` como checks requeridos, `enforce_admins: true`, `required_linear_history: true`, 0 aprobaciones requeridas, sin force-push ni borrado — coincide con lo declarado. PR #45 confirmado `CLOSED`, `mergeStateStatus: BLOCKED`, check `CI Pipeline` en `FAILURE`; rama remota `test/mhb-45-red-check` confirmada eliminada (404).
+- **Limpieza:** `docs/superpowers/mhb-45-proteccion-master.md` (artefacto auxiliar temporal) eliminado al confirmar el cierre, conforme a la invariante de `AGENTS.md`.
+- **Veredicto:** Aprobado.
+
+---
+
 ## MHB-41 — Gate del contrato de salida y validadores de email en CI
 
 - **Fecha de cierre:** 2026-09-25
