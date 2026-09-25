@@ -100,9 +100,9 @@ ${paint(c.cyan + c.bold, "  vite-mhb-email CLI")}
  * No termina el proceso — solo informa al usuario.
  */
 export function warnMissingEnv(): void {
-  const ALL_KEYS = ["MAILTRAP_API_TOKEN", "MAILTRAP_INBOX_ID", "GMAIL_USER", "GMAIL_APP_PASS"];
+  const GMAIL_KEYS = ["GMAIL_USER", "GMAIL_APP_PASS"];
 
-  const { exists, missing } = checkEnv(ALL_KEYS);
+  const { exists, missing } = checkEnv(GMAIL_KEYS);
 
   if (!exists) {
     console.log(
@@ -113,22 +113,23 @@ export function warnMissingEnv(): void {
     return;
   }
 
+  const mailtrapTokenMissing =
+    checkEnv(["MAILTRAP_API_TOKEN"]).missing.length > 0 &&
+    checkEnv(["MAILTRAP_API_KEY"]).missing.length > 0;
+
+  const affectedGroups: string[] = [];
+  if (mailtrapTokenMissing) {
+    affectedGroups.push("Mailtrap (opción 4)");
+  }
   if (missing.length > 0) {
-    const groups: Record<string, string[]> = {
-      "Mailtrap (opción 4)": ["MAILTRAP_API_TOKEN", "MAILTRAP_INBOX_ID"],
-      "Gmail SMTP (opciones 5 y 6)": ["GMAIL_USER", "GMAIL_APP_PASS"],
-    };
+    affectedGroups.push("Gmail SMTP (opciones 5 y 6)");
+  }
 
-    const affectedGroups = Object.entries(groups)
-      .filter(([, keys]) => keys.some((k) => missing.includes(k)))
-      .map(([name]) => name);
-
-    if (affectedGroups.length > 0) {
-      console.log(paint(c.yellow + c.bold, "  ⚠️  Variables de .env sin configurar:"));
-      for (const g of affectedGroups) {
-        console.log(paint(c.dim, `     • ${g}`));
-      }
-      console.log(paint(c.dim, "     Ver README → Variables de entorno para más info.\n"));
+  if (affectedGroups.length > 0) {
+    console.log(paint(c.yellow + c.bold, "  ⚠️  Variables de .env sin configurar:"));
+    for (const g of affectedGroups) {
+      console.log(paint(c.dim, `     • ${g}`));
     }
+    console.log(paint(c.dim, "     Ver README → Variables de entorno para más info.\n"));
   }
 }
