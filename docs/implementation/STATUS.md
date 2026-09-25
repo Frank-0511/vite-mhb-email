@@ -2,13 +2,13 @@
 
 ## Resumen
 
-- ID activo: MHB-40
-- Estado: Completada
-- Implementador: Perfil gobernanza/documentación
-- Revisor: Revisor independiente (orquestador)
-- Rama: `feature/mhb-40`
+- ID activo: MHB-41
+- Estado: En progreso
+- Implementador: Perfil tooling/CI
+- Revisor: Revisor técnico de build y email
+- Rama: `feature/mhb-41`
 - Última actualización: 2026-09-25
-- Contrato activo: `docs/implementation/PLAN.md` (MHB-40)
+- Contrato activo: `docs/implementation/PLAN.md` (MHB-41)
 
 ## Baseline vigente
 
@@ -16,60 +16,35 @@
 - La migración a TypeScript por capas (núcleo, CLI, servidor Vite y dashboard web) está completada y mergeada a `master`; la trazabilidad de los IDs cerrados vive en Git.
 - Las variables ESP `{{ }}` se preservan en el HTML final; `[[ page.* ]]` queda reservado para Maizzle.
 
-## Entrega activa (MHB-40: Gobernanza de agentes y revisión independiente)
+## Entrega activa (MHB-41: Gate del contrato de salida y validadores en CI)
 
 - **Hechos de implementación:**
-  1. Corregidas 5 contradicciones históricas en `docs/ai/` y `PLAN.md` (eliminadas referencias a JS/allowJs, typedefs, any, `storage-keys.js` e `IMPLEMENTATION-PLAN.md`).
-  2. Incorporadas 6 reglas de gobernanza en `AGENTS.md`, `email-quality-gates`, `task-verification` y `task-status-management` (supresiones registradas, `.ts` obligatorio, criterios con comando, actualización de rutas, baseline de dist y CHANGELOG unreleased).
-  3. Creadas skills canónicas `task-review` (procedimiento del revisor independiente) y `release-management` (congelamiento de alcance, checklist Go/No-Go y SemVer) con sus `agents/openai.yaml`.
-  4. Sincronizados y verificados los adaptadores en los 7 targets declarados mediante `bun run agents:sync` y `bun run agents:check`.
-  5. Documentadas entradas retroactivas de MHB-37, MHB-39 y MHB-40 en `CHANGELOG.md` bajo `[Unreleased]` y ejecutado ensayo de `task-review` sobre el diff de MHB-39.
+  1. Inicio de implementación de MHB-41 tras verificación de baseline limpio y sin divergencia en `dist/*.html`.
 - **Riesgos residuales:**
-  1. Riesgo bajo de que un implementador omita registrar una supresión temporal; mitigado por el procedimiento de auditoría profunda de diff en `task-review`.
+  1. Potencial no determinismo de hashes entre macOS (local) y Linux (CI); mitigado mediante spike en el paso 1.
 - **Bloqueos y desviaciones:**
-  - Sin bloqueos ni desviaciones vigentes.
+  - Sin bloqueos vigentes. Desviaciones aprobadas por el usuario (D1–D4):
+    - D1: Modificación de entrypoint CLI de `validate-email-html.ts` y `check-html-size.ts` para retornar código 1 ante errores o archivos > 102 KB.
+    - D2: Entrada de MHB-41 en `CHANGELOG.md` bajo `[Unreleased]`.
+    - D3: En `docs/ai/AGENTS.md`, reemplazar comparación manual por `bun run check:dist-baseline` y sincronizar adaptadores.
+    - D4: Push de `feature/mhb-41` a `origin` para el spike del paso 1, el commit rojo del paso 8 y su revert.
 
 ### Controles de Calidad
 
-| Control                 | Comando                                                                                                                | Resultado                      |
-| :---------------------- | :--------------------------------------------------------------------------------------------------------------------- | :----------------------------- |
-| Comprobación de rama    | `bun run check:task-branch`                                                                                            | Pasó (feature/mhb-40)          |
-| Barrido contradicciones | `grep -rnE "Conservar JavaScript ESM\|No migrar globalmente\|typedefs\|IMPLEMENTATION-PLAN\|storage-keys\.js" docs/ai` | Pasó (0 hallazgos)             |
-| Linting Markdown        | `bun run lint:md`                                                                                                      | Pasó (0 errores en 87 files)   |
-| Formato de código       | `bun run format:check`                                                                                                 | Pasó (100% Prettier)           |
-| Adaptadores de agentes  | `bun run agents:check`                                                                                                 | Pasó (7 targets declarados)    |
-| Typecheck unificado     | `bun run typecheck`                                                                                                    | Pasó (0 errores)               |
-| Suite de pruebas        | `bun run test`                                                                                                         | Pasó (598 tests, 78 suites)    |
-| Linting completo        | `bun run lint`                                                                                                         | Pasó (HTML, JS, MD, JSON, CSS) |
-| Build y salida dist     | `bun run build`                                                                                                        | Pasó (6 templates, 0 diff)     |
-| Validación email        | `bun run validate-email`                                                                                               | Pasó (0 errores)               |
-| Diff de Git             | `git diff --check`                                                                                                     | Pasó (limpio)                  |
-
-### Evidencia de Validación
-
-#### Contradicciones corregidas
-
-| Archivo                                              | Hallazgo previo                              | Acción aplicada                                   |
-| :--------------------------------------------------- | :------------------------------------------- | :------------------------------------------------ |
-| `docs/ai/skills/email-refactor-type-safety/SKILL.md` | Conservar JS ESM / no migrar globalmente     | Reemplazado por cierre TS estricto y nuevos `.ts` |
-| `docs/ai/skills/email-quality-gates/SKILL.md`        | typedefs y explicar cualquier any            | Prohibido any y `@typedef` en `.ts`               |
-| `docs/ai/AGENTS.md`                                  | `storage-keys.js` / `IMPLEMENTATION-PLAN.md` | Corregido a `.ts` y `PLAN.md`                     |
-| `docs/implementation/PLAN.md`                        | `a11y-check.ts`                              | Corregido a `check-a11y.ts`                       |
-
-#### Ensayo de `task-review` sobre MHB-39
-
-- **Diff (`2f3600b..b512883`):** 0 supresiones no autorizadas (`eslint-disable`, `@ts-ignore`), 0 archivos `.js`/`.mjs` nuevos.
-- **Salida:** 0 diff en `dist/*.html`, variables ESP `{{ }}` preservadas.
-- **Árbol:** `file-tree.test.ts` pasando al 100% (límites prod ≤ 250 / test ≤ 400 respetados).
-- **Veredicto del ensayo:** Aprobado.
-
-## Revisión de cierre (MHB-40)
-
-- **Procedimiento:** `task-review` sobre checkout de `feature/mhb-40`, commit `d568f69`.
-- **Gates re-ejecutados por el revisor:** `check:task-branch`, `lint`, `typecheck`, `format:check`, `agents:check`, `test` (598 pass), `build` (0 diff en `dist/*.html`), `validate-email` (0 errores) y `git diff --check`; todos Verde.
-- **Auditoría de diff `master...HEAD`:** sin `eslint-disable`, `@ts-ignore`/`@ts-expect-error`, exclusiones de `tsconfig*` ni tests `skip`/`todo`; sin archivos `.js`/`.mjs` nuevos; superficies limitadas a las autorizadas (`AGENTS.md`, `docs/ai/skills/**`, `CHANGELOG.md` unreleased, `STATUS.md` y una referencia de ruta en `PLAN.md`).
-- **Criterios de aceptación:** barrido de contradicciones en cero, reglas del paso 2 presentes en `AGENTS.md` y skills correspondientes, `task-review`/`release-management` sincronizadas en los 7 targets vía symlink, ensayo de `task-review` sobre MHB-39 documentado.
-- **Veredicto:** Aprobado. Sin desviaciones ni bloqueos.
+| Control                | Comando                         | Resultado             |
+| :--------------------- | :------------------------------ | :-------------------- |
+| Comprobación de rama   | `bun run check:task-branch`     | Pasó (feature/mhb-41) |
+| Formato de código      | `bun run format:check`          | Pendiente             |
+| Typecheck unificado    | `bun run typecheck`             | Pendiente             |
+| Suite de pruebas       | `bun run test`                  | Pendiente             |
+| Linting completo       | `bun run lint`                  | Pendiente             |
+| Build y salida dist    | `bun run build`                 | Pasó (6 templates)    |
+| Baseline dist local    | `git diff --exit-code -- dist/` | Pasó (0 diff)         |
+| Validación email       | `bun run validate-email`        | Pasó (0 errores)      |
+| Gate baseline dist     | `bun run check:dist-baseline`   | Pendiente             |
+| Chequeo tamaño HTML    | `bun run check-size`            | Pendiente             |
+| Adaptadores de agentes | `bun run agents:check`          | Pasó                  |
+| Diff de Git            | `git diff --check`              | Pendiente             |
 
 ## Últimas entregas
 
@@ -78,13 +53,17 @@
 
 ## Ejecuciones delegadas relevantes
 
-| Ámbito | Estado     | Propiedad                   | Handoff                                                      |
-| :----- | :--------- | :-------------------------- | :----------------------------------------------------------- |
-| MHB-40 | Completada | Gobernanza y revisión       | Revisión de cierre aprobada; lista para fusionar a `master`. |
-| MHB-39 | Completada | Nombres y linting con tipos | Verificación completa y aceptada en `feature/mhb-39`.        |
+| Ámbito | Estado      | Propiedad             | Handoff                                              |
+| :----- | :---------- | :-------------------- | :--------------------------------------------------- |
+| MHB-41 | En progreso | Tooling y CI          | Implementación activa en rama `feature/mhb-41`.      |
+| MHB-40 | Completada  | Gobernanza y revisión | Revisión aprobada y fusionada a `master` (ver HIST). |
 
 ## Decisiones y desviaciones vigentes
 
+- **D1 (Aprobada 2026-09-25):** Autorizado tocar entrypoints CLI en `validate-email-html.ts` (código 1 si errores > 0) y `check-html-size.ts` (código 1 si tamaño > 102 KB). Ambos pasos bloquean en CI.
+- **D2 (Aprobada 2026-09-25):** Entrada de MHB-41 en `CHANGELOG.md` bajo `[Unreleased]`.
+- **D3 (Aprobada 2026-09-25):** Reemplazar «manual hasta que MHB-41 la automatice» en `docs/ai/` por `bun run check:dist-baseline`; ejecutar `agents:sync` y `agents:check`.
+- **D4 (Aprobada 2026-09-25):** Push de rama `feature/mhb-41` a origin para spike paso 1 y validación manual paso 8 (commit rojo y revert).
 - **Directiva MD024 en Changelog:** Se añade directiva de archivo `markdownlint-configure-file { "MD024": { "siblings_only": true } }` en `CHANGELOG.md` para permitir subtítulos estándar de Keep a Changelog (`### Añadido`, etc.) entre versiones distintas.
 - **Dependencia de desarrollo:** Autorizada `eslint-plugin-check-file@3.3.2` fijada exacta para forzar kebab-case y blocklist de helpers/utils.
 - **Linting con tipos:** Configurado sobre `tsconfig.strict.json` en ESLint sin alterar los archivos `tsconfig*.json`.
@@ -94,6 +73,6 @@
 
 ## Handoff
 
-- Próxima acción inmediata: eliminar `docs/superpowers/mhb-40/` y preparar PR de `feature/mhb-40` a `master`.
+- Próxima acción inmediata: Implementar paso 1 (spike de determinismo en CI con `git diff --exit-code -- dist/`).
 - Siguiente tarea del roadmap:
-  - MHB-41 (`desbloqueada`, depende solo de MHB-40 ya completada): Gate del contrato de salida y validadores en CI.
+  - MHB-45 (`bloqueada`, depende de MHB-41): Protección de `master` y política de Dependabot.
