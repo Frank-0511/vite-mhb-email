@@ -1,0 +1,4 @@
+interface:
+  display_name: "Gestión de releases"
+  short_description: "Checklist Go/No-Go, congelamiento de alcance y SemVer"
+  default_prompt: "Usa $release-management para planificar, congelar alcance y verificar checklists de release."
