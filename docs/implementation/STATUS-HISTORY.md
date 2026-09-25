@@ -4,6 +4,46 @@ Este documento almacena el histórico de revisiones de cierre, tablas de validac
 
 ---
 
+## MHB-41 — Gate del contrato de salida y validadores de email en CI
+
+- **Fecha de cierre:** 2026-09-25
+- **Estado:** Completada
+- **Implementador:** Perfil tooling/CI
+- **Revisor independiente:** Revisor técnico de build y email
+- **Rama:** `feature/mhb-41` (commit `823218b`, PR #44)
+- **Contrato:** `docs/implementation/PLAN.md` (MHB-41)
+
+### Hechos de implementación (MHB-41)
+
+1. Módulo `scripts/validators/dist-baseline/` (`snapshot`, `compare`, `baseline-guard`, `check`, `update`, `baseline.json`) con 23 tests unitarios y fixtures deterministas; scripts `check:dist-baseline` y `update:dist-baseline` en `package.json`.
+2. Entrypoints CLI de `validate-email-html.ts` y `check-html-size.ts` retornan código 1 ante errores o archivos > 102 KB.
+3. `ci.yml` ejecuta tras `build`: `git diff --exit-code -- dist/`, `validate-email`, `check:dist-baseline`, `check-size` y `check:inventory` (informe).
+4. `ci.yml` paralelizado (D5): jobs `Format & Lint`, `Typecheck`, `Test` y `Build & Validate` agregados por el check `CI Pipeline`; `push` solo en `master`, `concurrency`, caché de `node_modules` y `PUPPETEER_SKIP_DOWNLOAD`.
+5. CI verde ([`36099115433`](https://github.com/Frank-0511/vite-mhb-email/actions/runs/36099115433)), rojo forzado ([`36099267303`](https://github.com/Frank-0511/vite-mhb-email/actions/runs/36099267303)) y verde tras revert ([`36099402152`](https://github.com/Frank-0511/vite-mhb-email/actions/runs/36099402152)), sin incremento de tiempo (1m1s vs 1m3s). Determinismo comprobado entre macOS y Linux.
+
+### Controles de calidad (MHB-41)
+
+Todos los controles pasaron: `check:task-branch`, `format:check`, `typecheck`, `test` (634 pass), `lint`, `build` (6 templates), `git diff --exit-code -- dist/`, `validate-email`, `check:dist-baseline`, `check-size`, `agents:check` y `git diff --check`.
+
+### Desviaciones aprobadas (MHB-41)
+
+- D1: entrypoints CLI de `validate-email-html.ts` y `check-html-size.ts` con código 1 ante errores.
+- D2: entrada de MHB-41 en `CHANGELOG.md` bajo `[Unreleased]`.
+- D3: `docs/ai/` referencia `bun run check:dist-baseline` en vez de comparación manual; adaptadores sincronizados.
+- D4: push de `feature/mhb-41` para el spike y la prueba roja con revert.
+- D5: paralelizar y cachear `ci.yml`, con `CI Pipeline` como check agregado requerido.
+- D6: `permissions: contents: read` en `ci.yml` y `audit.yml` (autorizado retroactivamente).
+- D7: correcciones de paso en `scripts/mail/send-mailtester.ts` y `scripts/vite/services/transforms/script-transforms.ts` (autorizado retroactivamente).
+
+### Revisión de cierre (MHB-41)
+
+- **Procedimiento:** `task-review` sobre checkout limpio de `feature/mhb-41` @ `823218b`, re-ejecutando todos los gates sin asumir lo declarado.
+- **Auditoría de diff `master...HEAD`:** sin supresiones ni `.js`/`.mjs` nuevos; cuatro desviaciones no documentadas en la primera pasada quedaron autorizadas como D6–D7.
+- **Contrato de salida:** `dist/` sin diff, variables ESP intactas y `check:dist-baseline` en coincidencia.
+- **Veredicto:** Aprobado.
+
+---
+
 ## MHB-40 — Gobernanza de agentes y revisión independiente
 
 - **Fecha de cierre:** 2026-09-25
