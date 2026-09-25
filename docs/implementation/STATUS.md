@@ -3,11 +3,11 @@
 ## Resumen
 
 - ID activo: MHB-40
-- Estado: En revisión
+- Estado: Completada
 - Implementador: Perfil gobernanza/documentación
 - Revisor: Revisor independiente (orquestador)
 - Rama: `feature/mhb-40`
-- Última actualización: 2026-09-24
+- Última actualización: 2026-09-25
 - Contrato activo: `docs/implementation/PLAN.md` (MHB-40)
 
 ## Baseline vigente
@@ -63,16 +63,25 @@
 - **Árbol:** `file-tree.test.ts` pasando al 100% (límites prod ≤ 250 / test ≤ 400 respetados).
 - **Veredicto del ensayo:** Aprobado.
 
+## Revisión de cierre (MHB-40)
+
+- **Procedimiento:** `task-review` sobre checkout de `feature/mhb-40`, commit `d568f69`.
+- **Gates re-ejecutados por el revisor:** `check:task-branch`, `lint`, `typecheck`, `format:check`, `agents:check`, `test` (598 pass), `build` (0 diff en `dist/*.html`), `validate-email` (0 errores) y `git diff --check`; todos Verde.
+- **Auditoría de diff `master...HEAD`:** sin `eslint-disable`, `@ts-ignore`/`@ts-expect-error`, exclusiones de `tsconfig*` ni tests `skip`/`todo`; sin archivos `.js`/`.mjs` nuevos; superficies limitadas a las autorizadas (`AGENTS.md`, `docs/ai/skills/**`, `CHANGELOG.md` unreleased, `STATUS.md` y una referencia de ruta en `PLAN.md`).
+- **Criterios de aceptación:** barrido de contradicciones en cero, reglas del paso 2 presentes en `AGENTS.md` y skills correspondientes, `task-review`/`release-management` sincronizadas en los 7 targets vía symlink, ensayo de `task-review` sobre MHB-39 documentado.
+- **Veredicto:** Aprobado. Sin desviaciones ni bloqueos.
+
 ## Últimas entregas
 
+- MHB-40: `Completada` el 2026-09-25; gobernanza de agentes, skills `task-review` y `release-management`, corrección de 5 contradicciones y sincronización de adaptadores en 7 targets.
 - MHB-39: `Completada` el 2026-09-24; estandarización de 48 renombres `git mv` (cero prefijos redundantes), barrels `index.ts` puros, test de árbol `file-tree.test.ts`, linting con tipos en ESLint con 0 hallazgos y `asyncHandler` seguro.
 
 ## Ejecuciones delegadas relevantes
 
-| Ámbito | Estado      | Propiedad                   | Handoff                                               |
-| :----- | :---------- | :-------------------------- | :---------------------------------------------------- |
-| MHB-40 | En revisión | Gobernanza y revisión       | Entrega completa a revisión técnica independiente.    |
-| MHB-39 | Completada  | Nombres y linting con tipos | Verificación completa y aceptada en `feature/mhb-39`. |
+| Ámbito | Estado     | Propiedad                   | Handoff                                                      |
+| :----- | :--------- | :-------------------------- | :----------------------------------------------------------- |
+| MHB-40 | Completada | Gobernanza y revisión       | Revisión de cierre aprobada; lista para fusionar a `master`. |
+| MHB-39 | Completada | Nombres y linting con tipos | Verificación completa y aceptada en `feature/mhb-39`.        |
 
 ## Decisiones y desviaciones vigentes
 
@@ -85,6 +94,6 @@
 
 ## Handoff
 
-- Próxima acción inmediata: revisión técnica independiente (orquestador) aplicando la skill `task-review`.
+- Próxima acción inmediata: eliminar `docs/superpowers/mhb-40/` y preparar PR de `feature/mhb-40` a `master`.
 - Siguiente tarea del roadmap:
-  - MHB-41 (`bloqueada` hasta completar MHB-40): Gate del contrato de salida y validadores en CI.
+  - MHB-41 (`desbloqueada`, depende solo de MHB-40 ya completada): Gate del contrato de salida y validadores en CI.
