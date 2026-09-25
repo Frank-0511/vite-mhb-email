@@ -20,6 +20,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   gestión de versiones y Go/No-Go (`release-management`) como skills obligatorias (MHB-40).
 - Reglas de gobernanza para agentes contra supresiones no autorizadas de lint/tipos,
   asociación de criterios a comandos y verificación obligatoria de baseline (MHB-40).
+- Módulo de validación de baseline para el contrato de salida `dist/*.html` (`scripts/validators/dist-baseline/`)
+  con cálculo determinista de hash SHA-256 sobre bytes crudos y extracción/comparación de variables ESP `{{ }}` (MHB-41).
+- Comandos CLI `bun run check:dist-baseline` y `bun run update:dist-baseline` para contrastar y regenerar
+  el baseline versionado `baseline.json` (MHB-41).
+- Pasos de validación en el pipeline de CI (`CI Pipeline`): verificación estricta de `dist/` contra build
+  (`git diff --exit-code`), `validate-email`, `check:dist-baseline`, `check-size` y `check:inventory` (MHB-41).
 
 ### Cambiado
 
@@ -35,6 +41,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Corregido
 
+- Salida con código de error (`process.exit(1)`) en los comandos CLI `validate-email`
+  (ante errores de compatibilidad) y `check-size` (al exceder 102 KB) para bloquear
+  efectivamente ante fallos en CI (MHB-41).
 - Saneamiento incompleto en `stripPropsScript` que podía reintroducir un bloque
   `<script>` anidado tras un único reemplazo (CodeQL `js/incomplete-multi-character-sanitization`, MHB-41).
 - Validación por subcadena del destinatario de mail-tester.com que podía
