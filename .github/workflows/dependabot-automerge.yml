@@ -10,6 +10,10 @@ jobs:
   dependabot:
     runs-on: ubuntu-latest
     if: github.actor == 'dependabot[bot]'
+    env:
+      # Dependencias críticas del pipeline de email (revisión manual obligatoria).
+      # Mantenido en sincronía conceptual con exclude-patterns en .github/dependabot.yml
+      MANUAL_REVIEW_DEPS: "@maizzle/* maizzle tailwindcss postcss autoprefixer juice handlebars"
     steps:
       - name: Obtener metadatos de Dependabot
         id: metadata
@@ -17,12 +21,24 @@ jobs:
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
 
-      # Opcional: fusionar solo si es actualización menor o parche (evita breaking changes)
-      - name: Aprobar y activar auto-merge
-        if: steps.metadata.outputs.update-type != 'version-update:semver-major'
+      - name: Clasificar actualización
+        id: classify
+        env:
+          DEPENDENCY_NAMES: ${{ steps.metadata.outputs.dependency-names }}
         run: |
-          gh pr review --approve "$PR_URL"
-          gh pr merge --auto --merge "$PR_URL"
+          manual=false
+          IFS=',' read -ra deps <<< "$DEPENDENCY_NAMES"
+          for dep in "${deps[@]}"; do
+            dep="${dep// /}"
+            for pattern in $MANUAL_REVIEW_DEPS; do
+              case "$dep" in $pattern) manual=true ;; esac
+            done
+          done
+          echo "manual=$manual" >> "$GITHUB_OUTPUT"
+
+      - name: Activar auto-merge
+        if: steps.metadata.outputs.update-type != 'version-update:semver-major' && steps.classify.outputs.manual != 'true'
+        run: gh pr merge --auto --rebase "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
