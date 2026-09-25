@@ -52,6 +52,8 @@
     "generate:email": "bun scripts/generators/generate-email.ts",
     "export:screenshot": "bun scripts/export/screenshot.ts",
     "check-size": "bun scripts/validators/check-html-size.ts",
+    "check:dist-baseline": "bun scripts/validators/dist-baseline/check.ts",
+    "update:dist-baseline": "bun scripts/validators/dist-baseline/update.ts",
     "validate-email": "bun scripts/validators/validate-email-html.ts",
     "benchmark": "bun scripts/perf/measure-benchmarks.ts",
     "cli": "bun scripts/cli/cli.ts",
