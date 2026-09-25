@@ -3,7 +3,7 @@
 ## Resumen
 
 - ID activo: MHB-45
-- Estado: En progreso
+- Estado: En revisión
 - Implementador: Perfil CI/seguridad
 - Revisor: Orquestador; la configuración de GitHub la confirma el usuario
 - Rama: `feature/mhb-45`
@@ -20,15 +20,31 @@
 
 - **Propiedad de archivos:** `.github/workflows/dependabot-automerge.yml`, `.github/dependabot.yml`, protección de `master` en GitHub, `CHANGELOG.md` (`[Unreleased]`, D1) y `docs/implementation/STATUS.md`.
 - **Estado de partida (2026-09-25):** `master` sin protección (API → 404) y sin rulesets; el auto-merge fusiona al instante por falta de checks requeridos (#34, #36, #37 y #38 el 2026-09-23); `dependabot.yml` solo cubre `bun`.
-- **Hechos de implementación:** pendientes.
-- **Riesgos residuales:** pendientes de evaluar al entregar.
+- **Hechos de implementación:**
+  1. Aplicada protección a `master` vía GitHub API: checks requeridos estrictos (`CI Pipeline` y `Accessibility & Contrast Audit`), `enforce_admins: true`, `required_linear_history: true`, PR obligatorio (0 aprobaciones para mantenedor único) sin bypass ni borrado.
+  2. Restringido auto-merge en `.github/workflows/dependabot-automerge.yml`: clasificación previa de dependencias, fusión con `--rebase`, eliminación de paso de aprobación automática y exclusión obligatoria de dependencias del pipeline de email (`@maizzle/*`, `maizzle`, `tailwindcss`, `postcss`, `autoprefixer`, `juice`, `handlebars`).
+  3. Configurado `.github/dependabot.yml` con soporte para `github-actions` (semanal) y grupos `dev-dependencies` y `actions` (minor/patch), excluyendo paquetes críticos del agrupamiento para PRs individuales.
+  4. Probado el bloqueo de merge de forma real con PR desechable #45 (`test/mhb-45-red-check`), comprobando fallo de `CI Pipeline` y estado `mergeStateStatus: BLOCKED`; PR cerrado y rama remota borrada.
+  5. Documentados cambios en `CHANGELOG.md` bajo `[Unreleased]` (D1) y plan temporal de ejecución en `docs/superpowers/mhb-45-proteccion-master.md`.
+- **Riesgos residuales:**
+  - `strict: true` exige rebasar PRs si la base avanza; Dependabot rebasea solo pero múltiples PRs simultáneos se procesan en serie.
+  - Sintaxis YAML validada en ejecución por GitHub Actions en PR #45; sin actionlint local por estar fuera de dependencias aprobadas.
 - **Bloqueos:** ninguno.
 
 ### Controles de Calidad
 
-| Control              | Comando                     | Resultado               |
-| :------------------- | :-------------------------- | :---------------------- |
-| Comprobación de rama | `bun run check:task-branch` | Pasó (`feature/mhb-45`) |
+| Control                   | Comando / Verificación                                         | Resultado                                                      |
+| :------------------------ | :------------------------------------------------------------- | :------------------------------------------------------------- |
+| Comprobación de rama      | `bun run check:task-branch`                                    | Pasó (`feature/mhb-45`)                                        |
+| Checks de protección      | `gh api .../branches/master/protection --jq ...`               | Pasó (`CI Pipeline`, `Accessibility & Contrast Audit`, admins) |
+| Exclusión única workflow  | `grep -c -E "..." .github/workflows/dependabot-automerge.yml`  | Pasó (1 sola coincidencia en `MANUAL_REVIEW_DEPS`)             |
+| Clasificación bash        | Simulación local de patterns (`@maizzle/*`, etc.)              | Pasó (críticos: `manual=true`, normales: `manual=false`)       |
+| Bloqueo en GitHub (D2)    | PR desechable #45 con check rojo intencional                   | Pasó (`CI Pipeline` FAILURE, `mergeStateStatus: BLOCKED`)      |
+| Ecosistema github-actions | `grep -n 'package-ecosystem: "github-actions"' dependabot.yml` | Pasó (configurado con schedule semanal y grupo actions)        |
+| Formato Prettier          | `bun run format:check`                                         | Pasó (código, markdown y yaml)                                 |
+| Lint de Markdown          | `bun run lint:md`                                              | Pasó (0 errores)                                               |
+| Diferencias Git           | `git diff --check`                                             | Pasó (limpio)                                                  |
+| Gate baseline dist        | `bun run check:dist-baseline`                                  | Pasó (`dist/` coincide con baseline)                           |
 
 ## Últimas entregas
 
@@ -38,11 +54,11 @@
 
 ## Ejecuciones delegadas relevantes
 
-| Ámbito | Estado      | Propiedad             | Handoff                                                  |
-| :----- | :---------- | :-------------------- | :------------------------------------------------------- |
-| MHB-45 | En progreso | CI y seguridad        | Implementación en curso en `feature/mhb-45`.             |
-| MHB-41 | Completada  | Tooling y CI          | Revisión técnica independiente aprobada (`task-review`). |
-| MHB-40 | Completada  | Gobernanza y revisión | Revisión aprobada y fusionada a `master` (ver HIST).     |
+| Ámbito | Estado      | Propiedad             | Handoff                                                                                  |
+| :----- | :---------- | :-------------------- | :--------------------------------------------------------------------------------------- |
+| MHB-45 | En revisión | CI y seguridad        | Implementación completada con evidencia reproducible; lista para revisión independiente. |
+| MHB-41 | Completada  | Tooling y CI          | Revisión técnica independiente aprobada (`task-review`).                                 |
+| MHB-40 | Completada  | Gobernanza y revisión | Revisión aprobada y fusionada a `master` (ver HIST).                                     |
 
 ## Decisiones y desviaciones vigentes
 
@@ -59,6 +75,6 @@
 
 ## Handoff
 
-- Próxima acción inmediata: aplicar la protección de `master` y restringir el auto-merge de Dependabot (MHB-45).
+- Próxima acción inmediata: revisión técnica independiente de MHB-45 por el orquestador y confirmación de la configuración de GitHub por el usuario.
 - Siguiente tarea del roadmap:
-  - MHB-44: Compatibilidad del HTML exportado con clientes reales (bloqueado hasta el cierre de MHB-45).
+  - MHB-44: Compatibilidad del HTML exportado con clientes reales (bloqueada hasta la aprobación y merge de MHB-45).
