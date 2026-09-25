@@ -73,6 +73,21 @@ export function checkHtmlSize(distDirOverride?: string): boolean {
   return hasWarnings;
 }
 
+/**
+ * Determina si algún archivo HTML en dist excede el límite de Gmail (102 KB).
+ *
+ * @param distDirOverride Directorio opcional para buscar archivos HTML.
+ * @returns `true` si al menos un archivo excede 102 KB.
+ */
+export function hasExceededGmailLimit(distDirOverride?: string): boolean {
+  const distDir = distDirOverride ?? resolve(rootDir, "dist");
+  const htmlFiles = globSync("**/*.html", { cwd: distDir });
+  return htmlFiles.some((file) => statSync(resolve(distDir, file)).size > GMAIL_LIMIT);
+}
+
 if (import.meta.url === `file://${process.argv[1]}`) {
   checkHtmlSize();
+  if (hasExceededGmailLimit()) {
+    process.exit(1);
+  }
 }
