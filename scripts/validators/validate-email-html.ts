@@ -138,5 +138,8 @@ export function validateEmailHtml(
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  validateEmailHtml();
+  const summary = validateEmailHtml();
+  if (summary.errors > 0) {
+    process.exit(1);
+  }
 }
