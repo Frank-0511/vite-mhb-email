@@ -34,6 +34,8 @@ validar y exportar templates HTML de email. Todo cambio debe preservar:
 | Refactor, modularización o tipado gradual                | `email-refactor-type-safety` |
 | Convenciones de código, nombres, roles o estructura      | `email-code-conventions`     |
 | Evidencias, ramas, commits o cierre                      | `task-verification`          |
+| Procedimiento del revisor independiente y gates          | `task-review`                |
+| Congelamiento de alcance, checklist Go/No-Go y SemVer    | `release-management`         |
 | Actualizar `docs/implementation/STATUS.md`               | `task-status-management`     |
 
 Leer solo las skills aplicables antes de modificar archivos. Cada una conserva
@@ -64,13 +66,26 @@ asignado.
   sin estructurarse en subdirectorios por dominio.
 - Shared first: buscar helpers y constantes en `scripts/shared/` o
   `src/web/shared/utils/` antes de escribir utilidades nuevas. No hardcodear
-  claves de almacenamiento (`storage-keys.js`), breakpoints, encabezados o magic numbers.
+  claves de almacenamiento (`storage-keys.ts`), breakpoints, encabezados o magic numbers.
   En frontend usar helpers centrales (`queryRequired`, `fetchJSON`, `debounce`) en vez
   de llamadas directas al DOM o `fetch()`.
 - Contratos aislados y tipado estricto: los contratos compartidos residen en
   `scripts/shared/contracts/` como módulos hoja sin dependencias de Node.js ni
   imports ascendentes. Se prohíbe `any` y `@typedef` en TypeScript (`.ts`); los
   límites externos (storage, URL, red) deben validarse mediante type guards.
+- Todo archivo fuente nuevo es `.ts`, salvo la allowlist que fije MHB-42.
+- Prohibido añadir `ignores` o exclusiones de ESLint, directivas `eslint-disable`,
+  `@ts-ignore`/`@ts-expect-error`, exclusiones de `tsconfig*.json` o tests `skip`/`todo`
+  sin registrarlos como desviación aprobada en `STATUS.md`.
+- Cada criterio de aceptación de un ID nuevo o ajustado se asocia a un comando o
+  test que falle si no se cumple; lo no automatizable se declara explícitamente
+  como revisión manual.
+- Un ID que borra o renombra archivos debe actualizar, en el mismo ID, las rutas
+  citadas por los contratos pendientes de `PLAN.md`.
+- La comparación de `dist/*.html` contra el baseline es un paso obligatorio de
+  verificación (manual hasta que MHB-41 la automatice).
+- Cada ID con efecto observable (comandos, dependencias, output, UI, CI) añade su
+  entrada en `CHANGELOG.md` bajo `[Unreleased]` antes de pasar a `En revisión`.
 - Menos es más: preferir eliminar código muerto o simplificar antes que agregar
   abstracciones preventivas. Un helper se justifica con ≥2 consumidores reales o
   manejo de error no trivial.
@@ -113,7 +128,7 @@ asignado.
 El chat principal integra resultados y conserva decisiones transversales,
 seguridad, versiones, releases, acciones destructivas y veredicto final. Solo
 delegar trabajo independiente con propiedad de archivos exclusiva. Usar el
-modelo y esfuerzo indicados por cada ID en `IMPLEMENTATION-PLAN.md`; escalar si
+modelo y esfuerzo indicados por cada ID en `PLAN.md`; escalar si
 cambia el contrato CLI, filesystem, compatibilidad, versión, release, permisos
 CI o alcance.
 
