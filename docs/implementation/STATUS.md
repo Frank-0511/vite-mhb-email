@@ -8,7 +8,7 @@
 - Implementador: perfil email/compatibilidad (sesión actual)
 - Revisor: pendiente de asignación
 - Rama: `feature/mhb-44`
-- Última actualización: 2026-09-25
+- Última actualización: 2026-09-28
 - Contrato activo: `docs/implementation/PLAN.md`
 
 ## Baseline vigente
@@ -19,14 +19,12 @@
 
 ## Entrega activa
 
-- MHB-44 `En progreso` — Paso 1 completado (reglas de `validate-email`) más la ampliación de alcance de 8 KB resuelta en el mismo paso:
-  - 6 reglas nuevas ERROR/WARNING: `css-color-format`, `css-relative-units`, `img-svg-source`, `img-host-allowlist`, `example-domains`, `style-block-size` (registradas en `rules/registry.ts`, con test co-locado cada una).
-  - Causa raíz del límite de 8 KB corregida: `maizzle.config.js` tenía `css.inline.removeInlinedSelectors: false` (mantenía en `<style>` selectores ya inlineados, duplicando CSS). Se restauró a `true` (default de Maizzle); `dist/*.html` regenerado, los 6 templates bajan de 8192 bytes por bloque `<style>` (antes 4/6 lo superaban, hasta 10 741 bytes) y las `@media`/dark mode se preservan intactas.
-  - `bun run validate-email` sobre el `dist/` actual: 44 ERROR (`css-color-format`, `css-relative-units`, `img-svg-source`, `img-host-allowlist`) + 6 WARNING (`example-domains`/`link-targets`), 0 en `style-block-size` (ya corregido). Falla a propósito hasta el paso 2 (preset de color/unidades) y el paso 4 (iconos PNG).
-  - Variables ESP `{{ }}` verificadas idénticas antes/después por template (`git show HEAD:dist/<t>.html` vs `dist/<t>.html`, comparando ocurrencias `{{ }}`).
-  - Controles verdes: `bun run lint`, `bun run typecheck`, `bun run format:check`, `bun run test` (661/663; los 2 fallos son los CLI de `validate-email`/`check:dist-baseline` fallando a propósito sobre el `dist/` aún no corregido).
+- MHB-44 `En progreso` — Pasos 1 y 2 completados; solo falta el paso 4 (iconos, D1–D3 ya aprobadas, sin bloqueos):
+  - Paso 1: 6 reglas nuevas en `validate-email` (`css-color-format`, `css-relative-units`, `img-svg-source`, `img-host-allowlist`, `example-domains`, `style-block-size`) y corrección de causa del límite de 8 KB por `<style>` (`maizzle.config.js`: `removeInlinedSelectors` vuelve a `true`, default de Maizzle).
+  - Paso 2: preset `tailwindcss-preset-email@1.4.2` en `tailwind.email.config.js` (colores en HEX) más 3 `rem`/`tracking` escritos a mano corregidos en las fuentes. Resultado en `dist/`: 0 `rgb(… /`, 0 `rem`/`em`, 0 bloques `<style>` > 8192 bytes (antes 4/6 templates); peso total 123 KB → 42 KB.
+  - D2/D3 aprobadas (2026-09-28): iconos PNG por jsDelivr sobre el propio repo; ícono de saludo con `lucide hand` (no `mdi:hand-wave`, para no sumar un set/licencia nuevo).
+  - Verificado: variables ESP `{{ }}` idénticas por template, `lint`/`typecheck`/`format:check`/`check-size` verdes, `test` 661/663 (los 2 fallos son `validate-email`/`check:dist-baseline` fallando a propósito hasta que el paso 4 reemplace los SVG de Iconify).
 - Plan operativo temporal en `docs/superpowers/plans/2026-09-25-mhb-44-compatibilidad-clientes.md` (se elimina antes de la PR).
-- D1 (preset `tailwindcss-preset-email`) aprobada; D2 (hosting PNG) y D3 (fuente `mdi:hand-wave`) pendientes, bloquean solo el paso de iconos (paso 4). Próximo paso propio: paso 2 (aplicar el preset para que los colores salgan en HEX y las unidades en `px`).
 
 ## Últimas entregas
 
@@ -56,6 +54,6 @@
 
 ## Handoff
 
-- Próxima acción inmediata: continuar MHB-44 con el paso 2 (preset `tailwindcss-preset-email`, D1 ya aprobada) y luego pedir al usuario D2 (hosting de PNG) y D3 (fuente de `mdi:hand-wave`) antes del paso 4 de iconos.
+- Próxima acción inmediata: continuar MHB-44 con el paso 4 (reemplazar los 12 `<img>` SVG de Iconify por PNG servidos desde jsDelivr) y luego el paso 5 (regenerar baseline).
 - Siguiente tarea del roadmap:
   - MHB-44 sigue `En progreso` (este ID); no hay otro ID bloqueado por asignar mientras continúa.
