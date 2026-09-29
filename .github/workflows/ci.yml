@@ -26,6 +26,9 @@ jobs:
       - &checkout
         name: Checkout
         uses: actions/checkout@v7
+        with:
+          # El guard de iconos compara contra master/origin/master; requiere historial.
+          fetch-depth: 0
 
       - &setup-bun
         name: Setup Bun
