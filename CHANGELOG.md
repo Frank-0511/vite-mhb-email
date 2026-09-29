@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Seguridad
+
+- Endpoints de escritura de la API local del servidor Vite rechazan con 403 peticiones cross-site (`Sec-Fetch-Site`/`Origin`) y cuerpos sin `application/json` (MHB-46).
+
 ### Añadido
 
 - Workflow trimestral `outdated-majors.yml` que abre un issue asignado al dueño

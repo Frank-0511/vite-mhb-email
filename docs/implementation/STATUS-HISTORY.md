@@ -4,6 +4,35 @@ Este documento almacena el histórico de revisiones de cierre, tablas de validac
 
 ---
 
+## MHB-44 — Compatibilidad del HTML exportado con clientes reales
+
+- **Fecha de cierre:** 2026-09-28
+- **Estado:** Completada
+- **Implementador:** Perfil email/compatibilidad
+- **Revisor independiente:** Revisor independiente (`task-review`, aprobado 2026-09-28, commit `362c324`, PR #56)
+- **Rama:** `feature/mhb-44`
+- **Contrato:** `docs/implementation/PLAN.md` (MHB-44)
+
+### Hechos de implementación (MHB-44)
+
+1. Reglas de validación: 6 reglas nuevas en `validate-email` (`css-color-format`, `css-relative-units`, `img-svg-source`, `img-host-allowlist`, `example-domains`, `style-block-size`) y fix del límite de 8 KB por `<style>` (`maizzle.config.js`: `removeInlinedSelectors: true`).
+2. Colores HEX y medidas px: preset `tailwindcss-preset-email@1.4.2` en `tailwind.email.config.js` neutralizando diferencias de layout, más corrección de 3 `rem`/`tracking` manuales. Resultado en `dist/`: 0 `rgb(… /`, 0 `rem`/`em`, 0 bloques `<style>` > 8192 bytes, peso 123 KB → 42.8 KB.
+3. Iconos PNG y atom `email-icon`: 12 iconos PNG @2x generados con fondo transparente en `src/emails/assets/icons/` con `README.md` (licencia ISC); atom `<x-email-icon>` creado y 12 `<img>` de Iconify reemplazadas en `main.html`, `welcome` y `user-created` respetando modo claro/oscuro (D2: jsDelivr, D3: Lucide `hand`).
+4. Automatización y validación de iconos (ajuste de alcance acordado): comando `bun run generate:icons` (`scripts/icons/generate-icon.ts`) mediante `@resvg/resvg-js@2.6.2` con opción `--suffix v<N>`, validador de referencias `<x-email-icon>` en `src/emails/**/*.html` con convención ampliada `lucide-<icono>-<hex6>(-v<N>)?` y rechazo explícito de `.png`, y guard de no-sobrescritura con respaldo `master`/`origin/master` integrado con `.github/workflows/ci.yml`; 37 tests en `scripts/icons/` cubriendo fixtures de error, éxito, sufijos y respaldos git.
+5. Contrato de salida y baseline: `bun run check:dist-baseline` confirmó 0 alteraciones en variables ESP `{{ }}` (solo hashes SHA-256 modificados); baseline actualizado con `bun run update:dist-baseline` y validado verde; `bun run validate-email` con 0 errores verificando HTML, iconos y guard.
+6. Limpieza de artefactos: plan operativo y script generador temporal en `docs/superpowers/` eliminados; `docs/superpowers/` permanece vacía.
+
+### Controles de calidad (MHB-44)
+
+Todos los controles pasaron en checkout limpio de `feature/mhb-44`: `bun install --frozen-lockfile`, `format:check`, `lint`, `typecheck`, `test` (700 tests en 91 archivos), `build`, `validate-email`, `check:dist-baseline`, `check-size` y `agents:check`.
+
+### Revisión de cierre (MHB-44)
+
+- **Procedimiento:** `task-review` sobre checkout de `feature/mhb-44` @ `362c324`.
+- **Veredicto:** Aprobado (2026-09-28), segunda revisión independiente tras resolver B1 y B2.
+
+---
+
 ## MHB-45 — Protección de `master` y política de Dependabot
 
 - **Fecha de cierre:** 2026-09-25
