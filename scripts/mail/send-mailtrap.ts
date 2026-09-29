@@ -1,10 +1,11 @@
 /**
- * @fileoverview Envía un template buildeado a un inbox de Mailtrap Sandbox
- * usando la API HTTP oficial.
+ * @fileoverview Envía un template buildeado a Mailtrap (Sandbox o Sending API)
+ * usando la API HTTP oficial. Solo requiere API token o API key.
  *
- * Variables requeridas en .env:
- *   MAILTRAP_API_TOKEN  — token de API de Mailtrap
- *   MAILTRAP_INBOX_ID   — ID del inbox sandbox
+ * Variables de entorno soportadas:
+ *   MAILTRAP_API_TOKEN  — token de API de Mailtrap (o MAILTRAP_API_KEY)
+ *   MAILTRAP_API_KEY    — token alternativo de API de Mailtrap
+ *   MAILTRAP_INBOX_ID   — ID del inbox sandbox (opcional, auto-detectable)
  *   MAILTRAP_FROM_EMAIL — email remitente por defecto (opcional)
  *   MAILTRAP_FROM_NAME  — nombre remitente por defecto (opcional)
  *   MAILTRAP_TO_EMAIL   — email destinatario por defecto (opcional)
@@ -16,7 +17,7 @@ import { c, loadEnv, paint, prompt } from "../shared/index.ts";
 import { selectBuiltTemplateWithData } from "./template-selection.ts";
 
 /**
- * Opciones para el envío a Mailtrap Sandbox API.
+ * Opciones para el envío a Mailtrap API.
  */
 export interface MailtrapSendOptions {
   html: string;
@@ -25,13 +26,89 @@ export interface MailtrapSendOptions {
   toName?: string;
   fromEmail: string;
   fromName: string;
+  inboxId?: string | number;
   fetchFn?: typeof fetch;
+}
+
+/**
+ * Obtiene el token de autenticación para Mailtrap desde las variables de entorno.
+ * Soporta tanto MAILTRAP_API_TOKEN como MAILTRAP_API_KEY.
+ */
+export function getMailtrapToken(): string | undefined {
+  const token = process.env.MAILTRAP_API_TOKEN || process.env.MAILTRAP_API_KEY;
+  if (!token || token === "your_api_token_here" || token === "your_api_key_here") {
+    return undefined;
+  }
+  return token;
+}
+
+/**
+ * Intenta descubrir automáticamente el primer ID de inbox disponible en
+ * Mailtrap Sandbox consultando la API oficial de cuentas.
+ */
+export async function discoverSandboxInboxId(
+  token: string,
+  fetchFn: typeof fetch = fetch,
+): Promise<string | number | null> {
+  try {
+    const accRes = await fetchFn("https://mailtrap.io/api/accounts", {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+    });
+    if (!accRes.ok) return null;
+    const accounts = (await accRes.json()) as Array<{ id?: number | string }>;
+    if (!Array.isArray(accounts)) return null;
+
+    for (const account of accounts) {
+      if (!account?.id) continue;
+      const inboxesRes = await fetchFn(`https://mailtrap.io/api/accounts/${account.id}/inboxes`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+      });
+      if (!inboxesRes.ok) continue;
+      const inboxes = (await inboxesRes.json()) as Array<{ id?: number | string }>;
+      if (Array.isArray(inboxes) && inboxes[0]?.id) {
+        return inboxes[0].id;
+      }
+    }
+  } catch {
+    return null;
+  }
+  return null;
+}
+
+/**
+ * Determina el endpoint de destino en Mailtrap.
+ * Si se especifica inboxId o se detecta en Sandbox, apunta a sandbox.api.mailtrap.io.
+ * Si no se encuentra ningún inbox (ej. token de Sending API), apunta a send.api.mailtrap.io.
+ */
+export async function resolveMailtrapEndpoint(
+  token: string,
+  explicitInboxId?: string | number,
+  fetchFn: typeof fetch = fetch,
+): Promise<{ url: string; inboxId?: string | number }> {
+  if (explicitInboxId) {
+    return {
+      url: `https://sandbox.api.mailtrap.io/api/send/${explicitInboxId}`,
+      inboxId: explicitInboxId,
+    };
+  }
+
+  const discoveredInboxId = await discoverSandboxInboxId(token, fetchFn);
+  if (discoveredInboxId) {
+    return {
+      url: `https://sandbox.api.mailtrap.io/api/send/${discoveredInboxId}`,
+      inboxId: discoveredInboxId,
+    };
+  }
+
+  return { url: "https://send.api.mailtrap.io/api/send" };
 }
 
 // ─── Envío a Mailtrap ─────────────────────────────────────────────────────────
 
 /**
- * Envía el email a Mailtrap Sandbox mediante su API REST oficial.
+ * Envía el email a Mailtrap Sandbox o Sending API mediante su API REST oficial.
  */
 export async function sendToMailtrap({
   html,
@@ -40,19 +117,21 @@ export async function sendToMailtrap({
   toName,
   fromEmail,
   fromName,
+  inboxId,
   fetchFn = fetch,
 }: MailtrapSendOptions): Promise<unknown> {
-  const token = process.env.MAILTRAP_API_TOKEN;
-  const inboxId = process.env.MAILTRAP_INBOX_ID;
+  const token = getMailtrapToken();
 
-  if (!token || token === "your_api_token_here") {
-    throw new Error("MAILTRAP_API_TOKEN no configurado en .env");
-  }
-  if (!inboxId || inboxId === "your_inbox_id_here") {
-    throw new Error("MAILTRAP_INBOX_ID no configurado en .env");
+  if (!token) {
+    throw new Error("MAILTRAP_API_TOKEN no configurado en .env (o MAILTRAP_API_KEY)");
   }
 
-  const url = `https://sandbox.api.mailtrap.io/api/send/${inboxId}`;
+  const envInbox = process.env.MAILTRAP_INBOX_ID;
+  const targetInbox =
+    inboxId ?? (envInbox && envInbox !== "your_inbox_id_here" ? envInbox : undefined);
+
+  const { url } = await resolveMailtrapEndpoint(token, targetInbox, fetchFn);
+
   const body = JSON.stringify({
     from: { email: fromEmail, name: fromName },
     to: [{ email: to, name: toName || to }],
