@@ -2,16 +2,25 @@
 
 ## Resumen
 
-- ID activo: ninguno
-- Estado: MHB-46 `Completada` (pendiente de PR/merge a `master`)
-- Último cierre: MHB-46 — Endurecimiento de la API local del servidor Vite (`Completada`, revisor independiente `task-review`, aprobado 2026-09-29, rama `feature/mhb-46`)
-- Rama: `feature/mhb-46`
+- ID activo: MHB-47
+- Estado: MHB-47 `En progreso`
+- Implementador: Gemini Flash
+- Revisor: Pendiente de asignación (revisión independiente requerida)
+- Rama: `feature/mhb-47`
 - Última actualización: 2026-09-29
 - Contrato activo: `docs/implementation/PLAN.md`
 
 ## Paquete activo
 
-Ninguno. La revisión de cierre de MHB-46 (tabla de endpoints, controles y riesgos residuales) está en `STATUS-HISTORY.md`.
+- ID: MHB-47 — Contrato de integración ESP (manifiesto de variables, perfil SendGrid Dynamic y SendGrid Legacy)
+- Alcance:
+  1. Perfiles ESP (Handlebars / sustitución) y reglas de validación (`esp-syntax-profile`, `esp-legacy-compat`).
+  2. Datos de ejemplo saneados y extracción determinista de variables por template.
+  3. Generador de manifiesto `dist/esp-manifest.json` y comando `esp:manifest` integrado en build.
+  4. Guard de coherencia manifiesto ↔ baseline en `check:dist-baseline`.
+  5. Documentación de integración SendGrid en README y entrada de changelog.
+- Rama: `feature/mhb-47`
+- Estado: En progreso
 
 ## Baseline vigente
 
