@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { isEspManifest } from "./manifest-guard.ts";
-import type { EspManifest } from "./manifest-types.ts";
+import { isEspManifest } from "./guard.ts";
+import type { EspManifest } from "./types.ts";
 
 describe("isEspManifest", () => {
   const validManifest: EspManifest = {

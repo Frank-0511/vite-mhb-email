@@ -3,7 +3,7 @@
  */
 
 import { ESP_PROFILES } from "../../shared/contracts/constants/esp-contract.ts";
-import type { EspManifest, EspManifestLegacy, EspManifestTemplate } from "./manifest-types.ts";
+import type { EspManifest, EspManifestLegacy, EspManifestTemplate } from "./types.ts";
 
 function isStringRecord(value: unknown): value is Record<string, string> {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {

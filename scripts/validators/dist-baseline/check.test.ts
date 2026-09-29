@@ -16,6 +16,36 @@ import {
 import { createDistSnapshot, writeBaseline } from "./snapshot.ts";
 import { updateDistBaseline } from "./update.ts";
 
+function writeTestManifest(
+  dir: string,
+  templates: Record<string, string[]> = {
+    "welcome.html": ["first_name", "unsubscribe_url"],
+  },
+): void {
+  const tpls: Record<string, unknown> = {};
+  for (const [file, vars] of Object.entries(templates)) {
+    const key = file.replace(/\.html$/i, "");
+    const tags: Record<string, string> = {};
+    for (const v of vars) tags[v] = `-${v}-`;
+    tpls[key] = {
+      file,
+      requiredVariables: vars,
+      intentionalVariables: [],
+      exampleData: {},
+      legacy: { convertible: true, tags, issues: [] },
+    };
+  }
+  fs.writeFileSync(
+    path.join(dir, "esp-manifest.json"),
+    JSON.stringify({
+      version: 1,
+      profiles: ["sendgrid", "sendgrid-legacy"],
+      templates: tpls,
+    }),
+    "utf8",
+  );
+}
+
 describe("check.ts y update.ts", () => {
   test("checkDistBaseline reporta éxito cuando el directorio coincide con el baseline", () => {
     const { dir, cleanup } = createTempDist({
@@ -26,10 +56,29 @@ describe("check.ts y update.ts", () => {
     try {
       const snap = createDistSnapshot(dir);
       writeBaseline(snap, tempBaseline);
+      writeTestManifest(dir);
 
       const result = checkDistBaseline({ distDir: dir, baselinePath: tempBaseline });
       expect(result.success).toBe(true);
       expect(result.message).toContain("coincide exactamente");
+    } finally {
+      cleanup();
+    }
+  });
+
+  test("checkDistBaseline falla si falta dist/esp-manifest.json", () => {
+    const { dir, cleanup } = createTempDist({
+      "welcome.html": FIXTURE_HTML_WELCOME,
+    });
+    const tempBaseline = path.join(dir, "baseline.json");
+
+    try {
+      const snap = createDistSnapshot(dir);
+      writeBaseline(snap, tempBaseline);
+
+      const result = checkDistBaseline({ distDir: dir, baselinePath: tempBaseline });
+      expect(result.success).toBe(false);
+      expect(result.message).toContain("Falta dist/esp-manifest.json; ejecuta `bun run build`");
     } finally {
       cleanup();
     }
@@ -71,6 +120,7 @@ describe("check.ts y update.ts", () => {
     try {
       updateDistBaseline({ distDir: dir, baselinePath: tempBaseline });
       expect(fs.existsSync(tempBaseline)).toBe(true);
+      writeTestManifest(dir);
 
       const check = checkDistBaseline({ distDir: dir, baselinePath: tempBaseline });
       expect(check.success).toBe(true);
