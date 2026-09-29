@@ -5,7 +5,7 @@
 import type { ViteDevServer } from "vite";
 import { API_ROUTES } from "../../shared/contracts/constants/api-routes.ts";
 import { createPreviewCacheManager, type PreviewCacheManager } from "../services/cache/index.ts";
-import { asyncHandler, getRequestUrl, sendJson } from "./http.ts";
+import { asyncHandler, getRequestUrl, rejectUnsafeWrite, sendJson } from "./http.ts";
 
 let cacheManager: PreviewCacheManager | undefined;
 
@@ -30,6 +30,7 @@ export function setupCacheApi(server: ViteDevServer, rootDir: string): void {
       const url = getRequestUrl(req);
 
       if (req.method === "POST") {
+        if (rejectUnsafeWrite(req, res, { requireJson: false })) return;
         if (req.url.startsWith(API_ROUTES.CACHE_INVALIDATE)) {
           const templateName = url.searchParams.get("template");
 

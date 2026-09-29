@@ -12,7 +12,7 @@ import type { Connect, ViteDevServer } from "vite";
 import { API_ROUTES } from "../../shared/contracts/constants/api-routes.ts";
 import { getProjectPaths, isPathInside, isValidTemplateName } from "../../shared/index.ts";
 import { runSelectiveBuild } from "../services/render/index.ts";
-import { asyncHandler, getRequestUrl, readJsonBody, sendJson } from "./http.ts";
+import { asyncHandler, getRequestUrl, readJsonBody, rejectUnsafeWrite, sendJson } from "./http.ts";
 
 /**
  * Registra el middleware para POST /api/copy-html en el servidor de Vite.
@@ -36,6 +36,8 @@ export function setupCopyHtmlApi(
         if (req.method !== "POST") {
           return sendJson(res, 405, { success: false, error: "Method not allowed. Use POST." });
         }
+
+        if (rejectUnsafeWrite(req, res)) return;
 
         const url = getRequestUrl(req);
         const templateName = url.searchParams.get("template");

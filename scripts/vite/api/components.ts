@@ -11,7 +11,14 @@ import {
   readComponentSchema,
 } from "../services/catalog/index.ts";
 import { renderComponentPreview } from "../services/render/index.ts";
-import { asyncHandler, getRequestUrl, readJsonBody, sendJson, sendText } from "./http.ts";
+import {
+  asyncHandler,
+  getRequestUrl,
+  readJsonBody,
+  rejectUnsafeWrite,
+  sendJson,
+  sendText,
+} from "./http.ts";
 
 /**
  * Maneja GET /api/components — listado.
@@ -164,6 +171,7 @@ export function setupComponentsApi(server: ViteDevServer, rootDir: string): void
           segments.length === 4 &&
           segments[3] === "render"
         ) {
+          if (rejectUnsafeWrite(req, res)) return;
           return await handleRender(req, res, rootDir, componentName);
         }
 
