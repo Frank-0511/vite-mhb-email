@@ -13,6 +13,8 @@ import styleBlockSize from "./structure/style-block-size.ts";
 import imgAlt from "./accessibility/img-alt.ts";
 import imgDimensions from "./accessibility/img-dimensions.ts";
 import linkTargets from "./accessibility/link-targets.ts";
+import espLegacyCompat from "./content/esp-legacy-compat.ts";
+import espSyntaxProfile from "./content/esp-syntax-profile.ts";
 import espVariables from "./content/esp-variables.ts";
 import exampleDomains from "./content/example-domains.ts";
 import imgHostAllowlist from "./content/img-host-allowlist.ts";
@@ -40,6 +42,8 @@ export const rules: Rule[] = [
   imgSvgSource,
   imgHostAllowlist,
   exampleDomains,
+  espSyntaxProfile,
+  espLegacyCompat,
 ];
 
 /**

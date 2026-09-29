@@ -84,6 +84,16 @@ const cases: TestCase[] = [
     positive: cleanHtml,
     negative: '<a href="https://example.com/terms">Términos</a>',
   },
+  {
+    ruleId: "esp-syntax-profile",
+    positive: cleanHtml,
+    negative: "<p>{{#if (eq a b)}}x{{/if}}</p>",
+  },
+  {
+    ruleId: "esp-legacy-compat",
+    positive: cleanHtml,
+    negative: "<p>{{#if a}}x{{/if}}</p>",
+  },
 ];
 
 describe("registro de reglas de compatibilidad", () => {
