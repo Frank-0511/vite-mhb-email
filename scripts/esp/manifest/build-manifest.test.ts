@@ -3,7 +3,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { buildEspManifest } from "./build-manifest.ts";
-import { isEspManifest } from "./manifest-guard.ts";
+import { isEspManifest } from "./guard.ts";
 
 describe("buildEspManifest", () => {
   const tempDirs: string[] = [];

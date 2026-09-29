@@ -14,7 +14,7 @@ import { extractEspVariablesFromHtml } from "../../validators/dist-baseline/snap
 import { parseEspFrontmatter } from "../frontmatter.ts";
 import { analyzeLegacyCompat, formatSubstitutionTag } from "../syntax/legacy-compat.ts";
 import { buildExampleData } from "./example-data.ts";
-import type { EspManifest, EspManifestTemplate } from "./manifest-types.ts";
+import type { EspManifest, EspManifestTemplate } from "./types.ts";
 
 /**
  * Construye el objeto de manifiesto ESP analizando los templates compilados en dist/.
