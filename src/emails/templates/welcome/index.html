@@ -9,20 +9,13 @@ logoUrl: "https://example.com"
   <!-- Saludo principal -->
   <h1 class="text-2xl font-bold mb-4 text-zinc-800 dark:text-zinc-100">
     ¡Hola, {{ first_name }}!
-    <img
-      src="https://api.iconify.design/mdi:hand-wave.svg?color=%23121212"
+    <x-email-icon
+      name="lucide-hand-121212"
       alt="Waving Hand (Light)"
-      width="24"
-      height="24"
+      size="24"
       class="icon-light"
     />
-    <img
-      src="https://api.iconify.design/mdi:hand-wave.svg?color=%23fbbf24"
-      alt="Waving Hand (Dark)"
-      width="24"
-      height="24"
-      class="icon-dark"
-    />
+    <x-email-icon name="lucide-hand-fbbf24" alt="Waving Hand (Dark)" size="24" class="icon-dark" />
   </h1>
   <p class="text-base text-zinc-800 dark:text-zinc-300">
     Bienvenido a <strong>Mi Empresa</strong>. Estamos muy contentos de tenerte a bordo. Tu cuenta ya
@@ -42,18 +35,16 @@ logoUrl: "https://example.com"
   <table cellpadding="0" cellspacing="0" width="100%" role="none">
     <tr>
       <td width="28" valign="top" class="pb-4 text-xl">
-        <img
-          src="https://api.iconify.design/lucide:check-circle.svg?color=%23121212"
+        <x-email-icon
+          name="lucide-circle-check-121212"
           alt="Check Circle (Light)"
-          width="20"
-          height="20"
+          size="20"
           class="icon-light"
         />
-        <img
-          src="https://api.iconify.design/lucide:check-circle.svg?color=%2310b981"
+        <x-email-icon
+          name="lucide-circle-check-10b981"
           alt="Check Circle (Dark)"
-          width="20"
-          height="20"
+          size="20"
           class="icon-dark"
         />
       </td>
@@ -66,20 +57,8 @@ logoUrl: "https://example.com"
     </tr>
     <tr>
       <td width="28" valign="top" class="pb-4 text-xl">
-        <img
-          src="https://api.iconify.design/lucide:bell.svg?color=%23121212"
-          alt="Bell (Light)"
-          width="20"
-          height="20"
-          class="icon-light"
-        />
-        <img
-          src="https://api.iconify.design/lucide:bell.svg?color=%23f59e0b"
-          alt="Bell (Dark)"
-          width="20"
-          height="20"
-          class="icon-dark"
-        />
+        <x-email-icon name="lucide-bell-121212" alt="Bell (Light)" size="20" class="icon-light" />
+        <x-email-icon name="lucide-bell-f59e0b" alt="Bell (Dark)" size="20" class="icon-dark" />
       </td>
       <td valign="top" class="pb-4 pl-2">
         <p class="m-0 font-bold text-zinc-900 dark:text-zinc-200 text-sm">
@@ -92,20 +71,13 @@ logoUrl: "https://example.com"
     </tr>
     <tr>
       <td width="28" valign="top" class="text-xl" style="padding-bottom: 0">
-        <img
-          src="https://api.iconify.design/lucide:rocket.svg?color=%23121212"
+        <x-email-icon
+          name="lucide-rocket-121212"
           alt="Rocket (Light)"
-          width="20"
-          height="20"
+          size="20"
           class="icon-light"
         />
-        <img
-          src="https://api.iconify.design/lucide:rocket.svg?color=%233b82f6"
-          alt="Rocket (Dark)"
-          width="20"
-          height="20"
-          class="icon-dark"
-        />
+        <x-email-icon name="lucide-rocket-3b82f6" alt="Rocket (Dark)" size="20" class="icon-dark" />
       </td>
       <td valign="top" class="pl-2">
         <p class="m-0 font-bold text-zinc-900 dark:text-zinc-200 text-sm">Explorá el panel</p>

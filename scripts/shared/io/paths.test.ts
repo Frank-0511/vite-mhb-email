@@ -13,6 +13,7 @@ describe("getProjectPaths", () => {
       paths.layoutsRoot,
       paths.partialsRoot,
       paths.stylesRoot,
+      paths.iconsRoot,
       paths.maizzleConfig,
       paths.tailwindEmailConfig,
     ]) {

@@ -2,11 +2,11 @@
   "version": 1,
   "templates": {
     "example.html": {
-      "sha256": "15df26c930ff71fc6bbae6dfef92233807185e628bb8f376c3885cbaba040b84",
+      "sha256": "14ac19c1a635e48151489917f2d5d8ab914d4bbbac7525bd1debe18723105f2c",
       "espVariables": ["title", "unsubscribe_url"]
     },
     "newsletter.html": {
-      "sha256": "46d2ca012c6ed322c07216388d70da83cdb0d1fbc2f4656129fdfc36ac5797a8",
+      "sha256": "4698b1397ed44840634de50e74a30666875286cfe1055edad5cbd1fe0627c441",
       "espVariables": [
         "issue_date",
         "issue_number",
@@ -17,7 +17,7 @@
       ]
     },
     "password-reset.html": {
-      "sha256": "cbc7a669473da4fe851cd19b7b53eb65db46457100d966eb58d4aaa96ae35c59",
+      "sha256": "b4b09b8fddc719fc142ed9875865745cfe4b92058d4664c690cf6c28eb9025de",
       "espVariables": [
         "expiration_minutes",
         "reset_url",
@@ -27,7 +27,7 @@
       ]
     },
     "receipt.html": {
-      "sha256": "e3778cd67de181b2d0d8fff1201170a8f7074f0b9ad9b5947e6076be713e4f7b",
+      "sha256": "dc4865d130c3231dd3ae6a96707bb796717e88d608cf7f85f478c273191d4156",
       "espVariables": [
         "customer_name",
         "item_1_name",
@@ -45,11 +45,11 @@
       ]
     },
     "user-created.html": {
-      "sha256": "8b6a9527bfd8757ba65b7f4db9f607299ff0c2ead12fed64f50feffe7de685ee",
+      "sha256": "ac3eadf944a5983761b914eeeb8d5904cc168b663c84b2f4ca92517aaedf3613",
       "espVariables": ["email", "first_name", "login_url", "temp_password", "unsubscribe_url"]
     },
     "welcome.html": {
-      "sha256": "82713780e64b5b87d793fefa766bd53a9f0a543c76505040f606891bbee3cb28",
+      "sha256": "684214f3f9fc5e9094ab28b9f6a8750bd6954b5815865f50bb762e1845ad80b7",
       "espVariables": ["buttonUrl", "dashboard_url", "first_name", "unsubscribe_url"]
     }
   }

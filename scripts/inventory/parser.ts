@@ -102,6 +102,7 @@ export function matchesLayer(relativePath: string, layerKey: string): boolean {
         relativePath.startsWith("scripts/build/") ||
         relativePath.startsWith("scripts/esp/") ||
         relativePath.startsWith("scripts/validators/") ||
+        relativePath.startsWith("scripts/icons/") ||
         relativePath.startsWith("src/emails/partials/")
       );
 
