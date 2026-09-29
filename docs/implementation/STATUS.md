@@ -4,9 +4,9 @@
 
 - ID activo: MHB-44
 - Descripción: Compatibilidad del HTML exportado con clientes reales
-- Estado: En revisión
+- Estado: Completada
 - Implementador: perfil email/compatibilidad (sesión actual)
-- Revisor: pendiente de asignación
+- Revisor: revisor independiente (`task-review`), aprobado 2026-09-28
 - Rama: `feature/mhb-44`
 - Última actualización: 2026-09-28
 - Contrato activo: `docs/implementation/PLAN.md`
@@ -49,19 +49,31 @@
 1. **Advertencias de dominios de ejemplo / link-targets:** 6 advertencias residuales en `validate-email` asociadas a `https://example.com` y `href="#"` en la configuración base de las plantillas (fuera de alcance de MHB-44).
 2. **Disponibilidad de URLs jsDelivr antes del merge:** Las URLs en jsDelivr apuntan a `@master` del repositorio público; hasta que la PR sea mergeada a `master`, responderán HTTP 404 en consultas de red externas (verificado localmente en disco). La fijación de la URL a etiquetas de release formales corresponde a MHB-15.
 
+## Revisión de cierre
+
+- Veredicto: **Aprobado** (2026-09-28), segunda revisión independiente tras corregir dos hallazgos bloqueantes de la primera.
+- Rama y commit: `feature/mhb-44` @ `362c324`, árbol de trabajo limpio.
+- Hallazgos previos resueltos y verificados: B1 (guard con respaldo `origin/master` y `git fetch origin master` en `ci.yml`, con tests de respaldo) y B2 (convención `lucide-<icono>-<hex6>(-v<N>)?` en `scripts/shared/contracts/constants/email-assets.ts`, `generate:icons --suffix`, `-vx` y `-v0` rechazados); O1 (trabajo commiteado), O2 (`.png` rechazado con mensaje explícito) y O3 (700 tests).
+- Controles re-ejecutados por el revisor, todos en verde: `check:task-branch`, `lint`, `typecheck`, `test` (700 pass, 0 fail), `format:check`, `build`, `validate-email`, `check:dist-baseline`, `check-size`, `agents:check` y `git diff --check`.
+- Auditoría del diff: sin `eslint-disable`, `@ts-ignore`, `skip`/`todo`, `any` ni `.js`/`.mjs` nuevos; `scripts/icons/` con 8 archivos y ninguno sobre 250 líneas (tests bajo 400); `rg` de `rgb(… /`, `rem` y `.svg` en `dist/` devuelve 0.
+- Contrato de salida: variables ESP `{{ }}` preservadas en los 6 templates y baseline coincidente.
+- Riesgo residual aceptado: las URLs de jsDelivr `@master` responden 404 hasta el merge de la PR.
+
 ## Últimas entregas
 
+- MHB-44: `Completada` el 2026-09-28; compatibilidad del HTML exportado (colores HEX, unidades px, iconos PNG @2x vía jsDelivr, reglas de `validate-email`), con generador `generate:icons`, validador de referencias y guard de no-sobrescritura, y revisión técnica independiente aprobada.
 - MHB-45: `Completada` el 2026-09-25; protección de `master` (checks requeridos `CI Pipeline` y `Accessibility & Contrast Audit`, `enforce_admins`, historial lineal), auto-merge de Dependabot restringido con exclusión de dependencias del pipeline de email y ecosistema `github-actions` añadido, con revisión técnica independiente aprobada (D1–D2, detalle en `STATUS-HISTORY.md`).
 - MHB-41: `Completada` el 2026-09-25; gate de contrato de salida (`dist/*.html` + variables ESP) y validadores de email en CI, con revisión técnica independiente aprobada (D1–D7, detalle en `STATUS-HISTORY.md`).
 - MHB-40: `Completada` el 2026-09-25; gobernanza de agentes, skills `task-review` y `release-management`, corrección de 5 contradicciones y sincronización de adaptadores en 7 targets.
 
 ## Ejecuciones delegadas relevantes
 
-| Ámbito | Estado     | Propiedad             | Handoff                                                  |
-| :----- | :--------- | :-------------------- | :------------------------------------------------------- |
-| MHB-45 | Completada | CI y seguridad        | Revisión técnica independiente aprobada (`task-review`). |
-| MHB-41 | Completada | Tooling y CI          | Revisión técnica independiente aprobada (`task-review`). |
-| MHB-40 | Completada | Gobernanza y revisión | Revisión aprobada y fusionada a `master` (ver HIST).     |
+| Ámbito | Estado     | Propiedad              | Handoff                                                  |
+| :----- | :--------- | :--------------------- | :------------------------------------------------------- |
+| MHB-44 | Completada | Email y compatibilidad | Revisión técnica independiente aprobada (`task-review`). |
+| MHB-45 | Completada | CI y seguridad         | Revisión técnica independiente aprobada (`task-review`). |
+| MHB-41 | Completada | Tooling y CI           | Revisión técnica independiente aprobada (`task-review`). |
+| MHB-40 | Completada | Gobernanza y revisión  | Revisión aprobada y fusionada a `master` (ver HIST).     |
 
 ## Decisiones y desviaciones vigentes
 
@@ -82,6 +94,6 @@
 
 ## Handoff
 
-- Próxima acción inmediata: revisión técnica independiente de MHB-44 mediante checkout limpio y re-ejecución de gates según la skill `task-review`.
+- Próxima acción inmediata: abrir la PR de `feature/mhb-44` hacia `master` y esperar CI verde antes de fusionar.
 - Siguiente tarea del roadmap:
   - MHB-46 ("Endurecimiento de la API local del servidor Vite") desbloqueada una vez aprobada y mergeada MHB-44; no iniciarla sin asignación explícita.
