@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Añadido
 
+- Manifiesto de variables ESP `dist/esp-manifest.json` generado automáticamente en el pipeline de build y ejecutable bajo demanda (`bun run esp:manifest`), con perfiles `sendgrid` (Dynamic Templates con Handlebars, bloques y helpers soportados) y `sendgrid-legacy` (etiquetas de sustitución `-variable-`), sanitización de datos de prueba (`exampleData`) contra fuga de datos personales o credenciales, reglas de compatibilidad de sintaxis `esp-syntax-profile` (ERROR) y `esp-legacy-compat` (WARNING) en `validate-email`, y guard de coherencia entre manifiesto y baseline versionado integrado en `bun run check:dist-baseline` (MHB-47).
 - Workflow trimestral `outdated-majors.yml` que abre un issue asignado al dueño
   con las versiones mayores pendientes de `bun outdated`.
 - Contratos compartidos y constantes tipadas aisladas en `scripts/shared/contracts/`
