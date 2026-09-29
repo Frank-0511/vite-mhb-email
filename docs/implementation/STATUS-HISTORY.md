@@ -4,6 +4,34 @@ Este documento almacena el histórico de revisiones de cierre, tablas de validac
 
 ---
 
+## MHB-46 — Endurecimiento de la API local del servidor Vite
+
+- **Fecha de cierre:** 2026-09-29
+- **Estado:** Completada
+- **Implementador:** Perfil servidor Vite/seguridad
+- **Revisor independiente:** `task-review`, aprobado 2026-09-29, rama `feature/mhb-46`, commit base de revisión `d51fee9`
+- **Contrato:** `docs/implementation/PLAN.md` (MHB-46)
+
+### Revisión de cierre de MHB-46
+
+- **Veredicto:** Aprobado. Sin hallazgos bloqueantes.
+- **Controles reproducidos (todos Verde):** `check:task-branch`, `lint`, `typecheck`, `test`, `format:check`, `build`, `validate-email`, `check:dist-baseline`, `check-size`, `agents:check`, `git diff --check`; `bun test scripts/vite/api` 30 pass / 0 fail.
+- **Auditoría del diff:** sin `eslint-disable`, `@ts-ignore`, `skip`/`todo`, cambios en `ignores` ni `tsconfig*.json`; sin archivos `.js`/`.mjs` nuevos; `dist/` sin cambios; ningún archivo supera límites.
+- **Criterios:** `text/plain` u `Origin`/`Sec-Fetch-Site` externo → 403 en cada uno de los 6 endpoints (`write-endpoints.test.ts`, `http.test.ts`); frontend envía `application/json` en `postJSON`/`postText`/render y la invalidación de caché no envía cuerpo (`requireJson: false`).
+- **Revisión manual:** recorrido visual del dashboard (guardar datos, copiar HTML, invalidar caché) queda al usuario; el smoke con curl del implementador y los helpers del frontend lo respaldan.
+- **Riesgo residual:** sin autenticación; con `vite --host` en red hostil la API sigue accesible por peticiones no-navegador.
+
+| #   | Endpoint                               | Archivo                                           | `requireJson` |
+| --- | :------------------------------------- | :------------------------------------------------ | :-----------: |
+| 1   | `POST /api/data?template=`             | `scripts/vite/api/data.ts`                        |     true      |
+| 2   | `POST /api/cache/invalidate?template=` | `scripts/vite/api/cache.ts`                       |     false     |
+| 3   | `POST /api/cache/clean`                | `scripts/vite/api/cache.ts`                       |     false     |
+| 4   | `POST /api/copy-html?template=`        | `scripts/vite/api/copy-html.ts`                   |     true      |
+| 5   | `POST /api/render?template=`           | `scripts/vite/services/render/request-handler.ts` |     true      |
+| 6   | `POST /api/components/:name/render`    | `scripts/vite/api/components.ts`                  |     true      |
+
+---
+
 ## MHB-44 — Compatibilidad del HTML exportado con clientes reales
 
 - **Fecha de cierre:** 2026-09-28

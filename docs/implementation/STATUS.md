@@ -2,55 +2,16 @@
 
 ## Resumen
 
-- ID activo: MHB-46
-- Estado: `En revisión`
-- Último cierre: MHB-44 — Compatibilidad del HTML exportado con clientes reales (`Completada`, revisor independiente `task-review`, aprobado 2026-09-28, PR #56 mergeada a `master`)
+- ID activo: ninguno
+- Estado: MHB-46 `Completada` (pendiente de PR/merge a `master`)
+- Último cierre: MHB-46 — Endurecimiento de la API local del servidor Vite (`Completada`, revisor independiente `task-review`, aprobado 2026-09-29, rama `feature/mhb-46`)
 - Rama: `feature/mhb-46`
 - Última actualización: 2026-09-29
 - Contrato activo: `docs/implementation/PLAN.md`
 
-## Paquete activo — MHB-46
+## Paquete activo
 
-- ID: MHB-46 — Endurecimiento de la API local del servidor Vite
-- Estado: `En revisión`
-- Implementador: Gemini 3.8 Flash (High)
-- Revisor: revisor técnico independiente (`task-review`)
-- Superficie: `scripts/vite/api/**`, `scripts/vite/services/render/request-handler.ts`, `scripts/shared/contracts/constants/http-security.ts`, `docs/implementation/`, `CHANGELOG.md`
-
-### Endpoints de escritura protegidos
-
-| #   | Endpoint                               | Archivo                                           | `requireJson` | Protección activa                                            |
-| --- | :------------------------------------- | :------------------------------------------------ | :-----------: | :----------------------------------------------------------- |
-| 1   | `POST /api/data?template=`             | `scripts/vite/api/data.ts`                        |     true      | `Content-Type: application/json` + `Origin`/`Sec-Fetch-Site` |
-| 2   | `POST /api/cache/invalidate?template=` | `scripts/vite/api/cache.ts`                       |     false     | `Origin`/`Sec-Fetch-Site` (sin cuerpo)                       |
-| 3   | `POST /api/cache/clean`                | `scripts/vite/api/cache.ts`                       |     false     | `Origin`/`Sec-Fetch-Site` (sin cuerpo)                       |
-| 4   | `POST /api/copy-html?template=`        | `scripts/vite/api/copy-html.ts`                   |     true      | `Content-Type: application/json` + `Origin`/`Sec-Fetch-Site` |
-| 5   | `POST /api/render?template=`           | `scripts/vite/services/render/request-handler.ts` |     true      | `Content-Type: application/json` + `Origin`/`Sec-Fetch-Site` |
-| 6   | `POST /api/components/:name/render`    | `scripts/vite/api/components.ts`                  |     true      | `Content-Type: application/json` + `Origin`/`Sec-Fetch-Site` |
-
-### Controles de salida de MHB-46
-
-| Control                     | Comando                         | Estado | Detalle                                                                                      |
-| :-------------------------- | :------------------------------ | :----: | :------------------------------------------------------------------------------------------- |
-| Comprobación de rama        | `bun run check:task-branch`     | Verde  | Conforme en `feature/mhb-46`                                                                 |
-| Dependencias congeladas     | `bun install --frozen-lockfile` | Verde  | Lockfile sincronizado                                                                        |
-| Formato Prettier            | `bun run format:check`          | Verde  | Conforme en todo el proyecto                                                                 |
-| Linting estricto            | `bun run lint`                  | Verde  | Cero errores o advertencias                                                                  |
-| Verificación de tipos       | `bun run typecheck`             | Verde  | Doble pasada (base + strict) limpia                                                          |
-| Suite de pruebas            | `bun run test`                  | Verde  | 723 tests en 92 archivos pasan (0 fail)                                                      |
-| Build determinista          | `bun run build`                 | Verde  | 6 plantillas compiladas en dist/                                                             |
-| Sin cambios dist/ sueltos   | `git diff --exit-code -- dist/` | Verde  | dist/ idéntico al baseline                                                                   |
-| Validación de email         | `bun run validate-email`        | Verde  | 0 errores (6 warnings residuales RFC 2606)                                                   |
-| Baseline de dist/           | `bun run check:dist-baseline`   | Verde  | dist/ coincide exactamente con baseline.json                                                 |
-| Sincronización agentes      | `bun run agents:check`          | Verde  | 7 targets de adaptadores conformes                                                           |
-| Integridad Git diff         | `git diff --check`              | Verde  | Sin marcadores ni trailing whitespace                                                        |
-| Tests de rechazo cross-site | `bun test scripts/vite/api`     | Verde  | 18 unitarios en `http.test.ts` y 10 en `write-endpoints.test.ts`                             |
-| Smoke real con curl         | Verificación HTTP en dev server | Verde  | HTTP 403 ante text/plain, evil origin y cross-site; HTTP 200 en legítimas; data.json intacto |
-
-### Riesgos residuales documentados
-
-1. **Exposición en redes compartidas con `--host`:** La guarda protege contra peticiones cross-site desde navegadores del usuario (`Origin`/`Sec-Fetch-Site`); no implementa autenticación por diseño al ser un servidor local de desarrollo. Si el usuario levanta `vite --host` en una red hostil, atacantes de la red local directa podrían interactuar con la API.
-2. **Recorrido visual del dashboard:** Guardar datos, copiar HTML e invalidar caché en la interfaz web de preview queda registrado como revisión manual del usuario.
+Ninguno. La revisión de cierre de MHB-46 (tabla de endpoints, controles y riesgos residuales) está en `STATUS-HISTORY.md`.
 
 ## Baseline vigente
 
@@ -60,6 +21,7 @@
 
 ## Últimas entregas
 
+- MHB-46: `Completada` el 2026-09-29; guarda común `rejectUnsafeWrite` (403 ante `Origin`/`Sec-Fetch-Site` cross-site y `Content-Type` distinto de JSON) aplicada a los 6 endpoints de escritura de la API local, con revisión técnica independiente aprobada (detalle en `STATUS-HISTORY.md`).
 - MHB-44: `Completada` el 2026-09-28; compatibilidad del HTML exportado (colores HEX, unidades px, iconos PNG @2x vía jsDelivr, reglas de `validate-email`), con generador `generate:icons`, validador de referencias y guard de no-sobrescritura, y revisión técnica independiente aprobada (detalle en `STATUS-HISTORY.md`).
 - MHB-45: `Completada` el 2026-09-25; protección de `master` (checks requeridos `CI Pipeline` y `Accessibility & Contrast Audit`, `enforce_admins`, historial lineal), auto-merge de Dependabot restringido con exclusión de dependencias del pipeline de email y ecosistema `github-actions` añadido, con revisión técnica independiente aprobada (D1–D2, detalle en `STATUS-HISTORY.md`).
 - MHB-41: `Completada` el 2026-09-25; gate de contrato de salida (`dist/*.html` + variables ESP) y validadores de email en CI, con revisión técnica independiente aprobada (D1–D7, detalle en `STATUS-HISTORY.md`).
@@ -67,13 +29,13 @@
 
 ## Ejecuciones delegadas relevantes
 
-| Ámbito | Estado      | Propiedad               | Handoff                                                              |
-| :----- | :---------- | :---------------------- | :------------------------------------------------------------------- |
-| MHB-46 | En revisión | Servidor Vite/seguridad | Guarda común contra escrituras cross-site implementada y verificada. |
-| MHB-44 | Completada  | Email y compatibilidad  | Revisión técnica independiente aprobada (`task-review`).             |
-| MHB-45 | Completada  | CI y seguridad          | Revisión técnica independiente aprobada (`task-review`).             |
-| MHB-41 | Completada  | Tooling y CI            | Revisión técnica independiente aprobada (`task-review`).             |
-| MHB-40 | Completada  | Gobernanza y revisión   | Revisión aprobada y fusionada a `master` (ver HIST).                 |
+| Ámbito | Estado     | Propiedad               | Handoff                                                  |
+| :----- | :--------- | :---------------------- | :------------------------------------------------------- |
+| MHB-46 | Completada | Servidor Vite/seguridad | Revisión técnica independiente aprobada (`task-review`). |
+| MHB-44 | Completada | Email y compatibilidad  | Revisión técnica independiente aprobada (`task-review`). |
+| MHB-45 | Completada | CI y seguridad          | Revisión técnica independiente aprobada (`task-review`). |
+| MHB-41 | Completada | Tooling y CI            | Revisión técnica independiente aprobada (`task-review`). |
+| MHB-40 | Completada | Gobernanza y revisión   | Revisión aprobada y fusionada a `master` (ver HIST).     |
 
 ## Decisiones y desviaciones vigentes
 
@@ -95,6 +57,6 @@
 
 ## Handoff
 
-- Próxima acción inmediata: revisión técnica independiente de MHB-46 siguiendo la skill `task-review`.
+- Próxima acción inmediata: preparar PR de `feature/mhb-46` a `master` (limpiar `docs/superpowers/` si existe) y fusionar tras CI verde.
 - Siguiente tarea del roadmap:
-  - MHB-47 ("Contrato de integración ESP y perfil SendGrid") bloqueada hasta el cierre de MHB-46.
+  - MHB-47 ("Contrato de integración ESP y perfil SendGrid"): desbloqueado al fusionar MHB-46; no iniciar sin asignación explícita.
