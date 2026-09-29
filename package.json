@@ -50,6 +50,7 @@
     "build": "bun scripts/build/build.ts",
     "build-selective": "bun scripts/build/selective.ts",
     "generate:email": "bun scripts/generators/generate-email.ts",
+    "generate:icons": "bun scripts/icons/generate-icon.ts",
     "export:screenshot": "bun scripts/export/screenshot.ts",
     "check-size": "bun scripts/validators/check-html-size.ts",
     "check:dist-baseline": "bun scripts/validators/dist-baseline/check.ts",
@@ -124,6 +125,7 @@
   "devDependencies": {
     "@eslint/js": "10.0.1",
     "@maizzle/framework": "5.5.0",
+    "@resvg/resvg-js": "2.6.2",
     "@types/node": "26.0.1",
     "autoprefixer": "10.6.1",
     "axe-core": "4.13.0",
