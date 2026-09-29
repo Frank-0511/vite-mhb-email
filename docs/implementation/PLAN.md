@@ -268,17 +268,22 @@ los IDs se numeran por fecha de registro, no por orden de ejecución.
   - Imágenes SVG enlazadas desde `https://api.iconify.design/…`: Gmail y Outlook no muestran SVG, y el correo depende en producción de un servicio de terceros sin SLA.
   - Enlaces de ejemplo (`href="https://example.com"`, `href="#"`) y marca de ejemplo en templates de producto.
   - Causa probable: `tailwind.email.config.js` no usa el preset para email (px en lugar de rem y colores sin variables de opacidad), práctica recomendada por Maizzle para Tailwind v3.
-- **Superficies autorizadas:** `tailwind.email.config.js`, `maizzle.config.*`, `src/emails/**` (iconos e imágenes), reglas nuevas en `scripts/validators/email-rules/rules/**` con sus tests, `dist/*.html` regenerado, el baseline de MHB-41 (actualización autorizada), `package.json`/`bun.lock` si se adopta un preset y `docs/implementation/STATUS.md`.
+- **Superficies autorizadas:** `tailwind.email.config.js`, `maizzle.config.*`, `src/emails/**` (iconos e imágenes), `scripts/icons/**` y sus tests, reglas nuevas en `scripts/validators/email-rules/rules/**` con sus tests, `dist/*.html` regenerado, el baseline de MHB-41 (actualización autorizada), `package.json`/`bun.lock` (preset de email, `@resvg/resvg-js` y script `generate:icons`), `src/emails/assets/icons/README.md`, `.github/workflows/ci.yml`, `CHANGELOG.md` y `docs/implementation/STATUS.md`.
+
 - **Dependencias y precondiciones:** MHB-41 completada (el cambio de `dist/` queda medido y justificado por template); MHB-45 recomendada.
 - **Pasos técnicos:**
   1. **Reglas primero:** añadir reglas de `validate-email` (ERROR) para colores no HEX/`rgb(r, g, b)` en `style=""`, unidades `rem`/`em` en estilos inline, `<img>` con `.svg` y hosts de imagen fuera de una allowlist configurable; y WARNING para `href="#"` y dominios de ejemplo. Deben fallar sobre el `dist/` actual.
   2. **Corrección de causa:** configurar el pipeline de email para emitir px y colores HEX (preset de email compatible con Tailwind v3 o `corePlugins` de opacidad desactivados más conversión de unidades), sin cambiar el diseño.
-  3. **Iconos:** sustituir los SVG remotos por PNG (@2x, con `width`/`height`) servidos desde un host configurable (`[[ page.assetsBaseUrl ]]` o equivalente en build), sin romper el modo oscuro existente.
+  3. **Iconos (ajuste de alcance acordado):** sustituir los SVG remotos por PNG (@2x, con `width`/`height`) servidos desde jsDelivr sobre el propio repositorio (`https://cdn.jsdelivr.net/gh/Frank-0511/vite-mhb-email@master/src/emails/assets/icons/`), sin romper el modo oscuro existente. Automatizar la generación de PNG con `bun run generate:icons` (`scripts/icons/generate-icon.ts`) a partir de nodos SVG de Lucide usando `@resvg/resvg-js`. Implementar validador de referencias `<x-email-icon>` en `src/emails/**/*.html` y guard de no-sobrescritura frente a `master` para proteger la inmutabilidad y la caché de jsDelivr, integrados en `validate-email` y con tests unitarios.
   4. Regenerar `dist/`, ejecutar `update:dist-baseline` y justificar la diferencia de cada template en `STATUS.md`.
   5. Coordinar con MHB-38: la regla `modern-css-inline` prevista allí reutiliza estas reglas en lugar de duplicarlas.
 - **Criterios de aceptación:**
   - `rg -c "rgb\([0-9]+ [0-9]+ [0-9]+ /|[0-9.]+rem|\.svg" dist/*.html` devuelve 0 en todos los templates.
   - Las reglas nuevas fallan sobre fixtures con cada patrón y pasan sobre el `dist/` regenerado.
+  - El generador de iconos (`generate:icons`) produce PNG transparente con dimensiones @2x, nombre `lucide-<icono>-<hex>.png`, rechaza icono inexistente, hex inválido o size inválido con código 1, y no sobrescribe sin `--force`.
+  - El validador de referencias falla si una plantilla referencia un `name` sin archivo PNG en disco o si viola `lucide-<icono>-<hex6>`.
+  - El guard de no-sobrescritura falla si un PNG existente aparece modificado respecto a `master` y emite mensaje claro si `master` no está disponible localmente.
+  - Todas las referencias a iconos actuales en plantillas pasan `bun run validate-email`.
   - Las variables ESP `{{ }}` de cada template son idénticas antes y después (`check:dist-baseline` solo informa diferencias de hash justificadas).
   - Sin regresión visual en el preview (modo claro y oscuro) ni de peso por encima del umbral de `check-size`.
 - **Validación automática:** `bun install --frozen-lockfile`, lint, typecheck, test, `format:check`, build, `validate-email`, `check-size`, `check:dist-baseline` (tras actualizar el baseline) y `git diff --check`.

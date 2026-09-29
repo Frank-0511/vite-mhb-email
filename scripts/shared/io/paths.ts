@@ -10,6 +10,7 @@ export interface ProjectPaths {
   readonly layoutsRoot: string;
   readonly partialsRoot: string;
   readonly stylesRoot: string;
+  readonly iconsRoot: string;
   readonly maizzleConfig: string;
   readonly tailwindEmailConfig: string;
   readonly templateHtml: (templateName: string) => string;
@@ -32,6 +33,7 @@ export function getProjectPaths(rootDir: string): ProjectPaths {
     layoutsRoot: resolve(rootDir, "src/emails/layouts"),
     partialsRoot: resolve(rootDir, "src/emails/partials"),
     stylesRoot: resolve(rootDir, "src/emails/styles"),
+    iconsRoot: resolve(rootDir, "src/emails/assets/icons"),
     maizzleConfig: resolve(rootDir, "maizzle.config.js"),
     tailwindEmailConfig: resolve(rootDir, "tailwind.email.config.js"),
 

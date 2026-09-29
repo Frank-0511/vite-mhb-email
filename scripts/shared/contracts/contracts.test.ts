@@ -16,6 +16,11 @@ import { isThemeChangedEventDetail } from "./guards/events.ts";
 import { isRenderErrorCode, isSafeRenderCause } from "./guards/render-error.ts";
 import { isTheme } from "./guards/theme.ts";
 import {
+  EMAIL_IMAGE_HOST_ALLOWLIST,
+  EMAIL_STYLE_BLOCK_MAX_BYTES,
+  ICON_NAME_CONVENTION_REGEX,
+} from "./constants/email-assets.ts";
+import {
   componentDetailRoute,
   componentRenderRoute,
   copyHtmlTemplateRoute,
@@ -124,6 +129,17 @@ describe("scripts/shared/contracts", () => {
       expect(isTheme("system")).toBe(false);
       expect(isTheme(123)).toBe(false);
       expect(isTheme(undefined)).toBe(false);
+    });
+  });
+
+  describe("constants/email-assets", () => {
+    test("define constantes de hosts, tamaño de style y patrón de iconos", () => {
+      expect(EMAIL_IMAGE_HOST_ALLOWLIST).toContain("cdn.jsdelivr.net");
+      expect(EMAIL_STYLE_BLOCK_MAX_BYTES).toBe(8192);
+      expect(ICON_NAME_CONVENTION_REGEX.test("lucide-rocket-fbbf24")).toBe(true);
+      expect(ICON_NAME_CONVENTION_REGEX.test("lucide-rocket-fbbf24-v2")).toBe(true);
+      expect(ICON_NAME_CONVENTION_REGEX.test("lucide-rocket-fbbf24-vx")).toBe(false);
+      expect(ICON_NAME_CONVENTION_REGEX.test("lucide-rocket-fbbf24-v0")).toBe(false);
     });
   });
 });

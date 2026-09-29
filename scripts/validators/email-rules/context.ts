@@ -61,3 +61,32 @@ export function extractStyleContent(html: string): string {
   }
   return styleBlocks.join("\n");
 }
+
+/**
+ * Extrae cada bloque <style> por separado (sin unir), para validar límites
+ * por bloque como el de 8192 bytes que aplica Gmail.
+ */
+export function extractStyleBlocks(html: string): string[] {
+  const styleBlocks: string[] = [];
+  const regex = /<style[^>]*>([\s\S]*?)<\/style>/gi;
+  let match: RegExpExecArray | null;
+  while ((match = regex.exec(html)) !== null) {
+    styleBlocks.push(match[1]);
+  }
+  return styleBlocks;
+}
+
+/**
+ * Extrae el contenido de los atributos style="" de un HTML, unido en un solo
+ * bloque de texto CSS. Usado por reglas que validan valores CSS (colores,
+ * unidades) tanto en <style> como en estilos inline.
+ */
+export function extractInlineStyleContent(html: string): string {
+  const values: string[] = [];
+  const regex = /\bstyle\s*=\s*"([^"]*)"/gi;
+  let match: RegExpExecArray | null;
+  while ((match = regex.exec(html)) !== null) {
+    values.push(match[1]);
+  }
+  return values.join("\n");
+}

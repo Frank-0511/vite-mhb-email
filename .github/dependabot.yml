@@ -3,7 +3,19 @@ updates:
   - package-ecosystem: "bun"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    open-pull-requests-limit: 3
+    # Espera a que una versión "madure" antes de proponerla.
+    cooldown:
+      default-days: 7
+      semver-minor-days: 14
+      semver-patch-days: 7
+    # Los saltos de versión mayor se hacen a mano; los parches de seguridad
+    # siguen llegando (las security updates ignoran esta regla).
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
     groups:
       dev-dependencies:
         dependency-type: "development"
@@ -20,11 +32,31 @@ updates:
           - "autoprefixer"
           - "juice"
           - "handlebars"
+      production-dependencies:
+        dependency-type: "production"
+        update-types:
+          - "minor"
+          - "patch"
+        exclude-patterns:
+          - "@maizzle/*"
+          - "maizzle"
+          - "tailwindcss"
+          - "postcss"
+          - "autoprefixer"
+          - "juice"
+          - "handlebars"
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    open-pull-requests-limit: 2
+    cooldown:
+      default-days: 7
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
     groups:
       actions:
         update-types:

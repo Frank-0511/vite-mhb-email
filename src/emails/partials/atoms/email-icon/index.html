@@ -1,0 +1,25 @@
+<script props>
+  const BASE_URL =
+    "https://cdn.jsdelivr.net/gh/Frank-0511/vite-mhb-email@master/src/emails/assets/icons/";
+  const rawName = props.name || "";
+  const fileName = rawName.endsWith(".png") ? rawName : rawName ? rawName + ".png" : "";
+  const size = props.size || "";
+  const width = props.width || size;
+  const height = props.height || size;
+  const alt = props.alt !== undefined ? props.alt : "";
+
+  module.exports = {
+    src: BASE_URL + fileName,
+    width,
+    height,
+    alt,
+  };
+</script>
+
+<img
+  src="[[ src ]]"
+  width="[[ width ]]"
+  height="[[ height ]]"
+  alt="[[ alt ]]"
+  style="display: block"
+/>

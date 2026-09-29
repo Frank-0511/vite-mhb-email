@@ -19,9 +19,14 @@ export default {
   },
 
   css: {
-    // Inline hibrido: estilos base en `style=""`, media queries preservadas en <style>.
+    // Inline híbrido: estilos base en `style=""`; el `<style>` de salida
+    // conserva solo lo que no puede inlinearse (media queries, dark mode,
+    // pseudo-clases). `removeInlinedSelectors: true` es lo que produce ese
+    // resultado: si se deja en `false`, Juice conserva además todos los
+    // selectores ya aplicados inline, duplicando el CSS y pudiendo superar
+    // el límite de 8192 bytes por bloque `<style>` que aplica Gmail.
     inline: {
-      removeInlinedSelectors: false,
+      removeInlinedSelectors: true,
     },
     purge: true,
   },
