@@ -298,21 +298,23 @@ bun run format:check
 
 ### Reglas de compatibilidad email
 
-| Severidad      | Regla                   | Valida                                              |
-| -------------- | ----------------------- | --------------------------------------------------- |
-| Error          | `img-dimensions`        | Imagenes con `width` y `height` HTML                |
-| Error          | `css-unsupported-props` | CSS problematico en clientes de email               |
-| Error          | `doctype-present`       | Presencia de `<!doctype html>`                      |
-| Error          | `no-js-in-email`        | Ausencia de `<script>` en el output final           |
-| Warning        | `img-alt`               | Texto alternativo en imagenes                       |
-| Warning        | `meta-charset`          | Presencia de `<meta charset="utf-8">`               |
-| Warning        | `link-targets`          | Links reales en vez de `href="#"`                   |
-| Warning        | `max-width-check`       | Ancho razonable para email                          |
-| Warning        | `unsubscribe-link`      | Link de desuscripcion                               |
-| Warning / Info | `esp-variables`         | Variables `{{ }}` declaradas en `data.json`         |
-| Info           | `color-scheme-meta`     | Metadata de color scheme                            |
-| Info           | `nested-tables-depth`   | Profundidad de tablas anidadas                      |
-| Info           | `css-class-vs-inline`   | Relacion entre reglas en `<style>` y estilos inline |
+| Severidad      | Regla                   | Valida                                                        |
+| -------------- | ----------------------- | ------------------------------------------------------------- |
+| Error          | `img-dimensions`        | Imagenes con `width` y `height` HTML                          |
+| Error          | `css-unsupported-props` | CSS problematico en clientes de email                         |
+| Error          | `doctype-present`       | Presencia de `<!doctype html>`                                |
+| Error          | `no-js-in-email`        | Ausencia de `<script>` en el output final                     |
+| Warning        | `img-alt`               | Texto alternativo en imagenes                                 |
+| Warning        | `meta-charset`          | Presencia de `<meta charset="utf-8">`                         |
+| Warning        | `link-targets`          | Links reales en vez de `href="#"`                             |
+| Warning        | `max-width-check`       | Ancho razonable para email                                    |
+| Warning        | `unsubscribe-link`      | Link de desuscripcion                                         |
+| Error          | `esp-syntax-profile`    | Sintaxis ESP soportada según el perfil configurado (SendGrid) |
+| Warning        | `esp-legacy-compat`     | Compatibilidad con etiquetas de sustitución SendGrid Legacy   |
+| Warning / Info | `esp-variables`         | Variables `{{ }}` declaradas en `data.json`                   |
+| Info           | `color-scheme-meta`     | Metadata de color scheme                                      |
+| Info           | `nested-tables-depth`   | Profundidad de tablas anidadas                                |
+| Info           | `css-class-vs-inline`   | Relacion entre reglas en `<style>` y estilos inline           |
 
 Los errores bloquean el build. Los warnings son informativos.
 
@@ -320,6 +322,43 @@ Estas reglas son validacion estatica sobre `dist/`: no prueban el
 comportamiento real en Gmail, Outlook o Apple Mail. El alcance exacto de cada
 nivel de evidencia esta en
 [docs/guides/COMPATIBILITY-MATRIX.md](docs/guides/COMPATIBILITY-MATRIX.md).
+
+### Integración con un ESP (SendGrid)
+
+Los archivos generados bajo `dist/<template>.html` son el entregable compilado final listo para subir a un Email Service Provider (ESP). Durante la compilación, se aplana el layout, se procesan los estilos y se conservan intactas las etiquetas `{{ variable }}` para que el motor del ESP las reemplace por datos reales al enviar.
+
+Para permitir que sistemas externos de integración (por ejemplo, sincronizadores automáticos de templates vía API) conozcan qué variables requiere cada correo sin tener que analizar el HTML, el build genera un manifiesto determinista en `dist/esp-manifest.json` (también ejecutable bajo demanda mediante `bun run esp:manifest`).
+
+#### Estructura del manifiesto (`dist/esp-manifest.json`)
+
+- `version`: Versión del esquema del manifiesto (`1`).
+- `profiles`: Lista ordenada de perfiles de compatibilidad evaluados (`["sendgrid", "sendgrid-legacy"]`).
+- `templates`: Diccionario indexado por nombre de template:
+  - `file`: Nombre del archivo compilado en `dist/` (ej. `welcome.html`).
+  - `requiredVariables`: Variables `{{ variable }}` extraídas directamente del HTML compilado (ordenadas alfabéticamente).
+  - `intentionalVariables`: Variables declaradas en el frontmatter fuente bajo `espVariables`.
+  - `exampleData`: Muestra saneada de datos de prueba para alimentar la API del ESP. Claves sensibles (`email`, `password`, `token`, `phone`, `*_name`) y valores con tokens se reemplazan automáticamente por placeholders `<clave>` para evitar la fuga de datos personales o credenciales.
+  - `legacy`: Objeto de compatibilidad con plantillas SendGrid Legacy:
+    - `convertible`: Booleano que indica si el template puede utilizarse en modo legacy sin riesgo de pérdida de funcionalidad o colisión.
+    - `tags`: Mapa de sustitución `variable → -variable-` correspondiente a `requiredVariables`.
+    - `issues`: Lista de problemas detectados (violaciones de sintaxis o colisiones de texto con etiquetas de sustitución).
+
+#### Perfiles SendGrid soportados
+
+| Perfil            | Producto          | Sintaxis de variable                  | Lógica y helpers soportados                                                                                                                             |
+| ----------------- | ----------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `sendgrid`        | Dynamic Templates | Handlebars `{{ variable }}`           | Bloques `if`, `unless`, `each`, `with`, `else`; helpers `equals`, `notEquals`, `greaterThan`, `lessThan`, `and`, `or`, `formatDate`, `insert`, `length` |
+| `sendgrid-legacy` | Legacy Templates  | Etiquetas de sustitución `-variable-` | Ninguna (solo sustitución directa de variables planas)                                                                                                  |
+
+#### Uso con SendGrid Legacy
+
+En plantillas legacy, SendGrid no procesa Handlebars ni expresiones lógicas. Para integrar un template con SendGrid Legacy:
+
+1. Comprueba que `legacy.convertible` sea `true`. Si es `false`, el template contiene bloques condicionales, bucles o helpers no convertibles, o texto literal en colisión con una etiqueta; en tal caso debe migrarse a Dynamic Templates o simplificarse.
+2. Utiliza el diccionario `legacy.tags` para configurar las etiquetas de sustitución del payload del envío (`"first_name": "-first_name-"`).
+
+> [!WARNING]
+> En SendGrid Dynamic Templates, los helpers abreviados del preview local (`eq`, `ne`, `gt`, `lt`) **no están soportados**. Utiliza siempre la sintaxis oficial de SendGrid: `equals`, `notEquals`, `greaterThan`, `lessThan`, `and`, `or`, `formatDate`, `insert` y `length`. La regla `esp-syntax-profile` fallará el build si detecta helpers abreviados no soportados en producción.
 
 ---
 
