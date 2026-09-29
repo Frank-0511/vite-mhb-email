@@ -1,0 +1,197 @@
+{
+  "version": 1,
+  "profiles": [
+    "sendgrid",
+    "sendgrid-legacy"
+  ],
+  "templates": {
+    "example": {
+      "file": "example.html",
+      "requiredVariables": [
+        "title",
+        "unsubscribe_url"
+      ],
+      "intentionalVariables": [],
+      "exampleData": {
+        "title": "Título del email",
+        "unsubscribe_url": "https://miempresa.com/unsubscribe"
+      },
+      "legacy": {
+        "convertible": true,
+        "tags": {
+          "title": "-title-",
+          "unsubscribe_url": "-unsubscribe_url-"
+        },
+        "issues": []
+      }
+    },
+    "newsletter": {
+      "file": "newsletter.html",
+      "requiredVariables": [
+        "issue_date",
+        "issue_number",
+        "preferences_url",
+        "read_article_url",
+        "subscriber_name",
+        "unsubscribe_url"
+      ],
+      "intentionalVariables": [],
+      "exampleData": {
+        "issue_date": "Septiembre 2026",
+        "issue_number": "#42",
+        "preferences_url": "https://example.com/newsletter/preferences",
+        "read_article_url": "https://example.com/blog/novedades-septiembre",
+        "subscriber_name": "<subscriber_name>",
+        "unsubscribe_url": "https://example.com/newsletter/unsubscribe"
+      },
+      "legacy": {
+        "convertible": true,
+        "tags": {
+          "issue_date": "-issue_date-",
+          "issue_number": "-issue_number-",
+          "preferences_url": "-preferences_url-",
+          "read_article_url": "-read_article_url-",
+          "subscriber_name": "-subscriber_name-",
+          "unsubscribe_url": "-unsubscribe_url-"
+        },
+        "issues": []
+      }
+    },
+    "password-reset": {
+      "file": "password-reset.html",
+      "requiredVariables": [
+        "expiration_minutes",
+        "reset_url",
+        "support_url",
+        "unsubscribe_url",
+        "user_name"
+      ],
+      "intentionalVariables": [],
+      "exampleData": {
+        "expiration_minutes": "30",
+        "reset_url": "<reset_url>",
+        "support_url": "https://example.com/soporte",
+        "unsubscribe_url": "https://example.com/preferences",
+        "user_name": "<user_name>"
+      },
+      "legacy": {
+        "convertible": true,
+        "tags": {
+          "expiration_minutes": "-expiration_minutes-",
+          "reset_url": "-reset_url-",
+          "support_url": "-support_url-",
+          "unsubscribe_url": "-unsubscribe_url-",
+          "user_name": "-user_name-"
+        },
+        "issues": []
+      }
+    },
+    "receipt": {
+      "file": "receipt.html",
+      "requiredVariables": [
+        "customer_name",
+        "item_1_name",
+        "item_1_price",
+        "item_2_name",
+        "item_2_price",
+        "order_date",
+        "order_number",
+        "payment_method",
+        "receipt_url",
+        "subtotal",
+        "tax",
+        "total_amount",
+        "unsubscribe_url"
+      ],
+      "intentionalVariables": [],
+      "exampleData": {
+        "customer_name": "<customer_name>",
+        "item_1_name": "<item_1_name>",
+        "item_1_price": "$120.00",
+        "item_2_name": "<item_2_name>",
+        "item_2_price": "$29.00",
+        "order_date": "06 Sep 2026",
+        "order_number": "ORD-98432",
+        "payment_method": "Visa terminada en 4242",
+        "receipt_url": "https://example.com/receipts/ORD-98432",
+        "subtotal": "$149.00",
+        "tax": "$14.90",
+        "total_amount": "$163.90",
+        "unsubscribe_url": "https://example.com/preferences"
+      },
+      "legacy": {
+        "convertible": true,
+        "tags": {
+          "customer_name": "-customer_name-",
+          "item_1_name": "-item_1_name-",
+          "item_1_price": "-item_1_price-",
+          "item_2_name": "-item_2_name-",
+          "item_2_price": "-item_2_price-",
+          "order_date": "-order_date-",
+          "order_number": "-order_number-",
+          "payment_method": "-payment_method-",
+          "receipt_url": "-receipt_url-",
+          "subtotal": "-subtotal-",
+          "tax": "-tax-",
+          "total_amount": "-total_amount-",
+          "unsubscribe_url": "-unsubscribe_url-"
+        },
+        "issues": []
+      }
+    },
+    "user-created": {
+      "file": "user-created.html",
+      "requiredVariables": [
+        "email",
+        "first_name",
+        "login_url",
+        "temp_password",
+        "unsubscribe_url"
+      ],
+      "intentionalVariables": [],
+      "exampleData": {
+        "email": "<email>",
+        "first_name": "<first_name>",
+        "login_url": "https://miempresa.com/login",
+        "temp_password": "<temp_password>",
+        "unsubscribe_url": "https://miempresa.com/unsubscribe"
+      },
+      "legacy": {
+        "convertible": true,
+        "tags": {
+          "email": "-email-",
+          "first_name": "-first_name-",
+          "login_url": "-login_url-",
+          "temp_password": "-temp_password-",
+          "unsubscribe_url": "-unsubscribe_url-"
+        },
+        "issues": []
+      }
+    },
+    "welcome": {
+      "file": "welcome.html",
+      "requiredVariables": [
+        "buttonUrl",
+        "dashboard_url",
+        "first_name",
+        "unsubscribe_url"
+      ],
+      "intentionalVariables": [],
+      "exampleData": {
+        "dashboard_url": "https://miempresa.com/dashboard",
+        "first_name": "<first_name>",
+        "unsubscribe_url": "https://miempresa.com/unsubscribe"
+      },
+      "legacy": {
+        "convertible": true,
+        "tags": {
+          "buttonUrl": "-buttonUrl-",
+          "dashboard_url": "-dashboard_url-",
+          "first_name": "-first_name-",
+          "unsubscribe_url": "-unsubscribe_url-"
+        },
+        "issues": []
+      }
+    }
+  }
+}

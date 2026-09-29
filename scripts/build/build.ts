@@ -16,6 +16,7 @@
 import { execSync } from "node:child_process";
 import { checkHtmlSize } from "../validators/check-html-size.ts";
 import { validateEmailHtml } from "../validators/validate-email-html.ts";
+import { writeEspManifest } from "../esp/manifest/write-manifest.ts";
 
 export function build(): void {
   try {
@@ -25,6 +26,10 @@ export function build(): void {
 
     // Chequear tamaño de archivos HTML
     checkHtmlSize();
+
+    // Generar manifiesto de variables ESP
+    writeEspManifest();
+    console.log("📄 ESP manifest: dist/esp-manifest.json");
 
     // Validar compatibilidad con clientes de email
     console.log("\n🔍 Validating email HTML compatibility...\n");

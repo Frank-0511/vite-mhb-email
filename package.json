@@ -56,6 +56,7 @@
     "check:dist-baseline": "bun scripts/validators/dist-baseline/check.ts",
     "update:dist-baseline": "bun scripts/validators/dist-baseline/update.ts",
     "validate-email": "bun scripts/validators/validate-email-html.ts",
+    "esp:manifest": "bun scripts/esp/manifest/write-manifest.ts",
     "benchmark": "bun scripts/perf/measure-benchmarks.ts",
     "cli": "bun scripts/cli/cli.ts",
     "lint": "bun run lint:html && bun run lint:js && bun run lint:md && bun run lint:json && bun run lint:css",
