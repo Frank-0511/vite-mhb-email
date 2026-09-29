@@ -5,6 +5,12 @@ import { globSync } from "glob";
 import { resolve } from "node:path";
 import { projectRoot, Severity, type Issue } from "./email-rules/context.ts";
 import { rules, runRules } from "./email-rules/rules/index.ts";
+import {
+  checkIconNoOverwrite,
+  printIconGuardReport,
+  printIconValidationReport,
+  validateIconReferences,
+} from "../icons/index.ts";
 
 const colors = {
   reset: "\x1b[0m",
@@ -110,30 +116,62 @@ function printSummary(results: FileValidationResult[]): void {
   }
 }
 
+export interface ValidateEmailOptions {
+  readonly checkIcons?: boolean;
+  readonly checkGuard?: boolean;
+}
+
 /**
  * Valida todos los HTML de dist y devuelve conteos por severidad.
+ * Opcionalmente valida referencias a iconos y no-sobrescritura frente a master.
  * Solo ERROR bloquea a los consumidores del resultado.
  */
 export function validateEmailHtml(
   distDirOverride?: string,
   projectRootOverride?: string,
+  options?: ValidateEmailOptions,
 ): ValidationSummary {
   const root = projectRootOverride ?? projectRoot;
   const distDir = distDirOverride ?? resolve(root, "dist");
   const htmlFiles = globSync("**/*.html", { cwd: distDir });
+
+  let distErrors = 0;
+  let distWarnings = 0;
+  let distInfos = 0;
+
   if (htmlFiles.length === 0) {
     console.log(`\n⚠️  No HTML files found in ${distDir}\n`);
-    return { errors: 0, warnings: 0, infos: 0 };
+  } else {
+    console.log(paint(colors.cyan + colors.bold, "🔍 Validando compatibilidad email...\n"));
+    const results = htmlFiles.map((file) => validateFile(resolve(distDir, file), root));
+    results.forEach(printFileReport);
+    printSummary(results);
+    const issues = results.flatMap((result) => result.issues);
+    distErrors = issues.filter((issue) => issue.severity === Severity.ERROR).length;
+    distWarnings = issues.filter((issue) => issue.severity === Severity.WARNING).length;
+    distInfos = issues.filter((issue) => issue.severity === Severity.INFO).length;
   }
-  console.log(paint(colors.cyan + colors.bold, "🔍 Validando compatibilidad email...\n"));
-  const results = htmlFiles.map((file) => validateFile(resolve(distDir, file), root));
-  results.forEach(printFileReport);
-  printSummary(results);
-  const issues = results.flatMap((result) => result.issues);
+
+  const shouldCheckIcons = options?.checkIcons ?? !distDirOverride;
+  let iconErrors = 0;
+
+  if (shouldCheckIcons) {
+    const iconSummary = validateIconReferences(root);
+    printIconValidationReport(iconSummary);
+    iconErrors += iconSummary.errors;
+
+    const shouldCheckGuard = options?.checkGuard ?? true;
+    if (shouldCheckGuard) {
+      const guardSummary = checkIconNoOverwrite({ projectRoot: root });
+      printIconGuardReport(guardSummary);
+      iconErrors += guardSummary.errors;
+    }
+  }
+
   return {
-    errors: issues.filter((issue) => issue.severity === Severity.ERROR).length,
-    warnings: issues.filter((issue) => issue.severity === Severity.WARNING).length,
-    infos: issues.filter((issue) => issue.severity === Severity.INFO).length,
+    errors: distErrors + iconErrors,
+    warnings: distWarnings,
+    infos: distInfos,
   };
 }
 

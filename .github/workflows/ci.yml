@@ -93,6 +93,9 @@ jobs:
       - name: Verify dist matches build
         run: git diff --exit-code -- dist/
 
+      - name: Fetch base branch for icon guard
+        run: git fetch origin master
+
       - name: Validate email compatibility
         run: bun run validate-email
 
