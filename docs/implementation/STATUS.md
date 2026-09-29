@@ -2,11 +2,26 @@
 
 ## Resumen
 
-- ID activo: Ninguno
+- ID activo: MHB-46
 - Último cierre: MHB-44 — Compatibilidad del HTML exportado con clientes reales (`Completada`, revisor independiente `task-review`, aprobado 2026-09-28, PR #56 mergeada a `master`)
-- Rama: `master`
-- Última actualización: 2026-09-28
+- Rama: `feature/mhb-46`
+- Última actualización: 2026-09-29
 - Contrato activo: `docs/implementation/PLAN.md`
+
+## Paquete activo — MHB-46
+
+- ID: MHB-46 — Endurecimiento de la API local del servidor Vite
+- Estado: `En progreso`
+- Implementador: Gemini 3.8 Flash (High)
+- Revisor: revisor técnico independiente (`task-review`)
+- Superficie: `scripts/vite/api/**`, `scripts/vite/services/render/request-handler.ts`, `scripts/shared/contracts/constants/http-security.ts`, `docs/implementation/`
+
+### Controles de MHB-46
+
+| Control                 | Comando                         | Estado | Detalle                      |
+| :---------------------- | :------------------------------ | :----: | :--------------------------- |
+| Comprobación de rama    | `bun run check:task-branch`     | Verde  | Conforme en `feature/mhb-46` |
+| Dependencias congeladas | `bun install --frozen-lockfile` | Verde  | Lockfile sincronizado        |
 
 ## Baseline vigente
 
@@ -65,15 +80,17 @@
 
 ## Ejecuciones delegadas relevantes
 
-| Ámbito | Estado     | Propiedad              | Handoff                                                  |
-| :----- | :--------- | :--------------------- | :------------------------------------------------------- |
-| MHB-44 | Completada | Email y compatibilidad | Revisión técnica independiente aprobada (`task-review`). |
-| MHB-45 | Completada | CI y seguridad         | Revisión técnica independiente aprobada (`task-review`). |
-| MHB-41 | Completada | Tooling y CI           | Revisión técnica independiente aprobada (`task-review`). |
-| MHB-40 | Completada | Gobernanza y revisión  | Revisión aprobada y fusionada a `master` (ver HIST).     |
+| Ámbito | Estado      | Propiedad               | Handoff                                                      |
+| :----- | :---------- | :---------------------- | :----------------------------------------------------------- |
+| MHB-46 | En progreso | Servidor Vite/seguridad | Implementación de guarda de rechazo cross-site en endpoints. |
+| MHB-44 | Completada  | Email y compatibilidad  | Revisión técnica independiente aprobada (`task-review`).     |
+| MHB-45 | Completada  | CI y seguridad          | Revisión técnica independiente aprobada (`task-review`).     |
+| MHB-41 | Completada  | Tooling y CI            | Revisión técnica independiente aprobada (`task-review`).     |
+| MHB-40 | Completada  | Gobernanza y revisión   | Revisión aprobada y fusionada a `master` (ver HIST).         |
 
 ## Decisiones y desviaciones vigentes
 
+- **MHB-46 — Ajuste de alcance acordado (2026-09-29):** Inclusión de `scripts/vite/services/render/request-handler.ts` (y tests), endpoint 6 (`POST /api/components/:name/render`) en superficies autorizadas, y `requireJson: false` para endpoints de caché (`/api/cache/invalidate`, `/api/cache/clean`) por ausencia de cuerpo en el frontend.
 - **D1 — Preset para email (aprobada 2026-09-25, MHB-44):** Adopción de `tailwindcss-preset-email@1.4.2` para forzar salida de colores en HEX y medidas en px, neutralizando discrepancias de layout en `tailwind.email.config.js`.
 - **D2 — Hosting de iconos PNG (aprobada 2026-09-28, MHB-44):** Alojar los PNG optimizados en `src/emails/assets/icons/` servidos a través de jsDelivr sobre el propio repositorio público en GitHub.
 - **D3 — Icono de saludo unificado (aprobada 2026-09-28, MHB-44):** Sustitución del icono `mdi:hand-wave` por Lucide `hand` en el saludo de `welcome`, unificando todos los iconos bajo el paquete `lucide` (licencia ISC) y evitando licencias externas adicionales.
@@ -91,6 +108,6 @@
 
 ## Handoff
 
-- Próxima acción inmediata: abrir la PR de `feature/mhb-44` hacia `master` y esperar CI verde antes de fusionar.
+- Próxima acción inmediata: implementar tests primero y guarda común de escritura (Paso 1).
 - Siguiente tarea del roadmap:
-  - MHB-46 ("Endurecimiento de la API local del servidor Vite") desbloqueada una vez aprobada y mergeada MHB-44; no iniciarla sin asignación explícita.
+  - MHB-47 ("Contrato de integración ESP y perfil SendGrid") bloqueada hasta el cierre de MHB-46.

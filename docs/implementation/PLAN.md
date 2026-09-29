@@ -299,13 +299,13 @@ los IDs se numeran por fecha de registro, no por orden de ejecución.
 ### MHB-46 — Endurecimiento de la API local del servidor Vite
 
 - **Objetivo observable:** que ninguna web abierta en el navegador del usuario pueda escribir o invalidar datos de la herramienta mediante peticiones cross-site al servidor local.
-- **Hallazgo (2026-09-23):** los endpoints de escritura (`POST /api/data`, `/api/cache/invalidate`, `/api/cache/clean`, `/api/copy-html`, `/api/render`) aceptan el cuerpo sin exigir `Content-Type: application/json` ni comprobar el origen. Un `POST` con `text/plain` es una petición simple sin preflight CORS, así que cualquier sitio visitado mientras corre `bun run dev` podría sobrescribir un `data.json` o vaciar la caché. La validación de nombres y rutas (`isValidTemplateName`, `isPathInside`) ya impide el path traversal. Severidad baja: herramienta local, sin secretos expuestos por estos endpoints.
-- **Superficies autorizadas:** `scripts/vite/api/**` (helper común en `http.ts`), sus tests y `docs/implementation/STATUS.md`.
+- **Hallazgo (2026-09-23, ajustado 2026-09-29):** los 6 endpoints de escritura (`POST /api/data?template=`, `POST /api/cache/invalidate?template=`, `POST /api/cache/clean`, `POST /api/copy-html?template=`, `POST /api/render?template=` y `POST /api/components/:name/render`) aceptan el cuerpo sin exigir `Content-Type: application/json` ni comprobar el origen. Un `POST` con `text/plain` es una petición simple sin preflight CORS, así que cualquier sitio visitado mientras corre `bun run dev` podría sobrescribir un `data.json` o vaciar la caché. La validación de nombres y rutas (`isValidTemplateName`, `isPathInside`) ya impide el path traversal. Severidad baja: herramienta local, sin secretos expuestos por estos endpoints.
+- **Superficies autorizadas:** `scripts/vite/api/**` (guarda en `http.ts`, sus tests y handlers de data, cache, copy-html y components), `scripts/vite/services/render/request-handler.ts` y `request-handler.test.ts` (ajuste acordado), `scripts/shared/contracts/constants/http-security.ts`, `docs/implementation/STATUS.md`, `docs/implementation/PLAN.md` y `CHANGELOG.md`.
 - **Dependencias y precondiciones:** MHB-44 completada (evita solapar con cambios de render); independiente del resto.
 - **Pasos técnicos:**
-  1. Añadir en `scripts/vite/api/http.ts` una guarda única para métodos de escritura: exigir `Content-Type: application/json` y rechazar `Sec-Fetch-Site: cross-site` u `Origin` distinto del servidor, con respuesta 403 accionable.
-  2. Aplicarla a todos los endpoints de escritura y cubrir cada rechazo con tests.
-  3. Confirmar que el frontend ya usa `postJSON`/`fetchJSON` con el encabezado correcto.
+  1. Añadir en `scripts/vite/api/http.ts` una guarda única para métodos de escritura: exigir `Content-Type: application/json` (salvo endpoints de caché sin cuerpo: `/api/cache/invalidate` y `/api/cache/clean` con `requireJson: false`) y rechazar `Sec-Fetch-Site: cross-site` u `Origin` distinto del servidor, con respuesta 403 accionable.
+  2. Aplicarla a los 6 endpoints de escritura y cubrir cada rechazo con tests.
+  3. Confirmar que el frontend ya usa `postJSON`/`fetchJSON` con el encabezado correcto y que caché no envía Content-Type.
 - **Criterios de aceptación:** un `POST` con `text/plain` o `Origin` externo recibe 403 en cada endpoint de escritura (tests); el dashboard funciona sin cambios.
 - **Validación automática:** lint, typecheck, test, `format:check` y `git diff --check`.
 - **Validación manual:** `bun run dev` y recorrido de guardar datos, copiar HTML e invalidar caché.
