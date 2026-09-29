@@ -1,0 +1,56 @@
+name: Outdated Majors
+
+on:
+  schedule:
+    # 1 de enero, abril, julio y octubre a las 09:00 UTC.
+    - cron: "0 9 1 1,4,7,10 *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  outdated-majors:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.13"
+
+      - name: Instalar dependencias
+        run: bun install --frozen-lockfile
+
+      - name: Detectar versiones mayores pendientes
+        id: majors
+        run: |
+          bun outdated | awk -F'|' '
+            /^\| / && $2 !~ /Package/ {
+              gsub(/^ +| +$/, "", $2); gsub(/ /, "", $3); gsub(/ /, "", $5)
+              split($3, cur, "."); split($5, lat, ".")
+              if (lat[1] > cur[1]) printf "| %s | %s | %s |\n", $2, $3, $5
+            }' > majors.md
+          if [ -s majors.md ]; then
+            { echo "| Paquete | Actual | Última |"; echo "|---|---|---|"; cat majors.md; } > body.md
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Abrir issue
+        if: steps.majors.outputs.found == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          {
+            echo "Versiones mayores pendientes (revisión trimestral). Plazos y criterios en la política de dependencias."
+            echo
+            cat body.md
+          } > issue.md
+          gh issue create \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "Versiones mayores pendientes ($(date -u +%Y-%m-%d))" \
+            --body-file issue.md \
+            --assignee "$GITHUB_REPOSITORY_OWNER"

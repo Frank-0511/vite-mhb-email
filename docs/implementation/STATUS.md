@@ -2,12 +2,9 @@
 
 ## Resumen
 
-- ID activo: MHB-44
-- Descripción: Compatibilidad del HTML exportado con clientes reales
-- Estado: Completada
-- Implementador: perfil email/compatibilidad (sesión actual)
-- Revisor: revisor independiente (`task-review`), aprobado 2026-09-28
-- Rama: `feature/mhb-44`
+- ID activo: Ninguno
+- Último cierre: MHB-44 — Compatibilidad del HTML exportado con clientes reales (`Completada`, revisor independiente `task-review`, aprobado 2026-09-28, PR #56 mergeada a `master`)
+- Rama: `master`
 - Última actualización: 2026-09-28
 - Contrato activo: `docs/implementation/PLAN.md`
 
@@ -17,9 +14,9 @@
 - La migración a TypeScript por capas (núcleo, CLI, servidor Vite y dashboard web) está completada y mergeada a `master`; la trazabilidad de los IDs cerrados vive en Git.
 - Las variables ESP `{{ }}` se preservan en el HTML final; `[[ page.* ]]` queda reservado para Maizzle.
 
-## Entrega activa
+## Última entrega
 
-- MHB-44 `En revisión` — Compatibilidad del HTML exportado con clientes reales:
+- MHB-44 `Completada` — Compatibilidad del HTML exportado con clientes reales:
   - Reglas de validación: 6 reglas nuevas en `validate-email` (`css-color-format`, `css-relative-units`, `img-svg-source`, `img-host-allowlist`, `example-domains`, `style-block-size`) y fix del límite de 8 KB por `<style>` (`maizzle.config.js`: `removeInlinedSelectors: true`).
   - Colores HEX y medidas px: preset `tailwindcss-preset-email@1.4.2` en `tailwind.email.config.js` neutralizando diferencias de layout, más corrección de 3 `rem`/`tracking` manuales. Resultado en `dist/`: 0 `rgb(… /`, 0 `rem`/`em`, 0 bloques `<style>` > 8192 bytes, peso 123 KB → 42.8 KB.
   - Iconos PNG y atom `email-icon`: 12 iconos PNG @2x generados con fondo transparente en `src/emails/assets/icons/` con `README.md` (licencia ISC); atom `<x-email-icon>` creado y 12 `<img>` de Iconify reemplazadas en `main.html`, `welcome` y `user-created` respetando modo claro/oscuro (D2: jsDelivr, D3: Lucide `hand`).

@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Añadido
 
+- Workflow trimestral `outdated-majors.yml` que abre un issue asignado al dueño
+  con las versiones mayores pendientes de `bun outdated`.
 - Contratos compartidos y constantes tipadas aisladas en `scripts/shared/contracts/`
   con guards de ESLint contra magic strings y `@typedef` en TypeScript (MHB-37).
 - Reglas estructurales de nombres y árbol de archivos (`eslint-plugin-check-file`
