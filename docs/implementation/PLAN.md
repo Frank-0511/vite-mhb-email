@@ -319,24 +319,28 @@ los IDs se numeran por fecha de registro, no por orden de ejecución.
 
 ### MHB-47 — Contrato de integración ESP (manifiesto de variables y perfil SendGrid)
 
-- **Objetivo observable:** que un sistema externo (por ejemplo, la integración por API con SendGrid) sepa, sin leer el HTML, qué variables requiere cada template, y que `dist/` solo contenga sintaxis Handlebars que SendGrid Dynamic Templates soporta.
+- **Objetivo observable:** que un sistema externo (por ejemplo, la integración por API con SendGrid) sepa, sin leer el HTML, qué variables requiere cada template, que el contrato cubre dos perfiles SendGrid: `sendgrid` (Dynamic Templates, Handlebars `{{ }}`) y `sendgrid-legacy` (etiquetas de sustitución `-variable-`), y que `dist/` solo contenga sintaxis Handlebars que SendGrid Dynamic Templates soporta.
 - **Hallazgo (2026-09-23):** el preview registra helpers propios (`eq`, `ne`, `gt`, `lt`, `gte`, `lte`, `and`, `or`, `not`) que SendGrid no ofrece (usa `equals`, `notEquals`, `greaterThan`, `lessThan`, `and`, `or`, `formatDate`, `insert`, `length`). Hoy `dist/` solo contiene variables simples `{{ var }}`, pero nada impide que un template futuro exporte un helper que SendGrid no conoce y que fallaría en silencio. Tampoco existe un listado de variables por template consumible por otra aplicación, aunque `scripts/esp/` ya las extrae.
-- **Superficies autorizadas:** `scripts/esp/**`, un comando nuevo en `package.json` (`esp:manifest` o integrado en `build`), una regla nueva de `validate-email` con su test, el manifiesto generado (`dist/esp-manifest.json` o ruta acordada), `check:dist-baseline` (para contemplar el manifiesto), `README.md` (sección de integración) y `docs/implementation/STATUS.md`.
+- **Superficies autorizadas:** `scripts/esp/**`, `scripts/shared/contracts/constants/esp-contract.ts`, `scripts/esp/manifest/**`, `scripts/esp/syntax/**`, `scripts/validators/dist-baseline/**` (comprobación de coherencia del manifiesto), `scripts/build/build.ts` (solo la llamada que genera el manifiesto), un comando nuevo en `package.json` (`esp:manifest` o integrado en `build`), una regla nueva de `validate-email` con su test, el manifiesto generado (`dist/esp-manifest.json` o ruta acordada), `check:dist-baseline` (para contemplar el manifiesto), `README.md` (sección de integración) y `docs/implementation/STATUS.md`.
 - **Dependencias y precondiciones:** MHB-44 completada (el HTML ya es apto para producción).
 - **Pasos técnicos:**
   1. Generar en el build un manifiesto por template: nombre, variables requeridas, variables intencionales del frontmatter y un ejemplo de datos tomado de `data.json` sin datos personales.
   2. Regla de `validate-email` (ERROR): en `dist/` solo se admiten variables, bloques `#if`/`#unless`/`#each` y los helpers de una allowlist de perfil ESP (inicialmente SendGrid).
-  3. Documentar en `README.md` cómo consumir `dist/<template>.html` y el manifiesto desde una integración por API, sin incluir código ni credenciales de SendGrid.
+  3. Regla `esp-legacy-compat` (WARNING) que avisa cuando un template no es convertible a etiquetas `-variable-` (bloques, helpers, rutas anidadas o colisión de texto), y el campo `legacy` (`convertible`, `tags`, `issues`) por template en el manifiesto.
+  4. Documentar en `README.md` cómo consumir `dist/<template>.html` y el manifiesto desde una integración por API, sin incluir código ni credenciales de SendGrid.
 - **Criterios de aceptación:**
   - El manifiesto existe para los seis templates y sus variables coinciden con las que extrae `check:dist-baseline`.
   - Un fixture con `{{#if (eq a b)}}` en `dist/` hace fallar `validate-email`.
+  - El manifiesto expone `legacy.tags` con formato `-variable-` para todas las `requiredVariables` (`bun test scripts/esp/manifest`).
+  - `esp-legacy-compat` marca un fixture con `{{#if a}}` y un fixture con colisión `-variable-` (`bun test scripts/validators/email-rules/rules/content/esp-legacy-compat.test.ts`).
+  - `check:dist-baseline` falla si el manifiesto no coincide con el baseline (`bun run check:dist-baseline` y `manifest-check.test.ts`).
   - `dist/*.html` no cambia (`check:dist-baseline` verde para el HTML).
 - **Validación automática:** lint, typecheck, test, `format:check`, build, `validate-email`, `check:dist-baseline` y `git diff --check`.
 - **Validación manual:** el usuario consume el manifiesto desde su integración con SendGrid (fuera de este repositorio) y confirma que le sirve.
 - **Evidencia requerida:** manifiesto generado, salida de la regla sobre fixtures y confirmación del usuario.
 - **Riesgos y reversión:** acoplar la herramienta a un solo ESP; el perfil se modela como allowlist configurable con SendGrid como primer perfil. Revertible por commit.
-- **Exclusiones específicas:** no implementar llamadas a la API de SendGrid ni guardar credenciales; no cambiar el HTML exportado ni las variables existentes.
-- **Análisis de mantenibilidad:** reutiliza `scripts/esp/extractor.ts` y `frontmatter.ts`; el manifiesto es un módulo de responsabilidad única.
+- **Exclusiones específicas:** no implementar llamadas a la API de SendGrid ni guardar credenciales; no cambiar el HTML exportado ni las variables existentes; no reescribir `dist/` a `-variable-`; la fuente de verdad sigue siendo `{{ }}`; no modelar `<%body%>`, `<%subject%>` ni secciones legacy.
+- **Análisis de mantenibilidad:** reutiliza `scripts/esp/extractor.ts` y `frontmatter.ts`; el manifiesto es un módulo de responsabilidad única; estructura modular en `syntax/` (2 archivos), `manifest/` (5 archivos) y `rules/content/` (7 archivos).
 - **Implementador:** perfil email/ESP, medio.
 - **Revisor independiente:** revisor de email y el usuario como consumidor.
 - **Condición de escalamiento:** la regla detecta un helper no soportado en un template existente, o el formato del manifiesto exige una decisión del consumidor.
