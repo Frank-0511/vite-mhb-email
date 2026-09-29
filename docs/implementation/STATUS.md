@@ -21,11 +21,25 @@
   4. Generador determinista `dist/esp-manifest.json` y comando `esp:manifest` integrado en pipeline de build sin alterar los HTML de salida.
   5. Coherencia estricta manifiesto ↔ baseline integrada en `check:dist-baseline`.
 - Controles: `bun install --frozen-lockfile` (Verde), `bun run format:check` (Verde), `bun run lint` (Verde), `bun run typecheck` (Verde), `bun run test` (Verde, 787 pass), `bun run build` (Verde, dist intacto), `bun run validate-email` (Verde, 0 errores), `bun run check-size` (Verde, <= 102 KB), `bun run check:dist-baseline` (Verde), `git diff --check` (Verde).
-- Criterios de aceptación (sección 7): Manifiesto 6 templates (Verde), Variables manifiesto = baseline (Verde), Fixture `if` con `eq` falla (Verde), Perfil legacy tags/convertible (Verde), `dist/*.html` sin cambios (Verde), Manifiesto sin datos personales (Verde), Sin errores sintaxis ESP (Verde).
+- Criterios de aceptación (sección 7):
+
+| Criterio                                                                                       | Comando                                                                            | Resultado |
+| :--------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------- | :-------: |
+| El manifiesto existe para los seis templates y sus variables coinciden con baseline            | `bun run check:dist-baseline`                                                      |   Verde   |
+| Fixture con `{{#if (eq a b)}}` en `dist/` hace fallar `validate-email`                         | `bun test scripts/validators/email-rules/rules/content/esp-syntax-profile.test.ts` |   Verde   |
+| El manifiesto expone `legacy.tags` con formato `-variable-` para todas las `requiredVariables` | `bun test scripts/esp/manifest`                                                    |   Verde   |
+| `esp-legacy-compat` marca un fixture con `{{#if a}}` y un fixture con colisión `-variable-`    | `bun test scripts/validators/email-rules/rules/content/esp-legacy-compat.test.ts`  |   Verde   |
+| `check:dist-baseline` falla si el manifiesto no coincide con el baseline                       | `bun run check:dist-baseline` y `manifest-check.test.ts`                           |   Verde   |
+| `dist/*.html` no cambia (`check:dist-baseline` verde para el HTML)                             | `bun run check:dist-baseline`                                                      |   Verde   |
+
 - Análisis de mantenibilidad: 15 archivos fuente nuevos/modificados (todos ≤ 110 líneas; límite 250); 11 tests (todos ≤ 170 líneas; límite 400). Carpetas cumplen límite ≤ 8 archivos fuente (verificado por `file-tree.test.ts`). Reutilización de helpers centrales (`extractEspVariablesFromHtml`, `parseEspFrontmatter`, `getProjectPaths`).
 - Desviaciones: Tipos de contrato ubicados en `scripts/shared/contracts/types/esp-contract.ts` para respetar el AST selector de ESLint de constants.
-- Validación manual pendiente: El usuario debe consumir `dist/esp-manifest.json` desde su integración SendGrid externa (Dynamic y, si aplica, Legacy con `-variable-`) y contrastar la lista de bloques/helpers del perfil `sendgrid` con la documentación oficial vigente. Sin esa confirmación el revisor no puede cerrar el ID.
-- Riesgos residuales: SendGrid puede actualizar o ampliar helpers Handlebars en futuras versiones de su API; el perfil está acotado a la documentación estándar vigente.
+- Validación manual pendiente: El usuario confirma que `legacy.tags` y `legacy.convertible` sirven a su integración legacy real, además de la confirmación del consumo del manifiesto Dynamic desde su integración SendGrid externa (sin esa confirmación el revisor no puede cerrar el ID).
+- Riesgos residuales:
+  - SendGrid puede actualizar o ampliar helpers Handlebars en futuras versiones de su API; el perfil está acotado a la documentación estándar vigente.
+  - No existe exportador que genere HTML con `-variable-`; solo se publica el mapeo en `dist/esp-manifest.json`.
+  - No se modelan las etiquetas propias de legacy (`<%body%>`, `<%subject%>`, secciones).
+  - El delimitador `-` es un supuesto por defecto, y la lista de bloques y helpers del perfil `sendgrid` está pendiente de contrastar con la documentación oficial vigente.
 
 ## Baseline vigente
 
@@ -54,6 +68,7 @@
 
 ## Decisiones y desviaciones vigentes
 
+- **MHB-47 — Ampliación de alcance acordada (2026-09-29):** Soporte de SendGrid Legacy (etiquetas -variable-) además de Dynamic Templates. La fuente de verdad sigue siendo {{ }}; legacy se resuelve mediante el campo legacy del manifiesto y la regla esp-legacy-compat (WARNING). Delimitador por defecto: "-".
 - **MHB-46 — Ajuste de alcance acordado (2026-09-29):** Inclusión de `scripts/vite/services/render/request-handler.ts` (y tests), endpoint 6 (`POST /api/components/:name/render`) en superficies autorizadas, y `requireJson: false` para endpoints de caché (`/api/cache/invalidate`, `/api/cache/clean`) por ausencia de cuerpo en el frontend.
 - **D1 — Preset para email (aprobada 2026-09-25, MHB-44):** Adopción de `tailwindcss-preset-email@1.4.2` para forzar salida de colores en HEX y medidas en px, neutralizando discrepancias de layout en `tailwind.email.config.js`.
 - **D2 — Hosting de iconos PNG (aprobada 2026-09-28, MHB-44):** Alojar los PNG optimizados en `src/emails/assets/icons/` servidos a través de jsDelivr sobre el propio repositorio público en GitHub.
