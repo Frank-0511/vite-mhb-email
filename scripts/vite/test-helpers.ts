@@ -12,6 +12,7 @@ export interface SimulateRequestOptions {
   method?: string;
   url: string;
   body?: unknown;
+  headers?: Record<string, string>;
 }
 
 /**
@@ -27,12 +28,16 @@ export function simulateRequest<T = unknown>(
     res: ServerResponse,
     next: (err?: unknown) => void,
   ) => Promise<void> | void,
-  { method = "GET", url, body }: SimulateRequestOptions,
+  { method = "GET", url, body, headers: customHeaders }: SimulateRequestOptions,
 ): Promise<SimulatedResponse<T>> {
   const req = Object.assign(new EventEmitter(), {
     method,
     url,
-    headers: { host: "localhost" },
+    headers: {
+      host: "localhost",
+      ...(body !== undefined ? { "content-type": "application/json" } : {}),
+      ...customHeaders,
+    },
   }) as unknown as IncomingMessage;
   const headers = new Map<string, string>();
 

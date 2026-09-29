@@ -6,7 +6,14 @@ import fs from "fs-extra";
 import type { ViteDevServer } from "vite";
 import { API_ROUTES } from "../../shared/contracts/constants/api-routes.ts";
 import { getProjectPaths, isPathInside, isValidTemplateName } from "../../shared/index.ts";
-import { asyncHandler, getRequestUrl, readJsonBody, sendJson, sendText } from "./http.ts";
+import {
+  asyncHandler,
+  getRequestUrl,
+  readJsonBody,
+  rejectUnsafeWrite,
+  sendJson,
+  sendText,
+} from "./http.ts";
 
 /**
  * Maneja las rutas /api/data para GET y POST.
@@ -42,6 +49,7 @@ export function setupDataApi(server: ViteDevServer, rootDir: string): void {
       }
 
       if (req.method === "POST") {
+        if (rejectUnsafeWrite(req, res)) return;
         try {
           const newData = await readJsonBody(req);
           fs.writeJsonSync(dataPath, newData, { spaces: 2 });

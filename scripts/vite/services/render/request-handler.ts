@@ -17,7 +17,13 @@ import { isTheme } from "../../../shared/contracts/guards/theme.ts";
 import type { RenderErrorPayload } from "../../../shared/contracts/types/render-error.ts";
 import type { Theme } from "../../../shared/contracts/types/theme.ts";
 import { getProjectPaths, isPathInside, isValidTemplateName } from "../../../shared/index.ts";
-import { getRequestUrl, readJsonBody, sendJson, sendText } from "../../api/http.ts";
+import {
+  getRequestUrl,
+  readJsonBody,
+  rejectUnsafeWrite,
+  sendJson,
+  sendText,
+} from "../../api/http.ts";
 import {
   createPreviewCacheManager,
   createPreviewDataHash,
@@ -79,6 +85,8 @@ export function createRenderRequestHandler(options: RenderRequestHandlerOptions 
     if (req.method !== "POST" || !templateName) {
       return next();
     }
+
+    if (rejectUnsafeWrite(req, res)) return;
 
     if (!isValidTemplateName(templateName)) {
       return sendText(res, 400, "Invalid template name");
