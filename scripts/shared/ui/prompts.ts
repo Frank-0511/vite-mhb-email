@@ -10,9 +10,7 @@ export interface PromptInterface {
 }
 
 export type PromptSource =
-  | ReadlineInterface
-  | PromptInterface
-  | { question: (...args: unknown[]) => unknown };
+  ReadlineInterface | PromptInterface | { question: (...args: unknown[]) => unknown };
 
 /**
  * Muestra una pregunta al usuario y devuelve su respuesta.

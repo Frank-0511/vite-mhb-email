@@ -57,6 +57,7 @@ export function checkEnv(requiredKeys: string[] = []): CheckEnvResult {
   // Valores placeholder del .env.example — se consideran "no configurados"
   const PLACEHOLDERS = new Set([
     "your_api_token_here",
+    "your_api_key_here",
     "your_inbox_id_here",
     "tu@gmail.com",
     "xxxx xxxx xxxx xxxx",
