@@ -28,6 +28,16 @@ import {
   invalidateCacheRoute,
   renderTemplateRoute,
 } from "./routes/api-routes.ts";
+import {
+  DEFAULT_ESP_PROFILE,
+  ESP_MANIFEST_FILENAME,
+  ESP_MANIFEST_PROFILES,
+  ESP_MANIFEST_VERSION,
+  ESP_PROFILES,
+  LEGACY_ESP_PROFILE,
+  SENSITIVE_EXAMPLE_KEY_RE,
+  SENSITIVE_EXAMPLE_VALUE_RE,
+} from "./constants/esp-contract.ts";
 
 describe("scripts/shared/contracts", () => {
   const contractsDir = fileURLToPath(new URL(".", import.meta.url));
@@ -140,6 +150,21 @@ describe("scripts/shared/contracts", () => {
       expect(ICON_NAME_CONVENTION_REGEX.test("lucide-rocket-fbbf24-v2")).toBe(true);
       expect(ICON_NAME_CONVENTION_REGEX.test("lucide-rocket-fbbf24-vx")).toBe(false);
       expect(ICON_NAME_CONVENTION_REGEX.test("lucide-rocket-fbbf24-v0")).toBe(false);
+    });
+  });
+
+  describe("constants/esp-contract", () => {
+    test("define perfiles, constantes del manifiesto y regex sensibles", () => {
+      expect(DEFAULT_ESP_PROFILE).toBe("sendgrid");
+      expect(LEGACY_ESP_PROFILE).toBe("sendgrid-legacy");
+      expect(ESP_MANIFEST_PROFILES).toEqual(["sendgrid", "sendgrid-legacy"]);
+      expect(ESP_MANIFEST_FILENAME).toBe("esp-manifest.json");
+      expect(ESP_MANIFEST_VERSION).toBe(1);
+      expect(ESP_PROFILES.sendgrid.syntax).toBe("handlebars");
+      expect(ESP_PROFILES["sendgrid-legacy"].syntax).toBe("substitution");
+      expect(SENSITIVE_EXAMPLE_KEY_RE.test("email")).toBe(true);
+      expect(SENSITIVE_EXAMPLE_KEY_RE.test("first_name")).toBe(true);
+      expect(SENSITIVE_EXAMPLE_VALUE_RE.test("https://example.com/reset?token=xyz")).toBe(true);
     });
   });
 });
