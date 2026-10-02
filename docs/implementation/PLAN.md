@@ -58,9 +58,9 @@ A partir de `v1.2.0`, todo trabajo técnico en EmailForge Toolkit debe regirse p
 - **Límites de tamaño de archivo:** ningún archivo fuente (no-test) puede superar 250 líneas de código. Los archivos de test no deben superar 400 líneas (si crecen, deben dividirse por suite de pruebas o escenario).
 - **Límites de directorio:** ningún directorio debe contener más de 8 archivos fuente sin estructurarse en subdirectorios temáticos por dominio (los tests co-locados no se contabilizan para este límite, pero no justifican directorios planos desordenados).
 - **Responsabilidad única:** un archivo resuelve una sola responsabilidad. Si un módulo realiza parsing Y formateo, o validación Y reporte, debe dividirse en módulos especializados.
-- **Shared first:** antes de implementar una función utilitaria o helper, revisar `scripts/shared/` o `src/web/shared/utils/`. Si existe, reutilizarla; si no existe pero tiene potencial reutilizable (≥2 consumidores), ubicarla en `shared/`. No hardcodear constantes de almacenamiento (`storage-keys.js`), breakpoints, magic numbers (e.g. `1024` para KB) ni cabeceras HTTP. En el frontend, el acceso al DOM y llamadas remotas deben usar exclusivamente `dom-helpers.js` (`queryRequired`, `querySafe`) y `http-helpers.js` (`fetchJSON`, `postJSON`, `debounce`).
+- **Shared first:** antes de implementar una función utilitaria o helper, revisar `scripts/shared/` o `src/web/shared/utils/`. Si existe, reutilizarla; si no existe pero tiene potencial reutilizable (≥2 consumidores), ubicarla en `shared/`. No hardcodear constantes de almacenamiento (`storage-keys.ts`), breakpoints, magic numbers (e.g. `1024` para KB) ni cabeceras HTTP. En el frontend, el acceso al DOM y llamadas remotas deben usar exclusivamente `dom-helpers.ts` (`queryRequired`, `querySafe`) y `http-helpers.ts` (`fetchJSON`, `postJSON`, `debounce`).
 - **Menos es más:** preferir eliminar código obsoleto o simplificar flujos antes que crear abstracciones preventivas o capas intermedias de una sola línea sin valor agregado.
-- **Convención de nombres:** archivos en `kebab-case`, constantes exportadas en `UPPER_SNAKE_CASE`, funciones en `camelCase`, Web Components con prefijo `ef-`, y tests co-locados con sufijo `.test.js` / `.test.ts`.
+- **Convención de nombres:** archivos en `kebab-case`, constantes exportadas en `UPPER_SNAKE_CASE`, funciones en `camelCase`, Web Components con prefijo `ef-`, y tests co-locados con sufijo `.test.ts`.
 
 ### 2. Arquitectura de carpetas escalable (patrón feature-module)
 
@@ -68,18 +68,18 @@ Toda feature frontend o paquete de scripts debe organizarse bajo una jerarquía 
 
 ```text
 feature-o-paquete/
-├── main.js (o index.ts)      # Punto de entrada cohesivo: solo bootstrap y exports
+├── main.ts (o index.ts)      # Punto de entrada cohesivo: solo bootstrap y exports
 ├── feature.html              # Markup exclusivo si aplica
 ├── styles/                   # Hojas de estilo divididas por dominio temático
 │   ├── layout.css
 │   └── theme.css
 └── modules/ (o subcarpetas)  # Lógica modular organizada por subdominio
     ├── controls/
-    │   ├── component.js
-    │   └── component.test.js
+    │   ├── component.ts
+    │   └── component.test.ts
     └── render/
-        ├── render-api.js
-        └── render-api.test.js
+        ├── render-api.ts
+        └── render-api.test.ts
 ```
 
 Criterios para crear subdirectorios:

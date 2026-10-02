@@ -47,6 +47,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Cambiado
 
+- Cierre total de la migración a TypeScript con repositorio 100% tipado bajo allowlist cerrada (`eslint.config.js` y el wrapper `maizzle.config.js`) (MHB-34).
+- Migración a TypeScript de configuraciones raíz (`postcss.config.ts`, `tailwind.config.ts`, `tailwind.email.config.ts`, `maizzle.config.ts`) y actualización de rutas en directivas `@config` en hojas de estilo CSS (MHB-34).
+- Migración a TypeScript de automatizaciones de agentes y comprobación de rama en `scripts/ai/**`, actualizando los comandos `agents:sync`, `agents:check` y `check:task-branch` a sus rutas `.ts` con soporte para type stripping nativo (MHB-34).
+- Unificación del chequeo de tipos en un único comando `bun run typecheck` (`tsc --noEmit`) con modo estricto integral (`strict: true`, `verbatimModuleSyntax: true`, `erasableSyntaxOnly: true`) en `tsconfig.json`, retirando `tsconfig.strict.json` y las opciones `allowJs`/`checkJs` (MHB-34).
+- Activación de modo bloqueante con `--require-zero` en el comando `bun run check:inventory` respetando la allowlist cerrada para asegurar cero regresión a JavaScript en desarrollo local y en el pipeline de CI (MHB-34).
+
 - Restricción del workflow de auto-merge de Dependabot con rebase (`--rebase`), eliminación del paso de aprobación ciega y exclusión de dependencias críticas del pipeline de email (`@maizzle/*`, `maizzle`, `tailwindcss`, `postcss`, `autoprefixer`, `juice`, `handlebars`) para revisión manual obligatoria (MHB-45).
 
 - `maizzle.config.js`: `css.inline.removeInlinedSelectors` vuelve a `true` (default de Maizzle). El valor `false` anterior conservaba en el `<style>` de salida todos los selectores aunque ya estuvieran aplicados inline, duplicando el CSS y superando en 4 de 6 templates el límite de 8192 bytes por bloque que aplica Gmail; `dist/*.html` regenerado sin cambios de variables ESP ni de diseño (MHB-44).

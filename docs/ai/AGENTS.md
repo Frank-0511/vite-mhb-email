@@ -73,7 +73,7 @@ asignado.
   `scripts/shared/contracts/` como módulos hoja sin dependencias de Node.js ni
   imports ascendentes. Se prohíbe `any` y `@typedef` en TypeScript (`.ts`); los
   límites externos (storage, URL, red) deben validarse mediante type guards.
-- Todo archivo fuente nuevo es `.ts`, salvo la allowlist que fije MHB-42.
+- Todo archivo fuente es `.ts`, salvo la allowlist cerrada (`eslint.config.js` y `maizzle.config.js`).
 - Prohibido añadir `ignores` o exclusiones de ESLint, directivas `eslint-disable`,
   `@ts-ignore`/`@ts-expect-error`, exclusiones de `tsconfig*.json` o tests `skip`/`todo`
   sin registrarlos como desviación aprobada en `STATUS.md`.

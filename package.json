@@ -74,15 +74,15 @@
     "agents:check": "node scripts/ai/agents-check.ts"
   },
   "lint-staged": {
-    "scripts/**/*.{js,mjs,ts}": [
+    "scripts/**/*.ts": [
       "eslint --fix",
       "prettier --write"
     ],
-    "src/web/**/*.{js,ts}": [
+    "src/web/**/*.ts": [
       "eslint --fix",
       "prettier --write"
     ],
-    "src/emails/**/*.{js,ts}": [
+    "src/emails/**/*.ts": [
       "eslint --fix",
       "prettier --write"
     ],

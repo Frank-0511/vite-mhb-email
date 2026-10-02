@@ -25,7 +25,7 @@ description: Convenciones de nombres, estructura de archivos y tipado estricto e
 
 ## Tipado estricto y manejo de promesas
 
-- El proyecto aplica linting con tipos sobre `tsconfig.strict.json` mediante
+- El proyecto aplica linting con tipos sobre `tsconfig.json` mediante
   `@typescript-eslint` (`no-floating-promises`, `no-misused-promises`, `await-thenable`,
   `no-redundant-type-constituents`, `require-await`, `return-await`).
 - Prohibidas las promesas flotantes (`no-floating-promises`): todo valor devuelto
