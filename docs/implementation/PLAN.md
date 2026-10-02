@@ -25,6 +25,7 @@ JavaScript propio a TypeScript estricto antes de preparar la siguiente release.
 | MHB-46        | Crear      | Guarda contra escrituras cross-site en la API local del servidor Vite.                          |
 | MHB-47        | Crear      | Manifiesto de variables por template y perfil de sintaxis ESP (SendGrid).                       |
 | MHB-34        | Ajustar    | Depende de MHB-42, adopta su allowlist y reapunta el linting con tipos de MHB-39.               |
+| MHB-48        | Crear      | Actualización a TypeScript 7, condicionada a soporte de `typescript-eslint` y a MHB-34.         |
 | MHB-36        | Ajustar    | Depende de MHB-43; rutas revalidadas, lockfiles y hashes contra el baseline de MHB-41.          |
 | MHB-14        | Ajustar    | Tras MHB-44; admite envíos reales con la integración ESP del usuario, con autorización.         |
 | MHB-16        | Ajustar    | Riesgo registrado: `vite build` vaciaría `dist/` de email por `outDir` + `emptyOutDir`.         |
@@ -41,6 +42,7 @@ conserva una rama, revisión y cierre independientes.
 | MHB-34 | Cierre total y modo estricto TypeScript       | Pendiente | MHB-42                                |
 | MHB-43 | Higiene de dependencias                       | Pendiente | MHB-34                                |
 | MHB-36 | Compatibilidad multi-package-manager          | Pendiente | MHB-43                                |
+| MHB-48 | Actualización a TypeScript 7                  | Pendiente | MHB-34 y disparador externo           |
 | MHB-14 | Evidencia de uso y compatibilidad             | Pendiente | Satisfecha                            |
 | MHB-15 | Documentación, capturas y release posterior   | Pendiente | MHB-14 y MHB-36                       |
 | MHB-16 | Demo candidata pre-renderizada                | Opcional  | MHB-15                                |
@@ -428,6 +430,33 @@ los IDs se numeran por fecha de registro, no por orden de ejecución.
 - **Revisor independiente:** revisor técnico de build.
 - **Condición de escalamiento:** la API programática de Maizzle no reproduce `dist/`, algún `globSync` nativo difiere en resultados, o eliminar un paquete exige cambiar un comando público.
 
+### MHB-48 — Actualización a TypeScript 7
+
+- **Objetivo observable:** subir `typescript` de `6.0.3` a `7.x` con `typecheck`, lint tipado y tests en verde, sin cambiar el HTML de `dist/`.
+- **Diagnóstico al 2026-10-01:** `typescript@7.0.2` es `latest` en npm y su paquete no declara `main` (solo el binario `tsc`). `typescript-eslint@8.71.0` (`latest`) y `8.71.1-alpha.5` (`canary`) declaran `peerDependencies.typescript: >=4.8.4 <6.1.0`, de modo que TS 7 no está soportado hoy. El repo importa la API del compilador en `scripts/validators/lint-guards/file-tree.test.ts` (`import ts from "typescript"`).
+- **Disparador externo (bloqueante):** una versión estable de `typescript-eslint` cuyo peer `typescript` admita 7.x, o una decisión explícita del usuario de sustituir el lint tipado. Hasta entonces el ID no se inicia ni se asigna.
+- **Superficies autorizadas:** `package.json`, `bun.lock`, `tsconfig*.json` solo para opciones deprecadas o removidas por TS 7, `scripts/validators/lint-guards/file-tree.test.ts` (o su sustituto si la API `ts` ya no existe), `docs/implementation/STATUS.md` y `CHANGELOG.md`.
+- **Dependencias y precondiciones:** MHB-34 completada (modo estricto ya cerrado, para aislar errores de la versión nueva) y el disparador externo satisfecho.
+- **Pasos técnicos:**
+  1. Confirmar el peer de `typescript-eslint` y la versión exacta a fijar; si no hay soporte, detener el ID.
+  2. Reemplazar `typescript` y `typescript-eslint` a versiones fijas compatibles y regenerar `bun.lock`.
+  3. Corregir opciones de `tsconfig*.json` removidas, sin añadir exclusiones ni `@ts-expect-error`.
+  4. Resolver la dependencia de la API `ts` en el guard de árbol de archivos: migrarla o sustituirla por un análisis equivalente.
+- **Criterios de aceptación:**
+  - `bun run typecheck` y `bun run lint` en verde con `typescript` en `7.x`.
+  - `bun run test` en verde, incluido el guard de árbol de archivos.
+  - `bun run check:dist-baseline` confirma `dist/` idéntico.
+  - `rg -n "eslint-disable|@ts-ignore|@ts-expect-error" scripts src` sin entradas nuevas respecto al inicio.
+- **Validación automática:** `bun install --frozen-lockfile`, lint, typecheck, test, `format:check`, build, `validate-email`, `check:dist-baseline` y `git diff --check`.
+- **Validación manual:** ninguna.
+- **Evidencia requerida:** versiones antes/después, salida de `typecheck` y `lint`, diff de `package.json` y `tsconfig*.json`.
+- **Riesgos y reversión:** cambios de diagnósticos o de resolución de módulos que revelen errores nuevos; API del compilador ausente. Un único commit de versión, revertible por separado.
+- **Exclusiones específicas:** no cambiar `strict`, `verbatimModuleSyntax` ni `erasableSyntaxOnly`, no migrar otras dependencias y no tocar templates ni `dist/`.
+- **Análisis de mantenibilidad:** si el guard de árbol de archivos deja de depender de la API `ts`, se elimina el acoplamiento con el compilador.
+- **Implementador:** perfil TypeScript/tooling, medio.
+- **Revisor independiente:** revisor técnico de tooling distinto del implementador.
+- **Condición de escalamiento:** `typescript-eslint` no soporta TS 7, la API `ts` no existe o falla un gate global.
+
 ### MHB-36 — Compatibilidad multi-package-manager
 
 - **Objetivo observable:** permitir que cualquier desarrollador clone el proyecto y trabaje con npm, yarn, pnpm o bun indistintamente, sin que ninguno sea obligatorio.
@@ -540,9 +569,10 @@ Cada elemento debe conservar en el contrato transferido objetivo, archivos, paso
 5. Cerrar la migración con MHB-34; ninguna excepción `.js`/`.mjs` fuera de la allowlist de MHB-42 permite avanzar.
 6. Ejecutar MHB-43 (higiene de dependencias) tras MHB-34: eliminar el CLI `maizzle`, `fs-extra` y `glob`, y reclasificar dependencias por rol.
 7. Ejecutar MHB-36 (compatibilidad multi-PM) tras MHB-43; migrar tests a Vitest y eliminar acoplamiento a Bun.
-8. Preparar MHB-15 solo con todas sus dependencias completadas; congelar el alcance al iniciarla; decidir MHB-16 después de esa release candidata. MHB-23 permanece opcional y separado.
-9. MHB-38 se ejecuta dentro de su ventana (no antes de 2027-01-15, límite 2027-06-30) o antes si se registra un disparador, siempre tras MHB-34 y MHB-36; hasta entonces el stack sigue en Maizzle 5 + Tailwind v3. Por cambiar `dist/`, queda fuera del alcance congelado de MHB-15.
-10. Someter el producto a revisión final independiente antes de declararlo listo para presentarse como caso de portafolio.
+8. MHB-48 (TypeScript 7) tras MHB-34 y solo cuando `typescript-eslint` soporte TS 7; puede ejecutarse en paralelo con MHB-43 y MHB-36 por no compartir superficie.
+9. Preparar MHB-15 solo con todas sus dependencias completadas; congelar el alcance al iniciarla; decidir MHB-16 después de esa release candidata. MHB-23 permanece opcional y separado.
+10. MHB-38 se ejecuta dentro de su ventana (no antes de 2027-01-15, límite 2027-06-30) o antes si se registra un disparador, siempre tras MHB-34 y MHB-36; hasta entonces el stack sigue en Maizzle 5 + Tailwind v3. Por cambiar `dist/`, queda fuera del alcance congelado de MHB-15.
+11. Someter el producto a revisión final independiente antes de declararlo listo para presentarse como caso de portafolio.
 
 ### Política de ramas y versiones conservada
 
