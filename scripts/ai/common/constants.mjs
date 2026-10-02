@@ -21,23 +21,11 @@ export const projectRoot = path.resolve(scriptDirectory, "../..");
  */
 export const configPath = path.join(scriptDirectory, "agents.config.json");
 
-/**
- * Identificador de marcador para copias administradas generadas.
- * @type {string}
- */
-export const generatedMarker = "portfolio-agents:generated";
-
-/**
- * Delimitador inicial del bloque administrado en `.gitignore`.
- * @type {string}
- */
-export const gitignoreStart = "# BEGIN agents:sync managed";
-
-/**
- * Delimitador final del bloque administrado en `.gitignore`.
- * @type {string}
- */
-export const gitignoreEnd = "# END agents:sync managed";
+export { DEFAULT_GENERATED_MARKER as generatedMarker } from "../../shared/io/hashing.ts";
+export {
+  DEFAULT_GITIGNORE_START as gitignoreStart,
+  DEFAULT_GITIGNORE_END as gitignoreEnd,
+} from "../../shared/io/gitignore.ts";
 
 /**
  * Formatea un error extrayendo su mensaje o representación textual.
