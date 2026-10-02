@@ -9,11 +9,10 @@ import {
   CONSTANTS_SELECTORS,
   CONTRACT_LITERAL_SELECTORS,
   LOCAL_STORAGE_LITERAL_SELECTOR,
-  NODE_BUILTIN_IN_CONTRACTS,
   NO_REEXPORT_SELECTORS,
-  OUTSIDE_CONTRACTS_MESSAGE,
   TYPES_ZERO_RUNTIME_SELECTORS,
-} from "./scripts/validators/lint-guards/selectors.js";
+} from "./scripts/validators/lint-guards/selectors.ts";
+import { ISOLATION_CONFIGS } from "./scripts/validators/lint-guards/isolation-rules.ts";
 
 const TEST_FILES = ["**/*.test.ts", "**/*.spec.ts", "**/*.fixtures.ts", "**/test-helpers.ts"];
 const SPECIAL_ROLE_FILES = [
@@ -47,6 +46,7 @@ export default [
       "src/emails/**/*.{js,ts}",
       "vite.config.ts",
       "maizzle.config.js",
+      "maizzle.config.ts",
     ],
     languageOptions: {
       globals: {
@@ -89,7 +89,7 @@ export default [
     files: ["**/*.ts"],
     languageOptions: {
       parserOptions: {
-        project: ["./tsconfig.strict.json"],
+        project: ["./tsconfig.json"],
         tsconfigRootDir: import.meta.dirname,
       },
     },
@@ -168,63 +168,8 @@ export default [
     },
   },
 
-  // Aislamiento de contracts (raíz): prohibido Node.js y subir de directorio
-  {
-    files: ["scripts/shared/contracts/*.ts"],
-    ignores: TEST_FILES,
-    rules: {
-      "no-restricted-imports": [
-        "error",
-        {
-          patterns: [
-            NODE_BUILTIN_IN_CONTRACTS,
-            { regex: "^\\.\\./", message: OUTSIDE_CONTRACTS_MESSAGE },
-          ],
-        },
-      ],
-    },
-  },
-
-  // Aislamiento de contracts (subcarpetas): se permite ../ entre subcarpetas, no salir de contracts/
-  {
-    files: ["scripts/shared/contracts/*/**/*.ts"],
-    ignores: TEST_FILES,
-    rules: {
-      "no-restricted-imports": [
-        "error",
-        {
-          patterns: [
-            NODE_BUILTIN_IN_CONTRACTS,
-            { regex: "^\\.\\./\\.\\./", message: OUTSIDE_CONTRACTS_MESSAGE },
-          ],
-        },
-      ],
-    },
-  },
-
-  // Aislamiento de web: prohibido importar barrel scripts/shared o utilidades de Node
-  {
-    files: ["src/web/**/*.ts"],
-    ignores: TEST_FILES,
-    rules: {
-      "no-restricted-imports": [
-        "error",
-        {
-          patterns: [
-            {
-              regex: "^node:.*",
-              message: "No uses módulos de Node.js en código frontend (src/web).",
-            },
-            {
-              regex: "scripts/shared(/(?!contracts(/|$)).*)?$",
-              message:
-                "En src/web solo se permite importar de scripts/shared/contracts/..., no del barrel ni de utilidades internas de scripts/shared/.",
-            },
-          ],
-        },
-      ],
-    },
-  },
+  // Bloques de aislamiento para contracts y frontend
+  ...ISOLATION_CONFIGS,
 
   // Convenciones de nombres de archivos y carpetas
   {
