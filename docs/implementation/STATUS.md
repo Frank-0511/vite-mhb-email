@@ -2,10 +2,10 @@
 
 ## Resumen
 
-- ID activo: MHB-42
-- Estado: En revisión (2026-10-01)
+- ID activo: ninguno
+- Estado: MHB-42 `Completada` (2026-10-01)
 - Implementador: Antigravity (perfil TypeScript/tooling)
-- Revisor: orquestador independiente (`task-review`)
+- Revisor: `task-review` independiente (aprobado 2026-10-01)
 - Rama: `feature/mhb-42`
 - Última actualización: 2026-10-01
 - Contrato activo: `docs/implementation/PLAN.md` (sección MHB-42)
@@ -22,6 +22,14 @@
 - Controles de entrega (todos Verde): `check:task-branch`, `lint:md`, `format:check`, `git diff --check`, `check:dist-baseline`, `agents:check`. Evidencia Node 24 ejecutada bajo Node v24.21.0 en rama desechable: `selectors.ts` en `eslint` exit 0 con 47 tests de lint-guards verdes; error `jiti` reproducido en `eslint.config.ts` (confirma excepción JS en Node 24); `scripts/ai/**` con type stripping nativo exit 0 y 21 tests verdes; transformación CSS en Vite (length: 40361) y build/baseline idénticos con configs `.ts`; wrapper `maizzle.config.js` resuelve config sin flags.
 - Riesgos residuales: ninguno; spike puramente documental en la rama entregable. `CHANGELOG.md` sin entrada declarada por ausencia de efecto observable.
 
+## Revisión de cierre de MHB-42
+
+- Veredicto: Aprobado (revisor independiente, 2026-10-01). Rama `feature/mhb-42`, commit `61078b9`.
+- Controles re-ejecutados (todos Verde): `check:task-branch`, `lint`, `typecheck`, `test`, `format:check`, `build`, `validate-email`, `check:dist-baseline`, `check-size`, `agents:check`, `git diff --check`.
+- Diff `master...HEAD`: solo `PLAN.md` y `STATUS.md`; sin `eslint-disable`, `@ts-*`, skip/todo ni cambios en `tsconfig*.json`, ESLint ni `dist/`.
+- Criterios: allowlist cerrada, dimensionamiento (5 errores TS2339) y rutas de MHB-34/MHB-36 actualizadas en `PLAN.md`. Evidencia Node 24 (spike desechable eliminado) tomada del registro del implementador; no reproducible en el árbol actual.
+- Pendiente antes de la PR: eliminar `docs/superpowers/mhb-42.md` y `docs/superpowers/mhb-42/` (temporales sin commitear).
+
 ## Baseline vigente
 
 - La release [v1.2.0](https://github.com/Frank-0511/vite-mhb-email/releases/tag/v1.2.0) es el baseline funcional publicado.
@@ -30,6 +38,7 @@
 
 ## Últimas entregas
 
+- MHB-42: `Completada` el 2026-10-01; spike de loaders con allowlist cerrada (`eslint.config.js`, `maizzle.config.js`) y MHB-34 indiviso; solo `docs/implementation/**`; revisión técnica independiente aprobada.
 - MHB-47: `Completada` el 2026-10-01; manifiesto `dist/esp-manifest.json` con perfiles SendGrid Dynamic y Legacy, reglas `esp-syntax-profile` (ERROR) y `esp-legacy-compat` (WARNING), sanitización de `exampleData` y coherencia manifiesto↔baseline en `check:dist-baseline`, con revisión técnica independiente aprobada (detalle en `STATUS-HISTORY.md`).
 - MHB-46: `Completada` el 2026-09-29; guarda común `rejectUnsafeWrite` (403 ante `Origin`/`Sec-Fetch-Site` cross-site y `Content-Type` distinto de JSON) aplicada a los 6 endpoints de escritura de la API local, con revisión técnica independiente aprobada (detalle en `STATUS-HISTORY.md`).
 - MHB-44: `Completada` el 2026-09-28; compatibilidad del HTML exportado (colores HEX, unidades px, iconos PNG @2x vía jsDelivr, reglas de `validate-email`), con generador `generate:icons`, validador de referencias y guard de no-sobrescritura, y revisión técnica independiente aprobada (detalle en `STATUS-HISTORY.md`).
@@ -72,6 +81,6 @@
 
 ## Handoff
 
-- Próxima acción inmediata: revisión técnica independiente de MHB-42 con skill `task-review` sobre `feature/mhb-42`, merge a `master` (tras eliminar `docs/superpowers/mhb-42.md` y `docs/superpowers/mhb-42/`, temporales no commiteados).
+- Próxima acción inmediata: abrir PR de `feature/mhb-42` a `master` (tras eliminar `docs/superpowers/mhb-42.md` y `docs/superpowers/mhb-42/`, temporales no commiteados).
 - Siguiente tarea del roadmap:
   - MHB-34 ("Cierre total y modo estricto TypeScript"): `desbloqueado` una vez mergeado MHB-42; no iniciar sin asignación explícita.
