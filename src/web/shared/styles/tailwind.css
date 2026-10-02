@@ -3,7 +3,7 @@
 @import url("./design-tokens.css");
 
 /* Para Vite/preview: darkMode: "class" */
-@config "../../../../tailwind.config.js";
+@config "../../../../tailwind.config.ts";
 
 @tailwind base;
 @tailwind components;
