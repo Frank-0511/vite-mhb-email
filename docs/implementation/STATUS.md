@@ -3,7 +3,7 @@
 ## Resumen
 
 - ID activo: MHB-34
-- Estado: En progreso
+- Estado: En revisión
 - Implementador: Antigravity (perfil TypeScript/tooling transversal)
 - Revisor: revisor técnico final independiente
 - Rama: `feature/mhb-34`
@@ -14,8 +14,17 @@
 
 - MHB-34: Cierre total y modo estricto TypeScript.
 - Alcance: migración de 20 archivos propios restantes (.js/.mjs) a TypeScript, modo estricto único (`strict`, `verbatimModuleSyntax`, `erasableSyntaxOnly`) sin `tsconfig.strict.json` ni `allowJs`/`checkJs`, allowlist cerrada (`eslint.config.js` y wrapper `maizzle.config.js`), gate de inventario `--require-zero`, saneamiento de tooling AI y cumplimiento de límites de árbol.
-- Estado: F0 — Preparación en progreso.
-- Riesgos residuales: ninguno bloqueante al inicio; plan de ejecución por fases F0–F7 definido en docs/superpowers/mhb-34.md.
+- Estado: En revisión.
+- Hechos de la entrega:
+  1. 20 archivos propios (.js/.mjs) migrados a .ts estricto; solo `eslint.config.js` y wrapper `maizzle.config.js` permanecen como JS (allowlist cerrada de MHB-42).
+  2. Configuraciones raíz (`postcss`, `tailwind`, `tailwind.email`, `maizzle`) tipadas y directivas `@config` actualizadas en CSS.
+  3. `scripts/ai/**` y `check-task-branch` migrados a .ts con type stripping nativo de Node 24, 5 TS2339 corregidos con `isEnoent`, y comandos actualizados en `package.json`.
+  4. Modo estricto único unificado en `tsconfig.json` (`strict`, `verbatimModuleSyntax`, `erasableSyntaxOnly`); eliminados `tsconfig.strict.json` y `allowJs`/`checkJs`.
+  5. Gate `check:inventory --require-zero` bloqueante activo (exit 0; 2 JS allowlist, 303 TS); matriz de gates completa en Verde y `dist/` 100% idéntico.
+- Controles ejecutados (todos Verde): `check:task-branch`, `frozen-install`, `lint`, `typecheck`, `test` (790 pass), `format:check`, `build`, `validate-email`, `lint:contrast`, `a11y-check`, `agents:check`, `check:inventory`, `check:dist-baseline`, `check-size`, `git diff --check`.
+- Verificación manual declarada: inspección de salidas CLI en comandos de agentes e inventario; interacción de dashboard web reservada a petición expresa (Browser pane no abierto).
+- Desviaciones: ninguna.
+- Riesgos residuales: ninguno.
 
 ## Revisión de cierre de MHB-42
 
@@ -69,13 +78,13 @@
 - **Auto-merge de Dependabot (aprobado 2026-09-25, MHB-45):** Fusión con `--rebase`; dependencias del pipeline de email siempre en revisión manual.
 - **Directiva MD024 en Changelog:** Directiva `markdownlint-configure-file { "MD024": { "siblings_only": true } }` en `CHANGELOG.md`.
 - **Dependencia de desarrollo:** Autorizada `eslint-plugin-check-file@3.3.2` fijada exacta para forzar kebab-case y blocklist de helpers/utils.
-- **Linting con tipos:** Configurado sobre `tsconfig.strict.json` en ESLint sin alterar los archivos `tsconfig*.json`.
+- **Linting con tipos (MHB-34):** Reapuntado directamente a `tsconfig.json` en ESLint con `parserOptions.project`, retirando `tsconfig.strict.json` al unificar el modo estricto en el archivo principal.
 - **Envoltorio async de middlewares:** Todo handler async en endpoints Vite se envuelve con `asyncHandler` en `scripts/vite/api/http.ts`.
 - **Pruebas de guards sintéticos:** En `eslint-guards.test.ts` se anula `parserOptions.project` para evaluar snippets en memoria mediante AST puro.
 - **Barrels index.ts puros:** Todos los `index.ts` bajo `scripts/` y `src/` actúan exclusivamente como puntos de reexport (`export ... from`).
 
 ## Handoff
 
-- Próxima acción inmediata: abrir PR de `feature/mhb-42` a `master` (tras eliminar `docs/superpowers/mhb-42.md` y `docs/superpowers/mhb-42/`, temporales no commiteados).
+- Próxima acción inmediata: revisión técnica independiente de MHB-34 sobre rama `feature/mhb-34` (`task-review`).
 - Siguiente tarea del roadmap:
-  - MHB-34 ("Cierre total y modo estricto TypeScript"): `desbloqueado` una vez mergeado MHB-42; no iniciar sin asignación explícita.
+  - MHB-43 ("Retirar dependencias huérfanas y CLI maizzle heredado"): `desbloqueado` una vez mergeado MHB-34; no iniciar sin asignación explícita.
