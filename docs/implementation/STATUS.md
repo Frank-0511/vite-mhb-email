@@ -2,25 +2,20 @@
 
 ## Resumen
 
-- ID activo: ninguno
-- Estado: MHB-42 `Completada` (2026-10-01)
-- Implementador: Antigravity (perfil TypeScript/tooling)
-- Revisor: `task-review` independiente (aprobado 2026-10-01)
-- Rama: `feature/mhb-42`
-- Última actualización: 2026-10-01
-- Contrato activo: `docs/implementation/PLAN.md` (sección MHB-42)
+- ID activo: MHB-34
+- Estado: En progreso
+- Implementador: Antigravity (perfil TypeScript/tooling transversal)
+- Revisor: revisor técnico final independiente
+- Rama: `feature/mhb-34`
+- Última actualización: 2026-10-02
+- Contrato activo: `docs/implementation/PLAN.md` (sección MHB-34)
 
 ## Paquete activo
 
-- MHB-42: Spike de loaders de configuración y decisión de excepciones JS concluido.
-- Hechos de entrega:
-  1. Inventario de 22 archivos (1793 l.): 20 convertibles a `.ts` sin excepción (`postcss.config`, `tailwind.config`, `tailwind.email.config`, `selectors.js` y 16 módulos/tests en `scripts/ai/**`).
-  2. Allowlist cerrada aprobada por el usuario: `eslint.config.js` (excepción obligatoria por `jiti >= 2.2.0` en ESLint 10.11) y `maizzle.config.js` (wrapper de 1 línea a `maizzle.config.ts`).
-  3. Dimensionamiento estricto: `tsc --noEmit` arrojó solo 5 errores (TS2339 en `scripts/ai/`); decisión aprobada de mantener MHB-34 como ID único indiviso (umbral >150 errores no alcanzado).
-  4. Linting con tipos: `parserOptions.project: ["./tsconfig.json"]` resuelve todos los archivos sin regresiones ni variación de tiempo (~4.0s); 42 guards de MHB-37 y 5 límites de `file-tree` verdes.
-  5. Contratos de MHB-34 y MHB-36 actualizados en `PLAN.md`; saneamiento documental adicional en `PLAN.md` ajeno al spike (tabla «Backlog activo» depurada: retiradas MHB-44, MHB-46 y MHB-47 por completadas, y dependencias de MHB-42 y MHB-14 actualizadas a «Satisfecha»); `git diff master...HEAD` limitado a `docs/implementation/**`; sin cambios en dependencias ni `tsconfig*.json`.
-- Controles de entrega (todos Verde): `check:task-branch`, `lint:md`, `format:check`, `git diff --check`, `check:dist-baseline`, `agents:check`. Evidencia Node 24 ejecutada bajo Node v24.21.0 en rama desechable: `selectors.ts` en `eslint` exit 0 con 47 tests de lint-guards verdes; error `jiti` reproducido en `eslint.config.ts` (confirma excepción JS en Node 24); `scripts/ai/**` con type stripping nativo exit 0 y 21 tests verdes; transformación CSS en Vite (length: 40361) y build/baseline idénticos con configs `.ts`; wrapper `maizzle.config.js` resuelve config sin flags.
-- Riesgos residuales: ninguno; spike puramente documental en la rama entregable. `CHANGELOG.md` sin entrada declarada por ausencia de efecto observable.
+- MHB-34: Cierre total y modo estricto TypeScript.
+- Alcance: migración de 20 archivos propios restantes (.js/.mjs) a TypeScript, modo estricto único (`strict`, `verbatimModuleSyntax`, `erasableSyntaxOnly`) sin `tsconfig.strict.json` ni `allowJs`/`checkJs`, allowlist cerrada (`eslint.config.js` y wrapper `maizzle.config.js`), gate de inventario `--require-zero`, saneamiento de tooling AI y cumplimiento de límites de árbol.
+- Estado: F0 — Preparación en progreso.
+- Riesgos residuales: ninguno bloqueante al inicio; plan de ejecución por fases F0–F7 definido en docs/superpowers/mhb-34.md.
 
 ## Revisión de cierre de MHB-42
 
