@@ -2,44 +2,19 @@
 
 ## Resumen
 
-- ID activo: MHB-47
-- Estado: MHB-47 `En revisión`
+- ID activo: ninguno
+- Estado: MHB-47 `Completada` (2026-10-01)
 - Implementador: Gemini Flash
-- Revisor: Pendiente de asignación (revisión independiente requerida)
-- Rama: `feature/mhb-47`
-- Última actualización: 2026-09-29
+- Revisor: `task-review` independiente (aprobado 2026-10-01)
+- Rama: `feature/mhb-47` (pendiente de PR y merge a `master`)
+- Última actualización: 2026-10-01
 - Contrato activo: `docs/implementation/PLAN.md`
 
 ## Paquete activo
 
-- ID: MHB-47 — Contrato de integración ESP (manifiesto de variables, perfil SendGrid Dynamic y SendGrid Legacy)
-- Estado: `En revisión` (entregado el 2026-09-29, rama `feature/mhb-47`)
-- Hechos de la entrega:
-  1. Perfiles ESP (`sendgrid` y `sendgrid-legacy`) en `scripts/shared/contracts/constants/esp-contract.ts` y tipos en `types/esp-contract.ts`.
-  2. Reglas de validación `esp-syntax-profile` (ERROR) y `esp-legacy-compat` (WARNING) registradas en `validate-email`.
-  3. Sanitización de datos de prueba (`exampleData`) con placeholder `<clave>` ante campos sensibles (`email`, `temp_password`, `*_name`, tokens).
-  4. Generador determinista `dist/esp-manifest.json` y comando `esp:manifest` integrado en pipeline de build sin alterar los HTML de salida.
-  5. Coherencia estricta manifiesto ↔ baseline integrada en `check:dist-baseline`.
-- Controles: `bun install --frozen-lockfile` (Verde), `bun run format:check` (Verde), `bun run lint` (Verde), `bun run typecheck` (Verde), `bun run test` (Verde, 787 pass), `bun run build` (Verde, dist intacto), `bun run validate-email` (Verde, 0 errores), `bun run check-size` (Verde, <= 102 KB), `bun run check:dist-baseline` (Verde), `git diff --check` (Verde).
-- Criterios de aceptación (sección 7):
-
-| Criterio                                                                                       | Comando                                                                            | Resultado |
-| :--------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------- | :-------: |
-| El manifiesto existe para los seis templates y sus variables coinciden con baseline            | `bun run check:dist-baseline`                                                      |   Verde   |
-| Fixture con `{{#if (eq a b)}}` en `dist/` hace fallar `validate-email`                         | `bun test scripts/validators/email-rules/rules/content/esp-syntax-profile.test.ts` |   Verde   |
-| El manifiesto expone `legacy.tags` con formato `-variable-` para todas las `requiredVariables` | `bun test scripts/esp/manifest`                                                    |   Verde   |
-| `esp-legacy-compat` marca un fixture con `{{#if a}}` y un fixture con colisión `-variable-`    | `bun test scripts/validators/email-rules/rules/content/esp-legacy-compat.test.ts`  |   Verde   |
-| `check:dist-baseline` falla si el manifiesto no coincide con el baseline                       | `bun run check:dist-baseline` y `manifest-check.test.ts`                           |   Verde   |
-| `dist/*.html` no cambia (`check:dist-baseline` verde para el HTML)                             | `bun run check:dist-baseline`                                                      |   Verde   |
-
-- Análisis de mantenibilidad: 15 archivos fuente nuevos/modificados (todos ≤ 110 líneas; límite 250); 11 tests (todos ≤ 170 líneas; límite 400). Carpetas cumplen límite ≤ 8 archivos fuente (verificado por `file-tree.test.ts`). Reutilización de helpers centrales (`extractEspVariablesFromHtml`, `parseEspFrontmatter`, `getProjectPaths`).
-- Desviaciones: Tipos de contrato ubicados en `scripts/shared/contracts/types/esp-contract.ts` para respetar el AST selector de ESLint de constants.
-- Validación manual pendiente: El usuario confirma que `legacy.tags` y `legacy.convertible` sirven a su integración legacy real, además de la confirmación del consumo del manifiesto Dynamic desde su integración SendGrid externa (sin esa confirmación el revisor no puede cerrar el ID).
-- Riesgos residuales:
-  - SendGrid puede actualizar o ampliar helpers Handlebars en futuras versiones de su API; el perfil está acotado a la documentación estándar vigente.
-  - No existe exportador que genere HTML con `-variable-`; solo se publica el mapeo en `dist/esp-manifest.json`.
-  - No se modelan las etiquetas propias de legacy (`<%body%>`, `<%subject%>`, secciones).
-  - El delimitador `-` es un supuesto por defecto, y la lista de bloques y helpers del perfil `sendgrid` está pendiente de contrastar con la documentación oficial vigente.
+- Sin paquete activo. MHB-47 cerrado; detalle y revisión de cierre en `STATUS-HISTORY.md`.
+- Controles de cierre (todos Verde): `check:task-branch`, `lint`, `typecheck`, `test` (787 pass), `format:check`, `build`, `validate-email`, `check:dist-baseline`, `check-size`, `agents:check`, `git diff --check`.
+- Riesgos residuales: allowlist del perfil `sendgrid` y delimitador `-` de legacy no contrastados con SendGrid real; no se modelan etiquetas propias de legacy (`<%body%>`, secciones).
 
 ## Baseline vigente
 
@@ -49,6 +24,7 @@
 
 ## Últimas entregas
 
+- MHB-47: `Completada` el 2026-10-01; manifiesto `dist/esp-manifest.json` con perfiles SendGrid Dynamic y Legacy, reglas `esp-syntax-profile` (ERROR) y `esp-legacy-compat` (WARNING), sanitización de `exampleData` y coherencia manifiesto↔baseline en `check:dist-baseline`, con revisión técnica independiente aprobada (detalle en `STATUS-HISTORY.md`).
 - MHB-46: `Completada` el 2026-09-29; guarda común `rejectUnsafeWrite` (403 ante `Origin`/`Sec-Fetch-Site` cross-site y `Content-Type` distinto de JSON) aplicada a los 6 endpoints de escritura de la API local, con revisión técnica independiente aprobada (detalle en `STATUS-HISTORY.md`).
 - MHB-44: `Completada` el 2026-09-28; compatibilidad del HTML exportado (colores HEX, unidades px, iconos PNG @2x vía jsDelivr, reglas de `validate-email`), con generador `generate:icons`, validador de referencias y guard de no-sobrescritura, y revisión técnica independiente aprobada (detalle en `STATUS-HISTORY.md`).
 - MHB-45: `Completada` el 2026-09-25; protección de `master` (checks requeridos `CI Pipeline` y `Accessibility & Contrast Audit`, `enforce_admins`, historial lineal), auto-merge de Dependabot restringido con exclusión de dependencias del pipeline de email y ecosistema `github-actions` añadido, con revisión técnica independiente aprobada (D1–D2, detalle en `STATUS-HISTORY.md`).
@@ -57,14 +33,14 @@
 
 ## Ejecuciones delegadas relevantes
 
-| Ámbito | Estado      | Propiedad               | Handoff                                                                               |
-| :----- | :---------- | :---------------------- | :------------------------------------------------------------------------------------ |
-| MHB-47 | En revisión | Contrato ESP / SendGrid | Revisión técnica independiente requerida (`task-review`) y validación manual externa. |
-| MHB-46 | Completada  | Servidor Vite/seguridad | Revisión técnica independiente aprobada (`task-review`).                              |
-| MHB-44 | Completada  | Email y compatibilidad  | Revisión técnica independiente aprobada (`task-review`).                              |
-| MHB-45 | Completada  | CI y seguridad          | Revisión técnica independiente aprobada (`task-review`).                              |
-| MHB-41 | Completada  | Tooling y CI            | Revisión técnica independiente aprobada (`task-review`).                              |
-| MHB-40 | Completada  | Gobernanza y revisión   | Revisión aprobada y fusionada a `master` (ver HIST).                                  |
+| Ámbito | Estado     | Propiedad               | Handoff                                                  |
+| :----- | :--------- | :---------------------- | :------------------------------------------------------- |
+| MHB-47 | Completada | Contrato ESP / SendGrid | Revisión técnica independiente aprobada (`task-review`). |
+| MHB-46 | Completada | Servidor Vite/seguridad | Revisión técnica independiente aprobada (`task-review`). |
+| MHB-44 | Completada | Email y compatibilidad  | Revisión técnica independiente aprobada (`task-review`). |
+| MHB-45 | Completada | CI y seguridad          | Revisión técnica independiente aprobada (`task-review`). |
+| MHB-41 | Completada | Tooling y CI            | Revisión técnica independiente aprobada (`task-review`). |
+| MHB-40 | Completada | Gobernanza y revisión   | Revisión aprobada y fusionada a `master` (ver HIST).     |
 
 ## Decisiones y desviaciones vigentes
 
@@ -87,6 +63,6 @@
 
 ## Handoff
 
-- Próxima acción inmediata: revisión técnica independiente (`task-review`) de MHB-47 y validación manual del usuario de `dist/esp-manifest.json` en integración SendGrid externa.
+- Próxima acción inmediata: abrir PR de `feature/mhb-47` a `master` (tras eliminar `docs/superpowers/mhb-47.md`, que es temporal y no se commitea) y mergear con los checks requeridos.
 - Siguiente tarea del roadmap:
-  - MHB-42 ("Spike de loaders y decisión de excepciones JS"): bloqueada hasta completar y mergear MHB-47; no iniciar sin asignación explícita.
+  - MHB-42 ("Spike de loaders y decisión de excepciones JS"): `desbloqueado` una vez mergeado MHB-47 (dependencia MHB-47 satisfecha); no iniciar sin asignación explícita.

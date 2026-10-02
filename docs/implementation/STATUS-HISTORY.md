@@ -4,6 +4,26 @@ Este documento almacena el histórico de revisiones de cierre, tablas de validac
 
 ---
 
+## MHB-47 — Contrato de integración ESP (manifiesto, SendGrid Dynamic y Legacy)
+
+- **Fecha de cierre:** 2026-10-01
+- **Estado:** Completada
+- **Implementador:** Gemini Flash (perfil email/ESP)
+- **Revisor independiente:** `task-review`, aprobado 2026-10-01, rama `feature/mhb-47`, commit base de revisión `f25086d`
+- **Contrato:** `docs/implementation/PLAN.md` (MHB-47)
+
+### Revisión de cierre de MHB-47
+
+- **Veredicto:** Aprobado. Sin hallazgos bloqueantes.
+- **Controles reproducidos (todos Verde):** `check:task-branch`, `lint`, `typecheck`, `test` (787 pass / 0 fail), `format:check`, `build`, `validate-email`, `check:dist-baseline`, `check-size`, `agents:check`, `git diff --check`.
+- **Auditoría del diff:** sin `eslint-disable`, `@ts-ignore`/`@ts-expect-error`, `skip`/`todo`, `any`, `@typedef`, cambios en `ignores`, `tsconfig*.json` ni `file-tree.test.ts`; sin `.js`/`.mjs` nuevos; ningún archivo supera límites; `scripts/esp/manifest` (5 fuentes) y `syntax` (2) respetan el máximo por carpeta. Único cambio en `dist/`: el nuevo `esp-manifest.json`; los `dist/*.html` no cambian.
+- **Criterios:** manifiesto para los seis templates y coherencia con baseline (`check:dist-baseline`, `manifest-check.test.ts`); `{{#if (eq a b)}}` produce ERROR (`esp-syntax-profile.test.ts`); `legacy.tags` `-variable-` (`scripts/esp/manifest`); `esp-legacy-compat` marca `{{#if a}}` y colisión (`esp-legacy-compat.test.ts`); HTML intacto.
+- **Seguridad:** `exampleData` sanea claves sensibles (`email`, `password`, `token`, `*_name`); sin datos personales ni tokens en `dist/esp-manifest.json`. `PLAN.md` actualizado en la misma entrega y `CHANGELOG.md` con entrada.
+- **Revisión manual:** el cierre se registra por instrucción explícita del usuario en el chat (2026-10-01); el consumo real del manifiesto desde su integración SendGrid externa no pudo ser verificado por el revisor.
+- **Riesgos residuales:** la allowlist de helpers/bloques del perfil `sendgrid` y el delimitador `-` de legacy siguen basados en la documentación vigente y no se contrastaron con SendGrid real; no se modelan `<%body%>`, `<%subject%>` ni secciones legacy.
+
+---
+
 ## MHB-46 — Endurecimiento de la API local del servidor Vite
 
 - **Fecha de cierre:** 2026-09-29
