@@ -1,7 +1,8 @@
-// tailwind.email.config.js
+// tailwind.email.config.ts
 
 import defaultTheme from "tailwindcss/defaultTheme.js";
 import emailPreset from "tailwindcss-preset-email";
+import type { Config } from "tailwindcss";
 
 /**
  * Preset de email: emite HEX en lugar de la sintaxis CSS Color 4
@@ -10,7 +11,6 @@ import emailPreset from "tailwindcss-preset-email";
  * preset (screens desktop-first, maxWidth.2xl, fontSize sin lineHeight,
  * fontFamily y letterSpacing en em) para no alterar el diseño existente.
  */
-/** @type {import('tailwindcss').Config} */
 export default {
   presets: [emailPreset],
   darkMode: "media",
@@ -77,4 +77,4 @@ export default {
   corePlugins: {
     preflight: false,
   },
-};
+} satisfies Config;
