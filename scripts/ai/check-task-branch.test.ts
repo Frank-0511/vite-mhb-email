@@ -1,7 +1,5 @@
-// @ts-check
-
 import { describe, expect, test } from "bun:test";
-import { assertTaskBranch, getActiveTaskId, getTaskBranch } from "./check-task-branch.mjs";
+import { assertTaskBranch, getActiveTaskId, getTaskBranch } from "./check-task-branch.ts";
 
 describe("task branch guard", () => {
   test("obtiene el ID MHB activo", () => {

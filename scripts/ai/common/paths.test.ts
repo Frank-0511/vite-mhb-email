@@ -1,6 +1,6 @@
 import path from "node:path";
 import { describe, expect, test } from "bun:test";
-import { projectRoot } from "./constants.mjs";
+import { projectRoot } from "./constants.ts";
 import {
   assertInside,
   canonicalPath,
@@ -8,7 +8,7 @@ import {
   isInside,
   pathState,
   validateRelativePath,
-} from "./paths.mjs";
+} from "./paths.ts";
 
 describe("paths / validateRelativePath", () => {
   test("acepta rutas relativas válidas", () => {

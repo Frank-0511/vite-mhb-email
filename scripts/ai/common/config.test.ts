@@ -1,7 +1,8 @@
 import path from "node:path";
 import { describe, expect, test } from "bun:test";
-import { assertNoTargetOverlaps, loadConfig } from "./config.mjs";
-import { projectRoot } from "./constants.mjs";
+import { assertNoTargetOverlaps, loadConfig } from "./config.ts";
+import { projectRoot } from "./constants.ts";
+import type { TargetConfig } from "./types.ts";
 
 describe("config / loadConfig", () => {
   test("carga y valida exitosamente el archivo real agents.config.json", async () => {
@@ -19,13 +20,13 @@ describe("config / loadConfig", () => {
 
 describe("config / assertNoTargetOverlaps", () => {
   test("lanza error si los targets se anidan o superponen", () => {
-    const overlappingTargets = [
+    const overlappingTargets: TargetConfig[] = [
       {
         source: path.join(projectRoot, "docs/ai/skills"),
         sourceRelative: "docs/ai/skills",
         target: path.join(projectRoot, "folder"),
         targetRelative: "folder",
-        mode: /** @type {'symlink'} */ ("symlink"),
+        mode: "symlink",
         optional: false,
       },
       {
@@ -33,7 +34,7 @@ describe("config / assertNoTargetOverlaps", () => {
         sourceRelative: "docs/ai/skills",
         target: path.join(projectRoot, "folder/subfolder"),
         targetRelative: "folder/subfolder",
-        mode: /** @type {'symlink'} */ ("symlink"),
+        mode: "symlink",
         optional: false,
       },
     ];

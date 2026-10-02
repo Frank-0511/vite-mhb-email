@@ -1,70 +1,22 @@
+import type { Stats } from "node:fs";
 import { lstat, readlink, realpath, stat } from "node:fs/promises";
 import path from "node:path";
-import { projectRoot } from "./constants.mjs";
-
-/**
- * @typedef {Object} PathInspectionAbsent
- * @property {'absent'} kind
- * @property {string} path
- */
-
-/**
- * @typedef {Object} PathInspectionFile
- * @property {'file'} kind
- * @property {string} path
- * @property {import("node:fs").Stats} current
- */
-
-/**
- * @typedef {Object} PathInspectionDirectory
- * @property {'directory'} kind
- * @property {string} path
- * @property {import("node:fs").Stats} current
- */
-
-/**
- * @typedef {Object} PathInspectionInvalid
- * @property {'invalid'} kind
- * @property {string} path
- * @property {import("node:fs").Stats} current
- */
-
-/**
- * @typedef {Object} PathInspectionSymlink
- * @property {'symlink'} kind
- * @property {string} path
- * @property {import("node:fs").Stats} current
- * @property {string} link
- * @property {string} resolved
- * @property {string} canonical
- * @property {import("node:fs").Stats} canonicalState
- */
-
-/**
- * @typedef {Object} PathInspectionBrokenSymlink
- * @property {'broken-symlink'} kind
- * @property {string} path
- * @property {import("node:fs").Stats} current
- * @property {string} link
- * @property {string} resolved
- */
-
-/**
- * @typedef {PathInspectionAbsent | PathInspectionFile | PathInspectionDirectory | PathInspectionInvalid | PathInspectionSymlink | PathInspectionBrokenSymlink} PathInspection
- */
+import { projectRoot } from "./constants.ts";
+import { isEnoent } from "./errors.ts";
+import type { PathInspection } from "./types.ts";
 
 /**
  * Obtiene el estado (`Stats`) de un archivo o enlace mediante `lstat`.
  * Devuelve `null` si el archivo no existe.
  *
  * @param {string} targetPath
- * @returns {Promise<import("node:fs").Stats | null>}
+ * @returns {Promise<Stats | null>}
  */
-export async function pathState(targetPath) {
+export async function pathState(targetPath: string): Promise<Stats | null> {
   try {
     return await lstat(targetPath);
   } catch (error) {
-    if (error?.code === "ENOENT") return null;
+    if (isEnoent(error)) return null;
     throw error;
   }
 }
@@ -76,7 +28,7 @@ export async function pathState(targetPath) {
  * @param {string} field
  * @returns {string} Ruta normalizada
  */
-export function validateRelativePath(value, field) {
+export function validateRelativePath(value: unknown, field: string): string {
   if (typeof value !== "string" || value.trim() === "") {
     throw new Error(`${field} debe ser una ruta relativa no vacía.`);
   }
@@ -97,7 +49,7 @@ export function validateRelativePath(value, field) {
  * @param {string} field
  * @returns {void}
  */
-export function assertInside(parent, child, field) {
+export function assertInside(parent: string, child: string, field: string): void {
   const relative = path.relative(parent, child);
   if (relative === "" || relative === ".." || relative.startsWith(`..${path.sep}`)) {
     throw new Error(`${field} debe permanecer dentro de ${parent}: ${child}`);
@@ -111,7 +63,7 @@ export function assertInside(parent, child, field) {
  * @param {string} child
  * @returns {boolean}
  */
-export function isInside(parent, child) {
+export function isInside(parent: string, child: string): boolean {
   const relative = path.relative(parent, child);
   return relative !== "" && relative !== ".." && !relative.startsWith(`..${path.sep}`);
 }
@@ -122,7 +74,7 @@ export function isInside(parent, child) {
  * @param {string} targetPath
  * @returns {Promise<PathInspection>}
  */
-export async function inspectPath(targetPath) {
+export async function inspectPath(targetPath: string): Promise<PathInspection> {
   const current = await pathState(targetPath);
   if (!current) return { kind: "absent", path: targetPath };
   if (current.isFile()) return { kind: "file", path: targetPath, current };
@@ -144,7 +96,7 @@ export async function inspectPath(targetPath) {
       canonicalState,
     };
   } catch (error) {
-    if (error?.code === "ENOENT") {
+    if (isEnoent(error)) {
       return { kind: "broken-symlink", path: targetPath, current, link, resolved };
     }
     throw error;
@@ -154,10 +106,13 @@ export async function inspectPath(targetPath) {
 /**
  * Verifica que todos los ancestros existentes de un target sean directorios.
  *
- * @param {{ target: string, targetRelative: string }} target
+ * @param {{ target: string; targetRelative: string }} target
  * @returns {Promise<void>}
  */
-export async function validateTargetParent(target) {
+export async function validateTargetParent(target: {
+  target: string;
+  targetRelative: string;
+}): Promise<void> {
   let parent = path.dirname(target.target);
   while (parent !== projectRoot) {
     const parentState = await pathState(parent);
@@ -179,11 +134,11 @@ export async function validateTargetParent(target) {
  * @param {string} targetPath
  * @returns {Promise<string>}
  */
-export async function canonicalPath(targetPath) {
+export async function canonicalPath(targetPath: string): Promise<string> {
   try {
     return await realpath(targetPath);
   } catch (error) {
-    if (error?.code === "ENOENT") return path.resolve(targetPath);
+    if (isEnoent(error)) return path.resolve(targetPath);
     throw error;
   }
 }
