@@ -2,19 +2,19 @@
 
 ## Resumen
 
-- ID activo: ninguno
-- Estado: MHB-47 `Completada` (2026-10-01)
-- Implementador: Gemini Flash
-- Revisor: `task-review` independiente (aprobado 2026-10-01)
-- Rama: `feature/mhb-47` (pendiente de PR y merge a `master`)
+- ID activo: MHB-42
+- Estado: En progreso (2026-10-01)
+- Implementador: Antigravity (perfil TypeScript/tooling)
+- Revisor: orquestador independiente (`task-review`)
+- Rama: `feature/mhb-42`
 - Última actualización: 2026-10-01
-- Contrato activo: `docs/implementation/PLAN.md`
+- Contrato activo: `docs/implementation/PLAN.md` (sección MHB-42)
 
 ## Paquete activo
 
-- Sin paquete activo. MHB-47 cerrado; detalle y revisión de cierre en `STATUS-HISTORY.md`.
-- Controles de cierre (todos Verde): `check:task-branch`, `lint`, `typecheck`, `test` (787 pass), `format:check`, `build`, `validate-email`, `check:dist-baseline`, `check-size`, `agents:check`, `git diff --check`.
-- Riesgos residuales: allowlist del perfil `sendgrid` y delimitador `-` de legacy no contrastados con SendGrid real; no se modelan etiquetas propias de legacy (`<%body%>`, secciones).
+- MHB-42: Spike de loaders de configuración y decisión de excepciones JS antes de MHB-34.
+- Controles: ejecución de spike en rama desechable `spike/mhb-42-throwaway`.
+- Riesgos / bloqueo: ninguno.
 
 ## Baseline vigente
 
