@@ -33,7 +33,7 @@ description: Procedimiento de revisión técnica independiente de tareas complet
      - Tests marcados como `skip` o `todo`.
      - Nuevas excepciones o exclusiones relajantes añadidas a
        `scripts/validators/lint-guards/file-tree.test.ts`.
-     - Archivos `.js` o `.mjs` nuevos (salvo allowlist de MHB-42).
+     - Archivos `.js` o `.mjs` nuevos (salvo allowlist cerrada: `eslint.config.js` y `maizzle.config.js`).
    - Cualquier supresión o exclusión debe figurar aprobada y documentada en
      `STATUS.md` como desviación; en caso contrario, se rechaza la entrega.
    - Los límites de 250 líneas no-test, 400 líneas tests y máximo 8 archivos
