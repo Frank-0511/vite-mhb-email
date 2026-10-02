@@ -3,7 +3,7 @@
 ## Resumen
 
 - ID activo: MHB-42
-- Estado: En progreso (2026-10-01)
+- Estado: En revisión (2026-10-01)
 - Implementador: Antigravity (perfil TypeScript/tooling)
 - Revisor: orquestador independiente (`task-review`)
 - Rama: `feature/mhb-42`
@@ -12,9 +12,15 @@
 
 ## Paquete activo
 
-- MHB-42: Spike de loaders de configuración y decisión de excepciones JS antes de MHB-34.
-- Controles: ejecución de spike en rama desechable `spike/mhb-42-throwaway`.
-- Riesgos / bloqueo: ninguno.
+- MHB-42: Spike de loaders de configuración y decisión de excepciones JS concluido.
+- Hechos de entrega:
+  1. Inventario de 22 archivos (1793 l.): 20 convertibles a `.ts` sin excepción (`postcss.config`, `tailwind.config`, `tailwind.email.config`, `selectors.js` y 16 módulos/tests en `scripts/ai/**`).
+  2. Allowlist cerrada aprobada por el usuario: `eslint.config.js` (excepción obligatoria por `jiti >= 2.2.0` en ESLint 10.11) y `maizzle.config.js` (wrapper de 1 línea a `maizzle.config.ts`).
+  3. Dimensionamiento estricto: `tsc --noEmit` arrojó solo 5 errores (TS2339 en `scripts/ai/`); decisión aprobada de mantener MHB-34 como ID único indiviso (umbral >150 errores no alcanzado).
+  4. Linting con tipos: `parserOptions.project: ["./tsconfig.json"]` resuelve todos los archivos sin regresiones ni variación de tiempo (~4.0s); 42 guards de MHB-37 y 5 límites de `file-tree` verdes.
+  5. Contratos de MHB-34 y MHB-36 actualizados en `PLAN.md`; `git diff master...HEAD` limitado a `docs/implementation/**`; sin cambios en dependencias ni `tsconfig*.json`.
+- Controles de entrega (todos Verde): `check:task-branch`, `lint:md`, `format:check`, `git diff --check`, `check:dist-baseline`, `agents:check`.
+- Riesgos residuales: ninguno; spike puramente documental en la rama entregable. `CHANGELOG.md` sin entrada declarada por ausencia de efecto observable.
 
 ## Baseline vigente
 
@@ -44,6 +50,8 @@
 
 ## Decisiones y desviaciones vigentes
 
+- **MHB-42 — Allowlist cerrada de excepciones JS aprobada (2026-10-01):** `eslint.config.js` como excepción de terceros obligatoria (ESLint 10.11.0 requiere `jiti >= 2.2.0`; repo tiene `jiti@1.21.7`) y `maizzle.config.js` como wrapper de 1 línea (`export { default } from "./maizzle.config.ts";`) para soportar `maizzle build` estándar en `@maizzle/framework@5.5.0`. Los 20 archivos restantes son 100% convertibles a `.ts` sin excepciones.
+- **MHB-42 — Decisión de división de MHB-34 aprobada (2026-10-01):** MHB-34 se mantiene como ID único indiviso (conteo estricto combinado: 5 errores TS2339 en `scripts/ai/`, 0 errores en otras carpetas; umbral >150 errores no alcanzado).
 - **MHB-47 — Ampliación de alcance acordada (2026-09-29):** Soporte de SendGrid Legacy (etiquetas -variable-) además de Dynamic Templates. La fuente de verdad sigue siendo {{ }}; legacy se resuelve mediante el campo legacy del manifiesto y la regla esp-legacy-compat (WARNING). Delimitador por defecto: "-".
 - **MHB-46 — Ajuste de alcance acordado (2026-09-29):** Inclusión de `scripts/vite/services/render/request-handler.ts` (y tests), endpoint 6 (`POST /api/components/:name/render`) en superficies autorizadas, y `requireJson: false` para endpoints de caché (`/api/cache/invalidate`, `/api/cache/clean`) por ausencia de cuerpo en el frontend.
 - **D1 — Preset para email (aprobada 2026-09-25, MHB-44):** Adopción de `tailwindcss-preset-email@1.4.2` para forzar salida de colores en HEX y medidas en px, neutralizando discrepancias de layout en `tailwind.email.config.js`.
@@ -63,6 +71,6 @@
 
 ## Handoff
 
-- Próxima acción inmediata: abrir PR de `feature/mhb-47` a `master` (tras eliminar `docs/superpowers/mhb-47.md`, que es temporal y no se commitea) y mergear con los checks requeridos.
+- Próxima acción inmediata: revisión técnica independiente de MHB-42 con skill `task-review` sobre `feature/mhb-42`, merge a `master` (tras eliminar `docs/superpowers/mhb-42.md` y `docs/superpowers/mhb-42/`, temporales no commiteados).
 - Siguiente tarea del roadmap:
-  - MHB-42 ("Spike de loaders y decisión de excepciones JS"): `desbloqueado` una vez mergeado MHB-47 (dependencia MHB-47 satisfecha); no iniciar sin asignación explícita.
+  - MHB-34 ("Cierre total y modo estricto TypeScript"): `desbloqueado` una vez mergeado MHB-42; no iniciar sin asignación explícita.
