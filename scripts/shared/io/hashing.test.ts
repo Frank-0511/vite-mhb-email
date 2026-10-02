@@ -11,7 +11,7 @@ import {
   isManagedCopy,
 } from "./hashing.ts";
 
-const projectRoot = path.resolve(import.meta.dirname, "../../..");
+const projectRoot = path.resolve(import.meta.dirname ?? ".", "../../..");
 
 describe("hashing / marcas de copia administrada", () => {
   test("copyMarker e isManagedCopy identifican marcas generadas", async () => {

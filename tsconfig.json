@@ -5,16 +5,14 @@
     "target": "es2022",
     "module": "nodenext",
     "moduleResolution": "nodenext",
-
-    /* ── Modo JS con JSDoc y convivencia TS ── */
-    "allowJs": true,
-    "checkJs": true,
     "noEmit": true,
 
-    /* ── Rigor gradual para JS (estricto en tsconfig.strict.json) ── */
-    "strict": false,
-    "noImplicitAny": false,
-    "strictNullChecks": false,
+    /* ── Modo estricto único (MHB-34) ── */
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "verbatimModuleSyntax": true,
+    "erasableSyntaxOnly": true,
 
     /* ── Interop y resolución ── */
     "esModuleInterop": true,
@@ -30,16 +28,7 @@
   /*
    * Cobertura integral del proyecto: configs, scripts, src y tests.
    */
-  "include": [
-    "types/**/*.d.ts",
-    "*.config.js",
-    "*.config.ts",
-    "scripts/**/*.js",
-    "scripts/**/*.mjs",
-    "scripts/**/*.ts",
-    "src/**/*.js",
-    "src/**/*.ts"
-  ],
+  "include": ["types/**/*.d.ts", "*.config.ts", "scripts/**/*.ts", "src/**/*.ts"],
 
   /*
    * Excluir artefactos de build y dependencias.
