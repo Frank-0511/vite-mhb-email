@@ -162,18 +162,47 @@ describe("check-migration-inventory (MHB-29)", () => {
       expect(results.totalCurrentTs).toBeGreaterThanOrEqual(2);
     });
 
-    it("falla en modo requireZero si aún existen archivos JS/MJS", () => {
+    it("pasa en modo requireZero con la allowlist cerrada en el proyecto real (MHB-34)", () => {
       const baselinePath = new URL("./inventory-baseline.json", import.meta.url);
       const baselineData = JSON.parse(readFileSync(baselinePath, "utf8")) as BaselineData;
       const rootDir = fileURLToPath(new URL("../..", import.meta.url));
       const results = checkInventory(rootDir, baselineData, { requireZero: true });
-      expect(results.allPassed).toBe(false);
+      expect(results.allPassed).toBe(true);
       expect(results.requireZero).toBe(true);
-      expect(results.totalCurrentJs).toBeGreaterThan(0);
+      expect(results.totalCurrentJs).toBe(2);
 
       const report = formatInventoryReport(results);
       expect(report).toContain("[MODO --require-zero ACTIVO]");
-      expect(report).toContain("Modo estricto activo (--require-zero)");
+      expect(report).toContain("allowlist cerrada");
+    });
+
+    it("falla en modo requireZero si existen archivos JS fuera de la allowlist cerrada", () => {
+      const mockResults: InventoryResults = {
+        layerResults: [
+          {
+            key: "layer-5-tooling",
+            name: "Tooling",
+            targetTask: "MHB-34",
+            baselineJs: 1,
+            currentJs: 1,
+            currentTs: 10,
+            passed: false,
+            jsFiles: ["scripts/unmigrated.js"],
+            tsFiles: [],
+          },
+        ],
+        totalBaselineJs: 1,
+        totalCurrentJs: 1,
+        totalCurrentTs: 10,
+        requireZero: true,
+        allPassed: false,
+        unassignedFiles: [],
+      };
+
+      const report = formatInventoryReport(mockResults);
+      expect(report).toContain("[MODO --require-zero ACTIVO]");
+      expect(report).toContain("fuera de la allowlist cerrada");
+      expect(report).toContain("❌ Fallido");
     });
 
     it("pasa en modo requireZero cuando el conteo de JS es 0", () => {

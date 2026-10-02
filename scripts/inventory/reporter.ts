@@ -69,9 +69,13 @@ export function formatInventoryReport(results: InventoryResults): string {
     "═══════════════════════════════════════════════════════════════════════════════════════════",
   );
 
-  if (results.requireZero && results.totalCurrentJs > 0) {
+  if (results.requireZero && !results.allPassed) {
     lines.push(
-      `\n❌ Modo estricto activo (--require-zero): se requiere que el conteo de JS/MJS sea 0, pero aún quedan ${results.totalCurrentJs} archivos.`,
+      `\n❌ Modo estricto activo (--require-zero): se detectaron archivos JS/MJS pendientes fuera de la allowlist cerrada.`,
+    );
+  } else if (results.requireZero && results.allPassed) {
+    lines.push(
+      `\n✅ Modo estricto activo (--require-zero): repositorio migrado a TypeScript con allowlist cerrada (eslint.config.js, maizzle.config.js).`,
     );
   }
 

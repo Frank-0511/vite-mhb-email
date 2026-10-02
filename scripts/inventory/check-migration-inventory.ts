@@ -3,10 +3,11 @@
  * @fileoverview Control determinista de inventario para la migración gradual a TypeScript.
  *
  * Clasifica los archivos JavaScript, MJS y TypeScript propios por capa (MHB-30 a MHB-34)
- * y valida que el recuento de archivos JS/MJS no supere el baseline versionado decreciente.
+ * y valida que el recuento de archivos JS/MJS no supere el baseline versionado decreciente
+ * o alcance cero en modo estricto respetando la allowlist cerrada de MHB-42.
  *
  * Uso:
- *   bun scripts/inventory/check-migration-inventory.ts
+ *   bun scripts/inventory/check-migration-inventory.ts [--require-zero]
  */
 
 import { readFileSync } from "node:fs";
@@ -20,6 +21,13 @@ import { formatInventoryReport } from "./reporter.ts";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, "../..");
+
+/**
+ * Allowlist cerrada aprobada en MHB-42:
+ * 1. eslint.config.js (excepción obligatoria por jiti >= 2.2.0 en ESLint 10.11)
+ * 2. maizzle.config.js (wrapper de 1 línea a maizzle.config.ts para maizzle build)
+ */
+export const CLOSED_JS_ALLOWLIST = new Set<string>(["eslint.config.js", "maizzle.config.js"]);
 
 /**
  * Opciones para la verificación de inventario.
@@ -60,7 +68,10 @@ export function checkInventory(
       return false;
     });
 
-    const passed = requireZero ? layerJs.length === 0 : layerJs.length <= config.baselineJsCount;
+    const unallowedLayerJs = layerJs.filter((file) => !CLOSED_JS_ALLOWLIST.has(file));
+    const passed = requireZero
+      ? unallowedLayerJs.length === 0
+      : layerJs.length <= config.baselineJsCount;
 
     return {
       key,
@@ -83,9 +94,11 @@ export function checkInventory(
   const totalBaselineJs = baselineData.totalBaselineJsCount;
   const totalCurrentJs = jsFiles.length;
   const totalCurrentTs = tsFiles.length;
+  const unallowedTotalJs = jsFiles.filter((file) => !CLOSED_JS_ALLOWLIST.has(file));
+
   const allPassed =
     layerResults.every((layer) => layer.passed) &&
-    (requireZero ? totalCurrentJs === 0 : totalCurrentJs <= totalBaselineJs) &&
+    (requireZero ? unallowedTotalJs.length === 0 : totalCurrentJs <= totalBaselineJs) &&
     unassignedFiles.length === 0;
 
   return {
@@ -111,9 +124,9 @@ export function main(): void {
   console.log(`\n${report}\n`);
 
   if (!results.allPassed) {
-    if (requireZero && results.totalCurrentJs > 0) {
+    if (requireZero) {
       console.error(
-        `❌ Cierre estricto fallido: aún quedan ${results.totalCurrentJs} archivos JS/MJS propios pendientes de migrar a TypeScript.`,
+        "❌ Cierre estricto fallido: aún quedan archivos JS/MJS propios fuera de la allowlist cerrada pendientes de migrar a TypeScript.",
       );
     } else {
       console.error(
