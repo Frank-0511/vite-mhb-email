@@ -1,5 +1,5 @@
 import { realpath } from "node:fs/promises";
-import { isManagedCopy } from "./hashing.mjs";
+import { isManagedCopy } from "../../shared/io/hashing.ts";
 import { inspectPath } from "./paths.mjs";
 
 /**

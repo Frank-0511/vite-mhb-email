@@ -2,13 +2,21 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { describe, expect, test } from "bun:test";
-import { generatedMarker, projectRoot } from "./constants.mjs";
-import { copyMarker, expectedCopy, hashFile, hashSource, isManagedCopy } from "./hashing.mjs";
+import {
+  DEFAULT_GENERATED_MARKER,
+  copyMarker,
+  expectedCopy,
+  hashFile,
+  hashSource,
+  isManagedCopy,
+} from "./hashing.ts";
+
+const projectRoot = path.resolve(import.meta.dirname, "../../..");
 
 describe("hashing / marcas de copia administrada", () => {
   test("copyMarker e isManagedCopy identifican marcas generadas", async () => {
     const marker = copyMarker("docs/ai/AGENTS.md", "abcdef123456");
-    expect(marker).toContain(generatedMarker);
+    expect(marker).toContain(DEFAULT_GENERATED_MARKER);
     expect(marker).toContain("source=docs/ai/AGENTS.md");
     expect(marker).toContain("sha256=abcdef123456");
 

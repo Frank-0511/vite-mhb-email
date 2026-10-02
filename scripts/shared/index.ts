@@ -6,6 +6,8 @@
 export * from "./io/paths.ts";
 export * from "./io/path-safety.ts";
 export * from "./io/format-helpers.ts";
+export * from "./io/hashing.ts";
+export * from "./io/gitignore.ts";
 
 // Templates & Handlebars
 export * from "./template/handlebars.ts";

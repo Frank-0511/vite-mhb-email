@@ -23,7 +23,7 @@ export {
   validateTargetParent,
 } from "./common/paths.mjs";
 
-export { expectedGitignoreBlock, replaceGitignoreBlock } from "./common/gitignore.mjs";
+export { expectedGitignoreBlock, replaceGitignoreBlock } from "../shared/io/gitignore.ts";
 
 export {
   copyMarker,
@@ -31,7 +31,7 @@ export {
   hashFile,
   hashSource,
   isManagedCopy,
-} from "./common/hashing.mjs";
+} from "../shared/io/hashing.ts";
 
 export { classifySource, classifyTarget } from "./common/classifier.mjs";
 
