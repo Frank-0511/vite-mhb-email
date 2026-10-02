@@ -1,11 +1,20 @@
-// @ts-check
 import { builtinModules } from "node:module";
 
-export const API_ROUTE_MESSAGE =
+export interface SelectorRule {
+  selector: string;
+  message: string;
+}
+
+export interface RestrictedImportPattern {
+  regex: string;
+  message: string;
+}
+
+export const API_ROUTE_MESSAGE: string =
   "No uses rutas de API hardcodeadas. Importa API_ROUTES o helpers de scripts/shared/contracts/routes/api-routes.ts.";
 
 // Magic strings que deben importarse desde scripts/shared/contracts/
-export const CONTRACT_LITERAL_SELECTORS = [
+export const CONTRACT_LITERAL_SELECTORS: readonly SelectorRule[] = [
   { selector: "Literal[value=/^\\/api\\//]", message: API_ROUTE_MESSAGE },
   { selector: "TemplateElement[value.raw=/^\\/api\\//]", message: API_ROUTE_MESSAGE },
   {
@@ -24,9 +33,9 @@ export const CONTRACT_LITERAL_SELECTORS = [
     selector: 'Literal[value="theme-changed"]',
     message: "Usa EVENTS.THEME_CHANGED de scripts/shared/contracts/constants/events.ts.",
   },
-];
+] as const;
 
-export const LOCAL_STORAGE_LITERAL_SELECTOR = {
+export const LOCAL_STORAGE_LITERAL_SELECTOR: SelectorRule = {
   selector:
     'CallExpression[callee.property.name=/^(getItem|setItem|removeItem)$/]:matches([callee.object.name="localStorage"], [callee.object.object.name="window"][callee.object.property.name="localStorage"]) > Literal:first-child',
   message:
@@ -34,17 +43,17 @@ export const LOCAL_STORAGE_LITERAL_SELECTOR = {
 };
 
 // 1. Sin enum: TSEnumDeclaration
-export const NO_ENUM_SELECTOR = {
+export const NO_ENUM_SELECTOR: SelectorRule = {
   selector: "TSEnumDeclaration",
   message:
     "No uses enum o const enum. Usa objetos congelados con 'as const' y tipos derivados ('typeof OBJ[keyof typeof OBJ]').",
 };
 
 // Reglas sintácticas base para todo archivo TypeScript
-export const BASE_TS_SYNTAX_SELECTORS = [NO_ENUM_SELECTOR];
+export const BASE_TS_SYNTAX_SELECTORS: readonly SelectorRule[] = [NO_ENUM_SELECTOR];
 
 // 3. Sin reexports fuera de index.ts
-export const NO_REEXPORT_SELECTORS = [
+export const NO_REEXPORT_SELECTORS: readonly SelectorRule[] = [
   {
     selector: "ExportNamedDeclaration[source]",
     message: "Solo los barrels index.ts pueden reexportar desde otros módulos.",
@@ -61,7 +70,7 @@ export const NO_REEXPORT_SELECTORS = [
 ];
 
 // 4. types.ts / types/** sin runtime
-export const TYPES_ZERO_RUNTIME_SELECTORS = [
+export const TYPES_ZERO_RUNTIME_SELECTORS: readonly SelectorRule[] = [
   {
     selector: "VariableDeclaration",
     message:
@@ -84,7 +93,7 @@ export const TYPES_ZERO_RUNTIME_SELECTORS = [
 ];
 
 // 5. constants.ts / constants/** sin funciones ni declaraciones de tipo
-export const CONSTANTS_SELECTORS = [
+export const CONSTANTS_SELECTORS: readonly SelectorRule[] = [
   {
     selector: ":matches(FunctionDeclaration, ArrowFunctionExpression, FunctionExpression)",
     message: "Los archivos constants.ts y constants/** no deben contener funciones.",
@@ -95,12 +104,12 @@ export const CONSTANTS_SELECTORS = [
   },
 ];
 
-const nodeBuiltinPattern = `^(node:.*|${builtinModules.join("|")})(/.*)?$`;
+const nodeBuiltinPattern: string = `^(node:.*|${builtinModules.join("|")})(/.*)?$`;
 
-export const NODE_BUILTIN_IN_CONTRACTS = {
+export const NODE_BUILTIN_IN_CONTRACTS: RestrictedImportPattern = {
   regex: nodeBuiltinPattern,
   message: "Los contratos compartidos deben ser puros e independientes de Node.js.",
 };
 
-export const OUTSIDE_CONTRACTS_MESSAGE =
+export const OUTSIDE_CONTRACTS_MESSAGE: string =
   "Los contratos compartidos no deben importar módulos externos a contracts/.";
