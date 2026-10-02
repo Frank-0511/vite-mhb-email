@@ -27,7 +27,7 @@
         "maizzle": "1.2.4",
         "markdownlint-cli2": "0.23.3",
         "nodemailer": "10.0.10",
-        "postcss": "8.5.23",
+        "postcss": "8.5.28",
         "prettier": "3.9.9",
         "puppeteer": "25.12.0",
         "stylelint": "17.15.0",
