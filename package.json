@@ -69,10 +69,10 @@
     "a11y-check": "bun scripts/validators/check-a11y.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check:task-branch": "bun scripts/ai/check-task-branch.mjs",
+    "check:task-branch": "bun scripts/ai/check-task-branch.ts",
     "prepare": "husky",
-    "agents:sync": "node scripts/ai/agents-sync.mjs",
-    "agents:check": "node scripts/ai/agents-check.mjs"
+    "agents:sync": "node scripts/ai/agents-sync.ts",
+    "agents:check": "node scripts/ai/agents-check.ts"
   },
   "lint-staged": {
     "scripts/**/*.{js,mjs,ts}": [

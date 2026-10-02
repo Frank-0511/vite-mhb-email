@@ -2,9 +2,9 @@ import { mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { describe, expect, test } from "bun:test";
-import { classifySource, classifyTarget } from "./classifier.mjs";
-import { projectRoot } from "./constants.mjs";
-import { inspectPath } from "./paths.mjs";
+import { classifySource, classifyTarget } from "./classifier.ts";
+import { projectRoot } from "./constants.ts";
+import { inspectPath } from "./paths.ts";
 
 describe("classifier / classifySource", () => {
   test("rechaza fuentes que sean symlinks", async () => {

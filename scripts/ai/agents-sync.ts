@@ -2,26 +2,22 @@
 
 import { mkdir, readFile, symlink, writeFile } from "node:fs/promises";
 import path from "node:path";
-import {
-  classifySource,
-  classifyTarget,
-  expectedCopy,
-  expectedGitignoreBlock,
-  formatError,
-  loadConfig,
-  pathState,
-  projectRoot,
-  replaceGitignoreBlock,
-  validateTargetParent,
-} from "./agents-common.mjs";
+import { classifySource, classifyTarget } from "./common/classifier.ts";
+import { loadConfig } from "./common/config.ts";
+import { projectRoot } from "./common/constants.ts";
+import { formatError, isEnoent } from "./common/errors.ts";
+import { pathState, validateTargetParent } from "./common/paths.ts";
+import type { GitignorePlan, SyncPlan, SyncPlanEntry } from "./common/types.ts";
+import { expectedGitignoreBlock, replaceGitignoreBlock } from "../shared/io/gitignore.ts";
+import { expectedCopy } from "../shared/io/hashing.ts";
 
-async function planGitignore(patterns) {
+async function planGitignore(patterns: readonly string[]): Promise<GitignorePlan> {
   const gitignorePath = path.join(projectRoot, ".gitignore");
   let current = "";
   try {
     current = await readFile(gitignorePath, "utf8");
   } catch (error) {
-    if (error?.code !== "ENOENT") throw error;
+    if (!isEnoent(error)) throw error;
   }
 
   return {
@@ -31,16 +27,16 @@ async function planGitignore(patterns) {
   };
 }
 
-export async function buildSyncPlan() {
+export async function buildSyncPlan(): Promise<SyncPlan> {
   const config = await loadConfig();
-  const entries = [];
+  const entries: SyncPlanEntry[] = [];
 
   for (const target of config.targets) {
     const source = await classifySource(target);
 
     if (source.kind === "absent") {
       if (target.optional && !(await pathState(target.target))) {
-        entries.push({ target, action: "omit" });
+        entries.push({ target, action: "omit", expected: null });
         continue;
       }
       throw new Error(`No existe la fuente ${target.sourceRelative}.`);
@@ -83,7 +79,7 @@ export async function buildSyncPlan() {
   return { config, entries, gitignore: await planGitignore(config.gitignore) };
 }
 
-async function applyEntry(entry) {
+async function applyEntry(entry: SyncPlanEntry): Promise<void> {
   if (entry.action === "omit") {
     console.log(`omitido ${entry.target.targetRelative}: fuente opcional ausente`);
     return;
@@ -95,7 +91,9 @@ async function applyEntry(entry) {
 
   await mkdir(path.dirname(entry.target.target), { recursive: true });
   if (entry.target.mode === "copy") {
-    await writeFile(entry.target.target, entry.expected, "utf8");
+    if (entry.expected !== null) {
+      await writeFile(entry.target.target, entry.expected, "utf8");
+    }
     console.log(
       `${entry.target.targetRelative}: ${entry.action === "create" ? "copia creada" : "copia actualizada"}`,
     );
@@ -114,7 +112,7 @@ async function applyEntry(entry) {
   console.log(`${entry.target.targetRelative}: enlace creado`);
 }
 
-async function main() {
+async function main(): Promise<void> {
   const plan = await buildSyncPlan();
   for (const entry of plan.entries) await applyEntry(entry);
 
@@ -126,7 +124,7 @@ async function main() {
   }
 }
 
-main().catch((error) => {
+main().catch((error: unknown) => {
   console.error(`agents:sync falló: ${formatError(error)}`);
   process.exitCode = 1;
 });

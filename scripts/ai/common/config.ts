@@ -1,23 +1,9 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { configPath as defaultManifestPath, projectRoot, scriptDirectory } from "./constants.mjs";
-import { assertInside, isInside, validateRelativePath } from "./paths.mjs";
-
-/**
- * @typedef {Object} TargetConfig
- * @property {string} source Ruta absoluta a la fuente canónica
- * @property {string} sourceRelative Ruta relativa con separadores posix
- * @property {string} target Ruta absoluta al destino administrado
- * @property {string} targetRelative Ruta relativa con separadores posix
- * @property {'symlink' | 'copy'} mode Modo de sincronización
- * @property {boolean} optional Indica si la ausencia de la fuente omite el target
- */
-
-/**
- * @typedef {Object} LoadedAgentsConfig
- * @property {TargetConfig[]} targets Lista de targets validados
- * @property {string[]} gitignore Patrones para .gitignore
- */
+import { configPath as defaultManifestPath, projectRoot, scriptDirectory } from "./constants.ts";
+import { isEnoent } from "./errors.ts";
+import { assertInside, isInside, validateRelativePath } from "./paths.ts";
+import type { LoadedAgentsConfig, TargetConfig } from "./types.ts";
 
 /**
  * Valida y normaliza un objeto target individual del manifiesto.
@@ -28,12 +14,17 @@ import { assertInside, isInside, validateRelativePath } from "./paths.mjs";
  * @param {string} manifestPath
  * @returns {TargetConfig}
  */
-function validateTargetEntry(entry, index, seenTargets, manifestPath) {
+function validateTargetEntry(
+  entry: unknown,
+  index: number,
+  seenTargets: Set<string>,
+  manifestPath: string,
+): TargetConfig {
   if (!entry || typeof entry !== "object" || Array.isArray(entry)) {
     throw new Error(`targets[${index}] debe ser un objeto.`);
   }
 
-  const targetObj = /** @type {Record<string, unknown>} */ (entry);
+  const targetObj = entry as Record<string, unknown>;
   const sourceRelative = validateRelativePath(targetObj.source, `targets[${index}].source`);
   const targetRelative = validateRelativePath(targetObj.target, `targets[${index}].target`);
   const source = path.resolve(projectRoot, sourceRelative);
@@ -50,13 +41,13 @@ function validateTargetEntry(entry, index, seenTargets, manifestPath) {
     throw new Error(`targets[${index}].target no puede administrar scripts/ai.`);
   }
   if (seenTargets.has(target)) {
-    throw new Error(`Target duplicado: ${targetObj.target}`);
+    throw new Error(`Target duplicado: ${String(targetObj.target)}`);
   }
   seenTargets.add(target);
 
   const mode = targetObj.mode ?? "symlink";
   if (mode !== "symlink" && mode !== "copy") {
-    throw new Error(`Modo no soportado para ${targetObj.target}: ${mode}`);
+    throw new Error(`Modo no soportado para ${String(targetObj.target)}: ${String(mode)}`);
   }
 
   return {
@@ -72,9 +63,10 @@ function validateTargetEntry(entry, index, seenTargets, manifestPath) {
 /**
  * Valida que no existan superposiciones o anidamientos ilegales entre targets.
  *
- * @param {TargetConfig[]} targets
+ * @param {readonly TargetConfig[]} targets
+ * @returns {void}
  */
-export function assertNoTargetOverlaps(targets) {
+export function assertNoTargetOverlaps(targets: readonly TargetConfig[]): void {
   for (let left = 0; left < targets.length; left += 1) {
     for (let right = left + 1; right < targets.length; right += 1) {
       if (
@@ -95,12 +87,14 @@ export function assertNoTargetOverlaps(targets) {
  * @param {string} [manifestPath] Ruta al archivo de configuración (por defecto `configPath`).
  * @returns {Promise<LoadedAgentsConfig>}
  */
-export async function loadConfig(manifestPath = defaultManifestPath) {
-  let raw;
+export async function loadConfig(
+  manifestPath: string = defaultManifestPath,
+): Promise<LoadedAgentsConfig> {
+  let raw: string;
   try {
     raw = await readFile(manifestPath, "utf8");
   } catch (error) {
-    if (error && typeof error === "object" && "code" in error && error.code === "ENOENT") {
+    if (isEnoent(error)) {
       throw new Error(`No existe el manifiesto ${path.relative(projectRoot, manifestPath)}.`, {
         cause: error,
       });
@@ -108,9 +102,9 @@ export async function loadConfig(manifestPath = defaultManifestPath) {
     throw error;
   }
 
-  let config;
+  let config: Record<string, unknown>;
   try {
-    config = JSON.parse(raw);
+    config = JSON.parse(raw) as Record<string, unknown>;
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     throw new Error(`El manifiesto no contiene JSON válido: ${message}`, {
@@ -128,12 +122,12 @@ export async function loadConfig(manifestPath = defaultManifestPath) {
     throw new Error("agents.config.json debe declarar gitignore como arreglo.");
   }
 
-  const seenTargets = new Set();
-  const targets = config.targets.map((entry, index) =>
+  const seenTargets = new Set<string>();
+  const targets = (config.targets as unknown[]).map((entry, index) =>
     validateTargetEntry(entry, index, seenTargets, manifestPath),
   );
 
-  const gitignore = config.gitignore.map((value, index) => {
+  const gitignore = (config.gitignore as unknown[]).map((value, index) => {
     const normalized = validateRelativePath(value, `gitignore[${index}]`);
     return normalized.split(path.sep).join("/");
   });

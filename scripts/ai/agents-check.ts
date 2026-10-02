@@ -2,20 +2,16 @@
 
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import {
-  classifySource,
-  classifyTarget,
-  expectedCopy,
-  expectedGitignoreBlock,
-  formatError,
-  gitignoreEnd,
-  gitignoreStart,
-  loadConfig,
-  pathState,
-  projectRoot,
-} from "./agents-common.mjs";
+import { classifySource, classifyTarget } from "./common/classifier.ts";
+import { loadConfig } from "./common/config.ts";
+import { gitignoreEnd, gitignoreStart, projectRoot } from "./common/constants.ts";
+import { formatError, isEnoent } from "./common/errors.ts";
+import { pathState } from "./common/paths.ts";
+import type { TargetConfig } from "./common/types.ts";
+import { expectedGitignoreBlock } from "../shared/io/gitignore.ts";
+import { expectedCopy } from "../shared/io/hashing.ts";
 
-async function checkTarget(target) {
+async function checkTarget(target: TargetConfig): Promise<string | null> {
   let source;
   try {
     source = await classifySource(target);
@@ -47,13 +43,13 @@ async function checkTarget(target) {
   return actual === expected ? null : `${target.targetRelative} tiene drift`;
 }
 
-async function checkGitignore(patterns) {
+async function checkGitignore(patterns: readonly string[]): Promise<string | null> {
   const gitignorePath = path.join(projectRoot, ".gitignore");
-  let content;
+  let content: string;
   try {
     content = await readFile(gitignorePath, "utf8");
   } catch (error) {
-    if (error?.code === "ENOENT") return "falta .gitignore";
+    if (isEnoent(error)) return "falta .gitignore";
     throw error;
   }
 
@@ -75,9 +71,9 @@ async function checkGitignore(patterns) {
     : "el bloque administrado de .gitignore tiene drift";
 }
 
-async function main() {
+async function main(): Promise<void> {
   const config = await loadConfig();
-  const failures = [];
+  const failures: string[] = [];
 
   for (const target of config.targets) {
     try {
@@ -99,7 +95,7 @@ async function main() {
   console.log(`agents:check correcto (${config.targets.length} targets declarados).`);
 }
 
-main().catch((error) => {
+main().catch((error: unknown) => {
   console.error(`agents:check falló: ${formatError(error)}`);
   process.exitCode = 1;
 });

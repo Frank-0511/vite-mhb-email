@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
@@ -14,7 +14,7 @@ const activeTaskPattern = /^- ID activo:\s*(MHB-\d+)\s*$/m;
  * @param {string} status
  * @returns {string | null}
  */
-export function getActiveTaskId(status) {
+export function getActiveTaskId(status: string): string | null {
   return status.match(activeTaskPattern)?.[1] ?? null;
 }
 
@@ -24,7 +24,7 @@ export function getActiveTaskId(status) {
  * @param {string} taskId
  * @returns {string}
  */
-export function getTaskBranch(taskId) {
+export function getTaskBranch(taskId: string): string {
   return `feature/${taskId.toLowerCase()}`;
 }
 
@@ -35,7 +35,7 @@ export function getTaskBranch(taskId) {
  * @param {string} branch
  * @returns {void}
  */
-export function assertTaskBranch(taskId, branch) {
+export function assertTaskBranch(taskId: string | null, branch: string): void {
   if (!taskId || branch === getTaskBranch(taskId)) return;
 
   throw new Error(
@@ -43,14 +43,14 @@ export function assertTaskBranch(taskId, branch) {
   );
 }
 
-function getCurrentBranch() {
+function getCurrentBranch(): string {
   return execFileSync("git", ["branch", "--show-current"], {
     cwd: projectRoot,
     encoding: "utf8",
   }).trim();
 }
 
-function main() {
+function main(): void {
   const statusPath = path.join(projectRoot, "docs/implementation/STATUS.md");
   const taskId = getActiveTaskId(readFileSync(statusPath, "utf8"));
   const branch = getCurrentBranch();

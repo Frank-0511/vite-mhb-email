@@ -9,8 +9,8 @@ Agregar al `package.json` del proyecto:
 ```json
 {
   "scripts": {
-    "agents:sync": "node scripts/ai/agents-sync.mjs",
-    "agents:check": "node scripts/ai/agents-check.mjs"
+    "agents:sync": "node scripts/ai/agents-sync.ts",
+    "agents:check": "node scripts/ai/agents-check.ts"
   }
 }
 ```
