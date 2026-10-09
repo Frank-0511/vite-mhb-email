@@ -1,5 +1,6 @@
-import { globSync } from "glob";
+import { readdirSync } from "node:fs";
 import { rm } from "node:fs/promises";
+import { join } from "node:path";
 import { getEmailComponentFolders } from "./scripts/shared/index.ts";
 
 interface MaizzleConfig {
@@ -71,7 +72,7 @@ export default {
     const nonHtml = files.filter((f) => !f.endsWith(".html"));
     await Promise.all(nonHtml.map((f) => rm(f, { force: true })));
 
-    const dirs = globSync("dist/*/");
-    await Promise.all(dirs.map((d) => rm(d, { recursive: true, force: true })));
+    const dirs = readdirSync("dist", { withFileTypes: true }).filter((e) => e.isDirectory());
+    await Promise.all(dirs.map((d) => rm(join("dist", d.name), { recursive: true, force: true })));
   },
 };

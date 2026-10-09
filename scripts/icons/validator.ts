@@ -2,9 +2,8 @@
  * @fileoverview Validador de referencias a <x-email-icon> en plantillas y layouts de email.
  */
 
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, globSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
-import { globSync } from "glob";
 import { c, paint } from "../shared/index.ts";
 
 export interface IconValidationIssue {
@@ -32,7 +31,7 @@ import { ICON_NAME_CONVENTION_REGEX } from "../shared/contracts/constants/email-
 export function validateIconReferences(projectRootOverride?: string): IconValidationSummary {
   const root = projectRootOverride ?? process.cwd();
   const searchPattern = "src/emails/**/*.html";
-  const htmlFiles = globSync(searchPattern, { cwd: root });
+  const htmlFiles = globSync(searchPattern, { cwd: root }).sort();
   const iconsDir = join(root, "src/emails/assets/icons");
 
   const issues: IconValidationIssue[] = [];

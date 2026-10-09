@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 /** @fileoverview Descubre HTML compilado, ejecuta reglas y formatea reportes. */
-import { readFileSync } from "node:fs";
-import { globSync } from "glob";
+import { globSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { projectRoot, Severity, type Issue } from "./email-rules/context.ts";
 import { rules, runRules } from "./email-rules/rules/index.ts";
@@ -133,7 +132,7 @@ export function validateEmailHtml(
 ): ValidationSummary {
   const root = projectRootOverride ?? projectRoot;
   const distDir = distDirOverride ?? resolve(root, "dist");
-  const htmlFiles = globSync("**/*.html", { cwd: distDir });
+  const htmlFiles = globSync("**/*.html", { cwd: distDir }).sort();
 
   let distErrors = 0;
   let distWarnings = 0;

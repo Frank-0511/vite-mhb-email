@@ -6,9 +6,8 @@
  * analizar la misma superficie que terminará en el HTML compilado.
  */
 
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, globSync, readFileSync } from "node:fs";
 import { basename, dirname, resolve, sep } from "node:path";
-import { globSync } from "glob";
 
 const COMPONENT_TAG_RE = /<x-([a-z0-9-]+)\b[^>]*>/gi;
 
@@ -103,8 +102,12 @@ function resolveComponentPath(rootDir: string, tagName: string): string | null {
   const candidates = [
     resolve(layoutsRoot, `${tagName}.html`),
     resolve(partialsRoot, tagName, "index.html"),
-    ...globSync(`**/${tagName}.html`, { cwd: partialsRoot, absolute: true }),
-    ...globSync(`**/${tagName}/index.html`, { cwd: partialsRoot, absolute: true }),
+    ...globSync(`**/${tagName}.html`, { cwd: partialsRoot })
+      .sort()
+      .map((file) => resolve(partialsRoot, file)),
+    ...globSync(`**/${tagName}/index.html`, { cwd: partialsRoot })
+      .sort()
+      .map((file) => resolve(partialsRoot, file)),
   ];
 
   return candidates.find((candidate) => existsSync(candidate)) ?? null;
