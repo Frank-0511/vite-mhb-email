@@ -24,7 +24,7 @@ HTML no contiene el patrón que esa regla busca.
 
 | Ámbito                                         | Nivel máximo alcanzado | Evidencia                                                                   |
 | ---------------------------------------------- | ---------------------- | --------------------------------------------------------------------------- |
-| Reglas de compatibilidad sobre `dist/`         | E1                     | `bun run validate-email` (13 reglas, gate en errores).                      |
+| Reglas de compatibilidad sobre `dist/`         | E1                     | `bun run validate-email` (22 reglas, gate en errores).                      |
 | Tamaño frente al recorte de Gmail              | E1                     | `bun run check-size` (aviso a 100 KB, límite 102 KB).                       |
 | Preservación de variables ESP `{{ }}`          | E1                     | Regla `esp-variables` + pruebas de `scripts/esp/`.                          |
 | Render visual de templates                     | E2                     | Preview del dashboard y capturas de `screenshots/`.                         |
@@ -32,7 +32,7 @@ HTML no contiene el patrón que esa regla busca.
 
 ## Reglas de validación estática (E1)
 
-Las 13 reglas activas, en el orden en que corren. Los **errores detienen el
+Las 22 reglas activas, en el orden en que corren. Los **errores detienen el
 build**; warnings e info son informativos.
 
 | Regla                   | Severidad      | Qué comprueba                                                                                                                                     | Qué **no** prueba                                                                                                    |
@@ -40,8 +40,12 @@ build**; warnings e info son informativos.
 | `img-dimensions`        | Error          | Toda `<img>` tiene `width` y `height` como atributos HTML.                                                                                        | Que la imagen se vea correctamente en Outlook.                                                                       |
 | `img-alt`               | Warning        | Toda `<img>` tiene `alt` no vacío.                                                                                                                | Que el texto alternativo sea útil o que el cliente lo muestre.                                                       |
 | `css-unsupported-props` | Error          | Ausencia en `<style>` de flex, grid, `position`, `float`, `gap`, `opacity`, `transform`, `animation`, `transition`, `calc()`, `var()`, `clamp()`. | Que el CSS restante se aplique igual en todos los clientes. Solo inspecciona `<style>`, no atributos `style` inline. |
+| `css-color-format`      | Error          | Todo color en CSS o atributos usa formato HEX (`#rrggbb` o `#rgb`).                                                                               | Que el cliente aplique los colores exactamente idénticos en su motor de renderizado.                                 |
+| `css-relative-units`    | Error          | Ausencia de unidades relativas (`rem`, `em`, `vw`, `vh`) en `<style>`, usando `px` o `%`.                                                         | Que el escalado tipográfico sea proporcional si el usuario activa zoom accesible.                                    |
+| `style-block-size`      | Error          | El tamaño de cada bloque `<style>` no supera 8 KB (límite de truncado de Gmail).                                                                  | Que el total de estilos acumulados no supere límites agregados del cliente.                                          |
 | `doctype-present`       | Error          | El documento empieza con `<!doctype html>`.                                                                                                       | El modo de renderizado real del cliente.                                                                             |
 | `meta-charset`          | Warning        | Existe `<meta charset="utf-8">`.                                                                                                                  | Que los acentos lleguen bien tras la codificación del ESP.                                                           |
+| `title-present`         | Error          | El documento incluye una etiqueta `<title>` no vacía (título descriptivo).                                                                        | Que el cliente muestre el título en su barra de título o lista de mensajes.                                          |
 | `link-targets`          | Warning        | Ningún `<a href>` es `#` ni vacío.                                                                                                                | Que la URL resuelva, ni el comportamiento de los envoltorios de tracking.                                            |
 | `max-width-check`       | Warning        | El ancho máximo declarado es ≤ 700 px.                                                                                                            | El resultado real en la ventana de cada cliente móvil.                                                               |
 | `color-scheme-meta`     | Info           | Existe `<meta name="color-scheme">` si hay dark mode.                                                                                             | Que el dark mode se respete: varios clientes invierten colores por su cuenta.                                        |
@@ -50,6 +54,11 @@ build**; warnings e info son informativos.
 | `nested-tables-depth`   | Info           | Anidamiento de tablas ≤ 4 niveles.                                                                                                                | Que Outlook no corrompa el layout con el anidamiento existente.                                                      |
 | `css-class-vs-inline`   | Info           | Relación entre reglas en `<style>` y estilos inline.                                                                                              | Que Gmail conserve los estilos: informa el riesgo, no lo mide.                                                       |
 | `esp-variables`         | Warning / Info | Toda `{{ var }}` del template fuente existe en `data.json`; reporta claves sin uso.                                                               | Que el ESP sustituya correctamente la variable en el envío.                                                          |
+| `img-svg-source`        | Error          | Las imágenes no usan SVG como fuente directa (`src`), requiriendo PNG/JPG.                                                                        | Que el PNG generado a 2x se renderice con nitidez en pantallas de baja densidad.                                     |
+| `img-host-allowlist`    | Warning        | Las URLs de imágenes remotas apuntan a hosts de CDN autorizados (jsDelivr).                                                                       | Que el CDN mantenga alta disponibilidad o ausencia de bloqueos de red en el cliente.                                 |
+| `example-domains`       | Warning        | Enlaces no apuntan a dominios de ejemplo RFC 2606 (`example.com`).                                                                                | Que el dominio real de producción sea alcanzable y seguro.                                                           |
+| `esp-syntax-profile`    | Error          | Las variables ESP cumplen con la sintaxis soportada por el perfil (SendGrid Dynamic/Legacy).                                                      | Que el proveedor tenga creada la plantilla o variables correspondientes en su panel.                                 |
+| `esp-legacy-compat`     | Warning        | Detecta sintaxis legacy de SendGrid (`-var-`) y verifica coherencia con el manifiesto.                                                            | Que el envío real con tags legacy reemplace los valores sin escapar caracteres.                                      |
 
 Comando y salida:
 

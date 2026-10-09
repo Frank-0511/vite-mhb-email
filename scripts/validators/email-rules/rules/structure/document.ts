@@ -76,3 +76,37 @@ export const noJsInEmail: Rule = {
     return issues;
   },
 };
+
+export const titlePresent: Rule = {
+  id: "title-present",
+  severity: Severity.ERROR,
+  description: "El documento debe incluir una etiqueta <title> no vacía",
+  check(html: string): Issue[] {
+    const titleMatch = /<title[^>]*>([\s\S]*?)<\/title>/i.exec(html);
+    if (!titleMatch) {
+      return [
+        {
+          ruleId: "title-present",
+          severity: Severity.ERROR,
+          message: "Falta la etiqueta <title> en el documento",
+          hint: "Agregar <title>Título descriptivo</title> dentro del <head>",
+        },
+      ];
+    }
+
+    if (titleMatch[1].trim() === "") {
+      return [
+        {
+          ruleId: "title-present",
+          severity: Severity.ERROR,
+          message: "La etiqueta <title> está vacía",
+          context: getContext(html, titleMatch.index),
+          hint: "Incluir un título descriptivo no vacío dentro de <title>",
+          line: getLineNumber(html, titleMatch.index),
+        },
+      ];
+    }
+
+    return [];
+  },
+};
