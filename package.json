@@ -138,7 +138,6 @@
     "htmlhint": "1.9.2",
     "husky": "9.1.7",
     "lint-staged": "17.5.1",
-    "maizzle": "1.2.4",
     "markdownlint-cli2": "0.23.3",
     "nodemailer": "10.0.10",
     "postcss": "8.5.28",
