@@ -42,18 +42,18 @@ Los iconos se renderizan a partir de los nodos SVG de la librería `lucide` medi
 1. Ejecutar el comando generador:
 
    ```bash
-   bun run generate:icons --icon <nombre-lucide> --color <hex-sin-#> --size <px-en-html> [--suffix <vN>]
+   <pm> run generate:icons --icon <nombre-lucide> --color <hex-sin-#> --size <px-en-html> [--suffix <vN>]
    ```
 
    _Ejemplo:_
 
    ```bash
-   bun run generate:icons --icon rocket --color fbbf24 --size 24
+   <pm> run generate:icons --icon rocket --color fbbf24 --size 24
    ```
 
    Genera `src/emails/assets/icons/lucide-rocket-fbbf24.png` con tamaño de 48×48 px.
 
-2. **Inmutabilidad:** Los iconos PNG existentes son estrictamente inmutables para prevenir inconsistencias provocadas por el almacenamiento en caché de jsDelivr y clientes de correo. Si el diseño o color de un icono cambia, no se debe sobrescribir el archivo: genere uno nuevo agregando un sufijo de versión con `--suffix` (ejemplo: `bun run generate:icons --icon rocket --color fbbf24 --size 24 --suffix v2` genera `src/emails/assets/icons/lucide-rocket-fbbf24-v2.png`) y actualice la referencia en la plantilla correspondiente.
+2. **Inmutabilidad:** Los iconos PNG existentes son estrictamente inmutables para prevenir inconsistencias provocadas por el almacenamiento en caché de jsDelivr y clientes de correo. Si el diseño o color de un icono cambia, no se debe sobrescribir el archivo: genere uno nuevo agregando un sufijo de versión con `--suffix` (ejemplo: `<pm> run generate:icons --icon rocket --color fbbf24 --size 24 --suffix v2` genera `src/emails/assets/icons/lucide-rocket-fbbf24-v2.png`) y actualice la referencia en la plantilla correspondiente.
 
 3. **Plan B de purga de caché:** En caso excepcional de requerir invalidación de caché de un icono existente en el CDN, utilizar el endpoint de purga de jsDelivr:
 

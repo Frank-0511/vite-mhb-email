@@ -4,16 +4,16 @@
  * Mide tiempos de ejecución para comandos clave del proyecto en Bun y Node.js.
  *
  * Uso:
- *   bun scripts/perf/measure-benchmarks.ts
- *   bun scripts/perf/measure-benchmarks.ts --iterations=5 --warmup=1
- *   bun scripts/perf/measure-benchmarks.ts --json
+ *   <pm> scripts/perf/measure-benchmarks.ts
+ *   <pm> scripts/perf/measure-benchmarks.ts --iterations=5 --warmup=1
+ *   <pm> scripts/perf/measure-benchmarks.ts --json
  */
 
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { formatMarkdownTable } from "./benchmark-formatter.ts";
 import type { BenchmarkResult, BenchmarkSpec } from "./benchmark-runner.ts";
-import { getEnvironmentInfo, runBenchmark } from "./benchmark-runner.ts";
+import { filterTasksForEnvironment, getEnvironmentInfo, runBenchmark } from "./benchmark-runner.ts";
 
 export interface MainBenchmarkOptions {
   iterations?: number;
@@ -57,8 +57,8 @@ export const BENCHMARK_TASKS: BenchmarkSpec[] = [
   },
   {
     name: "Unit Test Suite",
-    runtime: "Bun",
-    command: "bun test",
+    runtime: "Node.js",
+    command: "node ./node_modules/vitest/vitest.mjs run",
   },
 ];
 
@@ -71,6 +71,7 @@ export function main(options: MainBenchmarkOptions = {}): void {
   const jsonOutput = options.json ?? false;
 
   const env = getEnvironmentInfo();
+  const tasks = filterTasksForEnvironment(BENCHMARK_TASKS, env);
 
   if (!jsonOutput) {
     console.log(`\n⏱️  Ejecutando benchmarks (${iterations} iteraciones, ${warmup} warmup)...`);
@@ -81,7 +82,7 @@ export function main(options: MainBenchmarkOptions = {}): void {
 
   const results: BenchmarkResult[] = [];
 
-  for (const task of BENCHMARK_TASKS) {
+  for (const task of tasks) {
     if (!jsonOutput) {
       process.stdout.write(`   • Midiendo ${task.name} (${task.runtime})... `);
     }

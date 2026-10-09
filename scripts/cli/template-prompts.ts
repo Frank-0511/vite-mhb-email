@@ -5,6 +5,7 @@
 import { existsSync, readdirSync } from "node:fs";
 import path from "node:path";
 import type { Interface } from "readline";
+import { formatRunCommand } from "../shared/env/detect-pm.ts";
 import { c, paint } from "../shared/index.ts";
 
 /**
@@ -17,7 +18,7 @@ export function askSelectTemplate(rl: Interface): Promise<string | null> {
     console.log(
       paint(c.red + c.bold, "  ❌ Error:") +
         paint(c.dim, " No existe la carpeta dist/.\n") +
-        paint(c.cyan, "     Primero ejecutá 'yarn build'.\n"),
+        paint(c.cyan, `     Primero ejecutá '${formatRunCommand("build")}'.\n`),
     );
     return Promise.resolve(null);
   }

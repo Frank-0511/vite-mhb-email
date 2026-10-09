@@ -2,10 +2,11 @@
 /**
  * @fileoverview Build selectivo por template mediante el servicio programático de Maizzle.
  *
- * Uso: bun run build-selective <templateName>
+ * Uso: <pm> run build-selective <templateName>
  * Genera `dist/<templateName>.html` sin mutar `maizzle.config.js`.
  */
 
+import { formatRunCommand } from "../shared/env/detect-pm.ts";
 import { validateEmailHtml } from "../validators/validate-email-html.ts";
 import { assertValidTemplateName } from "../shared/index.ts";
 import { runSelectiveBuild } from "../vite/services/index.ts";
@@ -17,8 +18,8 @@ try {
   assertValidTemplateName(templateName);
 } catch {
   console.error("❌ Template name must use only lowercase letters, numbers, and hyphens");
-  console.error("Usage: bun run build-selective <templateName>");
-  console.error("Example: bun run build-selective welcome");
+  console.error(`Usage: ${formatRunCommand("build-selective")} <templateName>`);
+  console.error(`Example: ${formatRunCommand("build-selective")} welcome`);
   process.exit(1);
 }
 

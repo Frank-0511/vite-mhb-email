@@ -4,8 +4,8 @@
  * @fileoverview Entry point del CLI interactivo para vite-mhb-email.
  *
  * Uso:
- *   bun cli          — Abre el menú interactivo
- *   bun cli --help   — Muestra la ayuda y sale
+ *   <pm> run cli          — Abre el menú interactivo
+ *   <pm> run cli --help   — Muestra la ayuda y sale
  */
 
 import { main } from "./main.ts";

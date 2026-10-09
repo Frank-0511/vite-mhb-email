@@ -1,6 +1,6 @@
 /**
  * @fileoverview Ejecuta en secuencia scripts de `package.json` con el package
- * manager detectado. Sustituye los encadenados `bun run a && bun run b`.
+ * manager detectado. Sustituye los encadenados `<pm> run a && <pm> run b`.
  *
  * Uso: node scripts/pm/run-scripts.ts <script> [<script>...]
  */

@@ -2,6 +2,7 @@
 
 import { EventEmitter } from "node:events";
 import { afterEach, beforeEach, describe, expect, spyOn, test, type Mock } from "bun:test";
+import { detectPackageManager, formatRunCommand } from "../shared/env/detect-pm.ts";
 import { buildIfNeeded, type SpawnFunction } from "./ensure-build.ts";
 import type { PromptSource } from "../shared/index.ts";
 
@@ -48,7 +49,7 @@ describe("buildIfNeeded", () => {
     children[0].emit("close", 0, null);
 
     expect(await result).toBe(true);
-    expect(spawnCalls[0]).toEqual(["bun", ["run", "build"], { stdio: "inherit" }]);
+    expect(spawnCalls[0]).toEqual([detectPackageManager(), ["run", "build"], { stdio: "inherit" }]);
   });
 
   test("devuelve false cuando el build falla", async () => {
@@ -66,7 +67,9 @@ describe("buildIfNeeded", () => {
 
     children[0].emit("error", new Error("ENOENT"));
 
-    await expect(result).rejects.toThrow('No se pudo iniciar "bun run build": ENOENT');
+    await expect(result).rejects.toThrow(
+      `No se pudo iniciar "${formatRunCommand("build")}": ENOENT`,
+    );
   });
 
   test("rechaza si el build termina por señal", async () => {
@@ -75,6 +78,8 @@ describe("buildIfNeeded", () => {
 
     children[0].emit("close", null, "SIGTERM");
 
-    await expect(result).rejects.toThrow('"bun run build" terminó por la señal SIGTERM');
+    await expect(result).rejects.toThrow(
+      `"${formatRunCommand("build")}" terminó por la señal SIGTERM`,
+    );
   });
 });

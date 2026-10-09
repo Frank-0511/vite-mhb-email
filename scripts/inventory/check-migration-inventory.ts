@@ -7,7 +7,7 @@
  * o alcance cero en modo estricto respetando la allowlist cerrada de MHB-42.
  *
  * Uso:
- *   bun scripts/inventory/check-migration-inventory.ts [--require-zero]
+ *   <pm> run check:inventory [--require-zero]
  */
 
 import { readFileSync } from "node:fs";

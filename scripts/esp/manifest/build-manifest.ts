@@ -4,6 +4,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { formatRunCommand } from "../../shared/env/detect-pm.ts";
 import {
   ESP_MANIFEST_PROFILES,
   ESP_PROFILES,
@@ -26,7 +27,7 @@ export function buildEspManifest(rootDir: string): EspManifest {
   const paths = getProjectPaths(rootDir);
 
   if (!fs.existsSync(paths.distDir)) {
-    throw new Error("El directorio dist/ no existe. Ejecuta bun run build primero.");
+    throw new Error(`El directorio dist/ no existe. Ejecuta ${formatRunCommand("build")} primero.`);
   }
 
   const htmlFiles = fs

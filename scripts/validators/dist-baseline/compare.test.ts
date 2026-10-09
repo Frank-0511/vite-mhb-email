@@ -56,7 +56,7 @@ describe("compare.ts", () => {
 
       const message = formatBaselineDiff(diff);
       expect(message).toContain("[hash-modificado] welcome.html");
-      expect(message).toContain("bun run update:dist-baseline");
+      expect(message).toContain("run update:dist-baseline");
     } finally {
       baseDir.cleanup();
       modDir.cleanup();
@@ -81,7 +81,7 @@ describe("compare.ts", () => {
       const message = formatBaselineDiff(diff);
       expect(message).toContain("[esp-perdida] welcome.html");
       expect(message).toContain("{{ first_name }}");
-      expect(message).toContain("bun run update:dist-baseline");
+      expect(message).toContain("run update:dist-baseline");
     } finally {
       baseDir.cleanup();
       modDir.cleanup();

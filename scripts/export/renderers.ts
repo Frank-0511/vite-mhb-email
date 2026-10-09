@@ -11,7 +11,7 @@ import { c, paint } from "../shared/index.ts";
  */
 export function getPuppeteerLaunchError(templateName: string): string {
   return [
-    "Puppeteer no pudo iniciar el navegador incluido. Ejecuta bun install y revisa sus errores.",
+    "Puppeteer no pudo iniciar el navegador incluido. Instala las dependencias y revisa sus errores.",
     `Alternativa: abre dist/${templateName}.html en el navegador y toma una captura manual.`,
   ].join(" ");
 }

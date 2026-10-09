@@ -9,6 +9,7 @@ import { getAvailableArchetypes } from "../generators/archetypes.ts";
 import { sendToInbox } from "../mail/send-inbox.ts";
 import { sendToMailtester } from "../mail/send-mailtester.ts";
 import { sendTemplate } from "../mail/send-mailtrap.ts";
+import { detectPackageManager } from "../shared/env/detect-pm.ts";
 import { c, getBuiltTemplates, paint } from "../shared/index.ts";
 import { run } from "./process-runner.ts";
 import { askCreationMode, askSelectArchetype, askTemplateName } from "./prompts.ts";
@@ -21,7 +22,8 @@ import { clearScreen } from "./ui.ts";
 export async function devServer(): Promise<void> {
   clearScreen();
   console.log(paint(c.green + c.bold, "\n  ⚡ Iniciando servidor de desarrollo…\n"));
-  await run("bun", ["run", "dev"]);
+  const pm = detectPackageManager();
+  await run(pm, ["run", "dev"]);
 }
 
 /**
@@ -30,7 +32,8 @@ export async function devServer(): Promise<void> {
 export async function buildProd(): Promise<void> {
   clearScreen();
   console.log(paint(c.yellow + c.bold, "\n  📦 Buildeando para producción…\n"));
-  const code = await run("bun", ["run", "build"]);
+  const pm = detectPackageManager();
+  const code = await run(pm, ["run", "build"]);
   if (code === 0) {
     console.log(paint(c.green + c.bold, "\n  ✅ Build completado exitosamente.\n"));
   } else {
@@ -71,7 +74,7 @@ export async function createTemplate(rl: Interface): Promise<void> {
     args.push(archetype);
   }
 
-  const code = await run("bun", args);
+  const code = await run(process.execPath, args);
   if (code !== 0) {
     console.log(paint(c.red, `\n  ❌ Error al crear el template (código ${code}).\n`));
   }
@@ -114,7 +117,7 @@ export async function exportScreenshot(rl: Interface): Promise<void> {
   }
 
   console.log();
-  const code = await run("bun", ["scripts/export/screenshot.ts", templateName]);
+  const code = await run(process.execPath, ["scripts/export/screenshot.ts", templateName]);
   if (code !== 0) {
     console.log(paint(c.red, `\n  ❌ Error al exportar la imagen (código ${code}).\n`));
   }

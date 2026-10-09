@@ -3,6 +3,7 @@
  * Pantalla, menú, banner, ayuda y validación de .env
  */
 
+import { formatRunCommand } from "../shared/env/detect-pm.ts";
 import { c, checkEnv, paint } from "../shared/index.ts";
 
 const bold = (text: string): string => paint(c.bold, text);
@@ -75,12 +76,12 @@ export function printHelp(): void {
 ${paint(c.cyan + c.bold, "  vite-mhb-email CLI")}
 
   ${bold("Uso:")}
-    bun cli           Abre el menú interactivo
-    bun cli --help    Muestra esta ayuda
+    ${formatRunCommand("cli")}           Abre el menú interactivo
+    ${formatRunCommand("cli")} --help    Muestra esta ayuda
 
   ${bold("Opciones del menú:")}
-    ${paint(c.green, "[1]")}  ⚡  Levantar servidor de desarrollo  (bun run dev)
-    ${paint(c.yellow, "[2]")}  📦  Buildear para producción          (bun run build)
+    ${paint(c.green, "[1]")}  ⚡  Levantar servidor de desarrollo  (${formatRunCommand("dev")})
+    ${paint(c.yellow, "[2]")}  📦  Buildear para producción          (${formatRunCommand("build")})
     ${paint(c.magenta, "[3]")}  ✨  Crear nuevo template
     ${paint(c.blue, "[4]")}  📨  Enviar template a Mailtrap        (requiere MAILTRAP_*)
     ${paint(c.cyan, "[5]")}  🧪  Testear con Mail-Tester (Gmail)   (requiere GMAIL_*)
