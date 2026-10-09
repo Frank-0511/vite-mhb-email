@@ -13,16 +13,22 @@
  *   bun run build                 # Comportamiento por defecto
  *   bun run build --allow-warnings # (reservado para CI permisivo)
  */
-import { execSync } from "node:child_process";
+import * as maizzleFramework from "@maizzle/framework";
+import maizzleConfig from "../../maizzle.config.ts";
 import { checkHtmlSize } from "../validators/check-html-size.ts";
 import { validateEmailHtml } from "../validators/validate-email-html.ts";
 import { writeEspManifest } from "../esp/manifest/write-manifest.ts";
 
-export function build(): void {
+/** `build` es un export de runtime de Maizzle sin declaración en sus tipos. */
+const maizzleBuild = (maizzleFramework as Record<string, unknown>).build as (
+  config: Record<string, unknown>,
+) => Promise<unknown>;
+
+export async function build(): Promise<void> {
   try {
     // Ejecutar el build de Maizzle
     console.log("\n📦 Building with Maizzle...\n");
-    execSync("maizzle build", { stdio: "inherit" });
+    await maizzleBuild(maizzleConfig);
 
     // Chequear tamaño de archivos HTML
     checkHtmlSize();
@@ -57,4 +63,4 @@ export function build(): void {
   }
 }
 
-build();
+await build();
