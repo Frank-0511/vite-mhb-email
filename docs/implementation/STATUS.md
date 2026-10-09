@@ -14,8 +14,8 @@
 
 - MHB-36: Compatibilidad multi-package-manager (Fase D). Estado: `En revisión`.
 - Hechos de la entrega:
-  1. Scripts de `package.json` ejecutados con `node` y detección agnóstica de package manager (`scripts/shared/env/detect-pm.ts`).
-  2. Suite completa migrada a Vitest (`105 files, 809 tests`) corriendo tanto con Bun como con Node/npm/yarn/pnpm.
+  1. Scripts de `package.json` ejecutados con `node` y detección agnóstica de package manager (`scripts/shared/env/detect-pm.ts`); scripts reducidos de 30 a 18.
+  2. Suite completa migrada a Vitest (`105 files, 808 tests`) corriendo tanto con Bun como con Node/npm/yarn/pnpm.
   3. Verificación limpia desde cero en los 4 managers (Bun 1.3.13, Yarn 4.18.1, npm 11.19.0, pnpm 12.10.1); solo `bun.lock` versionado.
   4. CI actualizado a Node 24 con matriz agnóstica (`package-managers`) y nuevo workflow `PR Guard` (`pull_request_target`).
   5. Documentación y gobernanza completas (`README.md`, `CONTRIBUTING.md`, `docs/ai/`, `CHANGELOG.md`) y adaptadores sincronizados con `agents:sync`.
@@ -23,13 +23,13 @@
   - `bun install --frozen-lockfile`: Verde
   - `bun run lint`: Verde
   - `bun run typecheck`: Verde
-  - `bun run test` (Vitest): Verde (105 files, 809 tests)
+  - `bun run test` (Vitest): Verde (105 files, 808 tests)
   - `bun run format:check`: Verde
   - `bun run build`: Verde
   - `bun run validate-email`: Verde
   - `bun run check:dist-baseline` (carril bun): Verde
   - `bun run check-size`: Verde
-  - `bun run check:inventory`: Verde (312 TS, 2 JS allowlist)
+  - `check:inventory`: script retirado; su verificación (`--require-zero`, 2 JS allowlist) la cubre `bun run test`: Verde
   - `bun run agents:check`: Verde (7 targets)
   - `git diff --check`: Verde
 - Verificación multi-manager (worktree limpio desde HEAD):
@@ -79,6 +79,10 @@
   - Tras el merge, `PR Guard` pasa a check requerido, con autorización del usuario.
   - Ya aplicado en GitHub: los workflows de PR externas requieren aprobación (`all_external_contributors`).
   - Descartado `CODEOWNERS` con revisión obligatoria, porque bloquearía el auto-merge de Dependabot.
+- **MHB-36 — Ampliación de alcance acordada (2026-10-09):** simplificación de scripts de `package.json` (commit `6fb62bc`), pedida por el usuario.
+  - Se retiran `test:watch`, `build-selective` (ahora `build <template>`), `generate:email`, `export:screenshot`, `lint:*` (incluidos en `lint`), `lint:contrast` y `a11y-check` (unificados en `check:a11y`), `check:inventory`, `esp:manifest` y `benchmark`; migración en `CHANGELOG.md`.
+  - SemVer: se decide que la API pública son los comandos de `CLAUDE.md`; la release sigue siendo `v1.3.0` (`PLAN.md`, línea de versión decidida).
+  - Verde tras el cambio con bun: `lint`, `typecheck`, `test`, `build`, `check:dist-baseline`, `format:check`, `agents:check`. No ejecutado: `check:a11y` (requiere navegador) y la verificación multi-manager, previa a este commit (la matriz de CI usa scripts sin cambios).
 - **MHB-36 — Desviación de baseline en carril sin lockfile (aprobada por el usuario, 2026-10-09):**
   - Causa raíz: `@maizzle/framework@5.5.0` tiene rangos `^` en dependencias de minificación (`html-crush`, `email-comb`, `string-strip-html`) que sin lockfile resuelven parches más recientes de npm, cambiando espaciado y saltos de línea en `dist/` sin alterar variables ESP ni contratos.
   - Opción elegida (Opción 4): `check:dist-baseline` es gate estricto solo en el carril congelado con `bun.lock`; la matriz npm/yarn/pnpm valida build, validate-email, check-size, typecheck y test sin exigir hash SHA-256 idéntico al baseline.
@@ -106,7 +110,7 @@
 
 ## Handoff
 
-- Próxima acción inmediata: Solicitud de autorización al usuario para push de la rama `feature/mhb-36` y apertura de Pull Request; ejecución de `task-review` por revisor técnico independiente.
+- Próxima acción inmediata: Revisión consciente del commit `6fb62bc` (ampliación de alcance de scripts, sin verificación multi-manager ni `check:a11y` posterior); solicitud de autorización al usuario para push de la rama `feature/mhb-36` y apertura de Pull Request; ejecución de `task-review` por revisor técnico independiente.
 - Siguiente tarea del roadmap (no iniciar sin asignación explícita):
   - MHB-14 (Fase C): desbloqueada; requiere acceso del usuario a Gmail, Outlook y Apple Mail. Su cierre habilita MHB-15 (`v1.3.0`).
   - MHB-48 (Fase D): bloqueada hasta evaluar disparador de performance o decisión de release.
