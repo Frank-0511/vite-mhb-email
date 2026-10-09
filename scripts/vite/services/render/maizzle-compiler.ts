@@ -16,7 +16,7 @@ import {
  * Usado en preview (Vite): renderiza el template con datos de preview.
  * El CSS de email lo gestiona cada template vía
  * `@import "src/emails/styles/tailwind.email.css"` y
- * `@config "tailwind.email.config.js"` — no se necesita intercambio de configs.
+ * `@config "tailwind.email.config.ts"` — no se necesita intercambio de configs.
  *
  * @param filePath Ruta al archivo HTML del template.
  * @param data Datos para la plantilla (Handlebars y SendGrid Legacy).

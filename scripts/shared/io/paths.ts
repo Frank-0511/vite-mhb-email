@@ -35,7 +35,7 @@ export function getProjectPaths(rootDir: string): ProjectPaths {
     stylesRoot: resolve(rootDir, "src/emails/styles"),
     iconsRoot: resolve(rootDir, "src/emails/assets/icons"),
     maizzleConfig: resolve(rootDir, "maizzle.config.js"),
-    tailwindEmailConfig: resolve(rootDir, "tailwind.email.config.js"),
+    tailwindEmailConfig: resolve(rootDir, "tailwind.email.config.ts"),
 
     templateHtml: (templateName: string): string =>
       resolve(templatesRoot, templateName, "index.html"),
