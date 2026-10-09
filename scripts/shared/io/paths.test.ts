@@ -20,6 +20,7 @@ describe("getProjectPaths", () => {
       expect(isAbsolute(value)).toBe(true);
       expect(value.startsWith(root + sep)).toBe(true);
     }
+    expect(paths.tailwindEmailConfig.endsWith("tailwind.email.config.ts")).toBe(true);
   });
 
   test("resuelve el trío de rutas por template dentro de templatesRoot", () => {

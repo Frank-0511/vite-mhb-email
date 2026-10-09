@@ -8,6 +8,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { mkdir, rm, writeFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { resolve } from "node:path";
+import { EMAIL_SOURCE_PATHS } from "../../../shared/contracts/constants/email-sources.ts";
 import { assertValidTemplateName } from "../../../shared/index.ts";
 
 export interface PreviewCacheOptions {
@@ -42,18 +43,9 @@ export class PreviewCacheManager {
    * Obtener el timestamp más reciente de las fuentes de email.
    */
   getSourcesMaxTimestamp(): number {
-    const sourcePatterns = [
-      "src/emails/templates",
-      "src/emails/layouts",
-      "src/emails/partials",
-      "src/emails/styles",
-      "maizzle.config.js",
-      "tailwind.email.config.js",
-    ];
-
     let maxTime = 0;
 
-    for (const pattern of sourcePatterns) {
+    for (const pattern of EMAIL_SOURCE_PATHS) {
       const fullPath = resolve(this.rootDir, pattern);
       try {
         if (existsSync(fullPath)) {

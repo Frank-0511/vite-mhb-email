@@ -25,7 +25,7 @@ const projectRoot = path.resolve(__dirname, "../..");
 /**
  * Allowlist cerrada aprobada en MHB-42:
  * 1. eslint.config.js (excepción obligatoria por jiti >= 2.2.0 en ESLint 10.11)
- * 2. maizzle.config.js (wrapper de 1 línea a maizzle.config.ts para maizzle build)
+ * 2. maizzle.config.js (wrapper de 1 línea a maizzle.config.ts para el descubrimiento de configuración de Maizzle 5)
  */
 export const CLOSED_JS_ALLOWLIST = new Set<string>(["eslint.config.js", "maizzle.config.js"]);
 

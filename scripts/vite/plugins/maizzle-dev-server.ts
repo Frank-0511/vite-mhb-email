@@ -4,6 +4,7 @@
 
 import { relative, resolve, sep } from "node:path";
 import type { HmrContext, Plugin, ViteDevServer } from "vite";
+import { EMAIL_SOURCE_PATHS } from "../../shared/contracts/constants/email-sources.ts";
 import { EVENTS } from "../../shared/contracts/constants/events.ts";
 import { setupCacheApi } from "../api/cache.ts";
 import { setupComponentsApi } from "../api/components.ts";
@@ -11,15 +12,6 @@ import { setupCopyHtmlApi } from "../api/copy-html.ts";
 import { setupDataApi } from "../api/data.ts";
 import { setupRenderApi } from "../api/render.ts";
 import { setupTemplateApi } from "../api/templates.ts";
-
-const EMAIL_SOURCE_PATHS = [
-  "src/emails/templates",
-  "src/emails/layouts",
-  "src/emails/partials",
-  "src/emails/styles",
-  "maizzle.config.js",
-  "tailwind.email.config.js",
-];
 
 /**
  * Normaliza paths a formato POSIX para comparaciones consistentes.
