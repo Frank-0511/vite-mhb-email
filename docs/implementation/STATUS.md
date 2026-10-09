@@ -2,29 +2,22 @@
 
 ## Resumen
 
-- ID activo: MHB-34
-- Estado: Completada
-- Implementador: Antigravity (perfil TypeScript/tooling transversal)
-- Revisor: revisor técnico final independiente
-- Rama: `feature/mhb-34`
+- ID activo: MHB-43
+- Estado: En progreso
+- Implementador: pendiente de asignar (perfil tooling, medio)
+- Revisor: revisor técnico de build independiente
+- Rama: `feature/mhb-43`
 - Última actualización: 2026-10-08
-- Contrato activo: `docs/implementation/PLAN.md` (sección MHB-34)
+- Contrato activo: `docs/implementation/PLAN.md` (sección MHB-43)
 
 ## Paquete activo
 
-- MHB-34: Cierre total y modo estricto TypeScript.
-- Alcance: migración de 20 archivos propios restantes (.js/.mjs) a TypeScript, modo estricto único (`strict`, `verbatimModuleSyntax`, `erasableSyntaxOnly`) sin `tsconfig.strict.json` ni `allowJs`/`checkJs`, allowlist cerrada (`eslint.config.js` y wrapper `maizzle.config.js`), gate de inventario `--require-zero`, saneamiento de tooling AI y cumplimiento de límites de árbol.
-- Estado: Completada (revisión independiente aprobada el 2026-10-08).
+- MHB-43: Higiene de dependencias (Fase D).
+- Alcance: retirar el CLI `maizzle`, `fs-extra` y `glob`; reclasificar dependencias por rol; alinear `@types/node` con `engines.node`.
 - Hechos de la entrega:
-  1. 20 archivos propios (.js/.mjs) migrados a .ts estricto; solo `eslint.config.js` y wrapper `maizzle.config.js` permanecen como JS (allowlist cerrada de MHB-42).
-  2. Configuraciones raíz (`postcss`, `tailwind`, `tailwind.email`, `maizzle`) tipadas y directivas `@config` actualizadas en CSS.
-  3. `scripts/ai/**` y `check-task-branch` migrados a .ts con type stripping nativo de Node 24, 5 TS2339 corregidos con `isEnoent`, y comandos actualizados en `package.json`.
-  4. Modo estricto único unificado en `tsconfig.json` (`strict`, `verbatimModuleSyntax`, `erasableSyntaxOnly`); eliminados `tsconfig.strict.json` y `allowJs`/`checkJs`.
-  5. Gate `check:inventory --require-zero` bloqueante activo (exit 0; 2 JS allowlist, 303 TS); matriz de gates completa en Verde y `dist/` 100% idéntico.
-- Controles ejecutados (todos Verde): `check:task-branch`, `frozen-install`, `lint`, `typecheck`, `test` (790 pass), `format:check`, `build`, `validate-email`, `lint:contrast`, `a11y-check`, `agents:check`, `check:inventory`, `check:dist-baseline`, `check-size`, `git diff --check`.
-- Verificación manual declarada: inspección de salidas CLI en comandos de agentes e inventario; interacción de dashboard web reservada a petición expresa (Browser pane no abierto).
-- Desviaciones: ninguna.
-- Riesgos residuales: ninguno.
+  1. Reestructuración de fases y releases registrada en `PLAN.md` (decisión del usuario, 2026-10-08), como primer commit de la rama.
+- Controles ejecutados: `lint:md`, `format:check` y `git diff --check` en Verde para el cambio documental.
+- Pendiente de decisión: conservar o eliminar el wrapper `maizzle.config.js` al retirar el CLI `maizzle`.
 
 ## Revisión de cierre de MHB-34
 
@@ -72,6 +65,7 @@
 
 ## Decisiones y desviaciones vigentes
 
+- **Reestructuración de fases y releases (aprobada por el usuario, 2026-10-08):** cada fase cierra con su propio ID de release. Fase C = MHB-14 + MHB-15 (`v1.3.0`, con todo lo mergeado desde `v1.2.0`); Fase D = MHB-43, MHB-36, MHB-48 (si se cumple su disparador) + MHB-49 (`v1.4.0`); Fase E = MHB-38 + MHB-50 (versión a decidir al congelar); Fase F = MHB-16 y MHB-23, en paralelo desde `v1.3.0`. Se retiran de `PLAN.md` los contratos completados (MHB-44, MHB-46, MHB-47, MHB-42 y MHB-34). MHB-43 puede ejecutarse en paralelo con MHB-14; si se mergea antes del congelamiento de MHB-15, entra en `v1.3.0`.
 - **MHB-42 — Allowlist cerrada de excepciones JS aprobada (2026-10-01):** `eslint.config.js` como excepción de terceros obligatoria (ESLint 10.11.0 requiere `jiti >= 2.2.0`; repo tiene `jiti@1.21.7`) y `maizzle.config.js` como wrapper de 1 línea (`export { default } from "./maizzle.config.ts";`) para soportar `maizzle build` estándar en `@maizzle/framework@5.5.0`. Los 20 archivos restantes son 100% convertibles a `.ts` sin excepciones.
 - **MHB-42 — Decisión de división de MHB-34 aprobada (2026-10-01):** MHB-34 se mantiene como ID único indiviso (conteo estricto combinado: 5 errores TS2339 en `scripts/ai/`, 0 errores en otras carpetas; umbral >150 errores no alcanzado).
 - **MHB-42 — Depuración de Backlog activo en PLAN.md (2026-10-01):** Cambio documental adicional ajeno al spike en PLAN.md: depuración de la tabla «Backlog activo» retirando las tareas ya completadas (MHB-44, MHB-46 y MHB-47) y actualizando la dependencia de MHB-42 y MHB-14 a «Satisfecha».
@@ -94,6 +88,7 @@
 
 ## Handoff
 
-- Próxima acción inmediata: abrir la PR de `feature/mhb-34` a `master` y mergear; no iniciar otro ID sin asignación.
-- Siguiente tarea del roadmap:
-  - MHB-43 ("Retirar dependencias huérfanas y CLI maizzle heredado"): `desbloqueado` una vez mergeado MHB-34; no iniciar sin asignación explícita.
+- MHB-34 mergeada a `master` (PR #65). MHB-43 en progreso en `feature/mhb-43`.
+- Siguientes tareas del roadmap (no iniciar sin asignación explícita):
+  - MHB-14 (Fase C): evidencia en Gmail, Outlook y Apple Mail; requiere acceso del usuario a los clientes. Su cierre habilita MHB-15 (`v1.3.0`).
+  - MHB-43 (Fase D): en progreso; ejecutable en paralelo con MHB-14.

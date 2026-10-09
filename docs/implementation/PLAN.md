@@ -1,53 +1,49 @@
 # Plan de implementación — EmailForge Toolkit
 
 Este documento contiene únicamente el trabajo pendiente. El baseline funcional
-publicado es `v1.2.0`; los artefactos de Git conservan la trazabilidad previa.
+publicado es `v1.2.0`; los artefactos de Git y `STATUS-HISTORY.md` conservan la
+trazabilidad de los IDs cerrados.
 
 ## Objetivo vigente
 
-Cerrar la puerta de calidad del producto con evidencia reproducible de
-integración, tipos/rendimiento, accesibilidad en clientes reales y narrativa de
-portafolio. Después se completará la migración gradual de todo el código
-JavaScript propio a TypeScript estricto antes de preparar la siguiente release.
+Publicar el trabajo acumulado desde `v1.2.0` en releases incrementales, una por
+fase. Primero se cierra la puerta de calidad con evidencia en clientes reales y
+se publica `v1.3.0`; después se reduce y desacopla el tooling (dependencias y
+multi-package-manager) para publicar `v1.4.0`. La migración de stack de estilos
+y la demo de portafolio se planifican como fases propias.
 
-## Matriz de reestructuración del plan
+## Matriz de reestructuración del plan (2026-10-08)
 
-| Ítem anterior | Decisión   | Tratamiento vigente                                                                             |
-| ------------- | ---------- | ----------------------------------------------------------------------------------------------- |
-| MHB-14        | Conservar  | Su evidencia manual sigue siendo independiente de la migración de lenguaje.                     |
-| MHB-15        | Reemplazar | La release posterior dependerá del cierre total de TypeScript, además de MHB-14.                |
-| MHB-16        | Reemplazar | La demo candidata dependerá de MHB-15, que ya incorpora el gate total de migración.             |
-| MHB-23        | Conservar  | Sigue opcional y no se mezcla con la conversión de lenguaje.                                    |
-| MHB-38        | Crear      | Migración en bloque a Maizzle 6 + Tailwind v4 (email y dashboard), programada desde 2027-01-15. |
-| MHB-42        | Crear      | Spike de loaders de configuración y decisión cerrada de excepciones antes de MHB-34.            |
-| MHB-43        | Crear      | Higiene de dependencias: consumidores reales, clasificación por rol y tipos alineados.          |
-| MHB-44        | Crear      | Compatibilidad del HTML exportado: colores, unidades e imágenes aptos para clientes reales.     |
-| MHB-46        | Crear      | Guarda contra escrituras cross-site en la API local del servidor Vite.                          |
-| MHB-47        | Crear      | Manifiesto de variables por template y perfil de sintaxis ESP (SendGrid).                       |
-| MHB-34        | Ajustar    | Depende de MHB-42, adopta su allowlist y reapunta el linting con tipos de MHB-39.               |
-| MHB-48        | Crear      | Actualización a TypeScript 7, condicionada a soporte de `typescript-eslint` y a MHB-34.         |
-| MHB-36        | Ajustar    | Depende de MHB-43; rutas revalidadas, lockfiles y hashes contra el baseline de MHB-41.          |
-| MHB-14        | Ajustar    | Tras MHB-44; admite envíos reales con la integración ESP del usuario, con autorización.         |
-| MHB-16        | Ajustar    | Riesgo registrado: `vite build` vaciaría `dist/` de email por `outDir` + `emptyOutDir`.         |
-| MHB-15        | Ajustar    | Congelamiento de alcance, decisión SemVer y nota de contrato de salida para integradores.       |
+| Ítem                               | Decisión  | Tratamiento vigente                                                                                    |
+| ---------------------------------- | --------- | ------------------------------------------------------------------------------------------------------ |
+| Fases                              | Ajustar   | Cada fase termina con su propio ID de release; no se espera al backlog completo para publicar.         |
+| MHB-44, MHB-46, MHB-47, MHB-42, 34 | Retirar   | Completadas; sus contratos salen del plan y su contenido forma parte de `v1.3.0`.                      |
+| MHB-14                             | Conservar | Último ID de la Fase C; su cierre habilita la release `v1.3.0`.                                        |
+| MHB-15                             | Ajustar   | Release `v1.3.0`; depende solo de MHB-14 (resto de su alcance ya completado).                          |
+| MHB-43, MHB-36                     | Mover     | Pasan a la Fase D y forman la release `v1.4.0`.                                                        |
+| MHB-48                             | Mover     | Fase D si su disparador externo se cumple antes del congelamiento de MHB-49; si no, release siguiente. |
+| MHB-49                             | Crear     | Release `v1.4.0` tras MHB-36.                                                                          |
+| MHB-38                             | Mover     | Fase E propia, dentro de su ventana (≥ 2027-01-15).                                                    |
+| MHB-50                             | Crear     | Release de la Fase E tras MHB-38; versión SemVer decidida al congelar.                                 |
+| MHB-16, MHB-23                     | Mover     | Fase F (demo y portafolio), ejecutable en paralelo desde `v1.3.0`.                                     |
 
-No se reabre ninguna tarea completada; su trazabilidad vive en Git. Cada ID
-conserva una rama, revisión y cierre independientes.
+No se reabre ninguna tarea completada. Cada ID conserva una rama, revisión y
+cierre independientes.
 
 ## Backlog activo
 
-| ID     | Entregable                                    | Estado    | Dependencia vigente                   |
-| ------ | --------------------------------------------- | --------- | ------------------------------------- |
-| MHB-42 | Spike de loaders y decisión de excepciones JS | Pendiente | Satisfecha                            |
-| MHB-34 | Cierre total y modo estricto TypeScript       | Pendiente | MHB-42                                |
-| MHB-43 | Higiene de dependencias                       | Pendiente | MHB-34                                |
-| MHB-36 | Compatibilidad multi-package-manager          | Pendiente | MHB-43                                |
-| MHB-48 | Actualización a TypeScript 7                  | Pendiente | MHB-34 y disparador externo           |
-| MHB-14 | Evidencia de uso y compatibilidad             | Pendiente | Satisfecha                            |
-| MHB-15 | Documentación, capturas y release posterior   | Pendiente | MHB-14 y MHB-36                       |
-| MHB-16 | Demo candidata pre-renderizada                | Opcional  | MHB-15                                |
-| MHB-23 | Ampliar biblioteca de componentes             | Opcional  | Caso de uso aprobado                  |
-| MHB-38 | Migración en bloque a Maizzle 6 y Tailwind v4 | Pendiente | MHB-34, MHB-36 y ventana ≥ 2027-01-15 |
+| Fase | ID     | Entregable                                    | Estado    | Dependencia vigente            |
+| ---- | ------ | --------------------------------------------- | --------- | ------------------------------ |
+| C    | MHB-14 | Evidencia de uso y compatibilidad             | Pendiente | Satisfecha                     |
+| C    | MHB-15 | Release `v1.3.0`                              | Pendiente | MHB-14                         |
+| D    | MHB-43 | Higiene de dependencias                       | Pendiente | Satisfecha (MHB-34 completada) |
+| D    | MHB-36 | Compatibilidad multi-package-manager          | Pendiente | MHB-43                         |
+| D    | MHB-48 | Actualización a TypeScript 7                  | Pendiente | Disparador externo             |
+| D    | MHB-49 | Release `v1.4.0`                              | Pendiente | MHB-15 y MHB-36                |
+| E    | MHB-38 | Migración en bloque a Maizzle 6 y Tailwind v4 | Pendiente | MHB-36 y ventana ≥ 2027-01-15  |
+| E    | MHB-50 | Release de la migración de stack              | Pendiente | MHB-49 y MHB-38                |
+| F    | MHB-16 | Demo candidata pre-renderizada                | Opcional  | MHB-15                         |
+| F    | MHB-23 | Ampliar biblioteca de componentes             | Opcional  | Caso de uso aprobado           |
 
 ## Invariantes de calidad, arquitectura y refactor integrado
 
@@ -99,7 +95,14 @@ Todo plan de implementación y contrato técnico futuro debe incluir obligatoria
 
 El cumplimiento de estos criterios es condición indispensable para que un revisor independiente marque una tarea como `Completada`.
 
-## MHB-14 — Evidencia de uso y compatibilidad
+## Fase C — Evidencia y release v1.3.0
+
+- **Contenido de la release:** todo lo completado y mergeado en `master` desde `v1.2.0` (`git log v1.2.0..master`: migración TypeScript completa hasta MHB-34, gobernanza MHB-40, contrato de salida MHB-41, protección de `master` MHB-45, compatibilidad HTML MHB-44, API local MHB-46 y contrato ESP MHB-47) más MHB-14.
+- **Orden:** MHB-14 → MHB-15.
+- **Riesgos:** afirmar evidencia de clientes sin pruebas; incluir secretos en capturas o documentación; publicar sin el checklist Go/No-Go.
+- **Criterio de salida:** MHB-14 cerrada con evidencia enlazable y `v1.3.0` publicada por MHB-15.
+
+### MHB-14 — Evidencia de uso y compatibilidad
 
 - **Objetivo observable:** producir checklist reproducible de accesibilidad y matriz fechada de clientes reales.
 - **Superficies autorizadas:** protocolo/checklist, capturas, matriz documental y templates de producto.
@@ -116,18 +119,18 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
 - **Revisor independiente:** orquestador o revisor con acceso a clientes.
 - **Condición de escalamiento:** falta acceso a cliente/dispositivo o aparecen datos sensibles.
 
-## MHB-15 — Documentación, capturas y release posterior
+### MHB-15 — Release v1.3.0
 
-- **Objetivo observable:** dejar README, CHANGELOG, versión, tag y release posterior coherentes y sustentados.
+- **Objetivo observable:** publicar `v1.3.0` con README, CHANGELOG, versión, tag y release coherentes con el trabajo completado desde `v1.2.0`.
 - **Superficies autorizadas:** README, CHANGELOG, versión/package metadata, capturas, notas de release y documentación relacionada.
-- **Dependencias y precondiciones:** MHB-14, MHB-39, MHB-40, MHB-41, MHB-45, MHB-44, MHB-46, MHB-47, MHB-42, MHB-34, MHB-43 y MHB-36 completadas, además de una decisión explícita antes de publicar o etiquetar; preservar el baseline publicado.
-- **Congelamiento de alcance:** al pasar MHB-15 a `En progreso` se congela el alcance de la release. Un hallazgo nuevo se registra como ID de la versión siguiente y no bloquea la release, salvo que rompa un gate de MHB-41 (hashes de `dist/`, variables ESP `{{ }}`, `validate-email`), la suite o el build; solo esos casos bloquean y se corrigen dentro del alcance congelado.
+- **Dependencias y precondiciones:** MHB-14 completada (el resto del contenido de la release ya está `Completada`), CI verde en `master` y decisión explícita del usuario antes de publicar o etiquetar; preservar el baseline publicado `v1.2.0`.
+- **Versión decidida (2026-10-08):** `v1.3.0` (minor). Desde `v1.2.0` no se eliminó ni renombró ningún comando público; solo se añadieron (`benchmark`, `generate:icons`, `esp:manifest`, `check:dist-baseline`, `update:dist-baseline` y `check:inventory`, verificado con `git show v1.2.0:package.json`). Si la verificación detecta una eliminación o renombre público, escalar antes de etiquetar.
+- **Congelamiento de alcance:** al pasar MHB-15 a `En progreso` se congela el alcance. Un hallazgo nuevo se registra como ID de la Fase D y no bloquea la release, salvo que rompa un gate de MHB-41 (hashes de `dist/`, variables ESP `{{ }}`, `validate-email`), la suite o el build; solo esos casos bloquean y se corrigen dentro del alcance congelado. Un ID de la Fase D mergeado antes del congelamiento forma parte de `v1.3.0` y se declara en sus notas.
 - **Pasos técnicos:**
-  - Aplicar la skill `release-management` (MHB-40): checklist Go/No-Go con cada dependencia `Completada` y CI verde en `master`.
-  - Decidir el número SemVer con el usuario. Propuesta: `v1.3.0`, porque la CLI pública, los scripts de `package.json` y el contrato de salida no cambian y el soporte multi-package-manager es aditivo. Pasar a `v2.0.0` solo si algún ID eliminó o renombró un comando público.
-  - Reconciliar narrativa/evidencia, actualizar versión y changelog del alcance real, preparar tag/release solo tras revisión.
-  - Incluir en CHANGELOG y notas de release una sección «Contrato de salida para integradores»: resultado de `check:dist-baseline` frente a `v1.2.0` (hashes idénticos o diferencias justificadas por template) y confirmación de que las variables ESP `{{ }}` de cada template se conservan.
-- **Criterios de aceptación:** documentación, versión, tag y release posterior coinciden; las capturas son actuales y los límites no se presentan como hechos no probados; la sección de contrato de salida existe y coincide con la salida de `check:dist-baseline`.
+  - Aplicar la skill `release-management`: checklist Go/No-Go con cada ID de la release `Completada` y CI verde en `master`.
+  - Reconciliar narrativa y evidencia; mover `[Unreleased]` a `[1.3.0]` en CHANGELOG; actualizar `package.json`; preparar tag/release solo tras revisión.
+  - Incluir en CHANGELOG y notas de release una sección «Contrato de salida para integradores»: resultado de `check:dist-baseline` frente a `v1.2.0` (diferencias justificadas por template, introducidas por MHB-44) y confirmación de que las variables ESP `{{ }}` de cada template se conservan, con referencia al manifiesto `dist/esp-manifest.json` (MHB-47).
+- **Criterios de aceptación:** documentación, versión, tag y release coinciden; las capturas son actuales y los límites no se presentan como hechos no probados; la sección de contrato de salida existe y coincide con la salida de `check:dist-baseline`.
 - **Validación automática:** lint Markdown, suite, build, `validate-email`, `check:dist-baseline` y comprobación de consistencia de versión.
 - **Validación manual:** revisar README, capturas, changelog, SHA/tag y notas antes de publicar.
 - **Evidencia requerida:** SHA, tag, URL de release, diff final, checklist de capturas y checklist Go/No-Go firmado por el orquestador.
@@ -137,41 +140,121 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
 - **Revisor independiente:** orquestador.
 - **Condición de escalamiento:** cualquier publicación, tag, versión o evidencia no sustentada, o un hallazgo que se proponga incluir pese al congelamiento de alcance.
 
-## Evolución y mantenibilidad
+## Fase D — Portabilidad y release v1.4.0
 
-### MHB-16 — Demo candidata pre-renderizada
+- **Contenido de la release:** MHB-43, MHB-36 y, si su disparador se cumple antes del congelamiento, MHB-48.
+- **Orden:** MHB-43 → MHB-36 → MHB-49; MHB-48 en paralelo con MHB-43 y MHB-36 por no compartir superficie.
+- **Entregables:** dependencias mínimas clasificadas por rol, build sin CLI `maizzle`, compatibilidad con npm, yarn, pnpm y bun, y release `v1.4.0`.
+- **Riesgos:** la API programática de Maizzle no reproduce `dist/`; incompatibilidades sutiles entre package managers; romper un comando público.
+- **Criterio de salida:** MHB-36 confirma que el proyecto funciona con los 4 managers con `dist/` idéntico y `v1.4.0` publicada por MHB-49.
 
-- **Objetivo observable:** decidir y probar una demo solo lectura sin divergencia frente al HTML compilado.
-- **Superficies autorizadas:** build estático, configuración de demo/despliegue aprobada, rutas de navegación y documentación de evidencia.
-- **Dependencias y precondiciones:** MHB-15 completada; aprobación explícita de proveedor/credenciales si fueran necesarios.
-- **Pasos técnicos:** comparar output, configurar demo mínima, ejecutar smoke y registrar SHA desplegado.
-- **Criterios de aceptación:** demo candidata coincide con HTML compilado, funciona en desktop/móvil y se enlaza para verificación.
-- **Validación automática:** smoke de build estático, enlaces y checks aplicables.
-- **Validación manual:** navegar la demo solo lectura en desktop/móvil.
-- **Evidencia requerida:** URL candidata, SHA desplegado y checklist.
-- **Riesgos y reversión:** divergencia, coste o exposición de datos; no desplegar sin aprobación y retirar la configuración candidata de forma recuperable. `vite.config.ts` fija `build.outDir: "../../dist"` con `emptyOutDir: true`: un `vite build` del dashboard vaciaría el `dist/` de email versionado. Antes de cualquier build estático, usar un `outDir` propio y comprobar `check:dist-baseline`.
-- **Exclusiones específicas:** no publicar el caso como destacado ni añadir backend.
-- **Implementador:** perfil de deploy/preview, alto.
+### MHB-43 — Higiene de dependencias
+
+- **Objetivo observable:** que cada dependencia tenga al menos un consumidor real, esté en la sección que corresponde a su rol y tenga tipos alineados con el runtime declarado, reduciendo lo que MHB-36 debe llevar a cuatro package managers.
+- **Criterio de clasificación:** el paquete es `private: true`, no se publica ni se despliega, así que la separación no cambia lo que instala un `bun install` completo; sí cambia un `--production`/`--omit=dev` y documenta qué necesita la herramienta para funcionar. `dependencies`: lo que exigen los comandos de uso (`dev`, `build`, `build-selective`, `cli`, `generate:email`, `export:screenshot`, envíos de prueba). `devDependencies`: calidad y tooling de desarrollo (lint, formato, tests, typecheck, hooks, `a11y-check`, tipos).
+- **Diagnóstico al 2026-09-23:** 2 `dependencies` (`handlebars`, `lucide`) y 26 `devDependencies`; todas tienen consumidor salvo el CLI `maizzle`, que solo se invoca vía `execSync("maizzle build")` en `scripts/build/build.ts`. Paquetes de uso clasificados como desarrollo: `@maizzle/framework`, `vite`, `tailwindcss`, `postcss`, `autoprefixer`, `fs-extra`, `glob`, `puppeteer` y `nodemailer`. `@types/node@26` no coincide con `engines.node >=24`. El Node local observado es 22.23.1, por debajo de `engines`.
+- **Superficies autorizadas:** `package.json`, `bun.lock`, `scripts/build/build.ts`, los módulos que importan `fs-extra` (16 no-test) o `glob` (7 no-test, incluido `maizzle.config.js`) al 2026-09-24, revalidar tras MHB-34, `maizzle.config.*`, un helper de JSON/filesystem en `scripts/shared/` si tiene ≥ 2 consumidores, sus tests, `README.md` (requisitos) y `docs/implementation/STATUS.md`.
+- **Dependencias y precondiciones:** MHB-34 completada (configuraciones ya en su forma final) y MHB-41 completada (`check:dist-baseline` demuestra que el HTML no cambia).
+- **Pasos técnicos:**
+  1. Tabla de inventario: paquete, consumidores, rol, sección actual y sección propuesta.
+  2. Sustituir `execSync("maizzle build")` por la API programática de `@maizzle/framework` y eliminar el paquete `maizzle` (CLI). Si la API no produce un `dist/` idéntico, escalar y conservar el CLI.
+  3. Sustituir `fs-extra` por `node:fs`/`node:fs/promises` (`mkdir` con `recursive`, `rm` con `recursive` y `force`, `existsSync`, lectura/escritura JSON) y eliminarlo.
+  4. Sustituir `glob` por `globSync` de `node:fs` (verificado en Bun 1.3.13 y Node 22.23.1 el 2026-09-23) y eliminarlo.
+  5. Reclasificar según el criterio: pasan a `dependencies` los paquetes de uso que queden (`@maizzle/framework`, `vite`, `tailwindcss`, `postcss`, `autoprefixer`, `puppeteer`, `nodemailer`); `axe-core` y el tooling de calidad siguen en `devDependencies`.
+  6. Alinear `@types/node` con el major mínimo de `engines.node` y documentar en `README.md` el Node requerido.
+  7. `bun install` para regenerar `bun.lock` y `bun audit` sin vulnerabilidades nuevas.
+- **Criterios de aceptación:**
+  - `rg -n "fs-extra|from \"glob\"|maizzle build" scripts src` y `package.json` sin `fs-extra`, `glob` ni `maizzle`.
+  - Toda dependencia restante tiene consumidor en la tabla y está en la sección de su rol.
+  - En un checkout limpio, `bun install --frozen-lockfile --production` seguido de `bun run build` termina en verde y `check:dist-baseline` confirma `dist/` idéntico.
+  - `@types/node` coincide con el major mínimo de `engines.node`.
+- **Validación automática:** `bun install --frozen-lockfile`, lint, typecheck, test, `format:check`, build, `validate-email`, `check:dist-baseline`, `check-size` y `git diff --check`.
+- **Validación manual:** `bun run dev` (Home, Preview y Library), `export:screenshot` de un template y un flujo de `cli` hasta la selección de template.
+- **Evidencia requerida:** tabla de inventario antes/después, diff de `package.json`, salida del build en modo producción y de `check:dist-baseline`.
+- **Riesgos y reversión:** la API programática de Maizzle 5 difiere del CLI en rutas o en configuración; diferencias sutiles de `fs-extra` (por ejemplo, `remove` sobre rutas inexistentes). Un commit por paquete eliminado, cada uno revertible.
+- **Exclusiones específicas:** no actualizar versiones (lo hace Dependabot), no cambiar majors de Maizzle ni Tailwind, no eliminar `postcss`, `autoprefixer` ni `tailwindcss` (los retira MHB-38), no añadir dependencias ni tocar `trustedDependencies` (MHB-36).
+- **Análisis de mantenibilidad:** menos dependencias y un spawn de shell menos en el build; el helper JSON/filesystem solo se crea si reemplaza ≥ 2 consumidores reales de `fs-extra`.
+- **Implementador:** perfil tooling, medio.
+- **Revisor independiente:** revisor técnico de build.
+- **Condición de escalamiento:** la API programática de Maizzle no reproduce `dist/`, algún `globSync` nativo difiere en resultados, o eliminar un paquete exige cambiar un comando público.
+
+### MHB-36 — Compatibilidad multi-package-manager
+
+- **Objetivo observable:** permitir que cualquier desarrollador clone el proyecto y trabaje con npm, yarn, pnpm o bun indistintamente, sin que ninguno sea obligatorio.
+- **Motivación:** el código runtime ya usa exclusivamente APIs estándar de Node.js (cero `Bun.*`), pero scripts, tests, CI/CD, hooks y documentación están acoplados a Bun como único package manager.
+- **Superficies autorizadas:** `package.json`, módulos que lanzan procesos o citan comandos del package manager (al 2026-09-23: `scripts/cli/actions.ts`, `scripts/cli/process-runner.ts`, `scripts/cli/template-prompts.ts`, `scripts/build/ensure-build.ts` (antes `build-helper.ts`), `scripts/perf/measure-benchmarks.ts`, `scripts/perf/benchmark-runner.ts` y `scripts/export/renderers.ts`; `scripts/cli/helpers.ts` ya no existe; lista revalidada el 2026-09-24 tras los renombres de MHB-39), `.yarnrc.yml` (nuevo), `lint-staged` config, todos los archivos de test `*.test.ts` (conteo inventariado al iniciar), `bunfig.toml`, `types/bun-test.d.ts`, `vitest.config.*` (nuevo), `.github/workflows/ci.yml`, `.github/workflows/audit.yml`, `.husky/*`, `AGENTS.md`, `CLAUDE.md`, `README.md`, skills bajo `docs/ai/skills/`, documentación de implementación y un helper nuevo `scripts/shared/env/detect-pm.ts`.
+- **Dependencias y precondiciones:** MHB-34 completada para evitar doble churn durante la migración TypeScript; MHB-43 completada (sin el CLI `maizzle` ni otras dependencias sobrantes que migrar entre managers); MHB-41 completada (baseline de `dist/` y gates de email en CI que deben sobrevivir al cambio de runtime); todos los tests ya convertidos a `.ts`; `tsconfig.json` con `verbatimModuleSyntax` y `erasableSyntaxOnly` y guard `consistent-type-imports` activo (MHB-34/MHB-37), de modo que el código propio sea ejecutable con type stripping de Node 24 (validado en MHB-42); allowlist cerrada de MHB-42 (`eslint.config.js` y wrapper `maizzle.config.js`) respetada en la comprobación multi-manager.
+- **Pasos técnicos:**
+  - **F0 — Inventario:** contar scripts de `package.json` que invocan `bun`, archivos de test que importan `bun:test` (74 al 2026-09-24) y puntos que lanzan procesos o citan un package manager (incluido el mensaje legacy `'yarn build'` de `scripts/cli/template-prompts.ts`); revalidar las rutas de este contrato; registrar el conteo en `STATUS.md`.
+  - **F0b — Política de lockfiles:** decidir con el usuario qué lockfiles se versionan. Propuesta: solo `bun.lock` como fuente de verdad; npm, yarn y pnpm se prueban en CI instalando desde cero, y `.yarnrc.yml` fija `nodeLinker: node-modules` para evitar Plug'n'Play, incompatible con Vite y Maizzle.
+  - **F0c — Plataformas soportadas:** decidir con el usuario si Windows entra en el soporte (hoy no se prueba: CI solo en `ubuntu-latest` y desarrollo en macOS). Si entra, añadir `windows-latest` a la matriz de CI y revisar rutas, `spawn` y fin de línea; si no, declararlo como no soportado en `README.md`.
+  - **F1 — Scripts genéricos y detección de PM:** reemplazar los scripts de `package.json` que usan `bun script.ts` por `node script.ts` (type stripping nativo de Node 24, sin loaders ni dependencias nuevas); eliminar `"packageManager": "bun@1.3.13"` y `trustedDependencies` (Bun-only); actualizar `lint-staged`; crear `scripts/shared/env/detect-pm.ts` que detecte el PM activo via `process.env.npm_config_user_agent` o presencia de lockfiles.
+  - **F2 — CLI y build helper agnósticos:** reemplazar las invocaciones fijas a `bun` en los módulos inventariados en F0 por detección dinámica del PM; actualizar mensajes de error; hacer graceful fallback en benchmarks si `bun -v` no está disponible; eliminar mensaje legacy `"yarn build"` en helpers.
+  - **F3 — Migración de tests a Vitest:** agregar `vitest` como devDependency; crear `vitest.config.ts`; cambiar imports de `"bun:test"` a `"vitest"` en todos los archivos de test inventariados (`mock()` → `vi.fn()`, `spyOn()` → `vi.spyOn()`, `mock.module()` → `vi.mock()`); eliminar `bunfig.toml` y `types/bun-test.d.ts`; actualizar `package.json` scripts de test.
+  - **F4 — CI/CD y hooks:** reemplazar `oven-sh/setup-bun` por `actions/setup-node` con Node 24 en los 2 workflows, conservando todos los pasos añadidos por MHB-41 y MHB-34 (`validate-email`, `check:dist-baseline`, `check-size`, `lint:contrast`, `a11y-check`, `check:inventory --require-zero` y `git diff --exit-code -- dist/`); actualizar comandos de hooks Husky a genéricos.
+  - **F5 — Documentación y governance:** reescribir la invariante de Bun en AGENTS.md, CLAUDE.md, README.md y todas las skills bajo `docs/ai/skills/` (10 al 2026-09-24); actualizar tablas de comandos; documentar instalación con los 4 managers.
+- **Criterios de aceptación:**
+  - El proyecto se instala, lintea, typecheckea, testea, compila y valida con cada uno de los 4 managers (npm, yarn, pnpm, bun) desde un checkout limpio.
+  - Ningún script de `package.json` ni código fuente contiene `"bun"` hardcodeado como único path de ejecución.
+  - La suite completa de tests pasa bajo Vitest con Node y con Bun.
+  - CI/CD corre en Node 24 sin dependencia de `oven-sh/setup-bun`.
+  - Documentación refleja soporte multi-manager.
+  - Con cada uno de los 4 managers, `check:dist-baseline` queda verde tras el build: el HTML exportado es idéntico al baseline de MHB-41.
+- **Validación automática:** instalar con cada PM y ejecutar `typecheck`, `lint`, `test`, `build`, `validate-email`, `check:dist-baseline`, `format:check` y `agents:check`.
+- **Validación manual:** clonar en directorio limpio y verificar el flujo completo con npm y con bun como extremos representativos.
+- **Evidencia requerida:** logs de instalación y gates con cada PM; diff de scripts y imports migrados; confirmación de que `dist/*.html` es idéntico con todos los managers.
+- **Riesgos y reversión:** romper resolución de módulos en algún PM; diferencias sutiles de comportamiento entre runners de test. Mitigación: ejecutar gates con los 4 managers como matrix CI; cada fase se revierte independientemente.
+- **Exclusiones específicas:** no cambiar lógica de negocio, templates de email, output HTML ni APIs; no migrar a un monorepo; no añadir Corepack obligatorio.
+- **Análisis de mantenibilidad:** el helper `detect-pm.ts` es un archivo pequeño (~30 líneas) con responsabilidad única; la migración de tests es mecánica (search-and-replace de imports); no se crean abstracciones nuevas innecesarias.
+- **Implementador:** perfil tooling/infraestructura, medio-alto.
+- **Revisor independiente:** revisor técnico.
+- **Condición de escalamiento:** Node no puede ejecutar un `.ts` propio sin loader; un PM no soporta una feature usada por el proyecto (e.g. workspaces, lifecycle scripts); Vitest introduce incompatibilidad con algún mock existente; se requiere cambiar un contrato público; un PM resuelve dependencias transitivas distintas que alteran `dist/` (se decide con el usuario si se fija la versión o se acota el soporte).
+
+### MHB-48 — Actualización a TypeScript 7
+
+- **Objetivo observable:** subir `typescript` de `6.0.3` a `7.x` con `typecheck`, lint tipado y tests en verde, sin cambiar el HTML de `dist/`.
+- **Diagnóstico al 2026-10-01:** `typescript@7.0.2` es `latest` en npm y su paquete no declara `main` (solo el binario `tsc`). `typescript-eslint@8.71.0` (`latest`) y `8.71.1-alpha.5` (`canary`) declaran `peerDependencies.typescript: >=4.8.4 <6.1.0`, de modo que TS 7 no está soportado hoy. El repo importa la API del compilador en `scripts/validators/lint-guards/file-tree.test.ts` (`import ts from "typescript"`).
+- **Disparador externo (bloqueante):** una versión estable de `typescript-eslint` cuyo peer `typescript` admita 7.x, o una decisión explícita del usuario de sustituir el lint tipado. Hasta entonces el ID no se inicia ni se asigna.
+- **Superficies autorizadas:** `package.json`, `bun.lock`, `tsconfig*.json` solo para opciones deprecadas o removidas por TS 7, `scripts/validators/lint-guards/file-tree.test.ts` (o su sustituto si la API `ts` ya no existe), `docs/implementation/STATUS.md` y `CHANGELOG.md`.
+- **Dependencias y precondiciones:** MHB-34 completada (modo estricto ya cerrado, para aislar errores de la versión nueva) y el disparador externo satisfecho.
+- **Pasos técnicos:**
+  1. Confirmar el peer de `typescript-eslint` y la versión exacta a fijar; si no hay soporte, detener el ID.
+  2. Reemplazar `typescript` y `typescript-eslint` a versiones fijas compatibles y regenerar `bun.lock`.
+  3. Corregir opciones de `tsconfig*.json` removidas, sin añadir exclusiones ni `@ts-expect-error`.
+  4. Resolver la dependencia de la API `ts` en el guard de árbol de archivos: migrarla o sustituirla por un análisis equivalente.
+- **Criterios de aceptación:**
+  - `bun run typecheck` y `bun run lint` en verde con `typescript` en `7.x`.
+  - `bun run test` en verde, incluido el guard de árbol de archivos.
+  - `bun run check:dist-baseline` confirma `dist/` idéntico.
+  - `rg -n "eslint-disable|@ts-ignore|@ts-expect-error" scripts src` sin entradas nuevas respecto al inicio.
+- **Validación automática:** `bun install --frozen-lockfile`, lint, typecheck, test, `format:check`, build, `validate-email`, `check:dist-baseline` y `git diff --check`.
+- **Validación manual:** ninguna.
+- **Evidencia requerida:** versiones antes/después, salida de `typecheck` y `lint`, diff de `package.json` y `tsconfig*.json`.
+- **Riesgos y reversión:** cambios de diagnósticos o de resolución de módulos que revelen errores nuevos; API del compilador ausente. Un único commit de versión, revertible por separado.
+- **Exclusiones específicas:** no cambiar `strict`, `verbatimModuleSyntax` ni `erasableSyntaxOnly`, no migrar otras dependencias y no tocar templates ni `dist/`.
+- **Análisis de mantenibilidad:** si el guard de árbol de archivos deja de depender de la API `ts`, se elimina el acoplamiento con el compilador.
+- **Implementador:** perfil TypeScript/tooling, medio.
+- **Revisor independiente:** revisor técnico de tooling distinto del implementador.
+- **Condición de escalamiento:** `typescript-eslint` no soporta TS 7, la API `ts` no existe o falla un gate global.
+
+### MHB-49 — Release v1.4.0
+
+- **Objetivo observable:** publicar `v1.4.0` con el alcance de la Fase D.
+- **Superficies autorizadas:** las mismas que MHB-15.
+- **Dependencias y precondiciones:** MHB-15 publicada, MHB-43 y MHB-36 completadas, CI verde en `master` y decisión explícita del usuario antes de publicar o etiquetar.
+- **Versión propuesta:** `v1.4.0` (minor), porque el soporte multi-package-manager es aditivo. Pasar a `v2.0.0` solo si algún ID de la fase eliminó o renombró un comando público o elevó el requisito de runtime declarado en `engines`.
+- **Procedimiento:** idéntico a MHB-15 (congelamiento de alcance, `release-management`, Go/No-Go, CHANGELOG `[1.4.0]` y sección «Contrato de salida para integradores» frente a `v1.3.0`, que debe declarar `dist/` idéntico). Las notas documentan la instalación con los 4 managers y los cambios de clasificación de dependencias.
+- **Criterios de aceptación, validación, evidencia, riesgos y exclusiones:** los de MHB-15, añadiendo la instalación congelada con al menos npm y bun desde un checkout limpio del tag.
+- **Implementador:** perfil documentación/release, medio.
 - **Revisor independiente:** orquestador.
-- **Condición de escalamiento:** proveedor, credenciales, coste o publicación externa.
+- **Condición de escalamiento:** la de MHB-15, o un cambio de comando público detectado al verificar.
 
-### MHB-23 — Ampliar biblioteca de componentes
+## Fase E — Evolución del stack de estilos
 
-- **Objetivo observable:** añadir componentes email-safe con schema y presencia en `/library`.
-- **Superficies autorizadas:** partials/componentes, schemas, library, pruebas y documentación de componentes.
-- **Dependencias y precondiciones:** un caso de uso aprobado para cada componente.
-- **Pasos técnicos:** crear componente/schema, registrarlo, construirlo y cubrir su validación/prueba aplicable.
-- **Criterios de aceptación:** cada componente adicional es email-safe, tiene schema, aparece en `/library` y pasa controles.
-- **Validación automática:** build, schema, validadores y tests aplicables por componente.
-- **Validación manual:** abrir library, editar datos y revisar output.
-- **Evidencia requerida:** schema, captura, build verde y resultados de validación.
-- **Riesgos y reversión:** ampliar hacia un builder o duplicar componentes; mantener cada adición aislada y reversible.
-- **Exclusiones específicas:** no construir editor/builder de emails.
-- **Implementador:** perfil email/UI, medio.
-- **Revisor independiente:** revisor de email/UI.
-- **Condición de escalamiento:** el alcance se amplía hacia un builder o requiere nueva arquitectura.
-
-## Evolución del stack de estilos
+- **Contenido:** MHB-38 y su release MHB-50.
+- **Ventana:** no antes de 2027-01-15 (límite 2027-06-30), salvo disparador registrado en `STATUS.md`. Hasta entonces el stack sigue en Maizzle 5 + Tailwind v3.
+- **Riesgos:** perder `{{ }}`/Handlebars o el inlining; cambios de `dist/` no justificados.
+- **Criterio de salida:** MHB-38 cerrada con diff de `dist/` justificado por template y release publicada por MHB-50.
 
 ### MHB-38 — Migración en bloque a Maizzle 6 y Tailwind CSS v4
 
@@ -235,290 +318,55 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
 - **Revisor independiente:** revisor build/email distinto del implementador, más un revisor UI para el dashboard.
 - **Condición de escalamiento:** el checkpoint F2 no pasa la auditoría o pierde `{{ }}`/Handlebars; Maizzle 6 no ofrece API programática para el preview; la migración exige cambiar la CLI pública; o el alcance obliga a dividir el ID (lo decide el orquestador con el usuario).
 
-## Migración gradual y completa a TypeScript
+### MHB-50 — Release de la migración de stack
 
-El alcance final comprende todo archivo JavaScript o MJS propio bajo
-`scripts/**`, `src/**` y las configuraciones raíz. Se excluyen dependencias,
-outputs generados, `dist/**` y material sincronizado de solo lectura. La
-convivencia `.js`/`.mjs`/`.ts` restante es transitoria y MHB-34 la elimina. Cambiar extensión no autoriza cambios funcionales,
-rediseños ni alteraciones de los contratos CLI, filesystem, email o ESP.
+- **Objetivo observable:** publicar la release que contiene MHB-38.
+- **Superficies autorizadas:** las mismas que MHB-15.
+- **Dependencias y precondiciones:** MHB-49 publicada, MHB-38 completada, CI verde en `master` y decisión explícita del usuario.
+- **Versión:** se decide al congelar. `v1.5.0` si los comandos públicos, la convención `[[ ]]`/`{{ }}` y las variables ESP del manifiesto se conservan; `v2.0.0` si cambia el formato de los templates fuente para usuarios del toolkit (Maizzle 6 usa Vue SFC) o algún comando público.
+- **Procedimiento:** idéntico a MHB-15; la sección «Contrato de salida para integradores» documenta el diff de `dist/` frente a `v1.4.0`, justificado por template, y la conservación de variables ESP.
+- **Implementador:** perfil documentación/release, medio.
+- **Revisor independiente:** orquestador.
+- **Condición de escalamiento:** la de MHB-15.
 
-### Resguardo previo a MHB-34 (MHB-40, MHB-41, MHB-45, MHB-44, MHB-46, MHB-47 y MHB-42)
+## Fase F — Demo y portafolio
 
-Registrado el 2026-09-23 a partir del análisis de riesgos hacia MHB-15. Causas
-observadas: criterios de aceptación en prosa que se endurecieron después de
-implementar, exclusiones de ESLint que ocultaron 23 infracciones en MHB-37,
-revisión apoyada en lo declarado en `STATUS.md`, skills que contradicen el plan,
-contratos pendientes que citan archivos ya borrados o renombrados, ausencia de un
-gate automático sobre `dist/*.html` y riesgo de bloqueo en MHB-34 por loaders de
-configuración de terceros. El análisis libre posterior añadió: `master` sin
-protección con auto-merge de Dependabot, HTML exportado con colores, unidades e
-imágenes no soportados por clientes reales, escrituras cross-site posibles en la
-API local y ausencia de un contrato de variables consumible por una integración
-ESP. Estos IDs se ejecutan en el orden indicado, uno por rama, después de MHB-39;
-los IDs se numeran por fecha de registro, no por orden de ejecución.
+- **Contenido:** MHB-16 (opcional) y MHB-23 (opcional), más la revisión final independiente del producto.
+- **Paralelismo:** se puede ejecutar desde la publicación de `v1.3.0`, sin esperar a las Fases D y E, porque no comparte superficie con ellas. Si la demo se publica antes de una release posterior, se actualiza tras esa release.
+- **Riesgos:** divergencia entre demo y HTML compilado; ampliar la biblioteca hacia un builder.
+- **Criterio de salida:** la revisión final aprueba el caso según «Criterios para estar listo para portafolio»; cada opcional aprobado cumple su propia aceptación.
 
-### MHB-44 — Compatibilidad del HTML exportado con clientes reales
+### MHB-16 — Demo candidata pre-renderizada
 
-- **Objetivo observable:** que `dist/*.html` use solo CSS e imágenes que Gmail, Outlook de escritorio y Apple Mail renderizan, y que los validadores lo impidan en adelante. Es el requisito para enviar estos templates en producción vía SendGrid.
-- **Hallazgos (2026-09-23), no detectados por los validadores actuales:**
-  - Colores con sintaxis CSS Color 4 separada por espacios (`rgb(255 255 255 / 1)`): unas 400 apariciones en los seis templates. Outlook de escritorio (motor Word) y otros clientes solo admiten HEX o `rgb(r, g, b)`, por lo que se pierden fondos y colores de texto.
-  - Unidades `rem` en estilos inline (hasta 17 por template); varios clientes no las soportan de forma fiable.
-  - Imágenes SVG enlazadas desde `https://api.iconify.design/…`: Gmail y Outlook no muestran SVG, y el correo depende en producción de un servicio de terceros sin SLA.
-  - Enlaces de ejemplo (`href="https://example.com"`, `href="#"`) y marca de ejemplo en templates de producto.
-  - Causa probable: `tailwind.email.config.js` no usa el preset para email (px en lugar de rem y colores sin variables de opacidad), práctica recomendada por Maizzle para Tailwind v3.
-- **Superficies autorizadas:** `tailwind.email.config.js`, `maizzle.config.*`, `src/emails/**` (iconos e imágenes), `scripts/icons/**` y sus tests, reglas nuevas en `scripts/validators/email-rules/rules/**` con sus tests, `dist/*.html` regenerado, el baseline de MHB-41 (actualización autorizada), `package.json`/`bun.lock` (preset de email, `@resvg/resvg-js` y script `generate:icons`), `src/emails/assets/icons/README.md`, `.github/workflows/ci.yml`, `CHANGELOG.md` y `docs/implementation/STATUS.md`.
+- **Objetivo observable:** decidir y probar una demo solo lectura sin divergencia frente al HTML compilado.
+- **Superficies autorizadas:** build estático, configuración de demo/despliegue aprobada, rutas de navegación y documentación de evidencia.
+- **Dependencias y precondiciones:** MHB-15 completada; aprobación explícita de proveedor/credenciales si fueran necesarios.
+- **Pasos técnicos:** comparar output, configurar demo mínima, ejecutar smoke y registrar SHA desplegado.
+- **Criterios de aceptación:** demo candidata coincide con HTML compilado, funciona en desktop/móvil y se enlaza para verificación.
+- **Validación automática:** smoke de build estático, enlaces y checks aplicables.
+- **Validación manual:** navegar la demo solo lectura en desktop/móvil.
+- **Evidencia requerida:** URL candidata, SHA desplegado y checklist.
+- **Riesgos y reversión:** divergencia, coste o exposición de datos; no desplegar sin aprobación y retirar la configuración candidata de forma recuperable. `vite.config.ts` fija `build.outDir: "../../dist"` con `emptyOutDir: true`: un `vite build` del dashboard vaciaría el `dist/` de email versionado. Antes de cualquier build estático, usar un `outDir` propio y comprobar `check:dist-baseline`.
+- **Exclusiones específicas:** no publicar el caso como destacado ni añadir backend.
+- **Implementador:** perfil de deploy/preview, alto.
+- **Revisor independiente:** orquestador.
+- **Condición de escalamiento:** proveedor, credenciales, coste o publicación externa.
 
-- **Dependencias y precondiciones:** MHB-41 completada (el cambio de `dist/` queda medido y justificado por template); MHB-45 recomendada.
-- **Pasos técnicos:**
-  1. **Reglas primero:** añadir reglas de `validate-email` (ERROR) para colores no HEX/`rgb(r, g, b)` en `style=""`, unidades `rem`/`em` en estilos inline, `<img>` con `.svg` y hosts de imagen fuera de una allowlist configurable; y WARNING para `href="#"` y dominios de ejemplo. Deben fallar sobre el `dist/` actual.
-  2. **Corrección de causa:** configurar el pipeline de email para emitir px y colores HEX (preset de email compatible con Tailwind v3 o `corePlugins` de opacidad desactivados más conversión de unidades), sin cambiar el diseño.
-  3. **Iconos (ajuste de alcance acordado):** sustituir los SVG remotos por PNG (@2x, con `width`/`height`) servidos desde jsDelivr sobre el propio repositorio (`https://cdn.jsdelivr.net/gh/Frank-0511/vite-mhb-email@master/src/emails/assets/icons/`), sin romper el modo oscuro existente. Automatizar la generación de PNG con `bun run generate:icons` (`scripts/icons/generate-icon.ts`) a partir de nodos SVG de Lucide usando `@resvg/resvg-js`. Implementar validador de referencias `<x-email-icon>` en `src/emails/**/*.html` y guard de no-sobrescritura frente a `master` para proteger la inmutabilidad y la caché de jsDelivr, integrados en `validate-email` y con tests unitarios.
-  4. Regenerar `dist/`, ejecutar `update:dist-baseline` y justificar la diferencia de cada template en `STATUS.md`.
-  5. Coordinar con MHB-38: la regla `modern-css-inline` prevista allí reutiliza estas reglas en lugar de duplicarlas.
-- **Criterios de aceptación:**
-  - `rg -c "rgb\([0-9]+ [0-9]+ [0-9]+ /|[0-9.]+rem|\.svg" dist/*.html` devuelve 0 en todos los templates.
-  - Las reglas nuevas fallan sobre fixtures con cada patrón y pasan sobre el `dist/` regenerado.
-  - El generador de iconos (`generate:icons`) produce PNG transparente con dimensiones @2x, nombre `lucide-<icono>-<hex>.png`, rechaza icono inexistente, hex inválido o size inválido con código 1, y no sobrescribe sin `--force`.
-  - El validador de referencias falla si una plantilla referencia un `name` sin archivo PNG en disco o si viola `lucide-<icono>-<hex6>`.
-  - El guard de no-sobrescritura falla si un PNG existente aparece modificado respecto a `master` y emite mensaje claro si `master` no está disponible localmente.
-  - Todas las referencias a iconos actuales en plantillas pasan `bun run validate-email`.
-  - Las variables ESP `{{ }}` de cada template son idénticas antes y después (`check:dist-baseline` solo informa diferencias de hash justificadas).
-  - Sin regresión visual en el preview (modo claro y oscuro) ni de peso por encima del umbral de `check-size`.
-- **Validación automática:** `bun install --frozen-lockfile`, lint, typecheck, test, `format:check`, build, `validate-email`, `check-size`, `check:dist-baseline` (tras actualizar el baseline) y `git diff --check`.
-- **Validación manual:** comparar en el preview cada template antes y después (claro/oscuro, desktop/móvil); el envío a clientes reales queda en MHB-14.
-- **Evidencia requerida:** conteo por patrón antes/después, diff justificado por template, salida de las reglas nuevas y capturas del preview.
-- **Riesgos y reversión:** cambio visual inadvertido al convertir colores con opacidad o rem a px; hosting de imágenes sin decidir. Un commit por paso; revertir restaura el `dist/` y el baseline anteriores.
-- **Exclusiones específicas:** no rediseñar templates, no cambiar variables ESP ni la CLI pública, no migrar a Tailwind v4 ni Maizzle 6 (MHB-38), no subir imágenes a un servicio externo sin aprobación del usuario.
-- **Análisis de mantenibilidad:** una regla por archivo bajo la categoría existente (`structure/` o `content/`), respetando ≤ 8 archivos por carpeta; la allowlist de hosts vive en constantes compartidas.
-- **Implementador:** perfil email/compatibilidad, alto.
-- **Revisor independiente:** revisor de build y email.
-- **Condición de escalamiento:** el preset elegido cambia el diseño visible, no hay decisión sobre dónde alojar las imágenes, o el cambio exige tocar variables ESP.
+### MHB-23 — Ampliar biblioteca de componentes
 
-### MHB-46 — Endurecimiento de la API local del servidor Vite
-
-- **Objetivo observable:** que ninguna web abierta en el navegador del usuario pueda escribir o invalidar datos de la herramienta mediante peticiones cross-site al servidor local.
-- **Hallazgo (2026-09-23, ajustado 2026-09-29):** los 6 endpoints de escritura (`POST /api/data?template=`, `POST /api/cache/invalidate?template=`, `POST /api/cache/clean`, `POST /api/copy-html?template=`, `POST /api/render?template=` y `POST /api/components/:name/render`) aceptan el cuerpo sin exigir `Content-Type: application/json` ni comprobar el origen. Un `POST` con `text/plain` es una petición simple sin preflight CORS, así que cualquier sitio visitado mientras corre `bun run dev` podría sobrescribir un `data.json` o vaciar la caché. La validación de nombres y rutas (`isValidTemplateName`, `isPathInside`) ya impide el path traversal. Severidad baja: herramienta local, sin secretos expuestos por estos endpoints.
-- **Superficies autorizadas:** `scripts/vite/api/**` (guarda en `http.ts`, sus tests y handlers de data, cache, copy-html y components), `scripts/vite/services/render/request-handler.ts` y `request-handler.test.ts` (ajuste acordado), `scripts/shared/contracts/constants/http-security.ts`, `docs/implementation/STATUS.md`, `docs/implementation/PLAN.md` y `CHANGELOG.md`.
-- **Dependencias y precondiciones:** MHB-44 completada (evita solapar con cambios de render); independiente del resto.
-- **Pasos técnicos:**
-  1. Añadir en `scripts/vite/api/http.ts` una guarda única para métodos de escritura: exigir `Content-Type: application/json` (salvo endpoints de caché sin cuerpo: `/api/cache/invalidate` y `/api/cache/clean` con `requireJson: false`) y rechazar `Sec-Fetch-Site: cross-site` u `Origin` distinto del servidor, con respuesta 403 accionable.
-  2. Aplicarla a los 6 endpoints de escritura y cubrir cada rechazo con tests.
-  3. Confirmar que el frontend ya usa `postJSON`/`fetchJSON` con el encabezado correcto y que caché no envía Content-Type.
-- **Criterios de aceptación:** un `POST` con `text/plain` o `Origin` externo recibe 403 en cada endpoint de escritura (tests); el dashboard funciona sin cambios.
-- **Validación automática:** lint, typecheck, test, `format:check` y `git diff --check`.
-- **Validación manual:** `bun run dev` y recorrido de guardar datos, copiar HTML e invalidar caché.
-- **Evidencia requerida:** tabla de endpoints protegidos y salida de los tests de rechazo.
-- **Riesgos y reversión:** bloquear una llamada legítima del propio dashboard; revertible por commit.
-- **Exclusiones específicas:** no añadir autenticación ni dependencias; no cambiar rutas ni contratos de la API.
-- **Análisis de mantenibilidad:** una sola guarda reutilizada por todos los endpoints (≥ 2 consumidores), sin duplicar comprobaciones.
-- **Implementador:** perfil servidor Vite/seguridad, medio.
-- **Revisor independiente:** revisor técnico.
-- **Condición de escalamiento:** la guarda rompe un flujo del dashboard que exige cambiar un contrato de API.
-
-### MHB-47 — Contrato de integración ESP (manifiesto de variables y perfil SendGrid)
-
-- **Objetivo observable:** que un sistema externo (por ejemplo, la integración por API con SendGrid) sepa, sin leer el HTML, qué variables requiere cada template, que el contrato cubre dos perfiles SendGrid: `sendgrid` (Dynamic Templates, Handlebars `{{ }}`) y `sendgrid-legacy` (etiquetas de sustitución `-variable-`), y que `dist/` solo contenga sintaxis Handlebars que SendGrid Dynamic Templates soporta.
-- **Hallazgo (2026-09-23):** el preview registra helpers propios (`eq`, `ne`, `gt`, `lt`, `gte`, `lte`, `and`, `or`, `not`) que SendGrid no ofrece (usa `equals`, `notEquals`, `greaterThan`, `lessThan`, `and`, `or`, `formatDate`, `insert`, `length`). Hoy `dist/` solo contiene variables simples `{{ var }}`, pero nada impide que un template futuro exporte un helper que SendGrid no conoce y que fallaría en silencio. Tampoco existe un listado de variables por template consumible por otra aplicación, aunque `scripts/esp/` ya las extrae.
-- **Superficies autorizadas:** `scripts/esp/**`, `scripts/shared/contracts/constants/esp-contract.ts`, `scripts/esp/manifest/**`, `scripts/esp/syntax/**`, `scripts/validators/dist-baseline/**` (comprobación de coherencia del manifiesto), `scripts/build/build.ts` (solo la llamada que genera el manifiesto), un comando nuevo en `package.json` (`esp:manifest` o integrado en `build`), una regla nueva de `validate-email` con su test, el manifiesto generado (`dist/esp-manifest.json` o ruta acordada), `check:dist-baseline` (para contemplar el manifiesto), `README.md` (sección de integración) y `docs/implementation/STATUS.md`.
-- **Dependencias y precondiciones:** MHB-44 completada (el HTML ya es apto para producción).
-- **Pasos técnicos:**
-  1. Generar en el build un manifiesto por template: nombre, variables requeridas, variables intencionales del frontmatter y un ejemplo de datos tomado de `data.json` sin datos personales.
-  2. Regla de `validate-email` (ERROR): en `dist/` solo se admiten variables, bloques `#if`/`#unless`/`#each` y los helpers de una allowlist de perfil ESP (inicialmente SendGrid).
-  3. Regla `esp-legacy-compat` (WARNING) que avisa cuando un template no es convertible a etiquetas `-variable-` (bloques, helpers, rutas anidadas o colisión de texto), y el campo `legacy` (`convertible`, `tags`, `issues`) por template en el manifiesto.
-  4. Documentar en `README.md` cómo consumir `dist/<template>.html` y el manifiesto desde una integración por API, sin incluir código ni credenciales de SendGrid.
-- **Criterios de aceptación:**
-  - El manifiesto existe para los seis templates y sus variables coinciden con las que extrae `check:dist-baseline`.
-  - Un fixture con `{{#if (eq a b)}}` en `dist/` hace fallar `validate-email`.
-  - El manifiesto expone `legacy.tags` con formato `-variable-` para todas las `requiredVariables` (`bun test scripts/esp/manifest`).
-  - `esp-legacy-compat` marca un fixture con `{{#if a}}` y un fixture con colisión `-variable-` (`bun test scripts/validators/email-rules/rules/content/esp-legacy-compat.test.ts`).
-  - `check:dist-baseline` falla si el manifiesto no coincide con el baseline (`bun run check:dist-baseline` y `manifest-check.test.ts`).
-  - `dist/*.html` no cambia (`check:dist-baseline` verde para el HTML).
-- **Validación automática:** lint, typecheck, test, `format:check`, build, `validate-email`, `check:dist-baseline` y `git diff --check`.
-- **Validación manual:** el usuario consume el manifiesto desde su integración con SendGrid (fuera de este repositorio) y confirma que le sirve.
-- **Evidencia requerida:** manifiesto generado, salida de la regla sobre fixtures y confirmación del usuario.
-- **Riesgos y reversión:** acoplar la herramienta a un solo ESP; el perfil se modela como allowlist configurable con SendGrid como primer perfil. Revertible por commit.
-- **Exclusiones específicas:** no implementar llamadas a la API de SendGrid ni guardar credenciales; no cambiar el HTML exportado ni las variables existentes; no reescribir `dist/` a `-variable-`; la fuente de verdad sigue siendo `{{ }}`; no modelar `<%body%>`, `<%subject%>` ni secciones legacy.
-- **Análisis de mantenibilidad:** reutiliza `scripts/esp/extractor.ts` y `frontmatter.ts`; el manifiesto es un módulo de responsabilidad única; estructura modular en `syntax/` (2 archivos), `manifest/` (5 archivos) y `rules/content/` (7 archivos).
-- **Implementador:** perfil email/ESP, medio.
-- **Revisor independiente:** revisor de email y el usuario como consumidor.
-- **Condición de escalamiento:** la regla detecta un helper no soportado en un template existente, o el formato del manifiesto exige una decisión del consumidor.
-
-### MHB-42 — Spike de loaders de configuración y decisión de excepciones JS
-
-- **Objetivo observable:** saber antes de MHB-34 qué archivos `.js`/`.mjs` pueden convertirse a `.ts` con el stack vigente y dejar por escrito una allowlist cerrada (posiblemente vacía), para que MHB-34 no se bloquee a mitad de ejecución.
-- **Superficies autorizadas:** `docs/superpowers/mhb-42/` (temporal, para pruebas desechables), `docs/implementation/PLAN.md` (contratos de MHB-34 y MHB-36) y `docs/implementation/STATUS.md`. Las pruebas de conversión se hacen en una rama desechable que no se mergea.
-- **Dependencias y precondiciones:** MHB-47 completada (último ID del resguardo) y MHB-41 vigente, porque su gate demuestra si una conversión altera `dist/`.
-- **Pasos técnicos:**
-  1. Inventariar los `.js`/`.mjs` propios: 22 al 2026-09-23, entre ellos `eslint.config.js`, `maizzle.config.js`, `postcss.config.js`, `tailwind.config.js`, `tailwind.email.config.js`, `scripts/ai/**` y `scripts/validators/lint-guards/selectors.js` (añadido en MHB-37). Clasificarlos en «propio convertible» o «cargado por herramienta de terceros».
-  2. Para cada config de terceros, probar la variante `.ts` con el comando real que la consume (`bun run build`, `bun run dev`, `bun run lint`, CSS del dashboard) bajo Bun y bajo Node 24, y confirmar `check:dist-baseline` verde.
-  3. Dimensionar MHB-34: contar los errores de `tsc --noEmit` con `strict`, `verbatimModuleSyntax` y `erasableSyntaxOnly` activados globalmente, sin commitear, agrupados por flag y por carpeta.
-  4. Verificar el efecto de eliminar `tsconfig.strict.json` sobre el linting con tipos de MHB-39 (`parserOptions.project`).
-  5. Registrar la decisión en los contratos de MHB-34 y MHB-36: allowlist por archivo con herramienta, versión y motivo, o cero excepciones. Si el conteo del paso 3 lo justifica, proponer al usuario dividir MHB-34.
-- **Criterios de aceptación:**
-  - Tabla con los 22 archivos (o el conteo vigente) con decisión y comando de evidencia por fila.
-  - Conteo de errores estrictos por flag y por carpeta.
-  - Contratos de MHB-34 y MHB-36 actualizados con la allowlist y el umbral de división acordado.
-  - `git diff master...HEAD` limitado a `docs/implementation/**`.
-- **Validación automática:** `bun run lint:md`, `bun run format:check` y `git diff --check`; en la rama desechable, build, lint y `check:dist-baseline` por cada conversión probada.
-- **Validación manual:** el usuario aprueba la allowlist y la decisión de dividir o no MHB-34.
-- **Evidencia requerida:** tabla de clasificación, salida de los comandos por conversión, conteo de errores y decisión aprobada.
-- **Riesgos y reversión:** dar por buena una conversión que solo funciona bajo Bun; por eso cada prueba se repite bajo Node 24. La rama desechable no se mergea.
-- **Exclusiones específicas:** no convertir ningún archivo en la rama entregable (lo hace MHB-34); no cambiar versiones de dependencias; no modificar `tsconfig*.json` en la rama entregable.
-- **Análisis de mantenibilidad:** no aplica a código; el spike reduce el riesgo de que MHB-34 mezcle investigación e implementación.
-- **Implementador:** perfil TypeScript/tooling, alto.
-- **Revisor independiente:** orquestador, con aprobación del usuario sobre la allowlist.
-- **Condición de escalamiento:** alguna herramienta exige conservar JS, o el conteo de errores estrictos justifica dividir MHB-34.
-
-### MHB-34 — Cierre total y modo estricto TypeScript
-
-- **Objetivo observable:** eliminar la compatibilidad JavaScript transitoria, sanear utilidades residuales y dejar el repositorio propio completamente migrado a TypeScript estricto con arquitectura de carpetas validada.
-- **Superficies autorizadas:** `scripts/ai/**`, configuraciones raíz restantes, tests/imports residuales, `package.json`, `tsconfig*.json`, ESLint/lint-staged, documentación y control de inventario.
-- **Dependencias y precondiciones:** MHB-37, MHB-39, MHB-40, MHB-41 y MHB-42 completadas; conteo residual limitado a esta superficie; allowlist de excepciones JS y decisión de división aprobadas en MHB-42.
-- **Allowlist cerrada de excepciones JS (aprobada en MHB-42, 2026-10-01):**
-  1. `eslint.config.js`: herramienta `eslint@10.11.0`. Motivo: su cargador nativo `loadTypeScriptConfigFileWithJiti` requiere `jiti >= 2.2.0` (falla con `Error: You are using an outdated version of the 'jiti' library.` al detectar `jiti@1.21.7` transitivo). Sin dependencias nuevas, se mantiene como archivo `.js`.
-  2. `maizzle.config.js`: herramienta `@maizzle/framework@5.5.0`. Motivo: `baseConfigFileNames` en Maizzle busca únicamente `.js` y `.cjs`. Se mantiene como wrapper de 1 línea (`export { default } from "./maizzle.config.ts";`) mientras la configuración completa reside en `maizzle.config.ts`, permitiendo la invocación estándar de `maizzle build` sin banderas.
-  3. Cero excepciones adicionales: los 20 archivos restantes (`postcss.config.js` → `.ts`, `tailwind.config.js` → `.ts`, `tailwind.email.config.js` → `.ts`, `scripts/validators/lint-guards/selectors.js` → `.ts` y los 16 módulos/tests bajo `scripts/ai/**` → `.ts`) se convierten íntegramente a `.ts`.
-- **Decisión de dimensionamiento y división (aprobada en MHB-42, 2026-10-01):**
-  - Conteo estricto combinado (`strict`, `verbatimModuleSyntax`, `erasableSyntaxOnly`, sin `allowJs`/`checkJs`): 5 errores (todos código TS2339 por `error?.code` en cláusulas catch dentro de `scripts/ai/`; 0 errores en las demás carpetas del repositorio).
-  - Al quedar muy por debajo del umbral de división (>150 errores o >3 carpetas con >30 errores), MHB-34 se mantiene indiviso como un único ID ejecutable.
-- **Pasos técnicos:**
-  - **Ajustes derivados de MHB-39 a MHB-42:** reapuntar `parserOptions.project` del linting con tipos (MHB-39 lo apunta a `tsconfig.strict.json`, que este ID elimina) directamente a `tsconfig.json` (validado en MHB-42: cubre configs, tests y scripts con 0 regresiones y tiempos idénticos); convertir `scripts/validators/lint-guards/selectors.js` a `.ts` (su import ESM en `eslint.config.js` fue validado en MHB-42 bajo Bun y Node 22/24); convertir `postcss.config.js`, `tailwind.config.js` (y actualizar `@config` en `tailwind.css`) y `tailwind.email.config.js` (y actualizar `@config` en `tailwind.email.css`) a `.ts`; crear `maizzle.config.ts` y dejar `maizzle.config.js` como wrapper de 1 línea; pasar `check:inventory` del CI de modo informe a `--require-zero` con la allowlist cerrada (`eslint.config.js` y el wrapper `maizzle.config.js`) codificada en el propio script, no en exclusiones de ESLint ni de `tsconfig`.
-  - **Refactor y reorganización shared:** evaluar y mover utilidades agnósticas de `scripts/ai/common/` (`hashing.mjs`, `gitignore.mjs`) a `scripts/shared/` para unificar el tooling.
-  - **Auditoría arquitectónica:** auditar y validar que todo el árbol de archivos cumpla la regla de ≤250 líneas y ≤8 archivos fuente por directorio (incluyendo `scripts/esp/`).
-  - Migrar los 16 archivos de automatizaciones AI y tests de `scripts/ai/**` a `.ts` con type stripping nativo de Node 24 (`agents-sync.ts`, `agents-check.ts`, etc.); corregir las 5 instancias de `error.code` (TS2339) y las 24 infracciones de lint TS (@typedef, reexports en `agents-common.ts`, función en `constants.ts`); actualizar todas las referencias documentales y scripts de `package.json` (`check:task-branch`, `agents:sync`, `agents:check`); eliminar `tsconfig.strict.json` y activar `strict: true`, `noImplicitAny: true`, `strictNullChecks: true`, `verbatimModuleSyntax: true` y `erasableSyntaxOnly: true` directamente en `tsconfig.json`; eliminar `allowJs`/`checkJs`; conservar activos los guards de higiene de tipos de MHB-37 al modificar ESLint; actualizar las referencias `.js` de las invariantes de este plan, `AGENTS.md` y skills (`storage-keys`, `dom-helpers`, `http-helpers`, árbol de ejemplo y sufijo de tests); activar `strict` como gate global único; ejecutar `bun run check:inventory --require-zero` como gate de bloqueo obligatorio e integrarlo de forma permanente en el camino de verificación y en los checks de CI/PR; reducir el script `typecheck` de `package.json` a un único `tsc --noEmit`; al actualizar referencias `.js`/`.mjs`, conservar nombres de terceros y texto histórico del CHANGELOG; ejecutar la matriz completa desde instalación congelada.
-- **Criterios de aceptación:**
-  - Todo el árbol de directorios del proyecto respeta los límites de ≤250 líneas y ≤8 archivos fuente por carpeta.
-  - `rg --files -g '*.js' -g '*.mjs'` devuelve únicamente los 2 archivos de la allowlist cerrada de MHB-42 (`eslint.config.js` y `maizzle.config.js`); no existen imports rotos ni extensiones antiguas documentadas; el typecheck global estricto, suite, build, validadores y sincronización de agentes quedan verdes; `check:inventory --require-zero` finaliza con código 0.
-  - `tsconfig.json` incluye `strict`, `verbatimModuleSyntax` y `erasableSyntaxOnly`; los guards de MHB-37 siguen activos en `bun run lint`.
-- **Validación automática:** `bun install --frozen-lockfile`, lint, typecheck estricto, test, formato, build, `validate-email`, `lint:contrast`, `a11y-check`, `agents:check`, `check:inventory --require-zero`, `check:dist-baseline` y `git diff --check`.
-- **Validación manual:** revisar comandos públicos, configuración de cada herramienta, recorridos UI de Home/Preview/Library y output transaccional/marketing.
-- **Evidencia requerida:** inventario final cero con allowlist (`--require-zero`), matriz completa de gates, hashes finales, lista de comandos/documentos actualizados y diff acumulado por ID.
-- **Riesgos y reversión:** cerrar prematuramente con excepciones ocultas o romper tooling auxiliar; ninguna excepción fuera de la allowlist de MHB-42 cuenta como cierre y cada ID previo permanece revertible por separado.
-- **Exclusiones específicas:** no introducir React, no cambiar comportamiento de producto y no publicar versión/tag/release dentro de este ID.
-- **Implementador:** perfil TypeScript/tooling transversal, alto.
-- **Revisor independiente:** revisor técnico final distinto de los implementadores.
-- **Condición de escalamiento:** queda una excepción JavaScript fuera de la allowlist de MHB-42, falla un gate global, `check:dist-baseline` detecta un cambio en `dist/` o una herramienta exige conservar un wrapper no TypeScript no previsto por MHB-42.
-
-### MHB-43 — Higiene de dependencias
-
-- **Objetivo observable:** que cada dependencia tenga al menos un consumidor real, esté en la sección que corresponde a su rol y tenga tipos alineados con el runtime declarado, reduciendo lo que MHB-36 debe llevar a cuatro package managers.
-- **Criterio de clasificación:** el paquete es `private: true`, no se publica ni se despliega, así que la separación no cambia lo que instala un `bun install` completo; sí cambia un `--production`/`--omit=dev` y documenta qué necesita la herramienta para funcionar. `dependencies`: lo que exigen los comandos de uso (`dev`, `build`, `build-selective`, `cli`, `generate:email`, `export:screenshot`, envíos de prueba). `devDependencies`: calidad y tooling de desarrollo (lint, formato, tests, typecheck, hooks, `a11y-check`, tipos).
-- **Diagnóstico al 2026-09-23:** 2 `dependencies` (`handlebars`, `lucide`) y 26 `devDependencies`; todas tienen consumidor salvo el CLI `maizzle`, que solo se invoca vía `execSync("maizzle build")` en `scripts/build/build.ts`. Paquetes de uso clasificados como desarrollo: `@maizzle/framework`, `vite`, `tailwindcss`, `postcss`, `autoprefixer`, `fs-extra`, `glob`, `puppeteer` y `nodemailer`. `@types/node@26` no coincide con `engines.node >=24`. El Node local observado es 22.23.1, por debajo de `engines`.
-- **Superficies autorizadas:** `package.json`, `bun.lock`, `scripts/build/build.ts`, los módulos que importan `fs-extra` (16 no-test) o `glob` (7 no-test, incluido `maizzle.config.js`) al 2026-09-24, revalidar tras MHB-34, `maizzle.config.*`, un helper de JSON/filesystem en `scripts/shared/` si tiene ≥ 2 consumidores, sus tests, `README.md` (requisitos) y `docs/implementation/STATUS.md`.
-- **Dependencias y precondiciones:** MHB-34 completada (configuraciones ya en su forma final) y MHB-41 completada (`check:dist-baseline` demuestra que el HTML no cambia).
-- **Pasos técnicos:**
-  1. Tabla de inventario: paquete, consumidores, rol, sección actual y sección propuesta.
-  2. Sustituir `execSync("maizzle build")` por la API programática de `@maizzle/framework` y eliminar el paquete `maizzle` (CLI). Si la API no produce un `dist/` idéntico, escalar y conservar el CLI.
-  3. Sustituir `fs-extra` por `node:fs`/`node:fs/promises` (`mkdir` con `recursive`, `rm` con `recursive` y `force`, `existsSync`, lectura/escritura JSON) y eliminarlo.
-  4. Sustituir `glob` por `globSync` de `node:fs` (verificado en Bun 1.3.13 y Node 22.23.1 el 2026-09-23) y eliminarlo.
-  5. Reclasificar según el criterio: pasan a `dependencies` los paquetes de uso que queden (`@maizzle/framework`, `vite`, `tailwindcss`, `postcss`, `autoprefixer`, `puppeteer`, `nodemailer`); `axe-core` y el tooling de calidad siguen en `devDependencies`.
-  6. Alinear `@types/node` con el major mínimo de `engines.node` y documentar en `README.md` el Node requerido.
-  7. `bun install` para regenerar `bun.lock` y `bun audit` sin vulnerabilidades nuevas.
-- **Criterios de aceptación:**
-  - `rg -n "fs-extra|from \"glob\"|maizzle build" scripts src` y `package.json` sin `fs-extra`, `glob` ni `maizzle`.
-  - Toda dependencia restante tiene consumidor en la tabla y está en la sección de su rol.
-  - En un checkout limpio, `bun install --frozen-lockfile --production` seguido de `bun run build` termina en verde y `check:dist-baseline` confirma `dist/` idéntico.
-  - `@types/node` coincide con el major mínimo de `engines.node`.
-- **Validación automática:** `bun install --frozen-lockfile`, lint, typecheck, test, `format:check`, build, `validate-email`, `check:dist-baseline`, `check-size` y `git diff --check`.
-- **Validación manual:** `bun run dev` (Home, Preview y Library), `export:screenshot` de un template y un flujo de `cli` hasta la selección de template.
-- **Evidencia requerida:** tabla de inventario antes/después, diff de `package.json`, salida del build en modo producción y de `check:dist-baseline`.
-- **Riesgos y reversión:** la API programática de Maizzle 5 difiere del CLI en rutas o en configuración; diferencias sutiles de `fs-extra` (por ejemplo, `remove` sobre rutas inexistentes). Un commit por paquete eliminado, cada uno revertible.
-- **Exclusiones específicas:** no actualizar versiones (lo hace Dependabot), no cambiar majors de Maizzle ni Tailwind, no eliminar `postcss`, `autoprefixer` ni `tailwindcss` (los retira MHB-38), no añadir dependencias ni tocar `trustedDependencies` (MHB-36).
-- **Análisis de mantenibilidad:** menos dependencias y un spawn de shell menos en el build; el helper JSON/filesystem solo se crea si reemplaza ≥ 2 consumidores reales de `fs-extra`.
-- **Implementador:** perfil tooling, medio.
-- **Revisor independiente:** revisor técnico de build.
-- **Condición de escalamiento:** la API programática de Maizzle no reproduce `dist/`, algún `globSync` nativo difiere en resultados, o eliminar un paquete exige cambiar un comando público.
-
-### MHB-48 — Actualización a TypeScript 7
-
-- **Objetivo observable:** subir `typescript` de `6.0.3` a `7.x` con `typecheck`, lint tipado y tests en verde, sin cambiar el HTML de `dist/`.
-- **Diagnóstico al 2026-10-01:** `typescript@7.0.2` es `latest` en npm y su paquete no declara `main` (solo el binario `tsc`). `typescript-eslint@8.71.0` (`latest`) y `8.71.1-alpha.5` (`canary`) declaran `peerDependencies.typescript: >=4.8.4 <6.1.0`, de modo que TS 7 no está soportado hoy. El repo importa la API del compilador en `scripts/validators/lint-guards/file-tree.test.ts` (`import ts from "typescript"`).
-- **Disparador externo (bloqueante):** una versión estable de `typescript-eslint` cuyo peer `typescript` admita 7.x, o una decisión explícita del usuario de sustituir el lint tipado. Hasta entonces el ID no se inicia ni se asigna.
-- **Superficies autorizadas:** `package.json`, `bun.lock`, `tsconfig*.json` solo para opciones deprecadas o removidas por TS 7, `scripts/validators/lint-guards/file-tree.test.ts` (o su sustituto si la API `ts` ya no existe), `docs/implementation/STATUS.md` y `CHANGELOG.md`.
-- **Dependencias y precondiciones:** MHB-34 completada (modo estricto ya cerrado, para aislar errores de la versión nueva) y el disparador externo satisfecho.
-- **Pasos técnicos:**
-  1. Confirmar el peer de `typescript-eslint` y la versión exacta a fijar; si no hay soporte, detener el ID.
-  2. Reemplazar `typescript` y `typescript-eslint` a versiones fijas compatibles y regenerar `bun.lock`.
-  3. Corregir opciones de `tsconfig*.json` removidas, sin añadir exclusiones ni `@ts-expect-error`.
-  4. Resolver la dependencia de la API `ts` en el guard de árbol de archivos: migrarla o sustituirla por un análisis equivalente.
-- **Criterios de aceptación:**
-  - `bun run typecheck` y `bun run lint` en verde con `typescript` en `7.x`.
-  - `bun run test` en verde, incluido el guard de árbol de archivos.
-  - `bun run check:dist-baseline` confirma `dist/` idéntico.
-  - `rg -n "eslint-disable|@ts-ignore|@ts-expect-error" scripts src` sin entradas nuevas respecto al inicio.
-- **Validación automática:** `bun install --frozen-lockfile`, lint, typecheck, test, `format:check`, build, `validate-email`, `check:dist-baseline` y `git diff --check`.
-- **Validación manual:** ninguna.
-- **Evidencia requerida:** versiones antes/después, salida de `typecheck` y `lint`, diff de `package.json` y `tsconfig*.json`.
-- **Riesgos y reversión:** cambios de diagnósticos o de resolución de módulos que revelen errores nuevos; API del compilador ausente. Un único commit de versión, revertible por separado.
-- **Exclusiones específicas:** no cambiar `strict`, `verbatimModuleSyntax` ni `erasableSyntaxOnly`, no migrar otras dependencias y no tocar templates ni `dist/`.
-- **Análisis de mantenibilidad:** si el guard de árbol de archivos deja de depender de la API `ts`, se elimina el acoplamiento con el compilador.
-- **Implementador:** perfil TypeScript/tooling, medio.
-- **Revisor independiente:** revisor técnico de tooling distinto del implementador.
-- **Condición de escalamiento:** `typescript-eslint` no soporta TS 7, la API `ts` no existe o falla un gate global.
-
-### MHB-36 — Compatibilidad multi-package-manager
-
-- **Objetivo observable:** permitir que cualquier desarrollador clone el proyecto y trabaje con npm, yarn, pnpm o bun indistintamente, sin que ninguno sea obligatorio.
-- **Motivación:** el código runtime ya usa exclusivamente APIs estándar de Node.js (cero `Bun.*`), pero scripts, tests, CI/CD, hooks y documentación están acoplados a Bun como único package manager.
-- **Superficies autorizadas:** `package.json`, módulos que lanzan procesos o citan comandos del package manager (al 2026-09-23: `scripts/cli/actions.ts`, `scripts/cli/process-runner.ts`, `scripts/cli/template-prompts.ts`, `scripts/build/ensure-build.ts` (antes `build-helper.ts`), `scripts/perf/measure-benchmarks.ts`, `scripts/perf/benchmark-runner.ts` y `scripts/export/renderers.ts`; `scripts/cli/helpers.ts` ya no existe; lista revalidada el 2026-09-24 tras los renombres de MHB-39), `.yarnrc.yml` (nuevo), `lint-staged` config, todos los archivos de test `*.test.ts` (conteo inventariado al iniciar), `bunfig.toml`, `types/bun-test.d.ts`, `vitest.config.*` (nuevo), `.github/workflows/ci.yml`, `.github/workflows/audit.yml`, `.husky/*`, `AGENTS.md`, `CLAUDE.md`, `README.md`, skills bajo `docs/ai/skills/`, documentación de implementación y un helper nuevo `scripts/shared/env/detect-pm.ts`.
-- **Dependencias y precondiciones:** MHB-34 completada para evitar doble churn durante la migración TypeScript; MHB-43 completada (sin el CLI `maizzle` ni otras dependencias sobrantes que migrar entre managers); MHB-41 completada (baseline de `dist/` y gates de email en CI que deben sobrevivir al cambio de runtime); todos los tests ya convertidos a `.ts`; `tsconfig.json` con `verbatimModuleSyntax` y `erasableSyntaxOnly` y guard `consistent-type-imports` activo (MHB-34/MHB-37), de modo que el código propio sea ejecutable con type stripping de Node 24 (validado en MHB-42); allowlist cerrada de MHB-42 (`eslint.config.js` y wrapper `maizzle.config.js`) respetada en la comprobación multi-manager.
-- **Pasos técnicos:**
-  - **F0 — Inventario:** contar scripts de `package.json` que invocan `bun`, archivos de test que importan `bun:test` (74 al 2026-09-24) y puntos que lanzan procesos o citan un package manager (incluido el mensaje legacy `'yarn build'` de `scripts/cli/template-prompts.ts`); revalidar las rutas de este contrato; registrar el conteo en `STATUS.md`.
-  - **F0b — Política de lockfiles:** decidir con el usuario qué lockfiles se versionan. Propuesta: solo `bun.lock` como fuente de verdad; npm, yarn y pnpm se prueban en CI instalando desde cero, y `.yarnrc.yml` fija `nodeLinker: node-modules` para evitar Plug'n'Play, incompatible con Vite y Maizzle.
-  - **F0c — Plataformas soportadas:** decidir con el usuario si Windows entra en el soporte (hoy no se prueba: CI solo en `ubuntu-latest` y desarrollo en macOS). Si entra, añadir `windows-latest` a la matriz de CI y revisar rutas, `spawn` y fin de línea; si no, declararlo como no soportado en `README.md`.
-  - **F1 — Scripts genéricos y detección de PM:** reemplazar los scripts de `package.json` que usan `bun script.ts` por `node script.ts` (type stripping nativo de Node 24, sin loaders ni dependencias nuevas); eliminar `"packageManager": "bun@1.3.13"` y `trustedDependencies` (Bun-only); actualizar `lint-staged`; crear `scripts/shared/env/detect-pm.ts` que detecte el PM activo via `process.env.npm_config_user_agent` o presencia de lockfiles.
-  - **F2 — CLI y build helper agnósticos:** reemplazar las invocaciones fijas a `bun` en los módulos inventariados en F0 por detección dinámica del PM; actualizar mensajes de error; hacer graceful fallback en benchmarks si `bun -v` no está disponible; eliminar mensaje legacy `"yarn build"` en helpers.
-  - **F3 — Migración de tests a Vitest:** agregar `vitest` como devDependency; crear `vitest.config.ts`; cambiar imports de `"bun:test"` a `"vitest"` en todos los archivos de test inventariados (`mock()` → `vi.fn()`, `spyOn()` → `vi.spyOn()`, `mock.module()` → `vi.mock()`); eliminar `bunfig.toml` y `types/bun-test.d.ts`; actualizar `package.json` scripts de test.
-  - **F4 — CI/CD y hooks:** reemplazar `oven-sh/setup-bun` por `actions/setup-node` con Node 24 en los 2 workflows, conservando todos los pasos añadidos por MHB-41 y MHB-34 (`validate-email`, `check:dist-baseline`, `check-size`, `lint:contrast`, `a11y-check`, `check:inventory --require-zero` y `git diff --exit-code -- dist/`); actualizar comandos de hooks Husky a genéricos.
-  - **F5 — Documentación y governance:** reescribir la invariante de Bun en AGENTS.md, CLAUDE.md, README.md y todas las skills bajo `docs/ai/skills/` (10 al 2026-09-24); actualizar tablas de comandos; documentar instalación con los 4 managers.
-- **Criterios de aceptación:**
-  - El proyecto se instala, lintea, typecheckea, testea, compila y valida con cada uno de los 4 managers (npm, yarn, pnpm, bun) desde un checkout limpio.
-  - Ningún script de `package.json` ni código fuente contiene `"bun"` hardcodeado como único path de ejecución.
-  - La suite completa de tests pasa bajo Vitest con Node y con Bun.
-  - CI/CD corre en Node 24 sin dependencia de `oven-sh/setup-bun`.
-  - Documentación refleja soporte multi-manager.
-  - Con cada uno de los 4 managers, `check:dist-baseline` queda verde tras el build: el HTML exportado es idéntico al baseline de MHB-41.
-- **Validación automática:** instalar con cada PM y ejecutar `typecheck`, `lint`, `test`, `build`, `validate-email`, `check:dist-baseline`, `format:check` y `agents:check`.
-- **Validación manual:** clonar en directorio limpio y verificar el flujo completo con npm y con bun como extremos representativos.
-- **Evidencia requerida:** logs de instalación y gates con cada PM; diff de scripts y imports migrados; confirmación de que `dist/*.html` es idéntico con todos los managers.
-- **Riesgos y reversión:** romper resolución de módulos en algún PM; diferencias sutiles de comportamiento entre runners de test. Mitigación: ejecutar gates con los 4 managers como matrix CI; cada fase se revierte independientemente.
-- **Exclusiones específicas:** no cambiar lógica de negocio, templates de email, output HTML ni APIs; no migrar a un monorepo; no añadir Corepack obligatorio.
-- **Análisis de mantenibilidad:** el helper `detect-pm.ts` es un archivo pequeño (~30 líneas) con responsabilidad única; la migración de tests es mecánica (search-and-replace de imports); no se crean abstracciones nuevas innecesarias.
-- **Implementador:** perfil tooling/infraestructura, medio-alto.
-- **Revisor independiente:** revisor técnico.
-- **Condición de escalamiento:** Node no puede ejecutar un `.ts` propio sin loader; un PM no soporta una feature usada por el proyecto (e.g. workspaces, lifecycle scripts); Vitest introduce incompatibilidad con algún mock existente; se requiere cambiar un contrato público; un PM resuelve dependencias transitivas distintas que alteran `dist/` (se decide con el usuario si se fija la versión o se acota el soporte).
-
-## Fases
-
-### Fase C — Evidencia para la puerta de calidad
-
-- **Hallazgos que resuelve:** integración, baseline de tipos/rendimiento, accesibilidad y clientes reales.
-- **IDs incluidos:** MHB-44, MHB-47 y MHB-14 (en ese orden: primero se corrige el HTML exportado, luego se fija su contrato ESP y después se toma la evidencia en clientes reales).
-- **Entregables:** integración reproducible, baseline completo de tipos, mediciones y matriz de pruebas manuales.
-- **Riesgos:** afirmar evidencia de clientes sin pruebas; incluir secretos en capturas o documentación.
-- **Criterio de salida:** MHB-14 está cerrada con evidencia enlazable.
-
-### Fase D — Evolución opcional y mantenimiento
-
-- **IDs incluidos:** MHB-23 es opcional; MHB-38 migra en bloque email y dashboard a Maizzle 6 + Tailwind v4 dentro de su ventana (2027-01-15 a 2027-06-30).
-- **Nota de alcance:** no es una fase solo opcional. La validación automatizada de accesibilidad/contraste y la mantenibilidad del código web son requeridas: no añaden producto, pero sostienen un dashboard verificable y mantenible.
-- **Criterio de salida:** cada opcional aprobado cumple su propia aceptación; una demo accesible permite verificación, pero no equivale a publicar el caso como destacado. Los IDs requeridos cumplen su aceptación completa, sin excepción por ser trabajo interno.
-
-#### Fase E — Migración completa a TypeScript y compatibilidad multi-PM
-
-- **IDs incluidos:** MHB-46, MHB-42, MHB-34, MHB-43 y MHB-36.
-- **Resguardo intermedio:** MHB-46 (API local) y MHB-42 (spike de loaders), junto con MHB-44 y MHB-47 de la Fase C, se cierran antes de MHB-34 para que la migración estricta no mezcle investigación con implementación ni avance sin gate sobre `dist/`.
-- **Entregables:** saneamiento de deuda y arquitectura modular; cierre global estricto sin JavaScript propio residual; compatibilidad con npm, yarn, pnpm y bun (MHB-36).
-- **Riesgos:** mezclar renombres con cambios funcionales, perder compatibilidad de loaders o ocultar límites runtime con tipos estáticos; incompatibilidades sutiles entre package managers.
-- **Criterio de salida:** MHB-34 confirma inventario JavaScript propio en cero, límites de tamaño y carpetas cumplidos, typecheck estricto y matriz global verde; MHB-36 confirma que el proyecto funciona con los 4 managers.
-
-### Fase F — Release y demostración
-
-- **IDs incluidos:** MHB-15 y, si se aprueba, MHB-16.
-- **Entregables:** documentación y release posterior coherentes con la migración completada; demo candidata opcional y verificable.
-- **Riesgos:** publicar antes del cierre total o presentar evidencia no sustentada.
-- **Criterio de salida:** MHB-15 está cerrada con el alcance congelado y el contrato de salida documentado; MHB-16 cumple su aceptación cuando sea requerida o aprobada.
+- **Objetivo observable:** añadir componentes email-safe con schema y presencia en `/library`.
+- **Superficies autorizadas:** partials/componentes, schemas, library, pruebas y documentación de componentes.
+- **Dependencias y precondiciones:** un caso de uso aprobado para cada componente.
+- **Pasos técnicos:** crear componente/schema, registrarlo, construirlo y cubrir su validación/prueba aplicable.
+- **Criterios de aceptación:** cada componente adicional es email-safe, tiene schema, aparece en `/library` y pasa controles.
+- **Validación automática:** build, schema, validadores y tests aplicables por componente.
+- **Validación manual:** abrir library, editar datos y revisar output.
+- **Evidencia requerida:** schema, captura, build verde y resultados de validación.
+- **Riesgos y reversión:** ampliar hacia un builder o duplicar componentes; mantener cada adición aislada y reversible.
+- **Exclusiones específicas:** no construir editor/builder de emails.
+- **Implementador:** perfil email/UI, medio.
+- **Revisor independiente:** revisor de email/UI.
+- **Condición de escalamiento:** el alcance se amplía hacia un builder o requiere nueva arquitectura.
 
 ## Contrato obligatorio de cierre
 
@@ -538,16 +386,14 @@ Cada elemento debe conservar en el contrato transferido objetivo, archivos, paso
 | ------ | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------- |
 | MHB-14 | Validadores disponibles; no sustituyen pruebas reales.                               | Teclado/lector y Gmail/Outlook/Apple Mail con protocolo fechado.                     | Matriz por cliente/criterio, capturas sin secretos y limitaciones.                 |
 | MHB-15 | Lint, suite, build y consistencia de versión.                                        | Revisar README, capturas, changelog y release antes de publicar.                     | SHA, tag, URL de release y diff final.                                             |
-| MHB-16 | Smoke del build estático y enlaces.                                                  | Navegar demo solo lectura en desktop/móvil.                                          | URL candidata, SHA desplegado y checklist.                                         |
-| MHB-23 | Tests y validadores aplicables por componente.                                       | Aparición y edición en `/library`.                                                   | Schema, captura y build verde.                                                     |
-| MHB-44 | Reglas nuevas con fixtures, build, `validate-email`, `check-size` y baseline.        | Preview antes/después en claro/oscuro y desktop/móvil.                               | Conteo por patrón antes/después y diff justificado por template.                   |
-| MHB-46 | Tests de rechazo 403 por endpoint de escritura.                                      | Guardar datos, copiar HTML e invalidar caché desde el dashboard.                     | Tabla de endpoints protegidos y salida de tests.                                   |
-| MHB-47 | Fixture de helper no soportado, manifiesto generado y `check:dist-baseline`.         | Consumo del manifiesto desde la integración del usuario.                             | Manifiesto, salida de la regla y confirmación del usuario.                         |
-| MHB-42 | Build, lint y `check:dist-baseline` por conversión probada (rama desechable).        | Aprobación de la allowlist y de la división de MHB-34 por el usuario.                | Tabla de clasificación, conteo de errores estrictos y decisión registrada.         |
-| MHB-34 | Gate de cero `.js`/`.mjs`, typecheck estricto y matriz global.                       | Revisar comandos, tooling, UI y outputs finales.                                     | Inventario final cero, gates completos y referencias actualizadas.                 |
 | MHB-43 | Gates completos, build con `--production` y `check:dist-baseline`.                   | `dev` (Home/Preview/Library), `export:screenshot` y flujo de `cli`.                  | Tabla de dependencias antes/después y diff de `package.json`.                      |
 | MHB-36 | Instalación y gates completos con npm, yarn, pnpm y bun; suite Vitest verde.         | Clonar limpio e instalar con npm y bun como extremos representativos.                | Logs de 4 managers, diff de imports, hashes `dist/` idénticos entre managers.      |
+| MHB-48 | Typecheck, lint tipado, suite y `check:dist-baseline` con TS 7.                      | Ninguna.                                                                             | Versiones antes/después y diff de `package.json`/`tsconfig*.json`.                 |
+| MHB-49 | Lo de MHB-15 más instalación congelada con npm y bun desde el tag.                   | Lo de MHB-15.                                                                        | SHA, tag, URL de release, diff final y Go/No-Go.                                   |
 | MHB-38 | `modern-css-inline`, suite, build, `validate-email`, `check-size` y diff de `dist/`. | Checkpoint PoC, preview, biblioteca, dashboard y Gmail/Outlook con envío autorizado. | Auditoría por template, diff justificado de `dist/`, matriz de dependencias y ADR. |
+| MHB-50 | Lo de MHB-15 con diff de `dist/` frente a `v1.4.0`.                                  | Lo de MHB-15.                                                                        | SHA, tag, URL de release, diff justificado y Go/No-Go.                             |
+| MHB-16 | Smoke del build estático y enlaces.                                                  | Navegar demo solo lectura en desktop/móvil.                                          | URL candidata, SHA desplegado y checklist.                                         |
+| MHB-23 | Tests y validadores aplicables por componente.                                       | Aparición y edición en `/library`.                                                   | Schema, captura y build verde.                                                     |
 
 ### Gates globales
 
@@ -562,21 +408,16 @@ Cada elemento debe conservar en el contrato transferido objetivo, archivos, paso
 
 ## Orden de ejecución
 
-1. Ejecutar MHB-44 (compatibilidad del HTML exportado); es la única vía, junto con MHB-38, autorizada para actualizar el baseline de `dist/`.
-2. MHB-14 (evidencia en clientes reales) puede ejecutarse desde el cierre de MHB-44, en paralelo con los IDs siguientes, porque su superficie es documental y manual; debe estar cerrada antes de MHB-15.
-3. Ejecutar MHB-46 (API local) y MHB-47 (contrato ESP y perfil SendGrid), en ese orden.
-4. Ejecutar MHB-42 (spike de loaders y allowlist de excepciones); si el usuario decide dividir MHB-34, registrar los nuevos IDs antes de continuar.
-5. Cerrar la migración con MHB-34; ninguna excepción `.js`/`.mjs` fuera de la allowlist de MHB-42 permite avanzar.
-6. Ejecutar MHB-43 (higiene de dependencias) tras MHB-34: eliminar el CLI `maizzle`, `fs-extra` y `glob`, y reclasificar dependencias por rol.
-7. Ejecutar MHB-36 (compatibilidad multi-PM) tras MHB-43; migrar tests a Vitest y eliminar acoplamiento a Bun.
-8. MHB-48 (TypeScript 7) tras MHB-34 y solo cuando `typescript-eslint` soporte TS 7; puede ejecutarse en paralelo con MHB-43 y MHB-36 por no compartir superficie.
-9. Preparar MHB-15 solo con todas sus dependencias completadas; congelar el alcance al iniciarla; decidir MHB-16 después de esa release candidata. MHB-23 permanece opcional y separado.
-10. MHB-38 se ejecuta dentro de su ventana (no antes de 2027-01-15, límite 2027-06-30) o antes si se registra un disparador, siempre tras MHB-34 y MHB-36; hasta entonces el stack sigue en Maizzle 5 + Tailwind v3. Por cambiar `dist/`, queda fuera del alcance congelado de MHB-15.
-11. Someter el producto a revisión final independiente antes de declararlo listo para presentarse como caso de portafolio.
+1. **Fase C:** ejecutar MHB-14 (evidencia en clientes reales sobre el HTML corregido por MHB-44) y después MHB-15 (release `v1.3.0`).
+2. **Fase D:** MHB-43 puede ejecutarse en paralelo con MHB-14 por no compartir superficie; si se mergea antes del congelamiento de MHB-15, entra en `v1.3.0`. Después, MHB-36 tras MHB-43 y MHB-49 (release `v1.4.0`) tras MHB-36.
+3. MHB-48 (TypeScript 7) solo cuando `typescript-eslint` soporte TS 7; en paralelo con MHB-43 y MHB-36. Entra en la release cuyo congelamiento ocurra después de su cierre.
+4. **Fase E:** MHB-38 dentro de su ventana (no antes de 2027-01-15, límite 2027-06-30) o antes si se registra un disparador, siempre tras MHB-36; es, junto con un ID que lo autorice explícitamente, la única vía para actualizar el baseline de `dist/`. Después, MHB-50.
+5. **Fase F:** MHB-16 y MHB-23 desde la publicación de `v1.3.0`; someter el producto a revisión final independiente antes de declararlo listo para presentarse como caso de portafolio.
 
 ### Política de ramas y versiones conservada
 
 - Una tarea por rama `feature/<id-en-minusculas>` y PR directo a `master`; no se mezclan tareas ni se incrementa versión por cada una.
+- Cada fase cierra con su propio ID de release (MHB-15 → `v1.3.0`, MHB-49 → `v1.4.0`, MHB-50 → migración de stack); la versión solo cambia dentro de esos IDs.
 - `v1.2.0` es el baseline publicado. Cualquier versión, tag o release posterior requiere evidencia de su alcance y aprobación explícita del orquestador.
 - Tag, CHANGELOG, versión y release deben apuntar al mismo alcance. Ningún subagente publica o mueve referencias sin aprobación del orquestador.
 - `dist/` permanece versionado; las capturas son entregables documentales. `task-verification` debe evitar commits accidentales fuera de tarea.
@@ -599,36 +440,34 @@ No se cambia el repositorio ni se combina con otro caso. `EmailForge Toolkit` es
 
 Las skills son contratos de procedimiento; los subagentes son ejecuciones temporales. Cada subagente recibe IDs, skills obligatorias, archivos exclusivos, controles y condición de escalamiento. Ninguna identidad se persiste como agente permanente.
 
-### Fase C — Calidad y evidencia
+### Orquestación — Fase C — Evidencia y release v1.3.0
 
-| Línea                      | Skills obligatorias                                         | Implementador y propiedad                           | Revisor                 | Controles                                           | Escalar cuando                                                            |
-| -------------------------- | ----------------------------------------------------------- | --------------------------------------------------- | ----------------------- | --------------------------------------------------- | ------------------------------------------------------------------------- |
-| MHB-44 compatibilidad HTML | `email-compatibility`, `email-project-stack`, `task-review` | Perfil alto; config email, iconos, reglas y `dist/` | Revisor build/email     | Reglas con fixtures, baseline justificado y preview | Cambio visual, hosting de imágenes sin decidir o variables ESP afectadas. |
-| MHB-47 contrato ESP        | `email-compatibility`, `email-quality-gates`, `task-review` | Perfil medio; `scripts/esp/**`, regla y manifiesto  | Revisor email y usuario | Manifiesto, regla con fixture y `dist/` sin cambios | Helper no soportado en un template existente o formato a decidir.         |
-| MHB-14 evidencia manual    | `email-compatibility`, `email-preview-dashboard`            | Perfil alto; matriz/capturas                        | Orquestador             | Protocolo fechado, clientes reales y accesibilidad  | No haya acceso a cliente/dispositivo o aparezcan datos sensibles.         |
+| Línea                   | Skills obligatorias                              | Implementador y propiedad            | Revisor     | Controles                                                            | Escalar cuando                                                                                |
+| ----------------------- | ------------------------------------------------ | ------------------------------------ | ----------- | -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| MHB-14 evidencia manual | `email-compatibility`, `email-preview-dashboard` | Perfil alto; matriz/capturas         | Orquestador | Protocolo fechado, clientes reales y accesibilidad                   | No haya acceso a cliente/dispositivo o aparezcan datos sensibles.                             |
+| MHB-15 release          | `task-verification`, `release-management`        | Perfil medio; docs/version/changelog | Orquestador | Suite, inventario TS, `check:dist-baseline`, Go/No-Go, tag y release | Antes de publicación, tag o cambio de versión, o ante un hallazgo que rompa el congelamiento. |
 
-### Fase D — Evolución y mantenimiento
+### Orquestación — Fase D — Portabilidad y release v1.4.0
 
-| Línea              | Skills obligatorias                                                     | Implementador y propiedad                    | Revisor                  | Controles                                           | Escalar cuando                                                           |
-| ------------------ | ----------------------------------------------------------------------- | -------------------------------------------- | ------------------------ | --------------------------------------------------- | ------------------------------------------------------------------------ |
-| MHB-23 componentes | `email-compatibility`, `email-preview-dashboard`                        | Perfil medio; partials/schemas/library       | Revisor email/UI         | Build, schema, library y visual                     | Amplíe el alcance hacia un builder.                                      |
-| MHB-38 Maizzle 6   | `email-project-stack`, `email-compatibility`, `email-preview-dashboard` | Perfil alto; email, build, preview y estilos | Revisor build/email y UI | Checkpoint PoC, auditoría, diff `dist/` y recorrido | La PoC pierda `{{ }}`/Handlebars o no exista API programática de render. |
+| Línea               | Skills obligatorias                                               | Implementador y propiedad                                               | Revisor                    | Controles                                               | Escalar cuando                                                                          |
+| ------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------- | -------------------------- | ------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| MHB-43 dependencias | `email-project-stack`, `email-quality-gates`, `task-review`       | Perfil medio; `package.json`, build y consumidores de `fs-extra`/`glob` | Revisor técnico de build   | Build `--production`, `check:dist-baseline` y recorrido | La API de Maizzle no reproduce `dist/` o eliminar un paquete cambia un comando público. |
+| MHB-36 multi-PM     | `email-project-stack`, `email-quality-gates`, `task-verification` | Perfil medio-alto; scripts/tests/CI/docs                                | Revisor técnico            | Gates con 4 PMs, Vitest verde, hashes idénticos         | Un PM no soporta una feature o Vitest rompe un mock.                                    |
+| MHB-48 TypeScript 7 | `email-project-stack`, `email-quality-gates`, `task-review`       | Perfil medio; `package.json`, `bun.lock`, `tsconfig*.json`              | Revisor técnico de tooling | Typecheck, lint tipado, suite y baseline                | `typescript-eslint` no soporta TS 7 o falta la API `ts`.                                |
+| MHB-49 release      | `task-verification`, `release-management`                         | Perfil medio; docs/version/changelog                                    | Orquestador                | Lo de MHB-15 más instalación con npm y bun desde el tag | Lo de MHB-15 o un cambio de comando público.                                            |
 
-### Fase E — Migración TypeScript
+### Orquestación — Fase E — Evolución del stack
 
-| Línea               | Skills obligatorias                                                              | Implementador y propiedad                                               | Revisor                  | Controles                                               | Escalar cuando                                                                          |
-| ------------------- | -------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------ | ------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| MHB-46 API local    | `email-preview-dashboard`, `email-quality-gates`, `task-review`                  | Perfil medio; `scripts/vite/api/**`                                     | Revisor técnico          | Tests 403 y recorrido del dashboard                     | La guarda obliga a cambiar un contrato de API.                                          |
-| MHB-42 spike        | `email-project-stack`, `email-refactor-type-safety`, `task-review`               | Perfil alto; rama desechable y docs                                     | Orquestador y usuario    | Conversiones probadas bajo Bun y Node 24                | Una herramienta exige JS o conviene dividir MHB-34.                                     |
-| MHB-34 cierre TS    | `email-project-stack`, `email-quality-gates`, `task-verification`, `task-review` | Perfil alto; AI/configs/gates/docs residuales                           | Revisor técnico final    | Inventario cero, strict global y matriz completa        | Queda una excepción JS/MJS fuera de la allowlist o falla cualquier gate global.         |
-| MHB-43 dependencias | `email-project-stack`, `email-quality-gates`, `task-review`                      | Perfil medio; `package.json`, build y consumidores de `fs-extra`/`glob` | Revisor técnico de build | Build `--production`, `check:dist-baseline` y recorrido | La API de Maizzle no reproduce `dist/` o eliminar un paquete cambia un comando público. |
-| MHB-36 multi-PM     | `email-project-stack`, `email-quality-gates`, `task-verification`                | Perfil medio-alto; scripts/tests/CI/docs                                | Revisor técnico          | Gates con 4 PMs, Vitest verde, hashes idénticos         | Un PM no soporta una feature o Vitest rompe un mock.                                    |
+| Línea            | Skills obligatorias                                                     | Implementador y propiedad                    | Revisor                  | Controles                                           | Escalar cuando                                                           |
+| ---------------- | ----------------------------------------------------------------------- | -------------------------------------------- | ------------------------ | --------------------------------------------------- | ------------------------------------------------------------------------ |
+| MHB-38 Maizzle 6 | `email-project-stack`, `email-compatibility`, `email-preview-dashboard` | Perfil alto; email, build, preview y estilos | Revisor build/email y UI | Checkpoint PoC, auditoría, diff `dist/` y recorrido | La PoC pierda `{{ }}`/Handlebars o no exista API programática de render. |
+| MHB-50 release   | `task-verification`, `release-management`                               | Perfil medio; docs/version/changelog         | Orquestador              | Lo de MHB-15 más diff de `dist/` justificado        | Lo de MHB-15 o cambio del formato de templates fuente.                   |
 
-### Fase F — Release y demo
+### Orquestación — Fase F — Demo y portafolio
 
-| Línea          | Skills obligatorias                                                                           | Implementador y propiedad            | Revisor     | Controles                                                            | Escalar cuando                                                                                |
-| -------------- | --------------------------------------------------------------------------------------------- | ------------------------------------ | ----------- | -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| MHB-15 release | `task-verification`, `release-management`                                                     | Perfil medio; docs/version/changelog | Orquestador | Suite, inventario TS, `check:dist-baseline`, Go/No-Go, tag y release | Antes de publicación, tag o cambio de versión, o ante un hallazgo que rompa el congelamiento. |
-| MHB-16 demo    | `email-project-stack`, `email-preview-dashboard`, skill de despliegue si se aprueba proveedor | Perfil alto; build/config de deploy  | Orquestador | Smoke, URL, SHA y ausencia de divergencia                            | Requiera proveedor, credenciales o publicación externa.                                       |
+| Línea              | Skills obligatorias                                                                           | Implementador y propiedad              | Revisor          | Controles                                 | Escalar cuando                                          |
+| ------------------ | --------------------------------------------------------------------------------------------- | -------------------------------------- | ---------------- | ----------------------------------------- | ------------------------------------------------------- |
+| MHB-16 demo        | `email-project-stack`, `email-preview-dashboard`, skill de despliegue si se aprueba proveedor | Perfil alto; build/config de deploy    | Orquestador      | Smoke, URL, SHA y ausencia de divergencia | Requiera proveedor, credenciales o publicación externa. |
+| MHB-23 componentes | `email-compatibility`, `email-preview-dashboard`                                              | Perfil medio; partials/schemas/library | Revisor email/UI | Build, schema, library y visual           | Amplíe el alcance hacia un builder.                     |
 
 El orquestador conserva integración, decisiones transversales, cambios destructivos, versiones, releases y veredictos. Solo paraleliza líneas con archivos exclusivos y al menos dos ámbitos realmente independientes.
