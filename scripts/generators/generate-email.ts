@@ -8,7 +8,6 @@ import { existsSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { getAvailableArchetypes } from "./archetypes.ts";
-import { formatRunCommand } from "../shared/env/detect-pm.ts";
 import {
   assertValidTemplateName,
   isValidTemplateName,
@@ -48,12 +47,14 @@ try {
   assertValidTemplateName(name);
 } catch {
   console.error("❌ El nombre del template debe usar solo minúsculas, números y guiones.");
-  console.error(`   Uso: ${formatRunCommand("generate:email")} nombre-del-correo [template-base]`);
-  console.error(`   Ejemplo (desde cero): ${formatRunCommand("generate:email")} notificacion`);
   console.error(
-    `   Ejemplo (con template): ${formatRunCommand("generate:email")} bienvenida welcome`,
+    `   Uso: node scripts/generators/generate-email.ts nombre-del-correo [template-base]`,
   );
-  console.error(`   Ver templates disponibles: ${formatRunCommand("generate:email")} --list\n`);
+  console.error(`   Ejemplo (desde cero): node scripts/generators/generate-email.ts notificacion`);
+  console.error(
+    `   Ejemplo (con template): node scripts/generators/generate-email.ts bienvenida welcome`,
+  );
+  console.error(`   Ver templates disponibles: node scripts/generators/generate-email.ts --list\n`);
   process.exit(1);
 }
 

@@ -11,6 +11,7 @@
  *
  * Uso:
  *   <pm> run build                 # Comportamiento por defecto
+ *   <pm> run build <template>      # Solo `dist/<template>.html` (build selectivo)
  *   <pm> run build --allow-warnings # (reservado para CI permisivo)
  */
 import * as maizzleFramework from "@maizzle/framework";
@@ -18,6 +19,7 @@ import maizzleConfig from "../../maizzle.config.ts";
 import { checkHtmlSize } from "../validators/check-html-size.ts";
 import { validateEmailHtml } from "../validators/validate-email-html.ts";
 import { writeEspManifest } from "../esp/manifest/write-manifest.ts";
+import { buildSelective } from "./selective.ts";
 
 /** `build` es un export de runtime de Maizzle sin declaración en sus tipos. */
 const maizzleBuild = (maizzleFramework as Record<string, unknown>).build as (
@@ -63,4 +65,6 @@ export async function build(): Promise<void> {
   }
 }
 
-await build();
+const templateName = process.argv.slice(2).find((arg) => !arg.startsWith("--"));
+if (templateName === undefined) await build();
+else await buildSelective(templateName);

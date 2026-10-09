@@ -71,12 +71,12 @@ src/
     └── shared/
 
 scripts/
-├── build/              # Compilacion: build.js, build-selective.js, build-helper.js
-├── validators/         # Quality gates: validate-email-html.js, a11y-check.js, validate-contrast.js, check-html-size.js, validate-json.js
+├── build/              # Compilacion: build.ts, selective.ts, ensure-build.ts
+├── validators/         # Quality gates: validate-email-html.ts, check-a11y.ts, validate-contrast.ts, check-html-size.ts, validate-json.ts
 ├── esp/                # Motor de variables ESP: esp-variables.js, esp-sources.js, esp-validator.js
 ├── cli/                # CLI interactivo: cli.js, index.js, actions.js, helpers.js, ui.js
 ├── export/             # Export PNG con el navegador incluido de Puppeteer: screenshot.ts
-├── generators/         # Generador de templates (g:email)
+├── generators/         # Generador de templates (generate-email.ts)
 ├── mail/               # Transports de prueba (Mailtrap, Mailtester, Gmail)
 ├── shared/             # Utilidades: handlebars, paths, env, path-safety
 ├── vite/               # Servidor dev, endpoints /api/*, plugins y servicios
@@ -268,13 +268,13 @@ La capa de plantillas atómicas en `src/emails/partials/templates/` aloja arquet
 
 ```bash
 # Crear un template desde cero
-bun run g:email <nombre>
+node scripts/generators/generate-email.ts <nombre>
 
 # Crear un template basado en un arquetipo existente
-bun run g:email <nombre> <arquetipo>
+node scripts/generators/generate-email.ts <nombre> <arquetipo>
 
 # Listar todos los arquetipos disponibles dinámicamente
-bun scripts/generators/generate-email.js --list
+node scripts/generators/generate-email.ts --list
 ```
 
 Desde el menú interactivo (`bun run cli` opción `[3]`), el CLI consulta si se desea crear desde cero o basarse en un arquetipo, listando todas las plantillas descubiertas dinámicamente.
@@ -345,7 +345,7 @@ nivel de evidencia esta en
 
 Los archivos generados bajo `dist/<template>.html` son el entregable compilado final listo para subir a un Email Service Provider (ESP). Durante la compilación, se aplana el layout, se procesan los estilos y se conservan intactas las etiquetas `{{ variable }}` para que el motor del ESP las reemplace por datos reales al enviar.
 
-Para permitir que sistemas externos de integración (por ejemplo, sincronizadores automáticos de templates vía API) conozcan qué variables requiere cada correo sin tener que analizar el HTML, el build genera un manifiesto determinista en `dist/esp-manifest.json` (también ejecutable bajo demanda mediante `bun run esp:manifest`).
+Para permitir que sistemas externos de integración (por ejemplo, sincronizadores automáticos de templates vía API) conozcan qué variables requiere cada correo sin tener que analizar el HTML, el build genera un manifiesto determinista en `dist/esp-manifest.json` (también ejecutable bajo demanda con `node scripts/esp/manifest/write-manifest.ts`).
 
 #### Estructura del manifiesto (`dist/esp-manifest.json`)
 
@@ -420,21 +420,22 @@ TEST_APPLE_TO=
 
 > Nota: `<pm>` corresponde a tu package manager de preferencia (`bun`, `yarn`, `npm` o `pnpm`).
 
-| Comando                    | Descripción                                       |
-| -------------------------- | ------------------------------------------------- |
-| `<pm> install`             | Instalar dependencias                             |
-| `<pm> run dev`             | Servidor de desarrollo                            |
-| `<pm> run build`           | Build de producción (Maizzle + validación)        |
-| `<pm> run test`            | Suite de tests con Vitest                         |
-| `<pm> run typecheck`       | Verificación de tipos TypeScript                  |
-| `<pm> run lint`            | Lint completo (HTML / JS / Markdown / JSON / CSS) |
-| `<pm> run validate-email`  | Solo el validador de compatibilidad email         |
-| `<pm> run cli`             | Interfaz CLI interactiva                          |
-| `<pm> run format`          | Aplicar Prettier                                  |
-| `<pm> run format:check`    | Verificar formato Prettier                        |
-| `<pm> run build-selective` | Build de templates específicos                    |
-| `<pm> run check-size`      | Verificar tamaño del HTML generado                |
-| `<pm> run agents:sync`     | Sincronizar skills de agentes                     |
+| Comando                     | Descripción                                       |
+| --------------------------- | ------------------------------------------------- |
+| `<pm> install`              | Instalar dependencias                             |
+| `<pm> run dev`              | Servidor de desarrollo                            |
+| `<pm> run build`            | Build de producción (Maizzle + validación)        |
+| `<pm> run test`             | Suite de tests con Vitest                         |
+| `<pm> run typecheck`        | Verificación de tipos TypeScript                  |
+| `<pm> run lint`             | Lint completo (HTML / JS / Markdown / JSON / CSS) |
+| `<pm> run validate-email`   | Solo el validador de compatibilidad email         |
+| `<pm> run cli`              | Interfaz CLI interactiva                          |
+| `<pm> run format`           | Aplicar Prettier                                  |
+| `<pm> run format:check`     | Verificar formato Prettier                        |
+| `<pm> run build <template>` | Build de un solo template                         |
+| `<pm> run check:a11y`       | Contraste WCAG y accesibilidad (axe-core)         |
+| `<pm> run check-size`       | Verificar tamaño del HTML generado                |
+| `<pm> run agents:sync`      | Sincronizar skills de agentes                     |
 
 ---
 

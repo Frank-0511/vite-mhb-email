@@ -6,7 +6,7 @@
  * Genera PNG automáticamente con el navegador gestionado por Puppeteer.
  *
  * Uso:
- *   <pm> run export:screenshot nombre-template
+ *   node scripts/export/screenshot.ts nombre-template (o la opción [7] de `<pm> run cli`)
  */
 
 import { existsSync } from "node:fs";
@@ -25,7 +25,7 @@ try {
   console.error(
     paint(c.red + c.bold, "❌ Error:") +
       paint(c.dim, " El nombre del template debe usar solo minúsculas, números y guiones.\n") +
-      paint(c.cyan, `   Uso: ${formatRunCommand("export:screenshot")} nombre-template\n`),
+      paint(c.cyan, `   Uso: node scripts/export/screenshot.ts nombre-template\n`),
   );
   process.exit(1);
 }

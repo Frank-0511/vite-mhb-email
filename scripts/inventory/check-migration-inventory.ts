@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /**
  * @fileoverview Control determinista de inventario para la migración gradual a TypeScript.
  *
@@ -6,21 +5,12 @@
  * y valida que el recuento de archivos JS/MJS no supere el baseline versionado decreciente
  * o alcance cero en modo estricto respetando la allowlist cerrada de MHB-42.
  *
- * Uso:
- *   <pm> run check:inventory [--require-zero]
+ * Lo ejecuta la suite de pruebas (`<pm> run test`) sobre el proyecto real.
  */
 
-import { readFileSync } from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import type { BaselineData } from "./parser.ts";
 import { collectProjectFiles, matchesLayer } from "./parser.ts";
 import type { InventoryResults, LayerResult } from "./reporter.ts";
-import { formatInventoryReport } from "./reporter.ts";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const projectRoot = path.resolve(__dirname, "../..");
 
 /**
  * Allowlist cerrada aprobada en MHB-42:
@@ -110,35 +100,4 @@ export function checkInventory(
     allPassed,
     unassignedFiles,
   };
-}
-
-export function main(): void {
-  const requireZero =
-    process.argv.includes("--require-zero") || process.argv.includes("--strict-zero");
-  const baselinePath = path.join(__dirname, "inventory-baseline.json");
-  const baselineData = JSON.parse(readFileSync(baselinePath, "utf8")) as BaselineData;
-
-  const results = checkInventory(projectRoot, baselineData, { requireZero });
-  const report = formatInventoryReport(results);
-
-  console.log(`\n${report}\n`);
-
-  if (!results.allPassed) {
-    if (requireZero) {
-      console.error(
-        "❌ Cierre estricto fallido: aún quedan archivos JS/MJS propios fuera de la allowlist cerrada pendientes de migrar a TypeScript.",
-      );
-    } else {
-      console.error(
-        "❌ Control de inventario fallido: hay archivos JS/MJS no autorizados o capas que exceden su baseline.",
-      );
-    }
-    process.exit(1);
-  } else {
-    console.log("✅ Control de inventario conforme con el baseline decreciente.\n");
-  }
-}
-
-if (process.argv[1] === __filename) {
-  main();
 }

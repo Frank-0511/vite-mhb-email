@@ -51,7 +51,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Cambiado
 
-- Eliminado el script `test:watch`; usar `<pm> exec vitest` para el modo watch (MHB-36).
+- Simplificado el conjunto de scripts de `package.json` (30 → 18), sin cambios de comportamiento en el HTML generado (MHB-36). Migración:
+  - `test:watch` → `<pm> exec vitest`.
+  - `build-selective <t>` → `<pm> run build <t>`.
+  - `generate:email` y `export:screenshot` → `<pm> run cli` (opciones [3] y [7]) o `node scripts/generators/generate-email.ts` / `node scripts/export/screenshot.ts`.
+  - `lint:html`, `lint:js`, `lint:md`, `lint:json` y `lint:css` → incluidos en `<pm> run lint`.
+  - `lint:contrast` y `a11y-check` → `<pm> run check:a11y`.
+  - `check:inventory` → cubierto por `<pm> run test`; `esp:manifest` y `benchmark` → `node scripts/esp/manifest/write-manifest.ts` y `node scripts/perf/measure-benchmarks.ts`.
 - Ejecución de scripts del proyecto migrada a `node` directo con detección dinámica del package manager en tiempo de ejecución (`detect-pm.ts`) para orquestación secuencial y mensajes CLI interactivos (MHB-36).
 - Migración integral de la suite de pruebas unitarias de `bun:test` a Vitest (`vitest.config.ts`), ejecutada con `node` sobre Node 24 manteniendo paridad completa de pruebas (MHB-36).
 - Retirada de los campos `packageManager` y `engines.bun` en `package.json`, y eliminación del bloque `overrides` de `postcss` (MHB-36).

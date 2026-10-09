@@ -259,7 +259,7 @@ logoUrl: "https://example.com"
 - Las variables `{{ }}` del template son del ESP y deben sobrevivir al build;
   sus claves de preview van en `data.json` (`esp-variables` avisa si falta una).
 - El HTML final se genera con `bun run build` (o
-  `bun run build-selective <template>` para uno solo) en `dist/<template>.html`.
+  `bun run build <template>` para uno solo) en `dist/<template>.html`.
 
 ## Preview en `/library`
 
@@ -304,11 +304,11 @@ Limitaciones conocidas del preview:
    despachador.
 4. Escribir `schema.json` con `name`, `description`, `variants` y `props`.
 5. Declarar en `variants` solo ids que resuelvan a un archivo en disco.
-6. `bun run lint:html` y `bun run lint:json` → sintaxis de markup y schema.
+6. `bun run lint` → sintaxis de markup y schema.
 7. `bun run dev` y revisar el componente en `/library`: todas las variantes y
    cada prop del formulario.
 8. Usar el componente en un template y compilar:
-   `bun run build-selective <template>`.
+   `bun run build <template>`.
 9. `bun run validate-email` → 0 errores. Revisar los warnings del template.
 10. `bun run format` sobre los archivos nuevos y `bun run format:check`.
 
@@ -324,15 +324,14 @@ mkdir -p src/emails/partials/atoms/note-callout
 # con el contenido de las secciones anteriores
 
 # 2. Sintaxis
-bun run lint:html
-bun run lint:json
+bun run lint
 
 # 3. Template de prueba que lo consume
 mkdir -p src/emails/templates/component-fixture
 # crear index.html con <x-note-callout ... /> y data.json con las claves ESP
 
 # 4. Build y validación de compatibilidad
-bun run build-selective component-fixture
+bun run build component-fixture
 bun run validate-email
 
 # 5. Limpieza
