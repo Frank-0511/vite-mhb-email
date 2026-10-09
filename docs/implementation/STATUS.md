@@ -3,18 +3,18 @@
 ## Resumen
 
 - ID activo: MHB-34
-- Estado: En revisión
+- Estado: Completada
 - Implementador: Antigravity (perfil TypeScript/tooling transversal)
 - Revisor: revisor técnico final independiente
 - Rama: `feature/mhb-34`
-- Última actualización: 2026-10-02
+- Última actualización: 2026-10-08
 - Contrato activo: `docs/implementation/PLAN.md` (sección MHB-34)
 
 ## Paquete activo
 
 - MHB-34: Cierre total y modo estricto TypeScript.
 - Alcance: migración de 20 archivos propios restantes (.js/.mjs) a TypeScript, modo estricto único (`strict`, `verbatimModuleSyntax`, `erasableSyntaxOnly`) sin `tsconfig.strict.json` ni `allowJs`/`checkJs`, allowlist cerrada (`eslint.config.js` y wrapper `maizzle.config.js`), gate de inventario `--require-zero`, saneamiento de tooling AI y cumplimiento de límites de árbol.
-- Estado: En revisión.
+- Estado: Completada (revisión independiente aprobada el 2026-10-08).
 - Hechos de la entrega:
   1. 20 archivos propios (.js/.mjs) migrados a .ts estricto; solo `eslint.config.js` y wrapper `maizzle.config.js` permanecen como JS (allowlist cerrada de MHB-42).
   2. Configuraciones raíz (`postcss`, `tailwind`, `tailwind.email`, `maizzle`) tipadas y directivas `@config` actualizadas en CSS.
@@ -25,6 +25,14 @@
 - Verificación manual declarada: inspección de salidas CLI en comandos de agentes e inventario; interacción de dashboard web reservada a petición expresa (Browser pane no abierto).
 - Desviaciones: ninguna.
 - Riesgos residuales: ninguno.
+
+## Revisión de cierre de MHB-34
+
+- Veredicto: Aprobado (revisor independiente, 2026-10-08). Rama `feature/mhb-34`, commit revisado `3dc07cd`.
+- Controles re-ejecutados (todos Verde): `check:task-branch`, `bun install --frozen-lockfile`, `lint`, `typecheck`, `test`, `format:check`, `build`, `validate-email`, `lint:contrast`, `a11y-check`, `agents:check`, `check:inventory --require-zero`, `check:dist-baseline`, `check-size`, `git diff --check`.
+- Diff `master...HEAD`: sin `eslint-disable`, `@ts-ignore`/`@ts-expect-error`, `any`, `@typedef`, skip/todo ni archivos `.js`/`.mjs` nuevos; `tsconfig.json` activa `strict`, `verbatimModuleSyntax` y `erasableSyntaxOnly` sin `allowJs`/`checkJs`; `tsconfig.strict.json` eliminado; sin cambios en `dist/`.
+- Criterios: `rg --files -g '*.js' -g '*.mjs'` devuelve solo `eslint.config.js` y `maizzle.config.js`; `typecheck` es un único `tsc --noEmit`; `check:inventory --require-zero` finaliza en 0 y está en CI; límites de árbol validados por `file-tree.test.ts`; `CHANGELOG.md` actualizado.
+- Desviaciones: ninguna. Validación manual de UI (Browser pane) no realizada por regla del proyecto; cobertura por gates deterministas.
 
 ## Revisión de cierre de MHB-42
 
@@ -42,6 +50,7 @@
 
 ## Últimas entregas
 
+- MHB-34: `Completada` el 2026-10-08; cierre total y modo estricto TypeScript (20 archivos migrados, allowlist JS de 2 archivos, `tsconfig.strict.json` eliminado, `check:inventory --require-zero` en CI), `dist/` idéntico y revisión técnica independiente aprobada.
 - MHB-42: `Completada` el 2026-10-01; spike de loaders con allowlist cerrada (`eslint.config.js`, `maizzle.config.js`) y MHB-34 indiviso; solo `docs/implementation/**`; revisión técnica independiente aprobada.
 - MHB-47: `Completada` el 2026-10-01; manifiesto `dist/esp-manifest.json` con perfiles SendGrid Dynamic y Legacy, reglas `esp-syntax-profile` (ERROR) y `esp-legacy-compat` (WARNING), sanitización de `exampleData` y coherencia manifiesto↔baseline en `check:dist-baseline`, con revisión técnica independiente aprobada (detalle en `STATUS-HISTORY.md`).
 - MHB-46: `Completada` el 2026-09-29; guarda común `rejectUnsafeWrite` (403 ante `Origin`/`Sec-Fetch-Site` cross-site y `Content-Type` distinto de JSON) aplicada a los 6 endpoints de escritura de la API local, con revisión técnica independiente aprobada (detalle en `STATUS-HISTORY.md`).
@@ -85,6 +94,6 @@
 
 ## Handoff
 
-- Próxima acción inmediata: revisión técnica independiente de MHB-34 sobre rama `feature/mhb-34` (`task-review`).
+- Próxima acción inmediata: abrir la PR de `feature/mhb-34` a `master` y mergear; no iniciar otro ID sin asignación.
 - Siguiente tarea del roadmap:
   - MHB-43 ("Retirar dependencias huérfanas y CLI maizzle heredado"): `desbloqueado` una vez mergeado MHB-34; no iniciar sin asignación explícita.
