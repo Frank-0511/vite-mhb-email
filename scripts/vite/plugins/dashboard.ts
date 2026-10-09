@@ -3,7 +3,7 @@
  */
 
 import fs from "fs-extra";
-import { globSync } from "glob";
+import { globSync } from "node:fs";
 import { resolve } from "node:path";
 import type { IndexHtmlTransformContext, Plugin, ViteDevServer } from "vite";
 import { API_ROUTES } from "../../shared/contracts/constants/api-routes.ts";
@@ -34,7 +34,7 @@ export interface DashboardTemplate {
  */
 export function getTemplates(rootDir: string): DashboardTemplate[] {
   const paths = getProjectPaths(rootDir);
-  const templateFiles = globSync("src/emails/templates/*/index.html", { cwd: rootDir });
+  const templateFiles = globSync("src/emails/templates/*/index.html", { cwd: rootDir }).sort();
 
   const templates: DashboardTemplate[] = [];
   for (const file of templateFiles) {

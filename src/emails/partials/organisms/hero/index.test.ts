@@ -8,20 +8,7 @@
 
 import { render } from "@maizzle/framework";
 import { describe, expect, test } from "bun:test";
-import { globSync } from "glob";
-import { resolve } from "node:path";
-
-function getLocalComponentFolders(rootDir: string): string[] {
-  const layoutsRoot = resolve(rootDir, "src/emails/layouts");
-  const partialsRoot = resolve(rootDir, "src/emails/partials");
-  const partialFolders = globSync("**/", {
-    cwd: partialsRoot,
-    absolute: true,
-    mark: false,
-  });
-
-  return [layoutsRoot, partialsRoot, ...partialFolders];
-}
+import { getEmailComponentFolders } from "../../../../../scripts/shared/index.ts";
 
 /**
  * Compila un fragmento que usa `<x-hero>` con las carpetas de componentes reales.
@@ -32,7 +19,7 @@ function getLocalComponentFolders(rootDir: string): string[] {
 async function renderHero(tag: string): Promise<string> {
   const { html } = await render(tag, {
     components: {
-      folders: getLocalComponentFolders(process.cwd()),
+      folders: getEmailComponentFolders(process.cwd()),
       tagPrefix: "x-",
     },
     expressions: {

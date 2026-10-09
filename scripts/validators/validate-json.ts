@@ -3,14 +3,13 @@
  * Sale con código 1 si algún archivo tiene errores de sintaxis.
  */
 
-import { globSync } from "glob";
-import { readFileSync } from "node:fs";
+import { globSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 export function validateJsonFiles(customFiles?: string[]): boolean {
   let files = customFiles ?? process.argv.slice(2);
   if (files.length === 0) {
-    files = globSync("src/emails/templates/*/data.json");
+    files = globSync("src/emails/templates/*/data.json").sort();
   }
 
   if (files.length === 0) {

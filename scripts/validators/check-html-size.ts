@@ -1,7 +1,6 @@
 #!/usr/bin/env node
-import { statSync } from "node:fs";
+import { globSync, statSync } from "node:fs";
 import { resolve } from "node:path";
-import { globSync } from "glob";
 import {
   formatBytes,
   GMAIL_MAX_SAFE_BYTES,
@@ -20,7 +19,7 @@ const WARNING_THRESHOLD = GMAIL_WARNING_THRESHOLD_BYTES;
  */
 export function checkHtmlSize(distDirOverride?: string): boolean {
   const distDir = distDirOverride ?? resolve(rootDir, "dist");
-  const htmlFiles = globSync("**/*.html", { cwd: distDir });
+  const htmlFiles = globSync("**/*.html", { cwd: distDir }).sort();
 
   if (htmlFiles.length === 0) {
     console.log(`\n⚠️  No HTML files found in ${distDir}`);
@@ -81,7 +80,7 @@ export function checkHtmlSize(distDirOverride?: string): boolean {
  */
 export function hasExceededGmailLimit(distDirOverride?: string): boolean {
   const distDir = distDirOverride ?? resolve(rootDir, "dist");
-  const htmlFiles = globSync("**/*.html", { cwd: distDir });
+  const htmlFiles = globSync("**/*.html", { cwd: distDir }).sort();
   return htmlFiles.some((file) => statSync(resolve(distDir, file)).size > GMAIL_LIMIT);
 }
 

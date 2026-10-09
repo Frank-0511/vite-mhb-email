@@ -1,4 +1,4 @@
-import { globSync } from "glob";
+import { existsSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 
 /**
@@ -14,11 +14,12 @@ import { resolve } from "node:path";
 export function getEmailComponentFolders(rootDir: string): string[] {
   const layoutsRoot = resolve(rootDir, "src/emails/layouts");
   const partialsRoot = resolve(rootDir, "src/emails/partials");
-  const partialFolders = globSync("**/", {
-    cwd: partialsRoot,
-    absolute: true,
-    mark: false,
-  });
+  const partialFolders = existsSync(partialsRoot)
+    ? readdirSync(partialsRoot, { recursive: true, withFileTypes: true })
+        .filter((entry) => entry.isDirectory())
+        .map((entry) => resolve(entry.parentPath, entry.name))
+        .sort()
+    : [];
 
   return [layoutsRoot, partialsRoot, ...partialFolders];
 }
