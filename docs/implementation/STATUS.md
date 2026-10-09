@@ -3,7 +3,7 @@
 ## Resumen
 
 - ID activo: MHB-43
-- Estado: En revisión
+- Estado: Completada
 - Implementador: perfil tooling, medio (Claude Code)
 - Revisor: revisor técnico de build independiente
 - Rama: `feature/mhb-43`
@@ -41,6 +41,16 @@
 - Criterios: allowlist cerrada, dimensionamiento (5 errores TS2339) y rutas de MHB-34/MHB-36 actualizadas en `PLAN.md`. Evidencia Node 24 (spike desechable eliminado) tomada del registro del implementador; no reproducible en el árbol actual.
 - Pendiente antes de la PR: eliminar `docs/superpowers/mhb-42.md` y `docs/superpowers/mhb-42/` (temporales sin commitear).
 
+## Revisión de cierre de MHB-43
+
+- Veredicto: Aprobado (revisor independiente, 2026-10-08). Rama `feature/mhb-43`, commit revisado `dadf22a`.
+- Controles re-ejecutados (todos Verde): `check:task-branch`, `lint`, `typecheck`, `test`, `format:check`, `build`, `validate-email`, `check:dist-baseline`, `check-size`, `agents:check`, `git diff --check`; además `bun install --frozen-lockfile --production` + `bun run build` + `check:dist-baseline` en worktree limpio.
+- Diff `master...HEAD`: sin `eslint-disable`, `@ts-*`, `any`, skip/todo, cambios en `tsconfig*.json`/ESLint ni en `dist/`; sin `.js`/`.mjs` nuevos; `types/fs-extra.d.ts` eliminado.
+- Criterios: sin `fs-extra`, `glob` ni CLI `maizzle` en `scripts`, `src` y `package.json` (solo queda como keyword); sin `tailwind.email.config.js` ni `"maizzle"` en `.github`; `maizzle-dev-server.ts` y `preview-cache.ts` consumen `EMAIL_SOURCE_PATHS` con test de existencia; `@types/node` 24.x = `engines.node >=24`; README documenta Node >=24.
+- Observación: `bun audit` reporta `qs` (moderada) transitiva de `@maizzle/framework`, sin cambio de versión por este ID.
+- Desviaciones: ninguna. Validación manual (Browser pane) no realizada por regla del proyecto.
+- Pendiente antes de la PR: eliminar `docs/superpowers/mhb-43.md` (temporal sin commitear) tras la confirmación del usuario.
+
 ## Baseline vigente
 
 - La release [v1.2.0](https://github.com/Frank-0511/vite-mhb-email/releases/tag/v1.2.0) es el baseline funcional publicado.
@@ -57,6 +67,8 @@
 - MHB-45: `Completada` el 2026-09-25; protección de `master` (checks requeridos `CI Pipeline` y `Accessibility & Contrast Audit`, `enforce_admins`, historial lineal), auto-merge de Dependabot restringido con exclusión de dependencias del pipeline de email y ecosistema `github-actions` añadido, con revisión técnica independiente aprobada (D1–D2, detalle en `STATUS-HISTORY.md`).
 - MHB-41: `Completada` el 2026-09-25; gate de contrato de salida (`dist/*.html` + variables ESP) y validadores de email en CI, con revisión técnica independiente aprobada (D1–D7, detalle en `STATUS-HISTORY.md`).
 - MHB-40: `Completada` el 2026-09-25; gobernanza de agentes, skills `task-review` y `release-management`, corrección de 5 contradicciones y sincronización de adaptadores en 7 targets.
+
+- MHB-43: `Completada` el 2026-10-08; dependencias sin `maizzle`, `fs-extra` ni `glob`, build con API programática de Maizzle, reclasificación a `dependencies`, `@types/node` 24.x y fuentes vigiladas del preview unificadas, con `dist/` idéntico y revisión técnica independiente aprobada.
 
 ## Ejecuciones delegadas relevantes
 
@@ -95,8 +107,8 @@
 
 ## Handoff
 
-- MHB-34 mergeada a `master` (PR #65). MHB-43 en revisión en `feature/mhb-43`.
-- Próxima acción inmediata: revisión técnica independiente de MHB-43 (`task-review`); tras la aprobación del usuario, eliminar `docs/superpowers/mhb-43.md` antes de la PR.
+- MHB-34 mergeada a `master` (PR #65). MHB-43 completada en `feature/mhb-43` (pendiente de PR).
+- Próxima acción inmediata: abrir la PR de MHB-43; tras la confirmación del usuario, eliminar `docs/superpowers/mhb-43.md` antes de la PR.
 - Siguientes tareas del roadmap (no iniciar sin asignación explícita):
   - MHB-14 (Fase C): evidencia en Gmail, Outlook y Apple Mail; requiere acceso del usuario a los clientes. Su cierre habilita MHB-15 (`v1.3.0`).
-  - MHB-43 (Fase D): en revisión; ejecutable en paralelo con MHB-14.
+  - MHB-43 (Fase D): completada; ejecutable en paralelo con MHB-14.
