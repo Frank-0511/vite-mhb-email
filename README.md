@@ -426,7 +426,6 @@ TEST_APPLE_TO=
 | `<pm> run dev`             | Servidor de desarrollo                            |
 | `<pm> run build`           | Build de producción (Maizzle + validación)        |
 | `<pm> run test`            | Suite de tests con Vitest                         |
-| `<pm> run test:watch`      | Tests en modo watch                               |
 | `<pm> run typecheck`       | Verificación de tipos TypeScript                  |
 | `<pm> run lint`            | Lint completo (HTML / JS / Markdown / JSON / CSS) |
 | `<pm> run validate-email`  | Solo el validador de compatibilidad email         |
