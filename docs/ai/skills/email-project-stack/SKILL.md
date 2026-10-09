@@ -5,7 +5,10 @@ description: "Trabajar en el stack de EmailForge Toolkit: Bun, Vite, Maizzle, Ha
 
 # Stack de EmailForge Toolkit
 
-- Usar Bun 1.3.13 y ESM. No crear lockfiles de npm, Yarn o pnpm.
+- Usar Bun como manager de mantenimiento (`bun.lock`) y ESM. Los scripts
+  detectan el package manager en runtime (`scripts/shared/env/detect-pm.ts`);
+  el repo versiona solo `bun.lock` y soporta npm, Yarn 4 y pnpm sin lockfile.
+  No versionar `package-lock.json`, `yarn.lock` ni `pnpm-lock.yaml`.
 - Usar `bun run build` como compilación final; no sustituirlo por `maizzle build`.
 - Mantener Vite como servidor y middleware interno: UI en `src/web/`, APIs en
   `scripts/vite/api/`, plugins en `scripts/vite/plugins/` y servicios en
