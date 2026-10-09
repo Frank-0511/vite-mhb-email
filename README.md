@@ -112,7 +112,7 @@ El pipeline principal es:
 
 ### Requisitos locales
 
-- **Node.js 24** (ver `.nvmrc`). Con NVM: `nvm use` dentro del repo.
+- **Node.js >= 24** (`engines.node`; ver `.nvmrc`; `@types/node` fijado a 24.x). Con NVM: `nvm use` dentro del repo.
 - **Bun >= 1.3.13** (CI y `packageManager` usan **1.3.13**). Instálalo
   standalone y deja `~/.bun/bin` en tu `PATH`:
 
