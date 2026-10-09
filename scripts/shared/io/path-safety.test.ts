@@ -1,6 +1,6 @@
 /** @fileoverview Regresiones de seguridad para el contrato de nombres de template. */
 
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { spawnSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";

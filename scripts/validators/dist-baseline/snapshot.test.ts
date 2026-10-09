@@ -2,7 +2,7 @@
  * @fileoverview Pruebas unitarias para snapshot.ts y baseline-guard.ts.
  */
 
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";

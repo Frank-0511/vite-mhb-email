@@ -2,7 +2,7 @@
  * @fileoverview Pruebas unitarias para compare.ts (diffing y formateo).
  */
 
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { compareSnapshots, formatBaselineDiff, hasBaselineDiff } from "./compare.ts";
 import {
   createTempDist,

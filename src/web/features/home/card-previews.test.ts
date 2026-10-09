@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, test } from "bun:test";
+import { afterEach, describe, expect, test } from "vitest";
 import { initializeTemplateCardPreviews, loadTemplateCardPreview } from "./card-previews.ts";
 
 function createPreview(source = "/templates/welcome/index.html") {

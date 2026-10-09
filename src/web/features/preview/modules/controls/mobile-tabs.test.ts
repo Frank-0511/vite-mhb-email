@@ -1,4 +1,4 @@
-import { describe, expect, it } from "bun:test";
+import { describe, expect, it } from "vitest";
 import type { MockElement } from "../runtime/test-helpers.ts";
 import { createMockElement } from "../runtime/test-helpers.ts";
 import { initMobileTabs } from "./mobile-tabs.ts";

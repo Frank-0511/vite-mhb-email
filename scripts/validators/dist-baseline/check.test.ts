@@ -2,7 +2,7 @@
  * @fileoverview Pruebas para check.ts y update.ts.
  */
 
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";

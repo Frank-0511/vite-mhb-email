@@ -1,5 +1,5 @@
 import path from "node:path";
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { assertNoTargetOverlaps, loadConfig } from "./config.ts";
 import { projectRoot } from "./constants.ts";
 import type { TargetConfig } from "./types.ts";

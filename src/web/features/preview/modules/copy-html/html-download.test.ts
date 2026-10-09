@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, mock, test } from "bun:test";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import type { DownloadHtmlOptions } from "./html-download.ts";
 import { downloadHtml } from "./html-download.ts";
 
@@ -34,13 +34,13 @@ describe("downloadHtml", () => {
       href: "",
       download: "",
       clicked: false,
-      click: mock(() => {
+      click: vi.fn(() => {
         createdAnchor.clicked = true;
       }),
     };
     createdBlob = null;
     mockDocument = {
-      createElement: mock((tag: string) => {
+      createElement: vi.fn((tag: string) => {
         if (tag === "a") return createdAnchor;
         return {};
       }),
@@ -49,12 +49,12 @@ describe("downloadHtml", () => {
       counter: 0,
       /** @type {string[]} */
       revoked: [],
-      createObjectURL: mock((blob: unknown) => {
+      createObjectURL: vi.fn((blob: unknown) => {
         createdBlob = blob as MockBlob;
         mockUrlApi.counter += 1;
         return `blob:download-${mockUrlApi.counter}`;
       }),
-      revokeObjectURL: mock((url: string) => {
+      revokeObjectURL: vi.fn((url: string) => {
         mockUrlApi.revoked.push(url);
       }),
     } as MockUrlApi;
@@ -99,7 +99,6 @@ describe("downloadHtml", () => {
     (html) => {
       const result = downloadHtml({
         templateName: "welcome",
-        // @ts-expect-error Mock intentionally omits the browser download API.
         html: html as string,
         document: mockDocument,
         Blob: MockBlobConstructor,
@@ -150,7 +149,7 @@ describe("downloadHtml", () => {
   });
 
   test("revoca la URL si anchor.click lanza una excepción", () => {
-    createdAnchor.click = mock(() => {
+    createdAnchor.click = vi.fn(() => {
       throw new Error("Simulated click failure");
     });
 
@@ -170,7 +169,7 @@ describe("downloadHtml", () => {
   });
 
   test("falla limpiamente si createObjectURL lanza excepción", () => {
-    mockUrlApi.createObjectURL = mock(() => {
+    mockUrlApi.createObjectURL = vi.fn(() => {
       throw new Error("QuotaExceededError");
     });
 

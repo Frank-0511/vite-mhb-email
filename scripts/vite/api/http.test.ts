@@ -2,7 +2,7 @@
  * @fileoverview Pruebas unitarias para helpers HTTP y asyncHandler en scripts/vite/api/http.ts.
  */
 
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { EventEmitter } from "node:events";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import {

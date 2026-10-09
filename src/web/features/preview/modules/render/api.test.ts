@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, test } from "bun:test";
+import { afterEach, describe, expect, test } from "vitest";
 import { createRenderAPI } from "./api.ts";
 import { parseRenderErrorResponse, RenderApiError } from "./error-parser.ts";
 

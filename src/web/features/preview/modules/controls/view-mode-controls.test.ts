@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, mock, test } from "bun:test";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 import { createMockElement, createMockStorage } from "../runtime/test-helpers.ts";
 import { STORAGE_KEY_VIEW_MODE } from "../../../../shared/utils/storage-keys.ts";
@@ -117,7 +117,7 @@ describe("view-mode-controls (MHB-17)", () => {
 
   test("no recompila ni invoca peticiones al alternar entre vistas", () => {
     const originalFetch = globalThis.fetch;
-    const mockFetch = mock(() => Promise.resolve(new Response("")));
+    const mockFetch = vi.fn(() => Promise.resolve(new Response("")));
     globalThis.fetch = mockFetch;
 
     try {

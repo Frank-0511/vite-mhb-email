@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { renderMissingTemplateError } from "./preview-params.ts";
 
 describe("preview-params (gestión de parámetros de URL)", () => {

@@ -4,7 +4,7 @@
 
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { describe, expect, it } from "bun:test";
+import { describe, expect, it } from "vitest";
 import { checkInventory } from "./check-migration-inventory.ts";
 import type { BaselineData } from "./parser.ts";
 import { matchesLayer } from "./parser.ts";

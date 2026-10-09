@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import type { DistSnapshot } from "./baseline-guard.ts";
 import { compareManifestWithBaseline } from "./manifest-check.ts";
 import type { EspManifest } from "../../esp/manifest/types.ts";

@@ -2,7 +2,7 @@
  * @fileoverview Pruebas unitarias del validador de referencias de iconos (scripts/icons/validator.ts).
  */
 
-import { afterEach, beforeEach, describe, expect, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import { randomUUID } from "node:crypto";
 import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";

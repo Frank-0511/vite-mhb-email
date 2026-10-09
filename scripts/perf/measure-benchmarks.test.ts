@@ -1,4 +1,4 @@
-import { describe, expect, spyOn, test } from "bun:test";
+import { describe, expect, test, vi } from "vitest";
 import type { BenchmarkResult, BenchmarkSpec, EnvironmentInfo } from "./benchmark-runner.ts";
 import { computeStats, filterTasksForEnvironment, getEnvironmentInfo } from "./benchmark-runner.ts";
 import { formatMarkdownTable } from "./benchmark-formatter.ts";
@@ -90,7 +90,7 @@ describe("measure-benchmarks", () => {
         timestamp: "2026-10-09T00:00:00.000Z",
       };
 
-      const spy = spyOn(console, "log").mockImplementation(() => {});
+      const spy = vi.spyOn(console, "log").mockImplementation(() => {});
       const filtered = filterTasksForEnvironment(tasks, env);
       expect(filtered).toHaveLength(1);
       expect(filtered[0].name).toBe("Task 2");

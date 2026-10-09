@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, mock, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import type { LibraryComponentType } from "../types.ts";
 import { previewManager } from "./preview.ts";
 
@@ -80,7 +80,7 @@ describe("previewManager", () => {
   test("render with showLoading shows the skeleton during the fetch and hides it after success", async () => {
     /** @type {(value?: unknown) => void} */
     let resolveFetch: (value: unknown) => void = () => {};
-    globalThis.fetch = mock(
+    globalThis.fetch = vi.fn(
       () =>
         new Promise<unknown>((resolve) => {
           resolveFetch = resolve;
@@ -101,7 +101,7 @@ describe("previewManager", () => {
   });
 
   test("render with showLoading forwards the atomic design type to the skeleton", () => {
-    globalThis.fetch = mock(() => new Promise<unknown>(() => {})) as unknown as typeof fetch;
+    globalThis.fetch = vi.fn(() => new Promise<unknown>(() => {})) as unknown as typeof fetch;
 
     void previewManager.render("cta-button", "v1", {}, { showLoading: true, type: "atoms" });
 
@@ -109,7 +109,7 @@ describe("previewManager", () => {
   });
 
   test("render without showLoading never touches the skeleton", async () => {
-    globalThis.fetch = mock(() =>
+    globalThis.fetch = vi.fn(() =>
       Promise.resolve(/** @type {any} */ { text: () => Promise.resolve("<p>ok</p>") }),
     ) as unknown as typeof fetch;
 
@@ -120,11 +120,11 @@ describe("previewManager", () => {
   });
 
   test("render with showLoading hides the skeleton even when the fetch fails", async () => {
-    globalThis.fetch = mock(() =>
+    globalThis.fetch = vi.fn(() =>
       Promise.reject(new Error("network down")),
     ) as unknown as typeof fetch;
     const originalConsoleError = console.error;
-    console.error = mock(() => {});
+    console.error = vi.fn(() => {});
 
     await previewManager.render("hero-section", "v1", {}, { showLoading: true });
 

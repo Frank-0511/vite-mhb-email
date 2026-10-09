@@ -1,4 +1,4 @@
-import { describe, expect, it, mock } from "bun:test";
+import { describe, expect, it, vi } from "vitest";
 import { createMockElement } from "../../features/preview/modules/runtime/test-helpers.ts";
 import { EfSkeleton } from "./ef-skeleton.ts";
 
@@ -13,7 +13,7 @@ describe("EfSkeleton Web Component", () => {
     mockSkeleton.setAttribute = mockEl.setAttribute;
     mockSkeleton.hasAttribute = mockEl.hasAttribute;
     mockSkeleton.classList = mockEl.classList;
-    mockSkeleton.remove = mock(() => {});
+    mockSkeleton.remove = vi.fn(() => {});
 
     return { skeleton, mockEl };
   }
