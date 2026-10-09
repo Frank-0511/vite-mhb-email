@@ -7,9 +7,9 @@
  * separadores, metacaracteres o longitudes excesivas.
  */
 
-import fs from "fs-extra";
+import { existsSync, readdirSync, statSync } from "node:fs";
 import { resolve } from "node:path";
-import { isPathInside, isValidTemplateName } from "../../../shared/index.ts";
+import { isPathInside, isValidTemplateName, readJsonFile } from "../../../shared/index.ts";
 
 export interface ComponentVariant {
   id: string;
@@ -59,12 +59,12 @@ export function getPartialsRoot(rootDir: string): string {
  */
 function collectComponentDirs(baseDir: string): string[] {
   const results: string[] = [];
-  if (!fs.existsSync(baseDir)) return results;
+  if (!existsSync(baseDir)) return results;
 
-  for (const entry of fs.readdirSync(baseDir)) {
+  for (const entry of readdirSync(baseDir)) {
     const entryPath = resolve(baseDir, entry);
-    if (!fs.statSync(entryPath).isDirectory()) continue;
-    if (fs.existsSync(resolve(entryPath, "schema.json"))) {
+    if (!statSync(entryPath).isDirectory()) continue;
+    if (existsSync(resolve(entryPath, "schema.json"))) {
       results.push(entryPath);
     } else {
       results.push(...collectComponentDirs(entryPath));
@@ -86,9 +86,9 @@ function toComponentId(partialsRoot: string, componentDir: string): string {
  * Construye el listado de variantes disponibles a partir de archivos `.html`.
  */
 export function listVariantsFromDir(componentDir: string): string[] {
-  if (!fs.existsSync(componentDir)) return [];
+  if (!existsSync(componentDir)) return [];
   const variants: string[] = [];
-  const entries = fs.readdirSync(componentDir);
+  const entries = readdirSync(componentDir);
   for (const entry of entries) {
     if (!entry.endsWith(".html")) continue;
     variants.push(entry.replace(/\.html$/, ""));
@@ -107,7 +107,7 @@ export function listComponents(rootDir: string): ComponentSummary[] {
   for (const dir of dirs) {
     if (!isPathInside(partialsRoot, dir)) continue;
     const schemaPath = resolve(dir, "schema.json");
-    const schema = fs.readJsonSync(schemaPath) as Record<string, unknown>;
+    const schema = readJsonFile(schemaPath) as Record<string, unknown>;
     const relative = toComponentId(partialsRoot, dir);
     const segments = relative.split("/");
     const id = segments[segments.length - 1];
@@ -155,7 +155,7 @@ export function readComponentSchema(
   const dir = findComponentDir(rootDir, componentName);
   if (!dir) return null;
   const schemaPath = resolve(dir, "schema.json");
-  const schema = fs.readJsonSync(schemaPath) as Record<string, unknown>;
+  const schema = readJsonFile(schemaPath) as Record<string, unknown>;
   const variants = listVariantsFromDir(dir);
   return {
     id: componentName,

@@ -2,7 +2,7 @@
  * @fileoverview Módulo de gestión de archivos temporales y directorios.
  */
 
-import fs from "fs-extra";
+import { mkdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 /**
@@ -13,10 +13,10 @@ export async function createTempHtmlFile(
   templateName: string,
 ): Promise<string> {
   const tempDir = path.join(process.cwd(), ".temp-screenshots");
-  await fs.ensureDir(tempDir);
+  await mkdir(tempDir, { recursive: true });
 
   const tempFile = path.join(tempDir, `${templateName}-compiled.html`);
-  await fs.writeFile(tempFile, compiledHtml);
+  await writeFile(tempFile, compiledHtml);
 
   return tempFile;
 }
@@ -26,7 +26,7 @@ export async function createTempHtmlFile(
  */
 export async function cleanupTempFile(tempFile: string): Promise<void> {
   try {
-    await fs.remove(tempFile);
+    await rm(tempFile, { recursive: true, force: true });
   } catch {
     // Ignorar errores de limpieza
   }
@@ -37,7 +37,7 @@ export async function cleanupTempFile(tempFile: string): Promise<void> {
  */
 export async function ensureScreenshotDir(): Promise<string> {
   const screenshotDir = path.join(process.cwd(), "screenshots");
-  await fs.ensureDir(screenshotDir);
+  await mkdir(screenshotDir, { recursive: true });
   return screenshotDir;
 }
 

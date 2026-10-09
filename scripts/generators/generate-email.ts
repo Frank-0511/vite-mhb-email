@@ -4,10 +4,16 @@
  * Soporta creación desde cero o a partir de templates/arquetipos bajo Atomic Design (`src/emails/partials/templates/`).
  */
 
-import fs from "fs-extra";
+import { existsSync } from "node:fs";
+import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { assertValidTemplateName, isValidTemplateName } from "../shared/index.ts";
 import { getAvailableArchetypes } from "./archetypes.ts";
+import {
+  assertValidTemplateName,
+  isValidTemplateName,
+  readJsonFile,
+  writeJsonFile,
+} from "../shared/index.ts";
 
 const firstArg = process.argv[2];
 
@@ -70,7 +76,7 @@ const jsonFile = path.join(dir, "data.json");
 function buildInitialHtml(templateName: string, baseArchetype: string | undefined): string {
   if (baseArchetype) {
     const archetypeDir = path.join(process.cwd(), "src/emails/partials/templates", baseArchetype);
-    if (fs.existsSync(archetypeDir)) {
+    if (existsSync(archetypeDir)) {
       return `---
 title: "Título para ${templateName}"
 previewText: "Descripción breve del email."
@@ -115,9 +121,9 @@ function buildInitialData(
       baseArchetype,
       "data.json",
     );
-    if (fs.existsSync(archetypeDataPath)) {
+    if (existsSync(archetypeDataPath)) {
       try {
-        const templateData = fs.readJsonSync(archetypeDataPath) as Record<string, unknown>;
+        const templateData = readJsonFile(archetypeDataPath) as Record<string, unknown>;
         data = {
           ...templateData,
           titleTemplate: `Nombre de ${templateName}`,
@@ -137,7 +143,7 @@ function buildInitialData(
  */
 async function createTemplate(): Promise<void> {
   try {
-    const exists = await fs.pathExists(dir);
+    const exists = existsSync(dir);
     if (exists) {
       console.warn(`⚠️ El template "${validatedName}" ya existe.`);
       return;
@@ -146,12 +152,10 @@ async function createTemplate(): Promise<void> {
     const htmlContent = buildInitialHtml(validatedName, archetype);
     const jsonContent = buildInitialData(validatedName, archetype);
 
-    await fs.ensureDir(dir);
+    await mkdir(dir, { recursive: true });
 
-    await Promise.all([
-      fs.writeFile(htmlFile, htmlContent),
-      fs.writeJson(jsonFile, jsonContent, { spaces: 2 }),
-    ]);
+    await writeFile(htmlFile, htmlContent);
+    writeJsonFile(jsonFile, jsonContent);
 
     const modeMsg = archetype ? ` basado en template "${archetype}"` : " desde cero";
     console.log(

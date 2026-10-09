@@ -5,7 +5,8 @@
 
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { EventEmitter } from "node:events";
-import fs from "fs-extra";
+import { existsSync, mkdirSync, mkdtempSync, rmSync } from "node:fs";
+import { readJsonFile, writeJsonFile } from "../../shared/index.ts";
 import os from "node:os";
 import path from "node:path";
 import type { IncomingMessage, ServerResponse } from "node:http";
@@ -126,15 +127,15 @@ describe("Rechazo cross-site en endpoints de escritura (MHB-46)", () => {
   let dataFilePath: string;
 
   beforeAll(() => {
-    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "vite-api-test-"));
+    tempDir = mkdtempSync(path.join(os.tmpdir(), "vite-api-test-"));
     dataFilePath = path.join(tempDir, "src/emails/templates/welcome/data.json");
-    fs.mkdirpSync(path.dirname(dataFilePath));
-    fs.writeJsonSync(dataFilePath, { preserved: "original" }, { spaces: 2 });
+    mkdirSync(path.dirname(dataFilePath), { recursive: true });
+    writeJsonFile(dataFilePath, { preserved: "original" });
   });
 
   afterAll(() => {
-    if (tempDir && fs.existsSync(tempDir)) {
-      fs.removeSync(tempDir);
+    if (tempDir && existsSync(tempDir)) {
+      rmSync(tempDir, { recursive: true, force: true });
     }
   });
 
@@ -148,7 +149,7 @@ describe("Rechazo cross-site en endpoints de escritura (MHB-46)", () => {
       });
 
       assertRejected403(res, nextCalled);
-      const fileContent = fs.readJsonSync(dataFilePath) as { preserved: string };
+      const fileContent = readJsonFile(dataFilePath) as { preserved: string };
       expect(fileContent.preserved).toBe("original");
     });
 
@@ -172,7 +173,7 @@ describe("Rechazo cross-site en endpoints de escritura (MHB-46)", () => {
       });
       assertRejected403(bySecFetch.res, bySecFetch.nextCalled);
 
-      const fileContent = fs.readJsonSync(dataFilePath) as { preserved: string };
+      const fileContent = readJsonFile(dataFilePath) as { preserved: string };
       expect(fileContent.preserved).toBe("original");
     });
   });

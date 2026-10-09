@@ -2,11 +2,11 @@
  * @fileoverview Servidor de rutas de templates estáticas (/templates/<template>/index.html).
  */
 
-import fs from "fs-extra";
+import { existsSync } from "node:fs";
 import type { ViteDevServer } from "vite";
-import { getProjectPaths, isPathInside } from "../../shared/index.ts";
 import { compileTemplate } from "../services/render/index.ts";
 import { asyncHandler, sendText } from "./http.ts";
+import { getProjectPaths, isPathInside, readJsonFile } from "../../shared/index.ts";
 
 const TEMPLATE_ROUTE_PATTERN = /^\/templates\/([a-z0-9-]+)\/index\.html$/;
 
@@ -34,11 +34,13 @@ export function setupTemplateApi(server: ViteDevServer, rootDir: string): void {
         return sendText(res, 400, "Invalid template path");
       }
 
-      if (!fs.existsSync(filePath)) return next();
+      if (!existsSync(filePath)) return next();
 
       try {
         const dataPath = paths.templateData(templateName);
-        const data = fs.existsSync(dataPath) ? fs.readJsonSync(dataPath) : {};
+        const data = existsSync(dataPath)
+          ? (readJsonFile(dataPath) as Record<string, unknown>)
+          : {};
 
         const finalHtml = await compileTemplate(filePath, data, rootDir);
         res.setHeader("Content-Type", "text/html");

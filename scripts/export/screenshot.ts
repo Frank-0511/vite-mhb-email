@@ -9,11 +9,10 @@
  *   bun run export:screenshot nombre-template
  */
 
-import fs from "fs-extra";
+import { existsSync } from "node:fs";
 import path from "node:path";
 import { exportScreenshot } from "./main.ts";
-import { c, paint } from "../shared/index.ts";
-import { assertValidTemplateName } from "../shared/index.ts";
+import { assertValidTemplateName, c, paint, readJsonFile } from "../shared/index.ts";
 
 const templateName = process.argv[2];
 
@@ -35,7 +34,7 @@ const validatedTemplateName = templateName as string;
 
 const htmlPath = path.join(process.cwd(), "dist", `${validatedTemplateName}.html`);
 
-if (!fs.existsSync(htmlPath)) {
+if (!existsSync(htmlPath)) {
   console.error(
     paint(c.red + c.bold, "❌ Error:") +
       paint(c.dim, ` El template "${validatedTemplateName}" no existe en dist.\n`) +
@@ -54,8 +53,8 @@ const dataPath = path.join(
 );
 
 let templateData: Record<string, unknown> = {};
-if (fs.existsSync(dataPath)) {
-  templateData = fs.readJsonSync(dataPath) as Record<string, unknown>;
+if (existsSync(dataPath)) {
+  templateData = readJsonFile(dataPath) as Record<string, unknown>;
 }
 
 // ─── Ejecutar ────────────────────────────────────────────────────────────────

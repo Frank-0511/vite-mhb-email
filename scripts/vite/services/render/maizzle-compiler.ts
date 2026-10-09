@@ -3,7 +3,7 @@
  */
 
 import { render } from "@maizzle/framework";
-import fs from "fs-extra";
+import { readFileSync } from "node:fs";
 import Handlebars from "handlebars";
 import {
   applyLegacySendGridSubstitutions,
@@ -28,7 +28,7 @@ export async function compileTemplate(
   data: Record<string, unknown>,
   rootDir: string,
 ): Promise<string> {
-  const html = fs.readFileSync(filePath, "utf8");
+  const html = readFileSync(filePath, "utf8");
 
   const { html: maizzleHtml } = await render(html, {
     // Preview debe reflejar el output real de email, incluyendo Tailwind/Maizzle transformers.
