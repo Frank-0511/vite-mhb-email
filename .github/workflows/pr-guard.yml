@@ -1,0 +1,39 @@
+name: PR Guard
+
+# pull_request_target ejecuta este archivo desde master, no desde la PR: un
+# fork no puede modificarlo. Nunca hacer checkout ni ejecutar código de la PR.
+on:
+  pull_request_target:
+    branches: ["master"]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  guard:
+    name: PR Guard
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check protected paths
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+        run: |
+          files=$(gh api --paginate "repos/$REPO/pulls/$PR_NUMBER/files" --jq '.[].filename')
+          status=0
+          lockfiles=$(printf '%s\n' "$files" | grep -E '(^|/)(package-lock\.json|yarn\.lock|pnpm-lock\.yaml)$' || true)
+          if [ -n "$lockfiles" ]; then
+            echo "::error::Lockfiles ajenos no permitidos (solo se versiona bun.lock): $lockfiles"
+            status=1
+          fi
+          if [ "$HEAD_REPO" != "$REPO" ]; then
+            ci_files=$(printf '%s\n' "$files" | grep -E '^\.github/' || true)
+            if [ -n "$ci_files" ]; then
+              echo "::error::Una PR desde un fork no puede modificar .github/ (ver CONTRIBUTING.md): $ci_files"
+              status=1
+            fi
+          fi
+          exit $status

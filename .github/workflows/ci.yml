@@ -30,6 +30,12 @@ jobs:
           # El guard de iconos compara contra master/origin/master; requiere historial.
           fetch-depth: 0
 
+      - &setup-node
+        name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+
       - &setup-bun
         name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -62,6 +68,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - *checkout
+      - *setup-node
       - *setup-bun
       - *cache-deps
       - *install
@@ -74,6 +81,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - *checkout
+      - *setup-node
       - *setup-bun
       - *cache-deps
       - *install
@@ -86,6 +94,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - *checkout
+      - *setup-node
       - *setup-bun
       - *cache-deps
       - *install
@@ -111,18 +120,71 @@ jobs:
       - name: Check migration inventory
         run: bun run check:inventory
 
+  # Compatibilidad: yarn, npm y pnpm instalan desde cero (cada quien decide su
+  # lockfile); validan build, validate-email, check-size, typecheck y test.
+  # (check:dist-baseline es gate estricto del carril congelado con bun).
+  package-managers:
+    name: Compat (${{ matrix.pm }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        pm: [yarn, npm, pnpm]
+    env:
+      # Yarn 4 activa --immutable en CI por defecto; aquí no hay yarn.lock.
+      YARN_ENABLE_IMMUTABLE_INSTALLS: "false"
+    steps:
+      - *checkout
+      - *setup-node
+
+      - name: Setup pnpm
+        if: matrix.pm == 'pnpm'
+        uses: pnpm/action-setup@v6
+        with:
+          version: "12.10.1"
+
+      - name: Setup Yarn 4
+        if: matrix.pm == 'yarn'
+        run: corepack enable && corepack install -g yarn@4.18.1
+
+      - name: Install dependencies
+        run: |
+          case "${{ matrix.pm }}" in
+            yarn) yarn install ;;
+            npm) npm install --no-audit --no-fund ;;
+            pnpm) pnpm install --no-frozen-lockfile ;;
+          esac
+
+      - name: Typecheck
+        run: ${{ matrix.pm }} run typecheck
+
+      - name: Test
+        run: ${{ matrix.pm }} run test
+
+      - name: Build
+        run: ${{ matrix.pm }} run build
+
+      - name: Validate email
+        run: ${{ matrix.pm }} run validate-email
+
+      - name: Check HTML size
+        run: ${{ matrix.pm }} run check-size
+
+      - name: Verify bun.lock untouched
+        run: git diff --exit-code -- bun.lock
+
   # Check agregado con el nombre que MHB-45 marcará como requerido.
   ci:
     name: CI Pipeline
     runs-on: ubuntu-latest
-    needs: [quality, typecheck, test, build]
+    needs: [quality, typecheck, test, build, package-managers]
     if: always()
     steps:
       - name: Verify required jobs
         run: |
-          if [ "$RESULTS" != "success success success success" ]; then
+          if [ "$RESULTS" != "success success success success success" ]; then
             echo "Jobs fallidos o cancelados: $RESULTS"
             exit 1
           fi
         env:
-          RESULTS: ${{ needs.quality.result }} ${{ needs.typecheck.result }} ${{ needs.test.result }} ${{ needs.build.result }}
+          RESULTS: ${{ needs.quality.result }} ${{ needs.typecheck.result }} ${{ needs.test.result }} ${{ needs.build.result }} ${{ needs.package-managers.result }}
