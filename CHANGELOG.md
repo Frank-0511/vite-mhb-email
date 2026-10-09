@@ -62,6 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Actualización de `scripts/validators/dist-baseline/baseline.json` autorizada por el contrato del ID con los nuevos hashes de `dist/*.html`, confirmando variables ESP `{{ }}` idénticas por template (MHB-44).
 - Estandarización de 48 nombres de archivo a `kebab-case` eliminando prefijos
   redundantes de carpeta padre y unificación de barrels `index.ts` puros (MHB-39).
+- Higiene de dependencias: se retiran `maizzle` (CLI), `fs-extra` y `glob` en favor de `node:fs`, `bun run build` compila con la API programática de `@maizzle/framework` (salida `dist/` idéntica), las dependencias de build pasan a `dependencies`, `@types/node` se fija a 24.x y se retira `maizzle` de Dependabot (MHB-43).
 
 ### Mejorado
 
@@ -88,6 +89,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bloque `permissions: contents: read` explícito en `ci.yml` y `audit.yml`
   para limitar el alcance por defecto del `GITHUB_TOKEN`
   (CodeQL `actions/missing-workflow-permissions`, MHB-41).
+- Editar `maizzle.config.ts` o `tailwind.email.config.ts` ahora recarga el preview e invalida su caché: las fuentes vigiladas (`EMAIL_SOURCE_PATHS`) dejan de apuntar a `tailwind.email.config.js`, inexistente desde MHB-34 (MHB-43).
 
 ## [1.2.0] - 2026-09-18
 
