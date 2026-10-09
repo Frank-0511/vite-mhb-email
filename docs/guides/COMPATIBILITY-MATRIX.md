@@ -14,7 +14,7 @@ Fuente de las reglas: `scripts/validators/email-rules/rules/`. Fuente del gate:
 | ------ | --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | **E0** | Sin evidencia propia. Afirmación heredada de la práctica del sector o del texto de una regla. | Ninguna ejecución lo comprueba.                                  |
 | **E1** | Validación estática automatizada sobre `dist/*.html`.                                         | `bun run validate-email`, `bun run check-size`, `bun run build`. |
-| **E2** | Render comprobado fuera de un cliente real (preview del dashboard, export PNG).               | `bun run dev` + `/preview`, `bun run export:screenshot`.         |
+| **E2** | Render comprobado fuera de un cliente real (preview del dashboard, export PNG).               | `bun run dev` + `/preview`, `bun run cli` (opción [7]).          |
 | **E3** | Prueba real: mensaje entregado y abierto en un cliente de correo identificado.                | Protocolo manual de la sección "Elevar evidencia a E3".          |
 
 Regla de lectura: **E1 no implica E3**. Que una regla pase solo significa que el

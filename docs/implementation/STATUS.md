@@ -3,16 +3,16 @@
 ## Resumen
 
 - ID activo: MHB-36
-- Estado: En revisión
+- Estado: Completada
 - Implementador: perfil tooling/infraestructura, medio-alto (orquestador + subagentes por fase)
-- Revisor: revisor técnico independiente
+- Revisor: revisor técnico independiente (aprobado 2026-10-09)
 - Rama: `feature/mhb-36`
 - Última actualización: 2026-10-09
 - Contrato activo: `docs/implementation/PLAN.md` (sección MHB-36)
 
 ## Paquete activo
 
-- MHB-36: Compatibilidad multi-package-manager (Fase D). Estado: `En revisión`.
+- MHB-36: Compatibilidad multi-package-manager (Fase D). Estado: `Completada`.
 - Hechos de la entrega:
   1. Scripts de `package.json` ejecutados con `node` y detección agnóstica de package manager (`scripts/shared/env/detect-pm.ts`); scripts reducidos de 30 a 18.
   2. Suite completa migrada a Vitest (`105 files, 808 tests`) corriendo tanto con Bun como con Node/npm/yarn/pnpm.
@@ -48,6 +48,7 @@
 
 ## Últimas entregas
 
+- MHB-36: `Completada` el 2026-10-09; compatibilidad con Bun, npm, Yarn 4 y pnpm (Vitest, detección de package manager, CI Node 24 con matriz, `PR Guard`, scripts 30 → 18), `dist/` idéntico en el carril congelado y revisión técnica independiente aprobada.
 - MHB-43: `Completada` el 2026-10-08; dependencias sin `maizzle`, `fs-extra` ni `glob`, build con API programática de Maizzle, reclasificación a `dependencies`, `@types/node` 24.x y fuentes vigiladas del preview unificadas, con `dist/` idéntico y revisión técnica independiente aprobada.
 - MHB-34: `Completada` el 2026-10-08; cierre total y modo estricto TypeScript (20 archivos migrados, allowlist JS de 2 archivos, `tsconfig.strict.json` eliminado, `check:inventory --require-zero` en CI), `dist/` idéntico y revisión técnica independiente aprobada.
 - MHB-42: `Completada` el 2026-10-01; spike de loaders con allowlist cerrada (`eslint.config.js`, `maizzle.config.js`) y MHB-34 indiviso; solo `docs/implementation/**`; revisión técnica independiente aprobada.
@@ -62,6 +63,7 @@
 
 | Ámbito | Estado     | Propiedad               | Handoff                                                  |
 | :----- | :--------- | :---------------------- | :------------------------------------------------------- |
+| MHB-36 | Completada | Tooling, CI y docs      | Revisión técnica independiente aprobada (`task-review`). |
 | MHB-43 | Completada | Dependencias y build    | Revisión técnica independiente aprobada (`task-review`). |
 | MHB-47 | Completada | Contrato ESP / SendGrid | Revisión técnica independiente aprobada (`task-review`). |
 | MHB-46 | Completada | Servidor Vite/seguridad | Revisión técnica independiente aprobada (`task-review`). |
@@ -108,9 +110,17 @@
 - **Pruebas de guards sintéticos:** En `eslint-guards.test.ts` se anula `parserOptions.project` para evaluar snippets en memoria mediante AST puro.
 - **Barrels index.ts puros:** Todos los `index.ts` bajo `scripts/` y `src/` actúan exclusivamente como puntos de reexport (`export ... from`).
 
+## Revisión de cierre — MHB-36
+
+- Veredicto: **Aprobado** (2026-10-09), rama `feature/mhb-36`, base commit `9cb9b40` más este cierre.
+- Controles re-ejecutados por el revisor en árbol limpio (todos Verde): `check:task-branch`, `lint`, `typecheck`, `test`, `format:check`, `build`, `validate-email`, `check:dist-baseline`, `check-size`, `agents:check`, `git diff --check`.
+- Auditoría del diff: sin `eslint-disable`, `@ts-*`, `any`, skip/todo, `.js`/`.mjs` nuevos, cambios en `ignores`/`tsconfig*.json` ni en `dist/`; scripts retirados sin referencias vivas (corregida una en `COMPATIBILITY-MATRIX.md`).
+- Excluido del cierre: bump ajeno `handlebars` 4.7.9 → 4.7.10 (`package.json`/`bun.lock`), fuera de alcance; queda fuera del commit.
+- Riesgo residual: `check:a11y` (requiere navegador) lo ejecuta CI en `audit.yml`.
+
 ## Handoff
 
-- Próxima acción inmediata: Revisión consciente del commit `6fb62bc` (ampliación de alcance de scripts, sin verificación multi-manager ni `check:a11y` posterior); solicitud de autorización al usuario para push de la rama `feature/mhb-36` y apertura de Pull Request; ejecución de `task-review` por revisor técnico independiente.
+- Próxima acción inmediata: abrir la Pull Request de `feature/mhb-36`; tras el merge, `PR Guard` pasa a check requerido (autorizado por el usuario).
 - Siguiente tarea del roadmap (no iniciar sin asignación explícita):
   - MHB-14 (Fase C): desbloqueada; requiere acceso del usuario a Gmail, Outlook y Apple Mail. Su cierre habilita MHB-15 (`v1.3.0`).
   - MHB-48 (Fase D): bloqueada hasta evaluar disparador de performance o decisión de release.
