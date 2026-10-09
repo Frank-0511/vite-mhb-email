@@ -2,54 +2,22 @@
 
 ## Resumen
 
-- ID activo: MHB-43
-- Estado: Completada
-- Implementador: perfil tooling, medio (Claude Code)
-- Revisor: revisor técnico de build independiente
-- Rama: `feature/mhb-43`
-- Última actualización: 2026-10-08
-- Contrato activo: `docs/implementation/PLAN.md` (sección MHB-43)
+- ID activo: MHB-36
+- Estado: En progreso
+- Implementador: perfil tooling/infraestructura, medio-alto (orquestador + subagentes por fase)
+- Revisor: revisor técnico independiente
+- Rama: `feature/mhb-36`
+- Última actualización: 2026-10-09
+- Contrato activo: `docs/implementation/PLAN.md` (sección MHB-36)
 
 ## Paquete activo
 
-- MHB-43: Higiene de dependencias (Fase D).
-- Alcance: retirar el CLI `maizzle`, `fs-extra` y `glob`; reclasificar dependencias por rol; alinear `@types/node` con `engines.node`.
-- Hechos de la entrega (rama `feature/mhb-43`, último commit de código `5989f2b`):
-  1. `build.ts` compila con `build()` programático de `@maizzle/framework` (async) y se retiran `maizzle`, `fs-extra` y `glob`; `dist/` idéntico al baseline también en checkout limpio con `--production`.
-  2. `fs-extra` → `node:fs`/`node:fs/promises`; nuevo `readJsonFile`/`writeJsonFile` en `scripts/shared/io/json-file.ts` (con test); `glob` → `globSync` de `node:fs` con orden explícito (los directorios de componentes usan `readdirSync` recursivo porque Bun no expande `**/`).
-  3. `@maizzle/framework`, `vite`, `tailwindcss`, `tailwindcss-preset-email`, `postcss`, `autoprefixer`, `puppeteer`, `nodemailer` y `@resvg/resvg-js` pasan a `dependencies`; `@types/node` fijado a `24.19.1`; README documenta Node `>=24`.
-  4. `EMAIL_SOURCE_PATHS` (módulo hoja) reemplaza las dos listas duplicadas e incluye `maizzle.config.ts` y `tailwind.email.config.ts`; `paths.ts` y comentarios corregidos; `maizzle` retirado de Dependabot.
-  5. `prepare` pasa a `husky || true` para que `bun install --production` no falle (necesario para la prueba de producción).
-- Controles (todos Verde): `bun install --frozen-lockfile`, `lint`, `typecheck`, `test` (795), `format:check`, `build`, `validate-email`, `check:dist-baseline`, `check-size`, `check:inventory`, `agents:check`, `git diff --check`; prueba de producción en worktree limpio; `bun audit` sin cambios (67, igual que `master`); `bun run dev` responde 200 en `/`, `/api/data` y template; `export:screenshot welcome` y `cli` hasta el menú OK. Sin Browser pane.
-- Inventario de dependencias (revisión manual): `maizzle`, `fs-extra`, `glob` eliminados (sin consumidor); runtime de build/dev en `dependencies` (`@maizzle/framework` build y preview, `vite` dev server, `tailwindcss`+`preset-email`+`postcss`+`autoprefixer` CSS, `puppeteer` export/a11y, `nodemailer` envío, `@resvg/resvg-js` iconos, `handlebars`, `lucide`); herramientas de calidad (`eslint*`, `typescript*`, `prettier`, `stylelint*`, `htmlhint`, `markdownlint-cli2`, `husky`, `lint-staged`, `axe-core`, `globals`, `@types/node`) en `devDependencies`.
-- Riesgo residual: la salida de `globSync` nativo no está ordenada, por eso se ordena donde alimenta salida; el orden de carpetas de componentes pasa de glob a alfabético (sin impacto en `dist/`).
-- Decisión del usuario (2026-10-08): se conserva el wrapper `maizzle.config.js` (Maizzle 5.5.0 solo descubre configuración `.js`/`.cjs`; lo consumen `selective-build.ts` y `paths.ts`). Allowlist de MHB-42 intacta.
-
-## Revisión de cierre de MHB-34
-
-- Veredicto: Aprobado (revisor independiente, 2026-10-08). Rama `feature/mhb-34`, commit revisado `3dc07cd`.
-- Controles re-ejecutados (todos Verde): `check:task-branch`, `bun install --frozen-lockfile`, `lint`, `typecheck`, `test`, `format:check`, `build`, `validate-email`, `lint:contrast`, `a11y-check`, `agents:check`, `check:inventory --require-zero`, `check:dist-baseline`, `check-size`, `git diff --check`.
-- Diff `master...HEAD`: sin `eslint-disable`, `@ts-ignore`/`@ts-expect-error`, `any`, `@typedef`, skip/todo ni archivos `.js`/`.mjs` nuevos; `tsconfig.json` activa `strict`, `verbatimModuleSyntax` y `erasableSyntaxOnly` sin `allowJs`/`checkJs`; `tsconfig.strict.json` eliminado; sin cambios en `dist/`.
-- Criterios: `rg --files -g '*.js' -g '*.mjs'` devuelve solo `eslint.config.js` y `maizzle.config.js`; `typecheck` es un único `tsc --noEmit`; `check:inventory --require-zero` finaliza en 0 y está en CI; límites de árbol validados por `file-tree.test.ts`; `CHANGELOG.md` actualizado.
-- Desviaciones: ninguna. Validación manual de UI (Browser pane) no realizada por regla del proyecto; cobertura por gates deterministas.
-
-## Revisión de cierre de MHB-42
-
-- Veredicto: Aprobado (revisor independiente, 2026-10-01). Rama `feature/mhb-42`, commit `61078b9`.
-- Controles re-ejecutados (todos Verde): `check:task-branch`, `lint`, `typecheck`, `test`, `format:check`, `build`, `validate-email`, `check:dist-baseline`, `check-size`, `agents:check`, `git diff --check`.
-- Diff `master...HEAD`: solo `PLAN.md` y `STATUS.md`; sin `eslint-disable`, `@ts-*`, skip/todo ni cambios en `tsconfig*.json`, ESLint ni `dist/`.
-- Criterios: allowlist cerrada, dimensionamiento (5 errores TS2339) y rutas de MHB-34/MHB-36 actualizadas en `PLAN.md`. Evidencia Node 24 (spike desechable eliminado) tomada del registro del implementador; no reproducible en el árbol actual.
-- Pendiente antes de la PR: eliminar `docs/superpowers/mhb-42.md` y `docs/superpowers/mhb-42/` (temporales sin commitear).
-
-## Revisión de cierre de MHB-43
-
-- Veredicto: Aprobado (revisor independiente, 2026-10-08). Rama `feature/mhb-43`, commit revisado `dadf22a`.
-- Controles re-ejecutados (todos Verde): `check:task-branch`, `lint`, `typecheck`, `test`, `format:check`, `build`, `validate-email`, `check:dist-baseline`, `check-size`, `agents:check`, `git diff --check`; además `bun install --frozen-lockfile --production` + `bun run build` + `check:dist-baseline` en worktree limpio.
-- Diff `master...HEAD`: sin `eslint-disable`, `@ts-*`, `any`, skip/todo, cambios en `tsconfig*.json`/ESLint ni en `dist/`; sin `.js`/`.mjs` nuevos; `types/fs-extra.d.ts` eliminado.
-- Criterios: sin `fs-extra`, `glob` ni CLI `maizzle` en `scripts`, `src` y `package.json` (solo queda como keyword); sin `tailwind.email.config.js` ni `"maizzle"` en `.github`; `maizzle-dev-server.ts` y `preview-cache.ts` consumen `EMAIL_SOURCE_PATHS` con test de existencia; `@types/node` 24.x = `engines.node >=24`; README documenta Node >=24.
-- Observación: `bun audit` reporta `qs` (moderada) transitiva de `@maizzle/framework`, sin cambio de versión por este ID.
-- Desviaciones: ninguna. Validación manual (Browser pane) no realizada por regla del proyecto.
-- Pendiente antes de la PR: eliminar `docs/superpowers/mhb-43.md` (temporal sin commitear) tras la confirmación del usuario.
+- MHB-36: Compatibilidad multi-package-manager (Fase D). Estado: `En progreso`, desbloqueada (MHB-43 mergeada).
+- Plan ejecutable: `docs/superpowers/mhb-36.md` (temporal; un subagente nuevo por fase, un commit por fase).
+- Línea base: Node v24.21.0 (v22.23.1 default), Bun 1.3.13, Yarn 1.22.22 / 4.18.1, pnpm 10.18.3 / 12.10.1, npm 11.19.0 / 10.9.8.
+- Suite inicial: 795 pass, 0 fail, 103 files (`bun test`).
+- Build inicial y dist baseline: verde (`bun run build && bun run check:dist-baseline`).
+- Decisiones de planificación: ver «Decisiones y desviaciones vigentes» (MHB-36, 2026-10-08).
 
 ## Baseline vigente
 
@@ -59,6 +27,7 @@
 
 ## Últimas entregas
 
+- MHB-43: `Completada` el 2026-10-08; dependencias sin `maizzle`, `fs-extra` ni `glob`, build con API programática de Maizzle, reclasificación a `dependencies`, `@types/node` 24.x y fuentes vigiladas del preview unificadas, con `dist/` idéntico y revisión técnica independiente aprobada.
 - MHB-34: `Completada` el 2026-10-08; cierre total y modo estricto TypeScript (20 archivos migrados, allowlist JS de 2 archivos, `tsconfig.strict.json` eliminado, `check:inventory --require-zero` en CI), `dist/` idéntico y revisión técnica independiente aprobada.
 - MHB-42: `Completada` el 2026-10-01; spike de loaders con allowlist cerrada (`eslint.config.js`, `maizzle.config.js`) y MHB-34 indiviso; solo `docs/implementation/**`; revisión técnica independiente aprobada.
 - MHB-47: `Completada` el 2026-10-01; manifiesto `dist/esp-manifest.json` con perfiles SendGrid Dynamic y Legacy, reglas `esp-syntax-profile` (ERROR) y `esp-legacy-compat` (WARNING), sanitización de `exampleData` y coherencia manifiesto↔baseline en `check:dist-baseline`, con revisión técnica independiente aprobada (detalle en `STATUS-HISTORY.md`).
@@ -68,12 +37,11 @@
 - MHB-41: `Completada` el 2026-09-25; gate de contrato de salida (`dist/*.html` + variables ESP) y validadores de email en CI, con revisión técnica independiente aprobada (D1–D7, detalle en `STATUS-HISTORY.md`).
 - MHB-40: `Completada` el 2026-09-25; gobernanza de agentes, skills `task-review` y `release-management`, corrección de 5 contradicciones y sincronización de adaptadores en 7 targets.
 
-- MHB-43: `Completada` el 2026-10-08; dependencias sin `maizzle`, `fs-extra` ni `glob`, build con API programática de Maizzle, reclasificación a `dependencies`, `@types/node` 24.x y fuentes vigiladas del preview unificadas, con `dist/` idéntico y revisión técnica independiente aprobada.
-
 ## Ejecuciones delegadas relevantes
 
 | Ámbito | Estado     | Propiedad               | Handoff                                                  |
 | :----- | :--------- | :---------------------- | :------------------------------------------------------- |
+| MHB-43 | Completada | Dependencias y build    | Revisión técnica independiente aprobada (`task-review`). |
 | MHB-47 | Completada | Contrato ESP / SendGrid | Revisión técnica independiente aprobada (`task-review`). |
 | MHB-46 | Completada | Servidor Vite/seguridad | Revisión técnica independiente aprobada (`task-review`). |
 | MHB-44 | Completada | Email y compatibilidad  | Revisión técnica independiente aprobada (`task-review`). |
@@ -83,7 +51,13 @@
 
 ## Decisiones y desviaciones vigentes
 
-- **MHB-43 — Ampliación de alcance acordada (2026-10-08):** corregir las rutas de configuración obsoletas desde MHB-34 en el preview (listas de vigilancia duplicadas en `maizzle-dev-server.ts` y `preview-cache.ts` sin `maizzle.config.ts` y con `tailwind.email.config.js` inexistente; `paths.ts`; comentarios) y retirar `maizzle` de las listas de Dependabot. Se descartó, por prueba en copia aislada, un supuesto bug de fusión de configuración en `selective-build.ts`: compila solo el template pedido y deja `dist/` intacto.
+- **MHB-36 — Decisiones de planificación (aprobadas por el usuario, 2026-10-08):** (1) ID único, una rama y una PR, un commit por fase y un subagente nuevo por fase; (2) lockfiles: cada quien decide el suyo; el repo versiona solo `bun.lock` (manager del mantenedor), ignora `package-lock.json`, `yarn.lock` y `pnpm-lock.yaml`, y la CI valida yarn, npm y pnpm instalando desde cero; `.yarnrc.yml` solo con `nodeLinker: node-modules`; sin campo `packageManager`; (3) sin variable `.env`: el manager se detecta por `npm_config_user_agent` con `npm` por defecto; (4) Windows no soportado, se documenta en `README.md`; (5) la CI conserva `oven-sh/setup-bun` solo para la instalación congelada del carril principal (ajusta el criterio «sin `setup-bun`» del contrato original).
+- **MHB-36 — Ampliación de alcance acordada (2026-10-09):** política de PR externas.
+  - Workflow `pr-guard.yml` (`pull_request_target`, sin checkout): rechaza lockfiles ajenos y cambios en `.github/` desde forks.
+  - `CONTRIBUTING.md` con esa política (criterio 10).
+  - Tras el merge, `PR Guard` pasa a check requerido, con autorización del usuario.
+  - Ya aplicado en GitHub: los workflows de PR externas requieren aprobación (`all_external_contributors`).
+  - Descartado `CODEOWNERS` con revisión obligatoria, porque bloquearía el auto-merge de Dependabot.
 - **Reestructuración de fases y releases (aprobada por el usuario, 2026-10-08):** cada fase cierra con su propio ID de release. Fase C = MHB-14 + MHB-15 (`v1.3.0`, con todo lo mergeado desde `v1.2.0`); Fase D = MHB-43, MHB-36, MHB-48 (si se cumple su disparador) + MHB-49 (`v1.4.0`); Fase E = MHB-38 + MHB-50 (versión a decidir al congelar); Fase F = MHB-16 y MHB-23, en paralelo desde `v1.3.0`. Se retiran de `PLAN.md` los contratos completados (MHB-44, MHB-46, MHB-47, MHB-42 y MHB-34). MHB-43 puede ejecutarse en paralelo con MHB-14; si se mergea antes del congelamiento de MHB-15, entra en `v1.3.0`.
 - **MHB-42 — Allowlist cerrada de excepciones JS aprobada (2026-10-01):** `eslint.config.js` como excepción de terceros obligatoria (ESLint 10.11.0 requiere `jiti >= 2.2.0`; repo tiene `jiti@1.21.7`) y `maizzle.config.js` como wrapper de 1 línea (`export { default } from "./maizzle.config.ts";`) para soportar `maizzle build` estándar en `@maizzle/framework@5.5.0`. Los 20 archivos restantes son 100% convertibles a `.ts` sin excepciones.
 - **MHB-42 — Decisión de división de MHB-34 aprobada (2026-10-01):** MHB-34 se mantiene como ID único indiviso (conteo estricto combinado: 5 errores TS2339 en `scripts/ai/`, 0 errores en otras carpetas; umbral >150 errores no alcanzado).
@@ -107,8 +81,8 @@
 
 ## Handoff
 
-- MHB-34 mergeada a `master` (PR #65). MHB-43 completada en `feature/mhb-43` (pendiente de PR).
-- Próxima acción inmediata: abrir la PR de MHB-43; tras la confirmación del usuario, eliminar `docs/superpowers/mhb-43.md` antes de la PR.
+- MHB-34 (PR #65) y MHB-43 mergeadas a `master`; `docs/superpowers/mhb-43.md` eliminado.
+- Próxima acción inmediata: asignar MHB-36 y ejecutar `docs/superpowers/mhb-36.md` desde la fase F0 en `feature/mhb-36`.
 - Siguientes tareas del roadmap (no iniciar sin asignación explícita):
-  - MHB-14 (Fase C): evidencia en Gmail, Outlook y Apple Mail; requiere acceso del usuario a los clientes. Su cierre habilita MHB-15 (`v1.3.0`).
-  - MHB-43 (Fase D): completada; ejecutable en paralelo con MHB-14.
+  - MHB-36 (Fase D): desbloqueada; planificada.
+  - MHB-14 (Fase C): desbloqueada; requiere acceso del usuario a Gmail, Outlook y Apple Mail. Su cierre habilita MHB-15 (`v1.3.0`).
