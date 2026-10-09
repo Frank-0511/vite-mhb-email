@@ -30,6 +30,9 @@
   1. Preparación F0 completada y baseline verificado.
   2. Implementada regla `title-present` (ERROR) y layout `main.html` con `<title>[[ page.title ]]</title>` (F1b).
   3. Diff justificado de `dist/`: adición de `<title>` en los 6 templates (preservando `{{title}}` en `example.html` sin tocar variables ESP); `baseline.json` actualizado.
+  4. Creado checklist de accesibilidad `docs/guides/EMAIL-A11Y-CHECKLIST.md` (12 criterios WCAG, resultados estáticos y guías para VoiceOver y teclado) (F1).
+  5. Actualizado `docs/guides/COMPATIBILITY-MATRIX.md` (protocolo E3 fechado, 22 reglas estáticas y tabla de registro E3 con 24 combinaciones) y creado guard `scripts/validators/evidence-matrix/evidence-matrix.test.ts` (8/8 tests pasando) (F2/F4).
+  6. Actualizado `CHANGELOG.md` bajo `[Unreleased]` con las novedades de MHB-14.
 
 ## Baseline vigente
 
@@ -111,7 +114,7 @@
 
 ## Handoff
 
-- Próxima acción inmediata: Ejecución de F0 (baseline de gates) y F1/F1b (checklist A11Y, regla `title-present` y layout).
+- Próxima acción inmediata: Ejecución manual de pruebas en clientes reales (F3) por el usuario con capturas sanitizadas, o confirmación del estado de los clientes para revisión independiente.
 - Siguiente tarea del roadmap (no iniciar sin asignación explícita):
   - MHB-15 (Fase C): bloqueada hasta completar MHB-14.
   - MHB-48 (Fase D): bloqueada hasta evaluar disparador de performance o decisión de release.
