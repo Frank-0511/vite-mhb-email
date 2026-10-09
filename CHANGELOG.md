@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Añadido
 
+- Checklist de accesibilidad de email (`docs/guides/EMAIL-A11Y-CHECKLIST.md`) con 12 criterios reproducibles (estáticos, teclado, lector VoiceOver macOS/iOS y visuales) y procedimiento de verificación (MHB-14).
+- Protocolo fechado de pruebas en clientes reales y tabla de registro E3 en `docs/guides/COMPATIBILITY-MATRIX.md`, con separación de columnas para Apple Mail macOS e iOS y limitaciones documentadas (MHB-14).
+- Guard automático de consistencia `scripts/validators/evidence-matrix/evidence-matrix.test.ts` que valida el registro E3, cobertura cliente × template, sanitización y ausencia de capturas huérfanas (MHB-14).
+- Regla de validación estática `title-present` (ERROR) en `validate-email` que exige una etiqueta `<title>` no vacía en el documento compilado (MHB-14).
 - Soporte para npm, Yarn 4 (con `nodeLinker: node-modules`), pnpm 12 y Bun 1.3.13 como package managers soportados para desarrollo local y ejecución de scripts (`<pm> run <script>`) (MHB-36).
 - Política de lockfiles: cada quien decide si congela su instalación; el repositorio versiona exclusivamente `bun.lock` como manager del mantenedor e ignora `package-lock.json`, `yarn.lock` y `pnpm-lock.yaml`, funcionando sin lockfile en los demás gestores (MHB-36).
 - Matriz de CI con Node 24 en GitHub Actions que ejecuta pruebas e instalaciones limpias desde cero en Yarn 4, npm y pnpm para asegurar compatibilidad continua sin lockfiles versionados (MHB-36).
@@ -93,6 +97,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Corregido
 
+- Ausencia de `<title>` en el HTML compilado de los emails: `src/emails/layouts/main.html` emite ahora `<title>[[ page.title ]]</title>` desde el frontmatter de cada plantilla, garantizando título descriptivo para lectores de pantalla y preservando variables ESP `{{title}}` en `example.html`; baseline de `dist/` actualizado de forma justificada (MHB-14).
 - Salida con código de error (`process.exit(1)`) en los comandos CLI `validate-email`
   (ante errores de compatibilidad) y `check-size` (al exceder 102 KB) para bloquear
   efectivamente ante fallos en CI (MHB-41).
