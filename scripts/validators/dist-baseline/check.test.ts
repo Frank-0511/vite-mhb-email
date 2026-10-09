@@ -78,7 +78,7 @@ describe("check.ts y update.ts", () => {
 
       const result = checkDistBaseline({ distDir: dir, baselinePath: tempBaseline });
       expect(result.success).toBe(false);
-      expect(result.message).toContain("Falta dist/esp-manifest.json; ejecuta `bun run build`");
+      expect(result.message).toContain("run build");
     } finally {
       cleanup();
     }

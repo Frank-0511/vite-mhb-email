@@ -3,6 +3,7 @@
  */
 
 import { API_ROUTES } from "../../shared/contracts/constants/api-routes.ts";
+import { formatRunCommand } from "../../shared/env/detect-pm.ts";
 
 export interface DashboardTemplateCardData {
   name: string;
@@ -78,7 +79,7 @@ export function renderEmptyDashboardPlaceholder(): string {
   return `
         <div class="col-span-full py-12 text-center border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl p-8">
           <p class="text-base font-semibold text-slate-700 dark:text-slate-300">No hay templates creados aún.</p>
-          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Crea tu primer template desde la terminal con <code class="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded font-mono">bun run cli</code> o <code class="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded font-mono">bun run generate:email &lt;nombre&gt;</code>.</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Crea tu primer template desde la terminal con <code class="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded font-mono">${formatRunCommand("cli")}</code> o <code class="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded font-mono">${formatRunCommand("generate:email")} &lt;nombre&gt;</code>.</p>
         </div>`;
 }
 

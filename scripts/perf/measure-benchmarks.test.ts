@@ -1,7 +1,8 @@
-import { describe, expect, test } from "bun:test";
-import type { BenchmarkResult, EnvironmentInfo } from "./benchmark-runner.ts";
-import { computeStats, getEnvironmentInfo } from "./benchmark-runner.ts";
+import { describe, expect, spyOn, test } from "bun:test";
+import type { BenchmarkResult, BenchmarkSpec, EnvironmentInfo } from "./benchmark-runner.ts";
+import { computeStats, filterTasksForEnvironment, getEnvironmentInfo } from "./benchmark-runner.ts";
 import { formatMarkdownTable } from "./benchmark-formatter.ts";
+import { BENCHMARK_TASKS } from "./measure-benchmarks.ts";
 
 describe("measure-benchmarks", () => {
   describe("computeStats", () => {
@@ -52,8 +53,8 @@ describe("measure-benchmarks", () => {
       const results: BenchmarkResult[] = [
         {
           name: "Test Task",
-          runtime: "Bun",
-          command: "bun test",
+          runtime: "Node.js",
+          command: "node ./node_modules/vitest/vitest.mjs run",
           iterations: 3,
           minMs: 50,
           maxMs: 60,
@@ -69,6 +70,60 @@ describe("measure-benchmarks", () => {
       expect(md).toContain("Test Task");
       expect(md).toContain("55 ms");
       expect(md).toContain("[50 - 60] ms");
+    });
+  });
+
+  describe("filterTasksForEnvironment", () => {
+    test("omite tareas con runtime Bun cuando bunVersion es unknown", () => {
+      const tasks: BenchmarkSpec[] = [
+        { name: "Task 1", runtime: "Bun", command: "bun foo" },
+        { name: "Task 2", runtime: "Node.js", command: "node bar" },
+        { name: "Task 3", runtime: "Bun", command: "bun baz" },
+      ];
+      const env: EnvironmentInfo = {
+        os: "Linux",
+        arch: "x64",
+        cpuModel: "CPU",
+        nodeVersion: "v24.0.0",
+        bunVersion: "unknown",
+        gitCommit: "abc",
+        timestamp: "2026-10-09T00:00:00.000Z",
+      };
+
+      const spy = spyOn(console, "log").mockImplementation(() => {});
+      const filtered = filterTasksForEnvironment(tasks, env);
+      expect(filtered).toHaveLength(1);
+      expect(filtered[0].name).toBe("Task 2");
+      expect(spy).toHaveBeenCalledWith("Bun no disponible: se omiten 2 tareas");
+      spy.mockRestore();
+    });
+
+    test("mantiene todas las tareas cuando bunVersion está disponible", () => {
+      const tasks: BenchmarkSpec[] = [
+        { name: "Task 1", runtime: "Bun", command: "bun foo" },
+        { name: "Task 2", runtime: "Node.js", command: "node bar" },
+      ];
+      const env: EnvironmentInfo = {
+        os: "Linux",
+        arch: "x64",
+        cpuModel: "CPU",
+        nodeVersion: "v24.0.0",
+        bunVersion: "1.3.13",
+        gitCommit: "abc",
+        timestamp: "2026-10-09T00:00:00.000Z",
+      };
+
+      const filtered = filterTasksForEnvironment(tasks, env);
+      expect(filtered).toHaveLength(2);
+    });
+  });
+
+  describe("BENCHMARK_TASKS", () => {
+    test("Unit Test Suite usa Node.js y vitest", () => {
+      const unitTestTask = BENCHMARK_TASKS.find((t) => t.name === "Unit Test Suite");
+      expect(unitTestTask).toBeDefined();
+      expect(unitTestTask?.runtime).toBe("Node.js");
+      expect(unitTestTask?.command).toBe("node ./node_modules/vitest/vitest.mjs run");
     });
   });
 });

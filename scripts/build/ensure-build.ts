@@ -4,13 +4,14 @@
  */
 
 import { spawn } from "node:child_process";
+import { detectPackageManager, formatRunCommand } from "../shared/env/detect-pm.ts";
 import { c, paint, prompt, type PromptSource } from "../shared/index.ts";
 
 export type SpawnFunction = typeof spawn;
 
 /**
  * Si `dist/` está vacío, pregunta al usuario si quiere buildear ahora.
- * Ejecuta `bun run build` si confirma.
+ * Ejecuta `<pm> run build` si confirma.
  *
  * @param rl - Fuente de prompt readline
  * @param spawnProcess - Implementación de spawn.
@@ -30,6 +31,9 @@ export async function buildIfNeeded(
 
   console.log(paint(c.yellow + c.bold, "\n  📦 Buildeando para producción…\n"));
 
+  const pm = detectPackageManager();
+  const buildCmd = formatRunCommand("build", pm);
+
   const code = await new Promise<number>((resolve, reject) => {
     let settled = false;
     const rejectOnce = (error: Error) => {
@@ -39,17 +43,17 @@ export async function buildIfNeeded(
       }
     };
 
-    const child = spawnProcess("bun", ["run", "build"], { stdio: "inherit" });
+    const child = spawnProcess(pm, ["run", "build"], { stdio: "inherit" });
     child.once("error", (error: unknown) => {
       const message = error instanceof Error ? error.message : String(error);
-      rejectOnce(new Error(`No se pudo iniciar "bun run build": ${message}`, { cause: error }));
+      rejectOnce(new Error(`No se pudo iniciar "${buildCmd}": ${message}`, { cause: error }));
     });
     child.once("close", (code: number | null, signal: string | null) => {
       if (settled) return;
       if (signal) {
-        rejectOnce(new Error(`"bun run build" terminó por la señal ${signal}`));
+        rejectOnce(new Error(`"${buildCmd}" terminó por la señal ${signal}`));
       } else if (code === null) {
-        rejectOnce(new Error('"bun run build" terminó sin código de salida'));
+        rejectOnce(new Error(`"${buildCmd}" terminó sin código de salida`));
       } else {
         settled = true;
         resolve(code);

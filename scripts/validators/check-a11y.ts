@@ -2,9 +2,9 @@
 /**
  * @fileoverview Checker de accesibilidad de la dashboard (Home/Library/
  * Preview) con axe-core inyectado sobre el Puppeteer ya usado para exportar
- * PNG. Levanta un servidor Vite efímero (no depende de `bun run dev`
+ * PNG. Levanta un servidor Vite efímero (no depende de `<pm> run dev`
  * corriendo), visita rutas fijas en tema claro y oscuro, y reporta
- * violaciones por severidad. Separado de `bun run lint`/`bun run test` por
+ * violaciones por severidad. Separado de `<pm> run lint`/`<pm> run test` por
  * el costo de un navegador real, igual que `validate-email` hoy.
  */
 

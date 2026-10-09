@@ -6,11 +6,12 @@
  * Genera PNG automáticamente con el navegador gestionado por Puppeteer.
  *
  * Uso:
- *   bun run export:screenshot nombre-template
+ *   <pm> run export:screenshot nombre-template
  */
 
 import { existsSync } from "node:fs";
 import path from "node:path";
+import { formatRunCommand } from "../shared/env/detect-pm.ts";
 import { exportScreenshot } from "./main.ts";
 import { assertValidTemplateName, c, paint, readJsonFile } from "../shared/index.ts";
 
@@ -24,7 +25,7 @@ try {
   console.error(
     paint(c.red + c.bold, "❌ Error:") +
       paint(c.dim, " El nombre del template debe usar solo minúsculas, números y guiones.\n") +
-      paint(c.cyan, "   Uso: bun run export:screenshot nombre-template\n"),
+      paint(c.cyan, `   Uso: ${formatRunCommand("export:screenshot")} nombre-template\n`),
   );
   process.exit(1);
 }
@@ -38,7 +39,7 @@ if (!existsSync(htmlPath)) {
   console.error(
     paint(c.red + c.bold, "❌ Error:") +
       paint(c.dim, ` El template "${validatedTemplateName}" no existe en dist.\n`) +
-      paint(c.cyan, "   Asegúrate de hacer 'bun run build' primero.\n"),
+      paint(c.cyan, `   Asegúrate de hacer '${formatRunCommand("build")}' primero.\n`),
   );
   process.exit(1);
 }

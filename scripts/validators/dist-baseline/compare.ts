@@ -2,6 +2,7 @@
  * @fileoverview Comparación y formateo de diferencias entre DistSnapshots.
  */
 
+import { formatRunCommand } from "../../shared/env/detect-pm.ts";
 import type { DistSnapshot } from "./baseline-guard.ts";
 
 export interface BaselineDiff {
@@ -123,7 +124,7 @@ export function formatBaselineDiff(diff: BaselineDiff): string {
 
   lines.push("");
   lines.push(
-    "💡 Si el cambio es intencional y el ID lo autoriza (MHB-44/MHB-38), ejecutar `bun run update:dist-baseline` y justificar por template en STATUS.md.",
+    `💡 Si el cambio es intencional y el ID lo autoriza (MHB-44/MHB-38), ejecutar \`${formatRunCommand("update:dist-baseline")}\` y justificar por template en STATUS.md.`,
   );
 
   return lines.join("\n");

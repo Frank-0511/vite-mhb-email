@@ -3,9 +3,10 @@
  * @fileoverview CLI para generar iconos PNG de email a partir de Lucide Icons.
  *
  * Uso:
- *   bun run generate:icons --icon <nombre> --color <hex> --size <px> [--force]
+ *   <pm> run generate:icons --icon <nombre> --color <hex> --size <px> [--force]
  */
 
+import { formatRunCommand } from "../shared/env/detect-pm.ts";
 import { c, paint } from "../shared/index.ts";
 import { generateIcon } from "./generator.ts";
 
@@ -55,7 +56,7 @@ function printUsage(): void {
 ${paint(c.bold + c.cyan, "EmailForge — Generador de iconos PNG")}
 
 ${paint(c.bold, "Uso:")}
-  bun run generate:icons --icon <nombre> --color <hex> --size <px> [--suffix <vN>] [--force]
+  ${formatRunCommand("generate:icons")} --icon <nombre> --color <hex> --size <px> [--suffix <vN>] [--force]
 
 ${paint(c.bold, "Opciones:")}
   -i, --icon    Nombre del icono en Lucide (ej: rocket, circle-check)
@@ -66,7 +67,7 @@ ${paint(c.bold, "Opciones:")}
   -h, --help    Muestra esta ayuda
 
 ${paint(c.dim, "Ejemplo:")}
-  bun run generate:icons --icon rocket --color fbbf24 --size 24 --suffix v2
+  ${formatRunCommand("generate:icons")} --icon rocket --color fbbf24 --size 24 --suffix v2
 `);
 }
 

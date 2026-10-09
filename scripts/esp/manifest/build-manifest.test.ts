@@ -28,7 +28,7 @@ describe("buildEspManifest", () => {
     const root = mkdtempSync(join(tmpdir(), "esp-manifest-nodist-"));
     tempDirs.push(root);
     expect(() => buildEspManifest(root)).toThrow(
-      "El directorio dist/ no existe. Ejecuta bun run build primero.",
+      /El directorio dist\/ no existe\. Ejecuta .*run build primero\./,
     );
   });
 

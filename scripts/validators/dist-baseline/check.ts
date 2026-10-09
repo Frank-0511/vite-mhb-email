@@ -5,6 +5,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { ESP_MANIFEST_FILENAME } from "../../shared/contracts/constants/esp-contract.ts";
+import { formatRunCommand } from "../../shared/env/detect-pm.ts";
 import { getProjectPaths } from "../../shared/io/paths.ts";
 import { compareSnapshots, formatBaselineDiff, hasBaselineDiff } from "./compare.ts";
 import { compareManifestWithBaseline } from "./manifest-check.ts";
@@ -39,7 +40,7 @@ export function checkDistBaseline(options: CheckDistBaselineOptions = {}): Check
     const manifestPath = options.manifestPath ?? path.join(distDir, ESP_MANIFEST_FILENAME);
 
     if (!fs.existsSync(manifestPath)) {
-      const missingError = "❌ Falta dist/esp-manifest.json; ejecuta `bun run build`";
+      const missingError = `❌ Falta dist/esp-manifest.json; ejecuta \`${formatRunCommand("build")}\``;
       const finalMessage = diffFailed ? `${message}\n${missingError}` : missingError;
       return { success: false, message: finalMessage };
     }

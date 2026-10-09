@@ -10,8 +10,8 @@
  *      → WARNING e INFO no bloquean (configurable vía --allow-warnings).
  *
  * Uso:
- *   bun run build                 # Comportamiento por defecto
- *   bun run build --allow-warnings # (reservado para CI permisivo)
+ *   <pm> run build                 # Comportamiento por defecto
+ *   <pm> run build --allow-warnings # (reservado para CI permisivo)
  */
 import * as maizzleFramework from "@maizzle/framework";
 import maizzleConfig from "../../maizzle.config.ts";

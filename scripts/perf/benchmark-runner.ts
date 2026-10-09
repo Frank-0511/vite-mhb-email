@@ -162,3 +162,26 @@ export function runBenchmark(spec: BenchmarkSpec, iterations = 5, warmup = 1): B
     samples,
   };
 }
+
+/**
+ * Filtra tareas de benchmark según los runtimes disponibles en el entorno.
+ * Si Bun no está disponible (o es "unknown"), omite las tareas con runtime "Bun"
+ * e imprime una advertencia con el total de tareas omitidas.
+ *
+ * @param tasks - Tareas configuradas para medir
+ * @param env - Información del entorno detectado
+ * @returns Lista de tareas aptas para ejecución
+ */
+export function filterTasksForEnvironment(
+  tasks: readonly BenchmarkSpec[],
+  env: EnvironmentInfo = getEnvironmentInfo(),
+): BenchmarkSpec[] {
+  if (!env.bunVersion || env.bunVersion === "unknown") {
+    const bunTasks = tasks.filter((task) => task.runtime === "Bun");
+    if (bunTasks.length > 0) {
+      console.log(`Bun no disponible: se omiten ${bunTasks.length} tareas`);
+      return tasks.filter((task) => task.runtime !== "Bun");
+    }
+  }
+  return [...tasks];
+}
