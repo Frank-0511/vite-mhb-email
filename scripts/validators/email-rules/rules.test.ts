@@ -27,6 +27,11 @@ const cases: TestCase[] = [
   },
   { ruleId: "doctype-present", positive: cleanHtml, negative: "<html></html>" },
   { ruleId: "meta-charset", positive: cleanHtml, negative: "<!doctype html><html></html>" },
+  {
+    ruleId: "title-present",
+    positive: cleanHtml,
+    negative: '<!doctype html><html><head><meta charset="utf-8"></head></html>',
+  },
   { ruleId: "link-targets", positive: cleanHtml, negative: '<a href="#">Broken</a>' },
   {
     ruleId: "max-width-check",

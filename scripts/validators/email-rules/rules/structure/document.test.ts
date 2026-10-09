@@ -56,3 +56,27 @@ describe("no-js-in-email", () => {
     ).toEqual([]);
   });
 });
+
+describe("title-present", () => {
+  test("falla sin <title>", () => {
+    expect(
+      ruleById("title-present").check("<html><head></head></html>", createContext()),
+    ).toHaveLength(1);
+  });
+
+  test("falla con <title> vacío o solo espacios", () => {
+    expect(ruleById("title-present").check("<title></title>", createContext())).toHaveLength(1);
+    expect(ruleById("title-present").check("<title>   \n  </title>", createContext())).toHaveLength(
+      1,
+    );
+  });
+
+  test("pasa con título no vacío", () => {
+    expect(
+      ruleById("title-present").check("<title>Bienvenido a Mi Empresa</title>", createContext()),
+    ).toEqual([]);
+    expect(ruleById("title-present").check("<title>{{title}}</title>", createContext())).toEqual(
+      [],
+    );
+  });
+});

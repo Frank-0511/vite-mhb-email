@@ -2,43 +2,34 @@
 
 ## Resumen
 
-- ID activo: MHB-36
-- Estado: Completada
-- Implementador: perfil tooling/infraestructura, medio-alto (orquestador + subagentes por fase)
-- Revisor: revisor técnico independiente (aprobado 2026-10-09)
-- Rama: `feature/mhb-36`
+- ID activo: MHB-14
+- Estado: En progreso
+- Implementador: perfil evidencia/compatibilidad, alto
+- Revisor: orquestador o revisor técnico independiente con acceso a clientes
+- Rama: `feature/mhb-14`
 - Última actualización: 2026-10-09
-- Contrato activo: `docs/implementation/PLAN.md` (sección MHB-36)
+- Contrato activo: `docs/implementation/PLAN.md` (sección MHB-14)
 
 ## Paquete activo
 
-- MHB-36: Compatibilidad multi-package-manager (Fase D). Estado: `Completada`.
-- Hechos de la entrega:
-  1. Scripts de `package.json` ejecutados con `node` y detección agnóstica de package manager (`scripts/shared/env/detect-pm.ts`); scripts reducidos de 30 a 18.
-  2. Suite completa migrada a Vitest (`105 files, 808 tests`) corriendo tanto con Bun como con Node/npm/yarn/pnpm.
-  3. Verificación limpia desde cero en los 4 managers (Bun 1.3.13, Yarn 4.18.1, npm 11.19.0, pnpm 12.10.1); solo `bun.lock` versionado.
-  4. CI actualizado a Node 24 con matriz agnóstica (`package-managers`) y nuevo workflow `PR Guard` (`pull_request_target`).
-  5. Documentación y gobernanza completas (`README.md`, `CONTRIBUTING.md`, `docs/ai/`, `CHANGELOG.md`) y adaptadores sincronizados con `agents:sync`.
-- Controles obligatorios (todos en Verde):
+- MHB-14: Evidencia de uso y compatibilidad (Fase C). Estado: `En progreso`.
+- Propiedad de archivos: `docs/guides/EMAIL-A11Y-CHECKLIST.md`, `docs/guides/COMPATIBILITY-MATRIX.md`, `docs/evidence/mhb-14/`, `scripts/validators/evidence-matrix/evidence-matrix.test.ts`, `src/emails/layouts/main.html`, `scripts/validators/email-rules/rules/structure/document.ts`, `scripts/validators/email-rules/rules/structure/document.test.ts`, `scripts/validators/email-rules/rules/registry.ts`, `dist/*.html`, `scripts/validators/dist-baseline/baseline.json`, `docs/implementation/STATUS.md`, `CHANGELOG.md`.
+- Controles:
   - `bun install --frozen-lockfile`: Verde
   - `bun run lint`: Verde
   - `bun run typecheck`: Verde
-  - `bun run test` (Vitest): Verde (105 files, 808 tests)
+  - `bun run test`: Verde (105 files, 812 tests)
   - `bun run format:check`: Verde
   - `bun run build`: Verde
-  - `bun run validate-email`: Verde
-  - `bun run check:dist-baseline` (carril bun): Verde
+  - `bun run validate-email`: Verde (22 reglas OK)
+  - `bun run check:dist-baseline`: Verde
   - `bun run check-size`: Verde
-  - `check:inventory`: script retirado; su verificación (`--require-zero`, 2 JS allowlist) la cubre `bun run test`: Verde
-  - `bun run agents:check`: Verde (7 targets)
+  - `bun run check:task-branch`: Verde
   - `git diff --check`: Verde
-- Verificación multi-manager (worktree limpio desde HEAD):
-  - Bun 1.3.13: `install`, `typecheck`, `test`, `build`, `validate-email`, `check:dist-baseline`, `check-size` → Verde
-  - Yarn 4.18.1: `install`, `typecheck`, `test`, `build`, `validate-email`, `check-size` → Verde
-  - npm 11.19.0: `install`, `typecheck`, `test`, `build`, `validate-email`, `check-size` → Verde
-  - pnpm 12.10.1: `install`, `typecheck`, `test`, `build`, `validate-email`, `check-size` → Verde
-- Criterios de aceptación específicos: C1 (scripts sin bun) Verde, C2 (bun allowlist) Verde, C3 (cero bun:test) Verde, C7 (lockfiles ajenos gitignored) Verde, C10 (PR guard) Verde.
-- Riesgos residuales: Drift transitivo sin lockfile en npm, Yarn y pnpm por dependencias transitivas de `@maizzle/framework` (`html-crush`, `email-comb`, `string-strip-html`) resueltas desde npm; aceptado por el usuario (Opción 4) y protegido por la matriz de CI sin `check:dist-baseline`.
+- Hechos de la entrega:
+  1. Preparación F0 completada y baseline verificado.
+  2. Implementada regla `title-present` (ERROR) y layout `main.html` con `<title>[[ page.title ]]</title>` (F1b).
+  3. Diff justificado de `dist/`: adición de `<title>` en los 6 templates (preservando `{{title}}` en `example.html` sin tocar variables ESP); `baseline.json` actualizado.
 
 ## Baseline vigente
 
@@ -120,7 +111,7 @@
 
 ## Handoff
 
-- Próxima acción inmediata: abrir la Pull Request de `feature/mhb-36`; tras el merge, `PR Guard` pasa a check requerido (autorizado por el usuario).
+- Próxima acción inmediata: Ejecución de F0 (baseline de gates) y F1/F1b (checklist A11Y, regla `title-present` y layout).
 - Siguiente tarea del roadmap (no iniciar sin asignación explícita):
-  - MHB-14 (Fase C): desbloqueada; requiere acceso del usuario a Gmail, Outlook y Apple Mail. Su cierre habilita MHB-15 (`v1.3.0`).
+  - MHB-15 (Fase C): bloqueada hasta completar MHB-14.
   - MHB-48 (Fase D): bloqueada hasta evaluar disparador de performance o decisión de release.

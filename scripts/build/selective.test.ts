@@ -24,7 +24,7 @@ function createFixture(): Fixture {
   mkdirSync(resolve(tempDir, "src/emails/templates/welcome"), { recursive: true });
   writeFileSync(
     resolve(tempDir, "src/emails/templates/welcome/index.html"),
-    "<!doctype html><html><body><p>Welcome</p></body></html>\n",
+    "<!doctype html><html><head><title>Welcome</title></head><body><p>Welcome</p></body></html>\n",
   );
   return { tempDir, templateName };
 }

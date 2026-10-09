@@ -2,7 +2,13 @@
  * @fileoverview Registro y ejecutor de reglas de validación de emails.
  */
 
-import { colorSchemeMeta, doctypePresent, metaCharset, noJsInEmail } from "./structure/document.ts";
+import {
+  colorSchemeMeta,
+  doctypePresent,
+  metaCharset,
+  noJsInEmail,
+  titlePresent,
+} from "./structure/document.ts";
 import cssClassVsInline from "./structure/css-class-vs-inline.ts";
 import cssColorFormat from "./structure/css-color-format.ts";
 import cssRelativeUnits from "./structure/css-relative-units.ts";
@@ -31,6 +37,7 @@ export const rules: Rule[] = [
   styleBlockSize,
   doctypePresent,
   metaCharset,
+  titlePresent,
   linkTargets,
   maxWidthCheck,
   colorSchemeMeta,
