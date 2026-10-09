@@ -70,20 +70,20 @@ bun run check-size       # tamaño por archivo frente al límite de Gmail
 ## Matriz de técnicas por cliente
 
 Cada celda indica el **nivel de evidencia disponible en este repositorio**, no
-una promesa de compatibilidad. Todas las columnas de clientes están en E0
+una promesa de compatibilidad. Todas las columnas de clientes inician en E0
 porque no hay ninguna prueba de envío registrada.
 
-| Técnica usada por los templates       | Gmail web | Gmail app | Outlook (Windows) | Outlook.com | Apple Mail (macOS/iOS) | Respaldo automatizado          |
-| ------------------------------------- | --------- | --------- | ----------------- | ----------- | ---------------------- | ------------------------------ |
-| Layout con tablas                     | E0        | E0        | E0                | E0          | E0                     | —                              |
-| Estilos inline (Maizzle)              | E0        | E0        | E0                | E0          | E0                     | E1 `css-class-vs-inline`       |
-| `<style>` en `<head>` + media queries | E0        | E0        | E0                | E0          | E0                     | E1 `css-class-vs-inline`       |
-| Dark mode (`prefers-color-scheme`)    | E0        | E0        | E0                | E0          | E0                     | E1 `color-scheme-meta`         |
-| `border-radius`                       | E0        | E0        | E0                | E0          | E0                     | —                              |
-| Imágenes remotas con dimensiones      | E0        | E0        | E0                | E0          | E0                     | E1 `img-dimensions`, `img-alt` |
-| Ancho máximo ≤ 700 px                 | E0        | E0        | E0                | E0          | E0                     | E1 `max-width-check`           |
-| Ausencia de CSS moderno               | E0        | E0        | E0                | E0          | E0                     | E1 `css-unsupported-props`     |
-| Tamaño bajo el recorte de Gmail       | E0        | E0        | E0                | E0          | E0                     | E1 `check-size`                |
+| Técnica usada por los templates       | Gmail web | Gmail app | Outlook.com | Outlook (Windows) | Apple Mail macOS | Apple Mail iOS | Respaldo automatizado          |
+| ------------------------------------- | --------- | --------- | ----------- | ----------------- | ---------------- | -------------- | ------------------------------ |
+| Layout con tablas                     | E0        | E0        | E0          | E0                | E0               | E0             | —                              |
+| Estilos inline (Maizzle)              | E0        | E0        | E0          | E0                | E0               | E0             | E1 `css-class-vs-inline`       |
+| `<style>` en `<head>` + media queries | E0        | E0        | E0          | E0                | E0               | E0             | E1 `css-class-vs-inline`       |
+| Dark mode (`prefers-color-scheme`)    | E0        | E0        | E0          | E0                | E0               | E0             | E1 `color-scheme-meta`         |
+| `border-radius`                       | E0        | E0        | E0          | E0                | E0               | E0             | —                              |
+| Imágenes remotas con dimensiones      | E0        | E0        | E0          | E0                | E0               | E0             | E1 `img-dimensions`, `img-alt` |
+| Ancho máximo ≤ 700 px                 | E0        | E0        | E0          | E0                | E0               | E0             | E1 `max-width-check`           |
+| Ausencia de CSS moderno               | E0        | E0        | E0          | E0                | E0               | E0             | E1 `css-unsupported-props`     |
+| Tamaño bajo el recorte de Gmail       | E0        | E0        | E0          | E0                | E0               | E0             | E1 `check-size`                |
 
 La columna "Respaldo automatizado" es lo único que este repositorio puede
 demostrar hoy sobre cada técnica.
@@ -104,7 +104,7 @@ se ejecute el protocolo E3.
 
 ## Estado por template
 
-Salida de `bun run validate-email` sobre `dist/` el 2026-09-18 (6 templates):
+Salida de `bun run validate-email` sobre `dist/` tras el commit `0fb18ba` (6 templates):
 
 | Template         | Errores | Warnings | Info | Detalle                                                         |
 | ---------------- | ------- | -------- | ---- | --------------------------------------------------------------- |
@@ -123,18 +123,60 @@ limitan a fixtures internos.
 Una prueba real no se registra sin estos cinco datos. Mientras falte alguno, la
 celda sigue en E0.
 
-1. **Envío**: `bun run cli` → opción `4` (Mailtrap), `5` (Mail-Tester vía Gmail
-   SMTP) o `6` (bandeja real). Anotar la opción usada.
-2. **Identificación del cliente**: nombre, versión y sistema operativo o
-   navegador, más si es web, app o escritorio.
-3. **Commit**: SHA del build enviado, para poder reproducir el HTML exacto.
-4. **Captura**: imagen del mensaje abierto, en claro y en oscuro si el template
-   declara dark mode.
-5. **Veredicto por técnica**: qué fila de la matriz queda confirmada y qué se
-   rompió, con la diferencia observada.
+1. **Envío**: canal utilizado (`cli-4`, `cli-5`, `cli-6` o `sendgrid-externo`).
+2. **Identificación del cliente**: ID de cliente objetivo (`gmail-web`, `gmail-app`, `outlook-com`, `outlook-windows`, `apple-mail-mac`, `apple-mail-ios`), versión y sistema operativo.
+3. **Commit**: SHA del build enviado (mínimo 7 caracteres hex), para poder reproducir el HTML exacto.
+4. **Captura**: enlace relativo a la imagen en `../evidence/mhb-14/<archivo>.png`, en claro y en oscuro si aplica.
+5. **Veredicto por técnica**: técnica de la matriz o criterio `A11Y-NN` evaluado (`Aprobado`, `Parcial`, `Fallido` o `No verificado`).
 
-El resultado se registra actualizando la celda correspondiente a E3 con fecha y
-enlace a la evidencia. Una prueba en un cliente no eleva a los demás.
+### Protocolo fechado de ejecución (2026-10-09)
+
+1. **Preparación y build:** Ejecutar `bun run build` sobre el commit fijado `0fb18ba`. Comprobar `bun run check:dist-baseline` y `bun run validate-email` para asegurar que el HTML compilado es íntegro y contiene el `<title>` descriptivo.
+2. **Canales de envío autorizados:**
+   - `cli-4`: Mailtrap (sandbox local/remoto).
+   - `cli-5`: Mail-Tester (auditoría anti-spam vía Gmail SMTP).
+   - `cli-6`: Envío a bandeja real propia vía Gmail SMTP.
+   - `sendgrid-externo`: Envío desde SendGrid usando el HTML final de `dist/`.
+3. **Destinatarios seguros:** Enviar exclusivamente a cuentas de prueba bajo control del usuario (p. ej. `test@example.com` o bandejas personales de prueba).
+4. **Revisión en clientes:** Abrir cada uno de los 4 templates de producto (`welcome`, `password-reset`, `receipt`, `newsletter`) en los clientes objetivo.
+5. **Criterios de accesibilidad:** Evaluar los criterios del documento [EMAIL-A11Y-CHECKLIST.md](EMAIL-A11Y-CHECKLIST.md) (teclado en clientes web, VoiceOver en macOS e iOS, legibilidad sin imágenes y comportamiento en modo oscuro).
+6. **Sanitización de capturas:** Nombrar las imágenes como `<AAAA-MM-DD>-<template>-<cliente>-<light|dark>.png`. Comprobar visualmente que no expongan nombres reales, emails personales, avatares, tokens ni elementos ajenos de la bandeja.
+
+## Registro de pruebas reales (E3)
+
+| Fecha      | Cliente         | Template       | Criterio          | Resultado     | Commit  | Envío | Evidencia | Observación                                                      |
+| :--------- | :-------------- | :------------- | :---------------- | :------------ | :------ | :---- | :-------- | :--------------------------------------------------------------- |
+| 2026-10-09 | gmail-web       | welcome        | Layout con tablas | No verificado | 0fb18ba | cli-6 | —         | Pendiente de ejecución manual por el usuario en dispositivo real |
+| 2026-10-09 | gmail-web       | password-reset | Layout con tablas | No verificado | 0fb18ba | cli-6 | —         | Pendiente de ejecución manual por el usuario en dispositivo real |
+| 2026-10-09 | gmail-web       | receipt        | Layout con tablas | No verificado | 0fb18ba | cli-6 | —         | Pendiente de ejecución manual por el usuario en dispositivo real |
+| 2026-10-09 | gmail-web       | newsletter     | Layout con tablas | No verificado | 0fb18ba | cli-6 | —         | Pendiente de ejecución manual por el usuario en dispositivo real |
+| 2026-10-09 | gmail-app       | welcome        | Layout con tablas | No verificado | 0fb18ba | cli-6 | —         | Pendiente de ejecución manual por el usuario en dispositivo real |
+| 2026-10-09 | gmail-app       | password-reset | Layout con tablas | No verificado | 0fb18ba | cli-6 | —         | Pendiente de ejecución manual por el usuario en dispositivo real |
+| 2026-10-09 | gmail-app       | receipt        | Layout con tablas | No verificado | 0fb18ba | cli-6 | —         | Pendiente de ejecución manual por el usuario en dispositivo real |
+| 2026-10-09 | gmail-app       | newsletter     | Layout con tablas | No verificado | 0fb18ba | cli-6 | —         | Pendiente de ejecución manual por el usuario en dispositivo real |
+| 2026-10-09 | outlook-com     | welcome        | Layout con tablas | No verificado | 0fb18ba | cli-6 | —         | Pendiente de ejecución manual por el usuario en dispositivo real |
+| 2026-10-09 | outlook-com     | password-reset | Layout con tablas | No verificado | 0fb18ba | cli-6 | —         | Pendiente de ejecución manual por el usuario en dispositivo real |
+| 2026-10-09 | outlook-com     | receipt        | Layout con tablas | No verificado | 0fb18ba | cli-6 | —         | Pendiente de ejecución manual por el usuario en dispositivo real |
+| 2026-10-09 | outlook-com     | newsletter     | Layout con tablas | No verificado | 0fb18ba | cli-6 | —         | Pendiente de ejecución manual por el usuario en dispositivo real |
+| 2026-10-09 | outlook-windows | welcome        | Layout con tablas | No verificado | 0fb18ba | cli-6 | —         | Pendiente de acceso a entorno Windows con Outlook clásico        |
+| 2026-10-09 | outlook-windows | password-reset | Layout con tablas | No verificado | 0fb18ba | cli-6 | —         | Pendiente de acceso a entorno Windows con Outlook clásico        |
+| 2026-10-09 | outlook-windows | receipt        | Layout con tablas | No verificado | 0fb18ba | cli-6 | —         | Pendiente de acceso a entorno Windows con Outlook clásico        |
+| 2026-10-09 | outlook-windows | newsletter     | Layout con tablas | No verificado | 0fb18ba | cli-6 | —         | Pendiente de acceso a entorno Windows con Outlook clásico        |
+| 2026-10-09 | apple-mail-mac  | welcome        | Layout con tablas | No verificado | 0fb18ba | cli-6 | —         | Pendiente de ejecución manual por el usuario en dispositivo real |
+| 2026-10-09 | apple-mail-mac  | password-reset | Layout con tablas | No verificado | 0fb18ba | cli-6 | —         | Pendiente de ejecución manual por el usuario en dispositivo real |
+| 2026-10-09 | apple-mail-mac  | receipt        | Layout con tablas | No verificado | 0fb18ba | cli-6 | —         | Pendiente de ejecución manual por el usuario en dispositivo real |
+| 2026-10-09 | apple-mail-mac  | newsletter     | Layout con tablas | No verificado | 0fb18ba | cli-6 | —         | Pendiente de ejecución manual por el usuario en dispositivo real |
+| 2026-10-09 | apple-mail-ios  | welcome        | Layout con tablas | No verificado | 0fb18ba | cli-6 | —         | Pendiente de ejecución manual por el usuario en dispositivo real |
+| 2026-10-09 | apple-mail-ios  | password-reset | Layout con tablas | No verificado | 0fb18ba | cli-6 | —         | Pendiente de ejecución manual por el usuario en dispositivo real |
+| 2026-10-09 | apple-mail-ios  | receipt        | Layout con tablas | No verificado | 0fb18ba | cli-6 | —         | Pendiente de ejecución manual por el usuario en dispositivo real |
+| 2026-10-09 | apple-mail-ios  | newsletter     | Layout con tablas | No verificado | 0fb18ba | cli-6 | —         | Pendiente de ejecución manual por el usuario en dispositivo real |
+
+### Limitaciones
+
+1. **Entornos no disponibles:** Si no se dispone de una máquina con Windows y licencia de Office/Outlook clásico (motor Word), las pruebas correspondientes se conservan como `No verificado`.
+2. **Caché y proxy de imágenes:** Gmail procesa y cachea imágenes mediante Google Image Proxy, lo que puede diferir del comportamiento de clientes que descargan activos directamente del CDN.
+3. **Inversión de color en modo oscuro:** Ciertos clientes móviles (p. ej. Outlook móvil o Gmail en Android) fuerzan inversión automática de colores de fondo y texto sobre estilos inline, independientemente de `@media (prefers-color-scheme: dark)`.
+4. **Clientes y dispositivos no cubiertos:** Versiones legadas de clientes de escritorio, clientes web secundarios (Yahoo, Thunderbird) o dispositivos con pantallas de relación de aspecto atípica quedan fuera del alcance verificado.
 
 ## Fuera de alcance de este documento
 
