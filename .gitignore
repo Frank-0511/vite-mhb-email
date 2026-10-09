@@ -39,3 +39,8 @@ CLAUDE.md
 .github/skills
 !docs/ai/AGENTS.md
 # END agents:sync managed
+
+# Lockfiles: cada quien decide el suyo; este repo versiona solo bun.lock
+package-lock.json
+yarn.lock
+pnpm-lock.yaml

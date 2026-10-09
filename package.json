@@ -28,47 +28,42 @@
     "type": "git",
     "url": "https://github.com/Frank-0511/vite-mhb-email"
   },
-  "packageManager": "bun@1.3.13",
   "type": "module",
   "engines": {
-    "node": ">=24",
-    "bun": ">=1.3.13"
+    "node": ">=24"
   },
   "trustedDependencies": [
     "puppeteer"
   ],
-  "overrides": {
-    "postcss": "8.5.23"
-  },
   "scripts": {
     "dev": "vite",
     "test": "bun test",
     "test:watch": "bun test --watch",
     "typecheck": "tsc --noEmit",
-    "check:inventory": "bun scripts/inventory/check-migration-inventory.ts --require-zero",
-    "build": "bun scripts/build/build.ts",
-    "build-selective": "bun scripts/build/selective.ts",
-    "generate:email": "bun scripts/generators/generate-email.ts",
-    "generate:icons": "bun scripts/icons/generate-icon.ts",
-    "export:screenshot": "bun scripts/export/screenshot.ts",
-    "check-size": "bun scripts/validators/check-html-size.ts",
-    "check:dist-baseline": "bun scripts/validators/dist-baseline/check.ts",
-    "update:dist-baseline": "bun scripts/validators/dist-baseline/update.ts",
-    "validate-email": "bun scripts/validators/validate-email-html.ts",
-    "esp:manifest": "bun scripts/esp/manifest/write-manifest.ts",
-    "benchmark": "bun scripts/perf/measure-benchmarks.ts",
-    "cli": "bun scripts/cli/cli.ts",
-    "lint": "bun run lint:html && bun run lint:js && bun run lint:md && bun run lint:json && bun run lint:css",
+    "check:inventory": "node scripts/inventory/check-migration-inventory.ts --require-zero",
+    "build": "node scripts/build/build.ts",
+    "build-selective": "node scripts/build/selective.ts",
+    "generate:email": "node scripts/generators/generate-email.ts",
+    "generate:icons": "node scripts/icons/generate-icon.ts",
+    "export:screenshot": "node scripts/export/screenshot.ts",
+    "check-size": "node scripts/validators/check-html-size.ts",
+    "check:dist-baseline": "node scripts/validators/dist-baseline/check.ts",
+    "update:dist-baseline": "node scripts/validators/dist-baseline/update.ts",
+    "validate-email": "node scripts/validators/validate-email-html.ts",
+    "esp:manifest": "node scripts/esp/manifest/write-manifest.ts",
+    "benchmark": "node scripts/perf/measure-benchmarks.ts",
+    "cli": "node scripts/cli/cli.ts",
+    "lint": "node scripts/pm/run-scripts.ts lint:html lint:js lint:md lint:json lint:css",
     "lint:html": "htmlhint \"src/**/*.html\"",
     "lint:js": "eslint scripts/ src/web/ src/emails/ vite.config.ts maizzle.config.js maizzle.config.ts",
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\"",
-    "lint:json": "bun scripts/validators/validate-json.ts",
+    "lint:json": "node scripts/validators/validate-json.ts",
     "lint:css": "stylelint \"src/**/*.css\"",
-    "lint:contrast": "bun scripts/validators/validate-contrast.ts",
-    "a11y-check": "bun scripts/validators/check-a11y.ts",
+    "lint:contrast": "node scripts/validators/validate-contrast.ts",
+    "a11y-check": "node scripts/validators/check-a11y.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check:task-branch": "bun scripts/ai/check-task-branch.ts",
+    "check:task-branch": "node scripts/ai/check-task-branch.ts",
     "prepare": "husky || true",
     "agents:sync": "node scripts/ai/agents-sync.ts",
     "agents:check": "node scripts/ai/agents-check.ts"
@@ -102,7 +97,7 @@
       "prettier --write"
     ],
     "src/emails/templates/*/data.json": [
-      "bun scripts/validators/validate-json.ts"
+      "node scripts/validators/validate-json.ts"
     ],
     "**/*.json": [
       "prettier --write"
