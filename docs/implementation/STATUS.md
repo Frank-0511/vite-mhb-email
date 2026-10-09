@@ -3,7 +3,7 @@
 ## Resumen
 
 - ID activo: MHB-36
-- Estado: En progreso
+- Estado: En revisión
 - Implementador: perfil tooling/infraestructura, medio-alto (orquestador + subagentes por fase)
 - Revisor: revisor técnico independiente
 - Rama: `feature/mhb-36`
@@ -12,12 +12,33 @@
 
 ## Paquete activo
 
-- MHB-36: Compatibilidad multi-package-manager (Fase D). Estado: `En progreso`, desbloqueada (MHB-43 mergeada).
-- Plan ejecutable: `docs/superpowers/mhb-36.md` (temporal; un subagente nuevo por fase, un commit por fase).
-- Línea base: Node v24.21.0 (v22.23.1 default), Bun 1.3.13, Yarn 1.22.22 / 4.18.1, pnpm 10.18.3 / 12.10.1, npm 11.19.0 / 10.9.8.
-- Suite inicial: 795 pass, 0 fail, 103 files (`bun test`).
-- Build inicial y dist baseline: verde (`bun run build && bun run check:dist-baseline`).
-- Decisiones de planificación: ver «Decisiones y desviaciones vigentes» (MHB-36, 2026-10-08).
+- MHB-36: Compatibilidad multi-package-manager (Fase D). Estado: `En revisión`.
+- Hechos de la entrega:
+  1. Scripts de `package.json` ejecutados con `node` y detección agnóstica de package manager (`scripts/shared/env/detect-pm.ts`).
+  2. Suite completa migrada a Vitest (`105 files, 809 tests`) corriendo tanto con Bun como con Node/npm/yarn/pnpm.
+  3. Verificación limpia desde cero en los 4 managers (Bun 1.3.13, Yarn 4.18.1, npm 11.19.0, pnpm 12.10.1); solo `bun.lock` versionado.
+  4. CI actualizado a Node 24 con matriz agnóstica (`package-managers`) y nuevo workflow `PR Guard` (`pull_request_target`).
+  5. Documentación y gobernanza completas (`README.md`, `CONTRIBUTING.md`, `docs/ai/`, `CHANGELOG.md`) y adaptadores sincronizados con `agents:sync`.
+- Controles obligatorios (todos en Verde):
+  - `bun install --frozen-lockfile`: Verde
+  - `bun run lint`: Verde
+  - `bun run typecheck`: Verde
+  - `bun run test` (Vitest): Verde (105 files, 809 tests)
+  - `bun run format:check`: Verde
+  - `bun run build`: Verde
+  - `bun run validate-email`: Verde
+  - `bun run check:dist-baseline` (carril bun): Verde
+  - `bun run check-size`: Verde
+  - `bun run check:inventory`: Verde (312 TS, 2 JS allowlist)
+  - `bun run agents:check`: Verde (7 targets)
+  - `git diff --check`: Verde
+- Verificación multi-manager (worktree limpio desde HEAD):
+  - Bun 1.3.13: `install`, `typecheck`, `test`, `build`, `validate-email`, `check:dist-baseline`, `check-size` → Verde
+  - Yarn 4.18.1: `install`, `typecheck`, `test`, `build`, `validate-email`, `check-size` → Verde
+  - npm 11.19.0: `install`, `typecheck`, `test`, `build`, `validate-email`, `check-size` → Verde
+  - pnpm 12.10.1: `install`, `typecheck`, `test`, `build`, `validate-email`, `check-size` → Verde
+- Criterios de aceptación específicos: C1 (scripts sin bun) Verde, C2 (bun allowlist) Verde, C3 (cero bun:test) Verde, C7 (lockfiles ajenos gitignored) Verde, C10 (PR guard) Verde.
+- Riesgos residuales: Drift transitivo sin lockfile en npm, Yarn y pnpm por dependencias transitivas de `@maizzle/framework` (`html-crush`, `email-comb`, `string-strip-html`) resueltas desde npm; aceptado por el usuario (Opción 4) y protegido por la matriz de CI sin `check:dist-baseline`.
 
 ## Baseline vigente
 
@@ -85,8 +106,7 @@
 
 ## Handoff
 
-- MHB-34 (PR #65) y MHB-43 mergeadas a `master`; `docs/superpowers/mhb-43.md` eliminado.
-- Próxima acción inmediata: asignar MHB-36 y ejecutar `docs/superpowers/mhb-36.md` desde la fase F0 en `feature/mhb-36`.
-- Siguientes tareas del roadmap (no iniciar sin asignación explícita):
-  - MHB-36 (Fase D): desbloqueada; planificada.
+- Próxima acción inmediata: Solicitud de autorización al usuario para push de la rama `feature/mhb-36` y apertura de Pull Request; ejecución de `task-review` por revisor técnico independiente.
+- Siguiente tarea del roadmap (no iniciar sin asignación explícita):
   - MHB-14 (Fase C): desbloqueada; requiere acceso del usuario a Gmail, Outlook y Apple Mail. Su cierre habilita MHB-15 (`v1.3.0`).
+  - MHB-48 (Fase D): bloqueada hasta evaluar disparador de performance o decisión de release.
