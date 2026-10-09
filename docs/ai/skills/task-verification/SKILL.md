@@ -14,7 +14,7 @@ description: Verificar tareas, ejecutar comandos permitidos, preparar ramas o co
   validate-email; UI → lint y recorrido manual; CLI/exportación → acción o
   helper afectado. Investigar controles fallidos; no relajarlos.
 - Priorizar validación por costo de tokens: script determinista (p. ej.
-  `a11y-check`, `lint:contrast`, linters) antes que hacer leer/juzgar contenido
+  `check:a11y`, linters) antes que hacer leer/juzgar contenido
   a la IA. Si es indispensable que la IA lea contenido, preferir markdown/texto
   extraído sobre HTML crudo (menos ruido de tags/atributos por unidad de
   información), y reservar Browser pane/screenshot solo para verificación

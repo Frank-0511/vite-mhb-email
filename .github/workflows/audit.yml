@@ -39,12 +39,7 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Contraste · WCAG (informativo)
+      - name: Contraste y accesibilidad · WCAG + axe-core (informativo)
         # Informativo: no bloquea el pipeline
         continue-on-error: true
-        run: bun run lint:contrast
-
-      - name: Accesibilidad · axe-core (informativo)
-        # Informativo: no bloquea el pipeline
-        continue-on-error: true
-        run: bun run a11y-check
+        run: bun run check:a11y

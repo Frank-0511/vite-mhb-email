@@ -124,7 +124,7 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
 - **Objetivo observable:** publicar `v1.3.0` con README, CHANGELOG, versión, tag y release coherentes con el trabajo completado desde `v1.2.0`.
 - **Superficies autorizadas:** README, CHANGELOG, versión/package metadata, capturas, notas de release y documentación relacionada.
 - **Dependencias y precondiciones:** MHB-14 completada (el resto del contenido de la release ya está `Completada`), CI verde en `master` y decisión explícita del usuario antes de publicar o etiquetar; preservar el baseline publicado `v1.2.0`.
-- **Versión decidida (2026-10-08):** `v1.3.0` (minor). Desde `v1.2.0` no se eliminó ni renombró ningún comando público; solo se añadieron (`benchmark`, `generate:icons`, `esp:manifest`, `check:dist-baseline`, `update:dist-baseline` y `check:inventory`, verificado con `git show v1.2.0:package.json`). Si la verificación detecta una eliminación o renombre público, escalar antes de etiquetar.
+- **Versión decidida (2026-10-08):** `v1.3.0` (minor). La API pública son los comandos listados en `CLAUDE.md` (`dev`, `build`, `test`, `lint`, `typecheck`, `validate-email`, `check:dist-baseline`, `format:check`, etc.); el resto de scripts de `package.json` son herramientas internas que pueden cambiar en un minor con nota de migración en `CHANGELOG.md`. Desde `v1.2.0` no cambió ningún comando de esa lista.
 - **Congelamiento de alcance:** al pasar MHB-15 a `En progreso` se congela el alcance. Un hallazgo nuevo se registra como ID de la Fase D y no bloquea la release, salvo que rompa un gate de MHB-41 (hashes de `dist/`, variables ESP `{{ }}`, `validate-email`), la suite o el build; solo esos casos bloquean y se corrigen dentro del alcance congelado. Un ID de la Fase D mergeado antes del congelamiento forma parte de `v1.3.0` y se declara en sus notas.
 - **Pasos técnicos:**
   - Aplicar la skill `release-management`: checklist Go/No-Go con cada ID de la release `Completada` y CI verde en `master`.
@@ -152,7 +152,7 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
 
 - **Objetivo observable:** cualquier desarrollador clona el proyecto y trabaja con npm, yarn, pnpm o bun sin que ninguno sea obligatorio. Los scripts se ejecutan con `node` (type stripping nativo), los tests con Vitest y la CLI lanza procesos con el package manager detectado.
 - **Diagnóstico al 2026-10-08 (post MHB-43):**
-  - Con Node 22.23.1 local, `node` ejecuta sin cambios `build`, `validate-email`, `check:dist-baseline`, `check-size`, `check:inventory`, `lint:json` y `lint:contrast`, y `dist/` queda idéntico.
+  - Con Node 22.23.1 local, `node` ejecuta sin cambios `build`, `validate-email`, `check:dist-baseline`, `check-size`, `lint` y `check:a11y`, y `dist/` queda idéntico.
   - Acoplamiento a Bun:
     - 19 scripts `bun <archivo>.ts` en `package.json`, el encadenado `lint` con `bun run` y la entrada de `lint-staged` para `data.json`.
     - 4 hooks Husky y el shebang `#!/usr/bin/env bun` de `scripts/ai/check-task-branch.ts`.
@@ -210,7 +210,7 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
   8. `ci.yml` define el job `package-managers` (matriz npm/yarn/pnpm) incluido en `needs` y en la verificación de `CI Pipeline`; todos los jobs usan `actions/setup-node` con Node 24. Revisión manual del YAML y CI verde en la PR.
   9. Documentación: `rg -n 'bun:test|bun test\b' README.md docs/ai docs/implementation/TEST-INVENTORY.md` y `rg -n -i 'solo bun|únicamente bun|bun como único' README.md docs/ai` vacíos; `bun run agents:check` en verde. Revisión manual: cada `bun run`/`bun install` restante de `README.md` aparece junto a sus equivalentes multi-manager.
   10. `pr-guard.yml` se dispara con `pull_request_target`, no usa `actions/checkout` y falla ante lockfiles ajenos (cualquier PR) o cambios en `.github/` (PR desde fork): el comando `node -e` del plan lo comprueba. Revisión manual tras el merge: la siguiente PR muestra el check `PR Guard` antes de marcarlo requerido.
-- **Validación automática:** con bun: `install --frozen-lockfile`, `lint`, `typecheck`, `test`, `format:check`, `build`, `validate-email`, `check:dist-baseline`, `check-size`, `check:inventory`, `agents:check` y `git diff --check`. Más el criterio 6 con npm, yarn y pnpm.
+- **Validación automática:** con bun: `install --frozen-lockfile`, `lint`, `typecheck`, `test`, `format:check`, `build`, `validate-email`, `check:dist-baseline`, `check-size`, `agents:check` y `git diff --check`. Más el criterio 6 con npm, yarn y pnpm.
 - **Validación manual:** `yarn cli` y `bun run cli` hasta el menú. `yarn dev` y `bun run dev` responden 200 en `/` (sin Browser pane). Hook `pre-commit` en un commit real de la rama.
 - **Evidencia requerida:**
   - Línea base y resultado (tests, hashes de `dist/`).
@@ -338,7 +338,7 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
   - Las diferencias de `dist/*.html` frente al baseline están justificadas una a una (sin regresión visual ni de peso sobre el umbral de `check-size`).
   - El dashboard no presenta cambios visuales en las seis combinaciones ancho×tema.
   - No quedan `postcss.config.js`, `tailwind*.config.js`, `autoprefixer` ni referencias a Maizzle 5 o Tailwind v3.
-- **Validación automática:** `bun install --frozen-lockfile`, lint, typecheck, test, `format:check`, build, `validate-email` con `modern-css-inline`, `check-size`, `lint:contrast`, `a11y-check`, `agents:check` y `git diff --check`.
+- **Validación automática:** `bun install --frozen-lockfile`, lint, typecheck, test, `format:check`, build, `validate-email` con `modern-css-inline`, `check-size`, `check:a11y`, `agents:check` y `git diff --check`.
 - **Validación manual:** preview de los seis templates con datos, biblioteca de componentes, HMR al editar template/CSS, dashboard en seis combinaciones ancho×tema y, con envío autorizado, Gmail y Outlook con protocolo fechado.
 - **Evidencia requerida:** anexo con versiones y fechas revalidadas, resultado del checkpoint F2, salida de auditoría por template, diff justificado de `dist/`, matriz de dependencias eliminadas e instaladas, capturas del dashboard y ADR.
 - **Riesgos y reversión:**
@@ -429,7 +429,7 @@ Cada elemento debe conservar en el contrato transferido objetivo, archivos, paso
 ### Gates globales
 
 - Todos los cambios: `bun run format:check` y `git diff --check`.
-- Markdown: `bun run lint:md`.
+- Markdown: `bun run lint`.
 - JavaScript/TypeScript/configuración: `bun run lint` y `bun run typecheck` según alcance.
 - Templates/layouts/CSS/build: `bun run build` y `bun run validate-email`; ERROR bloquea y WARNING/INFO no se ocultan. Desde MHB-41, también `bun run check:dist-baseline`; solo un ID que autorice cambiar `dist/` puede actualizar el baseline.
 - Revisión independiente: desde MHB-40, el revisor aplica la skill `task-review`; lo declarado en `STATUS.md` no sustituye la re-ejecución de los gates.

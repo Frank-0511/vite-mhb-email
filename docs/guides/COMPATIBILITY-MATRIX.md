@@ -6,7 +6,7 @@ leen el HTML compilado) con **prueba real** (un mensaje abierto en un cliente de
 correo concreto).
 
 Fuente de las reglas: `scripts/validators/email-rules/rules/`. Fuente del gate:
-`scripts/build/build.js` y `scripts/build/build-selective.js`.
+`scripts/build/build.ts` y `scripts/build/selective.ts`.
 
 ## Niveles de evidencia
 
@@ -132,5 +132,5 @@ enlace a la evidencia. Una prueba en un cliente no eleva a los demás.
 - No sustituye a un servicio de pruebas multi-cliente (Litmus, Email on Acid);
   si se contrata uno, sus resultados se registran igual, como E3 con fuente.
 - No documenta accesibilidad ni contraste del dashboard web: eso corresponde a
-  `bun run lint:contrast` y `bun run a11y-check`.
+  `bun run check:a11y`.
 - La creación de componentes está en [COMPONENT-GUIDE.md](COMPONENT-GUIDE.md).

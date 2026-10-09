@@ -7,7 +7,7 @@ import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 
 const projectRoot = process.cwd();
-const buildSelectiveScript = resolve(projectRoot, "scripts/build/selective.ts");
+const buildSelectiveScript = resolve(projectRoot, "scripts/build/build.ts");
 
 interface Fixture {
   tempDir: string;
@@ -29,7 +29,7 @@ function createFixture(): Fixture {
   return { tempDir, templateName };
 }
 
-describe("build-selective CLI", () => {
+describe("build <template> (build selectivo)", () => {
   let tempDir: string | null = null;
 
   afterEach(() => {

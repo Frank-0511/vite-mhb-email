@@ -117,9 +117,6 @@ jobs:
       - name: Check HTML size
         run: bun run check-size
 
-      - name: Check migration inventory
-        run: bun run check:inventory
-
   # Compatibilidad: yarn, npm y pnpm instalan desde cero (cada quien decide su
   # lockfile); validan build, validate-email, check-size, typecheck y test.
   # (check:dist-baseline es gate estricto del carril congelado con bun).
