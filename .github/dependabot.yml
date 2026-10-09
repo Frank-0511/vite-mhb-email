@@ -26,7 +26,6 @@ updates:
         # Mantenido en sincronía conceptual con MANUAL_REVIEW_DEPS en .github/workflows/dependabot-automerge.yml
         exclude-patterns:
           - "@maizzle/*"
-          - "maizzle"
           - "tailwindcss"
           - "postcss"
           - "autoprefixer"
@@ -39,7 +38,6 @@ updates:
           - "patch"
         exclude-patterns:
           - "@maizzle/*"
-          - "maizzle"
           - "tailwindcss"
           - "postcss"
           - "autoprefixer"

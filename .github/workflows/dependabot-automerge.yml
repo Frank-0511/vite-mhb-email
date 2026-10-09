@@ -13,7 +13,7 @@ jobs:
     env:
       # Dependencias críticas del pipeline de email (revisión manual obligatoria).
       # Mantenido en sincronía conceptual con exclude-patterns en .github/dependabot.yml
-      MANUAL_REVIEW_DEPS: "@maizzle/* maizzle tailwindcss postcss autoprefixer juice handlebars"
+      MANUAL_REVIEW_DEPS: "@maizzle/* tailwindcss postcss autoprefixer juice handlebars"
     steps:
       - name: Obtener metadatos de Dependabot
         id: metadata
