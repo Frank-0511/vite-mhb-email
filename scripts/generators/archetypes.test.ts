@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { getArchetypeById, getAvailableArchetypes } from "./archetypes.ts";
 
 const rootDir = process.cwd();
@@ -17,10 +17,10 @@ describe("archetypes (descubrimiento dinámico)", () => {
       expect(ids).toContain("newsletter");
 
       for (const a of archetypes) {
-        expect(a.id).toBeString();
-        expect(a.name).toBeString();
-        expect(a.description).toBeString();
-        expect(a.category).toBeString();
+        expect(typeof a.id).toBe("string");
+        expect(typeof a.name).toBe("string");
+        expect(typeof a.description).toBe("string");
+        expect(typeof a.category).toBe("string");
         expect(Array.isArray(a.espVariables)).toBe(true);
         expect(a.dirPath).toContain("src/emails/partials/templates");
       }

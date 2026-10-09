@@ -2,7 +2,7 @@
  * @fileoverview Tests unitarios del validador de compatibilidad HTML para email.
  */
 
-import { afterEach, beforeEach, describe, expect, spyOn, test, type Mock } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, vi, type MockInstance } from "vitest";
 import { spawnSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
@@ -47,14 +47,14 @@ const HTML_CSS_ERROR = `<!doctype html>
 `;
 
 let tempDir = "";
-let consoleLogSpy: Mock<(...args: unknown[]) => void> | null = null;
-let consoleErrorSpy: Mock<(...args: unknown[]) => void> | null = null;
+let consoleLogSpy: MockInstance<(...args: unknown[]) => void> | null = null;
+let consoleErrorSpy: MockInstance<(...args: unknown[]) => void> | null = null;
 
 beforeEach(() => {
   tempDir = join(tmpdir(), `email-validate-${randomUUID()}`);
   mkdirSync(tempDir, { recursive: true });
-  consoleLogSpy = spyOn(console, "log").mockImplementation(() => {});
-  consoleErrorSpy = spyOn(console, "error").mockImplementation(() => {});
+  consoleLogSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+  consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 });
 
 afterEach(() => {

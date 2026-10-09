@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { ESP_PROFILES } from "../../shared/contracts/constants/esp-contract.ts";
 import { analyzeLegacyCompat, formatSubstitutionTag } from "./legacy-compat.ts";
 

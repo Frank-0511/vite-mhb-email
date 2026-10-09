@@ -1,7 +1,7 @@
 /** @fileoverview Regresiones para el build iniciado desde el CLI. */
 
 import { EventEmitter } from "node:events";
-import { afterEach, beforeEach, describe, expect, spyOn, test, type Mock } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, vi, type MockInstance } from "vitest";
 import { detectPackageManager, formatRunCommand } from "../shared/env/detect-pm.ts";
 import { buildIfNeeded, type SpawnFunction } from "./ensure-build.ts";
 import type { PromptSource } from "../shared/index.ts";
@@ -9,7 +9,7 @@ import type { PromptSource } from "../shared/index.ts";
 const spawnCalls: unknown[][] = [];
 const children: EventEmitter[] = [];
 
-let consoleLogSpy: Mock<(...args: unknown[]) => void> | null = null;
+let consoleLogSpy: MockInstance<(...args: unknown[]) => void> | null = null;
 
 const spawnMock = ((...args: unknown[]) => {
   const child = new EventEmitter();
@@ -29,7 +29,7 @@ function createReadline(answer: string): PromptSource {
 beforeEach(() => {
   spawnCalls.length = 0;
   children.length = 0;
-  consoleLogSpy = spyOn(console, "log").mockImplementation(() => {});
+  consoleLogSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 });
 
 afterEach(() => {

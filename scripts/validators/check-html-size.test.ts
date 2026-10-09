@@ -2,7 +2,7 @@
  * @fileoverview Pruebas unitarias para check-html-size.ts y su decisor de código de salida.
  */
 
-import { afterEach, beforeEach, describe, expect, spyOn, test, type Mock } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, vi, type MockInstance } from "vitest";
 import { spawnSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
@@ -12,12 +12,12 @@ import { GMAIL_MAX_SAFE_BYTES, GMAIL_WARNING_THRESHOLD_BYTES } from "../shared/i
 import { checkHtmlSize, hasExceededGmailLimit } from "./check-html-size.ts";
 
 let tempDir = "";
-let consoleLogSpy: Mock<(...args: unknown[]) => void> | null = null;
+let consoleLogSpy: MockInstance<(...args: unknown[]) => void> | null = null;
 
 beforeEach(() => {
   tempDir = join(tmpdir(), `check-size-test-${randomUUID()}`);
   mkdirSync(tempDir, { recursive: true });
-  consoleLogSpy = spyOn(console, "log").mockImplementation(() => {});
+  consoleLogSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 });
 
 afterEach(() => {

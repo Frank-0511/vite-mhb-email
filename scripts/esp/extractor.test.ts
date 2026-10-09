@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { extractEspVariables, stripEachBlocks } from "./extractor.ts";
 
 describe("extractEspVariables", () => {

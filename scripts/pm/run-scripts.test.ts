@@ -1,12 +1,12 @@
-import { afterEach, beforeEach, describe, expect, spyOn, test, type Mock } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, vi, type MockInstance } from "vitest";
 import type { PackageManager } from "../shared/env/detect-pm.ts";
 import { runScripts, type ScriptRunner } from "./run-scripts.ts";
 
 describe("runScripts", () => {
-  let consoleErrorSpy: Mock<(...args: unknown[]) => void> | null = null;
+  let consoleErrorSpy: MockInstance<(...args: unknown[]) => void> | null = null;
 
   beforeEach(() => {
-    consoleErrorSpy = spyOn(console, "error").mockImplementation(() => {});
+    consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {

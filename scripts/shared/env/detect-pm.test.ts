@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { detectPackageManager, formatRunCommand } from "./detect-pm.ts";
 
 describe("detectPackageManager", () => {

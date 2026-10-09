@@ -2,7 +2,7 @@
  * @fileoverview Pruebas unitarias del guard de no-sobrescritura de iconos (scripts/icons/guard.ts).
  */
 
-import { afterEach, beforeEach, describe, expect, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import { execSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";

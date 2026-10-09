@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 
 import { createCopyHtmlModalController } from "./controller.ts";
 import type { ValidationResult } from "./formatters.ts";

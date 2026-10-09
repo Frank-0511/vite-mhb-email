@@ -10,7 +10,7 @@
  * 7. no-restricted-imports (node:* y barrel scripts/shared en src/web/**)
  */
 
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { ESLint } from "eslint";
 import eslintConfig from "../../../eslint.config.js";
 

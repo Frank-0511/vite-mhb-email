@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { resolve } from "node:path";
 import type { IndexHtmlTransformContext, ViteDevServer } from "vite";
 import { dashboardPlugin, getTemplates } from "./dashboard.ts";
@@ -7,7 +7,7 @@ interface TransformIndexHtmlHandler {
   handler: (html: string, ctx: IndexHtmlTransformContext) => string;
 }
 
-const rootDir = resolve(import.meta.dir ?? process.cwd(), "../../..");
+const rootDir = resolve(import.meta.dirname ?? process.cwd(), "../../..");
 
 describe("dashboardPlugin", () => {
   describe("getTemplates", () => {

@@ -7,7 +7,7 @@
  */
 
 import { render } from "@maizzle/framework";
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { getEmailComponentFolders } from "../../../../../scripts/shared/index.ts";
 
 /**

@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { ESP_PROFILES, type EspProfile } from "../../shared/contracts/constants/esp-contract.ts";
 import { findUnsupportedSyntax } from "./profile-syntax.ts";
 

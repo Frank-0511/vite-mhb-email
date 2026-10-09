@@ -2,7 +2,7 @@
  * @fileoverview Helpers y mocks DOM compartidos para pruebas en preview.
  */
 
-import { mock } from "bun:test";
+import { vi } from "vitest";
 
 export interface MockElement {
   className: string;
@@ -83,14 +83,14 @@ export function createMockElement(
       }
     },
     classList: {
-      add: mock((/** @type {string[]} */ ...clsList) => {
+      add: vi.fn((/** @type {string[]} */ ...clsList) => {
         clsList.forEach((cls) => classes.add(cls));
       }),
-      remove: mock((/** @type {string[]} */ ...clsList) => {
+      remove: vi.fn((/** @type {string[]} */ ...clsList) => {
         clsList.forEach((cls) => classes.delete(cls));
       }),
-      contains: mock((/** @type {string} */ cls) => classes.has(cls)),
-      toggle: mock((/** @type {string} */ cls, /** @type {boolean} */ force) => {
+      contains: vi.fn((/** @type {string} */ cls) => classes.has(cls)),
+      toggle: vi.fn((/** @type {string} */ cls, /** @type {boolean} */ force) => {
         if (force !== undefined) {
           if (force) classes.add(cls);
           else classes.delete(cls);
@@ -106,20 +106,20 @@ export function createMockElement(
     hidden: attributes.hidden !== undefined ? Boolean(attributes.hidden) : false,
     id: typeof attributes.id === "string" ? attributes.id : "",
     value: typeof attributes.value === "string" ? attributes.value : "",
-    focus: mock(() => {}),
-    blur: mock(() => {}),
-    setAttribute: mock((/** @type {string} */ name, /** @type {unknown} */ val) => {
+    focus: vi.fn(() => {}),
+    blur: vi.fn(() => {}),
+    setAttribute: vi.fn((/** @type {string} */ name, /** @type {unknown} */ val) => {
       attrs[name] = String(val);
     }),
-    getAttribute: mock((name: string): string | null => {
+    getAttribute: vi.fn((name: string): string | null => {
       const value = attrs[name];
       return value === undefined || value === null ? null : String(value);
     }),
-    hasAttribute: mock((name: string): boolean => name in attrs),
-    removeAttribute: mock((name: string): void => {
+    hasAttribute: vi.fn((name: string): boolean => name in attrs),
+    removeAttribute: vi.fn((name: string): void => {
       delete attrs[name];
     }),
-    addEventListener: mock((evt: string, fn: () => void) => {
+    addEventListener: vi.fn((evt: string, fn: () => void) => {
       if (!listeners[evt]) listeners[evt] = [];
       listeners[evt].push(fn);
     }),
@@ -138,14 +138,14 @@ export function createMockElement(
 export function createMockStorage(initialState: Record<string, string> = {}) {
   const store: Record<string, string> = { ...initialState };
   return {
-    getItem: mock((key: string): string | null => store[key] ?? null),
-    setItem: mock((key: string, val: string): void => {
+    getItem: vi.fn((key: string): string | null => store[key] ?? null),
+    setItem: vi.fn((key: string, val: string): void => {
       store[key] = String(val);
     }),
-    removeItem: mock((key: string): void => {
+    removeItem: vi.fn((key: string): void => {
       delete store[key];
     }),
-    clear: mock((): void => {
+    clear: vi.fn((): void => {
       Object.keys(store).forEach((k) => delete store[k]);
     }),
   };
@@ -161,15 +161,15 @@ export function createMockIframe(): MockIframe {
   const iframeEl = createMockElement(["hidden"]);
 
   const mockDoc: MockDocument = {
-    open: mock(() => {}),
-    write: mock((html: string) => written.push(html)),
-    close: mock(() => {}),
+    open: vi.fn(() => {}),
+    write: vi.fn((html: string) => written.push(html)),
+    close: vi.fn(() => {}),
     documentElement: docElement,
     body: bodyElement,
-    getElementById: mock(() => null),
-    createElement: mock(() => createMockElement()),
+    getElementById: vi.fn(() => null),
+    createElement: vi.fn(() => createMockElement()),
     head: {
-      appendChild: mock(() => {}),
+      appendChild: vi.fn(() => {}),
     },
   };
 

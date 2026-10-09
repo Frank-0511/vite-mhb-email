@@ -3,7 +3,7 @@
  * en los 6 endpoints de escritura de la API local de Vite (MHB-46).
  */
 
-import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { EventEmitter } from "node:events";
 import { existsSync, mkdirSync, mkdtempSync, rmSync } from "node:fs";
 import { readJsonFile, writeJsonFile } from "../../shared/index.ts";

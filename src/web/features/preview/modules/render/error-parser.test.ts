@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { RENDER_ERROR_MESSAGE } from "../../../../../../scripts/shared/contracts/constants/render-error.ts";
 import {
   parseRenderErrorResponse,

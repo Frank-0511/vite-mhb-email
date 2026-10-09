@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import { STORAGE_KEY_TEMPLATE_THEME } from "../../../../shared/utils/storage-keys.ts";
 import { createIframeManager } from "./iframe-manager.ts";
 import { createMockElement, createMockIframe } from "./test-helpers.ts";

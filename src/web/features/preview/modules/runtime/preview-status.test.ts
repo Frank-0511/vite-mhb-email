@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { createPreviewStatus } from "./preview-status.ts";
 import { createMockElement } from "./test-helpers.ts";
 

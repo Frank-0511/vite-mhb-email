@@ -1,4 +1,4 @@
-import { describe, expect, it, mock } from "bun:test";
+import { describe, expect, it, vi } from "vitest";
 import type { MockElement } from "../runtime/test-helpers.ts";
 import { createMockElement } from "../runtime/test-helpers.ts";
 import { setupMoreMenu } from "./more-menu.ts";
@@ -12,7 +12,7 @@ describe("more-menu", () => {
     triggerDocClick: (target: unknown) => void;
   } {
     const details = createMockElement();
-    details.contains = mock((target) => target === details);
+    details.contains = vi.fn((target) => target === details);
 
     let docClickListener: ((event: { target: unknown }) => void) | null = null;
     const doc = {
@@ -34,7 +34,7 @@ describe("more-menu", () => {
     };
 
     const win = {
-      matchMedia: mock(() => mql),
+      matchMedia: vi.fn(() => mql),
     } as unknown as Window;
 
     return {

@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { formatError, isEnoent } from "./errors.ts";
 
 describe("errors / formatError", () => {

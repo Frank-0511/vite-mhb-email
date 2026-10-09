@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { createMockElement } from "../runtime/test-helpers.ts";
 import { createRenderErrorView } from "./error-view.ts";
 

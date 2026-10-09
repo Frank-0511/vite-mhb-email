@@ -1,7 +1,7 @@
 /**
  * @fileoverview Pruebas unitarias para el módulo piloto TypeScript (MHB-29).
  */
-import { describe, expect, it } from "bun:test";
+import { describe, expect, it } from "vitest";
 import { createMetric, getExecutionStatus, isExecutionEnvironment } from "./pilot.ts";
 
 describe("MHB-29 TypeScript Execution Base - Pilot Module", () => {

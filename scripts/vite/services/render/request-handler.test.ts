@@ -1,4 +1,4 @@
-import { afterAll, describe, expect, test } from "bun:test";
+import { afterAll, describe, expect, test } from "vitest";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { simulateRequest as request } from "../../test-helpers.ts";

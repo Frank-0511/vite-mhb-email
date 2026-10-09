@@ -3,7 +3,7 @@
  * y convenciones de nomenclatura en scripts/ y src/.
  */
 
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { readdirSync, readFileSync } from "node:fs";
 import { basename, join, relative } from "node:path";
 import ts from "typescript";

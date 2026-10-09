@@ -1,4 +1,4 @@
-import { describe, expect, spyOn, test } from "bun:test";
+import { describe, expect, test, vi } from "vitest";
 
 import {
   isCurrentTemplateDataFile,
@@ -225,7 +225,7 @@ describe("setupPreviewHmr", () => {
   });
 
   test("invalidación fallida igualmente intenta rerender, como el comportamiento actual", async () => {
-    const consoleErrorSpy = spyOn(console, "error").mockImplementation(() => {});
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
     try {
       const harness = createHmrTestHarness({
@@ -248,7 +248,7 @@ describe("setupPreviewHmr", () => {
   });
 
   test("captura y reporta error si falla la rehidratación de data.json sin lanzar excepción no controlada", async () => {
-    const consoleErrorSpy = spyOn(console, "error").mockImplementation(() => {});
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
     try {
       let fetchAttempted = false;

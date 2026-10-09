@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { isAbsolute, join, resolve, sep } from "node:path";
 import { getProjectPaths } from "./paths.ts";
 

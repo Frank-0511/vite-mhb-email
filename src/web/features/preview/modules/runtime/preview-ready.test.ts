@@ -1,4 +1,4 @@
-import { describe, expect, it, mock } from "bun:test";
+import { describe, expect, it, vi } from "vitest";
 import { markPreviewReady } from "./preview-ready.ts";
 import { createMockElement } from "./test-helpers.ts";
 
@@ -8,8 +8,8 @@ describe("markPreviewReady", () => {
   });
 
   it("recorre y ejecuta reveal() sobre todos los componentes <ef-skeleton>", () => {
-    const skeleton1 = { reveal: mock(() => {}) };
-    const skeleton2 = { reveal: mock(() => {}) };
+    const skeleton1 = { reveal: vi.fn(() => {}) };
+    const skeleton2 = { reveal: vi.fn(() => {}) };
     const saveBtn = createMockElement([], { id: "btn-save" });
     saveBtn.disabled = true;
 
@@ -54,7 +54,7 @@ describe("markPreviewReady", () => {
 
   it("elimina template-name-skeleton si todavía existe en el árbol", () => {
     const templateNameSkeleton = createMockElement([], { id: "template-name-skeleton" });
-    templateNameSkeleton.remove = mock(() => {});
+    templateNameSkeleton.remove = vi.fn(() => {});
 
     const doc = {
       querySelectorAll: () => [],

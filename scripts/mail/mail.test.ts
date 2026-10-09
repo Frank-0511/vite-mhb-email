@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import { sendViaGmail } from "./gmail-transport.ts";
 import { PROVIDERS } from "./send-inbox.ts";
 import { sendToMailtrap } from "./send-mailtrap.ts";
@@ -24,10 +24,10 @@ describe("mail subsystem", () => {
 
     test("cada proveedor cuenta con icono, etiqueta y variable de entorno asociada", () => {
       for (const p of PROVIDERS) {
-        expect(p.icon).toBeString();
-        expect(p.label).toBeString();
-        expect(p.envVar).toBeString();
-        expect(p.color).toBeString();
+        expect(typeof p.icon).toBe("string");
+        expect(typeof p.label).toBe("string");
+        expect(typeof p.envVar).toBe("string");
+        expect(typeof p.color).toBe("string");
       }
     });
   });

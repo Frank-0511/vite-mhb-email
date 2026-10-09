@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 
 import {
   filterEditorMenuItems,
@@ -24,10 +24,9 @@ describe("menu-filter", () => {
       [{ icon: { iconName: "redo" } }, false],
       [null, false],
       [undefined, false],
-    ] as Array<[unknown, boolean]>)("evaluates item (%j)", ((...args: [unknown, boolean]) => {
-      const [item, expected] = args;
+    ] as Array<[unknown, boolean]>)("evaluates item (%j)", (item: unknown, expected: boolean) => {
       expect(isTransformMenuItem(item)).toBe(expected);
-    }) as unknown as (arg: [unknown, boolean]) => void);
+    });
   });
 
   describe("isTreeOrTableMenuItem", () => {
@@ -43,10 +42,9 @@ describe("menu-filter", () => {
       [{ text: "text", value: "text" }, false],
       [{ text: "Format" }, false],
       [null, false],
-    ] as Array<[unknown, boolean]>)("evaluates item (%j)", ((...args: [unknown, boolean]) => {
-      const [item, expected] = args;
+    ] as Array<[unknown, boolean]>)("evaluates item (%j)", (item: unknown, expected: boolean) => {
       expect(isTreeOrTableMenuItem(item)).toBe(expected);
-    }) as unknown as (arg: [unknown, boolean]) => void);
+    });
   });
 
   describe("filterEditorMenuItems", () => {

@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import {
   DEFAULT_GITIGNORE_END,
   DEFAULT_GITIGNORE_START,

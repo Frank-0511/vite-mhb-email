@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, test } from "bun:test";
+import { afterEach, describe, expect, test } from "vitest";
 import { Severity } from "../../context.ts";
 import { cleanHtml, cleanupContexts, createContext, ruleById } from "../../rules.fixtures.ts";
 

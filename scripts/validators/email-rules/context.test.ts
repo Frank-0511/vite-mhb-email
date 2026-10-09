@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { extractStyleContent, getContext, getLineNumber } from "./context.ts";
 
 describe("getLineNumber", () => {

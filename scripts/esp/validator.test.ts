@@ -2,7 +2,7 @@
  * @fileoverview Tests de integración del validador de variables ESP `{{ }}` y su fachada.
  */
 
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { validateEspVariables } from "./validator.ts";
 
 describe("validateEspVariables — coincidencia", () => {

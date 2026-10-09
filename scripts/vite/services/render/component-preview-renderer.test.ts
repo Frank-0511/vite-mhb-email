@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { renderComponentPreview } from "./component-preview-renderer.ts";
 
 describe("renderComponentPreview — entradas inválidas", () => {

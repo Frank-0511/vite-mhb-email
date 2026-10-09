@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { isEspManifest } from "./guard.ts";
 import type { EspManifest } from "./types.ts";
 
