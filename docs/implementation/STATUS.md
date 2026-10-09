@@ -17,7 +17,7 @@
 - Hechos de la entrega:
   1. Reestructuración de fases y releases registrada en `PLAN.md` (decisión del usuario, 2026-10-08), como primer commit de la rama.
 - Controles ejecutados: `lint:md`, `format:check` y `git diff --check` en Verde para el cambio documental.
-- Pendiente de decisión: conservar o eliminar el wrapper `maizzle.config.js` al retirar el CLI `maizzle`.
+- Decisión del usuario (2026-10-08): se conserva el wrapper `maizzle.config.js` (Maizzle 5.5.0 solo descubre configuración `.js`/`.cjs`; lo consumen `selective-build.ts` y `paths.ts`). Allowlist de MHB-42 intacta.
 
 ## Revisión de cierre de MHB-34
 
