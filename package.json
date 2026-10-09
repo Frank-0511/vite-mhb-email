@@ -38,7 +38,6 @@
   "scripts": {
     "dev": "vite",
     "test": "vitest run",
-    "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "check:inventory": "node scripts/inventory/check-migration-inventory.ts --require-zero",
     "build": "node scripts/build/build.ts",
