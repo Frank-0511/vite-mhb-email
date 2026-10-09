@@ -4,7 +4,7 @@
  * caché, compilación de templates Maizzle y respuesta de diagnóstico seguro 422.
  */
 
-import fs from "fs-extra";
+import { existsSync } from "node:fs";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { collectTemplateSource } from "../../../esp/sources.ts";
 import { validateEspVariables } from "../../../esp/validator.ts";
@@ -104,7 +104,7 @@ export function createRenderRequestHandler(options: RenderRequestHandlerOptions 
       return sendText(res, 400, "Invalid JSON body");
     }
 
-    if (!fs.existsSync(filePath)) {
+    if (!existsSync(filePath)) {
       return sendText(res, 404, "Template not found");
     }
 

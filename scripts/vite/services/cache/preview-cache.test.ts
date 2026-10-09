@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
-import fs from "fs-extra";
-import { mkdtempSync, rmSync, utimesSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync, utimesSync } from "node:fs";
+import { mkdir, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import {
@@ -19,7 +19,7 @@ describe("PreviewCacheManager & createPreviewDataHash", () => {
   });
 
   afterEach(() => {
-    if (tempDir && fs.existsSync(tempDir)) {
+    if (tempDir && existsSync(tempDir)) {
       rmSync(tempDir, { recursive: true, force: true });
     }
   });
@@ -57,8 +57,8 @@ describe("PreviewCacheManager & createPreviewDataHash", () => {
       expect(readHtml).toBe(htmlContent);
 
       const metaPath = cacheManager.getCachePath("welcome") + ".meta";
-      expect(fs.existsSync(metaPath)).toBe(true);
-      const meta = JSON.parse(fs.readFileSync(metaPath, "utf-8"));
+      expect(existsSync(metaPath)).toBe(true);
+      const meta = JSON.parse(readFileSync(metaPath, "utf-8"));
       expect(meta).toMatchObject({
         template: "welcome",
         theme: "dark",
@@ -79,8 +79,8 @@ describe("PreviewCacheManager & createPreviewDataHash", () => {
 
     test("retorna false si existe el HTML pero falta el .meta", async () => {
       const cachePath = cacheManager.getCachePath("welcome");
-      await fs.ensureDir(resolve(tempDir, ".cache", "preview", "welcome"));
-      await fs.writeFile(cachePath, "<p>No meta</p>", "utf-8");
+      await mkdir(resolve(tempDir, ".cache", "preview", "welcome"), { recursive: true });
+      await writeFile(cachePath, "<p>No meta</p>", "utf-8");
 
       expect(cacheManager.isCacheValid("welcome")).toBe(false);
     });
@@ -109,8 +109,8 @@ describe("PreviewCacheManager & createPreviewDataHash", () => {
 
     test("retorna false si las fuentes del email son más recientes que la caché", async () => {
       const templateFile = resolve(tempDir, "src/emails/templates/welcome/index.html");
-      await fs.ensureDir(resolve(tempDir, "src/emails/templates/welcome"));
-      await fs.writeFile(templateFile, "<h1>Source</h1>", "utf-8");
+      await mkdir(resolve(tempDir, "src/emails/templates/welcome"), { recursive: true });
+      await writeFile(templateFile, "<h1>Source</h1>", "utf-8");
 
       const pastTime = (Date.now() - 50000) / 1000;
       utimesSync(templateFile, pastTime, pastTime);
@@ -127,8 +127,8 @@ describe("PreviewCacheManager & createPreviewDataHash", () => {
     test("ignora cambios de mtime en directorios si los archivos no cambiaron", async () => {
       const templateDir = resolve(tempDir, "src/emails/templates/welcome");
       const templateFile = resolve(templateDir, "index.html");
-      await fs.ensureDir(templateDir);
-      await fs.writeFile(templateFile, "<h1>Source</h1>", "utf-8");
+      await mkdir(templateDir, { recursive: true });
+      await writeFile(templateFile, "<h1>Source</h1>", "utf-8");
 
       const pastTime = (Date.now() - 50000) / 1000;
       utimesSync(templateFile, pastTime, pastTime);
@@ -161,7 +161,7 @@ describe("PreviewCacheManager & createPreviewDataHash", () => {
 
       await cacheManager.clean();
 
-      expect(fs.existsSync(resolve(tempDir, ".cache", "preview"))).toBe(false);
+      expect(existsSync(resolve(tempDir, ".cache", "preview"))).toBe(false);
       expect(cacheManager.readFromCache("welcome")).toBeNull();
       expect(cacheManager.readFromCache("receipt")).toBeNull();
     });

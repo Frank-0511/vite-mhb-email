@@ -7,7 +7,7 @@
  */
 
 import { render } from "@maizzle/framework";
-import fs from "fs-extra";
+import { existsSync, readFileSync } from "node:fs";
 import Handlebars from "handlebars";
 import { resolve } from "node:path";
 import { getEmailComponentFolders } from "../../../shared/index.ts";
@@ -89,7 +89,7 @@ function resolveVariantPath(
   for (const name of candidates) {
     if (!isValidComponentIdentifier(name.replace(/\.html$/, ""))) continue;
     const candidate = resolve(componentDir, name);
-    if (fs.existsSync(candidate)) return candidate;
+    if (existsSync(candidate)) return candidate;
   }
   return null;
 }
@@ -126,7 +126,7 @@ export async function renderComponentPreview(
     throw new Error(`Variant '${variant}' not found. Available: ${available.join(", ") || "none"}`);
   }
 
-  let componentHtml = fs.readFileSync(variantPath, "utf8");
+  let componentHtml = readFileSync(variantPath, "utf8");
   componentHtml = stripPropsScript(componentHtml);
   componentHtml = convertMaizzleDelimiters(componentHtml);
   componentHtml = convertMaizzleConditionals(componentHtml);

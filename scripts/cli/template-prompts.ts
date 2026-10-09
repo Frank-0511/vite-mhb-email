@@ -2,7 +2,7 @@
  * @fileoverview Selección interactiva de templates compilados en dist/.
  */
 
-import fs from "fs-extra";
+import { existsSync, readdirSync } from "node:fs";
 import path from "node:path";
 import type { Interface } from "readline";
 import { c, paint } from "../shared/index.ts";
@@ -13,7 +13,7 @@ import { c, paint } from "../shared/index.ts";
 export function askSelectTemplate(rl: Interface): Promise<string | null> {
   const distPath = path.join(process.cwd(), "dist");
 
-  if (!fs.existsSync(distPath)) {
+  if (!existsSync(distPath)) {
     console.log(
       paint(c.red + c.bold, "  ❌ Error:") +
         paint(c.dim, " No existe la carpeta dist/.\n") +
@@ -22,8 +22,7 @@ export function askSelectTemplate(rl: Interface): Promise<string | null> {
     return Promise.resolve(null);
   }
 
-  const templateFiles = fs
-    .readdirSync(distPath, { withFileTypes: true })
+  const templateFiles = readdirSync(distPath, { withFileTypes: true })
     .filter((dirent) => dirent.isFile() && dirent.name.endsWith(".html"))
     .map((dirent) => dirent.name.replace(".html", ""))
     .sort();

@@ -5,7 +5,8 @@
  * Body: { "build": true | false }
  */
 
-import fs from "fs-extra";
+import { existsSync } from "node:fs";
+import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Connect, ViteDevServer } from "vite";
@@ -87,7 +88,7 @@ export function setupCopyHtmlApi(
         }
 
         // build: false → leer desde dist/<template>.html
-        if (!fs.existsSync(distPath)) {
+        if (!existsSync(distPath)) {
           return sendJson(res, 404, {
             success: false,
             error: `dist/${templateName}.html not found. Run a build first.`,
@@ -96,7 +97,7 @@ export function setupCopyHtmlApi(
 
         let html: string;
         try {
-          html = await fs.readFile(distPath, "utf-8");
+          html = await readFile(distPath, "utf-8");
         } catch (err) {
           const message = err instanceof Error ? err.message : String(err);
           console.error("[copy-html] Error reading dist file:", message);

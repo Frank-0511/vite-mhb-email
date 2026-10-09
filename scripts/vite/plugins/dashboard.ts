@@ -2,17 +2,16 @@
  * @fileoverview Plugin de contexto de dashboard de templates para Vite.
  */
 
-import fs from "fs-extra";
-import { globSync } from "node:fs";
+import { existsSync, globSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 import type { IndexHtmlTransformContext, Plugin, ViteDevServer } from "vite";
 import { API_ROUTES } from "../../shared/contracts/constants/api-routes.ts";
-import { bytesToKB, getProjectPaths } from "../../shared/index.ts";
 import {
   getTemplateSizesClientScript,
   renderEmptyDashboardPlaceholder,
   renderTemplateCard,
 } from "./dashboard-templates.ts";
+import { bytesToKB, getProjectPaths, readJsonFile } from "../../shared/index.ts";
 
 export interface DashboardTemplate {
   id: string;
@@ -42,9 +41,9 @@ export function getTemplates(rootDir: string): DashboardTemplate[] {
 
     const dataPath = paths.templateData(name);
     let data: Record<string, unknown> = {};
-    if (fs.existsSync(dataPath)) {
+    if (existsSync(dataPath)) {
       try {
-        data = fs.readJsonSync(dataPath) as Record<string, unknown>;
+        data = readJsonFile(dataPath) as Record<string, unknown>;
       } catch {
         // Fallback a objeto vacío
       }
@@ -64,7 +63,7 @@ export function getTemplates(rootDir: string): DashboardTemplate[] {
       category: "Email",
       description,
       hasSource: true,
-      isBuilt: fs.existsSync(distPath),
+      isBuilt: existsSync(distPath),
     });
   }
 
@@ -84,8 +83,8 @@ export const dashboardPlugin = (rootDir: string): Plugin => ({
 
         for (const { name } of templates) {
           const distPath = resolve(paths.distDir, `${name}.html`);
-          if (fs.existsSync(distPath)) {
-            const stats = fs.statSync(distPath);
+          if (existsSync(distPath)) {
+            const stats = statSync(distPath);
             sizes[name] = {
               bytes: stats.size,
               kb: bytesToKB(stats.size),

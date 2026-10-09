@@ -3,9 +3,9 @@
  * Escanea `src/emails/partials/templates/` para el generador de templates y el CLI interactivo.
  */
 
-import fs from "fs-extra";
+import { existsSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
-import { isValidTemplateName } from "../shared/index.ts";
+import { isValidTemplateName, readJsonFile } from "../shared/index.ts";
 
 /**
  * Metadata representativa de un arquetipo de template.
@@ -35,11 +35,11 @@ interface ArchetypeSchema {
  */
 export function getAvailableArchetypes(rootDir: string = process.cwd()): ArchetypeTemplateInfo[] {
   const templatesDir = resolve(rootDir, "src/emails/partials/templates");
-  if (!fs.existsSync(templatesDir)) {
+  if (!existsSync(templatesDir)) {
     return [];
   }
 
-  const entries = fs.readdirSync(templatesDir, { withFileTypes: true });
+  const entries = readdirSync(templatesDir, { withFileTypes: true });
   const archetypes: ArchetypeTemplateInfo[] = [];
 
   for (const entry of entries) {
@@ -54,9 +54,9 @@ export function getAvailableArchetypes(rootDir: string = process.cwd()): Archety
     let category = "General";
     let espVariables: string[] = [];
 
-    if (fs.existsSync(schemaPath)) {
+    if (existsSync(schemaPath)) {
       try {
-        const schema = fs.readJsonSync(schemaPath) as ArchetypeSchema;
+        const schema = readJsonFile(schemaPath) as ArchetypeSchema;
         if (schema.name && typeof schema.name === "string") {
           name = schema.name;
         }

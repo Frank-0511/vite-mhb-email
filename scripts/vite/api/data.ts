@@ -2,10 +2,9 @@
  * @fileoverview API para lectura y escritura de data.json de plantillas (/api/data).
  */
 
-import fs from "fs-extra";
+import { existsSync } from "node:fs";
 import type { ViteDevServer } from "vite";
 import { API_ROUTES } from "../../shared/contracts/constants/api-routes.ts";
-import { getProjectPaths, isPathInside, isValidTemplateName } from "../../shared/index.ts";
 import {
   asyncHandler,
   getRequestUrl,
@@ -14,6 +13,13 @@ import {
   sendJson,
   sendText,
 } from "./http.ts";
+import {
+  getProjectPaths,
+  isPathInside,
+  isValidTemplateName,
+  readJsonFile,
+  writeJsonFile,
+} from "../../shared/index.ts";
 
 /**
  * Maneja las rutas /api/data para GET y POST.
@@ -44,7 +50,7 @@ export function setupDataApi(server: ViteDevServer, rootDir: string): void {
       }
 
       if (req.method === "GET") {
-        const data = fs.existsSync(dataPath) ? fs.readJsonSync(dataPath) : {};
+        const data = existsSync(dataPath) ? readJsonFile(dataPath) : {};
         return sendJson(res, 200, data);
       }
 
@@ -52,7 +58,7 @@ export function setupDataApi(server: ViteDevServer, rootDir: string): void {
         if (rejectUnsafeWrite(req, res)) return;
         try {
           const newData = await readJsonBody(req);
-          fs.writeJsonSync(dataPath, newData, { spaces: 2 });
+          writeJsonFile(dataPath, newData);
           return sendJson(res, 200, { success: true });
         } catch (err) {
           console.error("Error saving data.json", err);

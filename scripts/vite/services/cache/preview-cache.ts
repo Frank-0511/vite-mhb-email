@@ -4,7 +4,8 @@
  * y detecta staleness basado en cambios en fuentes de email.
  */
 
-import fs from "fs-extra";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { mkdir, rm, writeFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { resolve } from "node:path";
 import { assertValidTemplateName } from "../../../shared/index.ts";
@@ -55,17 +56,17 @@ export class PreviewCacheManager {
     for (const pattern of sourcePatterns) {
       const fullPath = resolve(this.rootDir, pattern);
       try {
-        if (fs.existsSync(fullPath)) {
-          const stat = fs.statSync(fullPath);
+        if (existsSync(fullPath)) {
+          const stat = statSync(fullPath);
 
           if (stat.isFile()) {
             maxTime = Math.max(maxTime, stat.mtimeMs);
           } else if (stat.isDirectory()) {
-            const files = fs.readdirSync(fullPath, { recursive: true, encoding: "utf-8" });
+            const files = readdirSync(fullPath, { recursive: true, encoding: "utf-8" });
             for (const file of files) {
               try {
                 const filePath = resolve(fullPath, file);
-                const fileStat = fs.statSync(filePath);
+                const fileStat = statSync(filePath);
                 if (fileStat.isFile()) {
                   maxTime = Math.max(maxTime, fileStat.mtimeMs);
                 }
@@ -96,18 +97,18 @@ export class PreviewCacheManager {
    */
   isCacheValid(templateName: string, options: PreviewCacheOptions = {}): boolean {
     const cachePath = this.getCachePath(templateName);
-    if (!fs.existsSync(cachePath)) {
+    if (!existsSync(cachePath)) {
       return false;
     }
 
     try {
       const metaPath = cachePath + ".meta";
-      if (!fs.existsSync(metaPath)) {
+      if (!existsSync(metaPath)) {
         return false;
       }
 
-      const cacheData: PreviewCacheMetadata = JSON.parse(fs.readFileSync(metaPath, "utf-8"));
-      const cacheStat = fs.statSync(cachePath);
+      const cacheData: PreviewCacheMetadata = JSON.parse(readFileSync(metaPath, "utf-8"));
+      const cacheStat = statSync(cachePath);
       const sourcesMaxTime = this.getSourcesMaxTimestamp();
 
       if (options.theme && cacheData.theme !== options.theme) {
@@ -134,10 +135,10 @@ export class PreviewCacheManager {
     options: PreviewCacheOptions = {},
   ): Promise<void> {
     const cachePath = this.getCachePath(templateName);
-    await fs.ensureDir(resolve(this.cacheDir, templateName));
+    await mkdir(resolve(this.cacheDir, templateName), { recursive: true });
 
     // Guardar HTML
-    await fs.writeFile(cachePath, html, "utf-8");
+    await writeFile(cachePath, html, "utf-8");
 
     // Guardar metadata
     const metadata: PreviewCacheMetadata = {
@@ -146,7 +147,7 @@ export class PreviewCacheManager {
       dataHash: options.dataHash || "",
       timestamp: Date.now(),
     };
-    await fs.writeFile(cachePath + ".meta", JSON.stringify(metadata, null, 2), "utf-8");
+    await writeFile(cachePath + ".meta", JSON.stringify(metadata, null, 2), "utf-8");
   }
 
   /**
@@ -154,8 +155,8 @@ export class PreviewCacheManager {
    */
   readFromCache(templateName: string): string | null {
     const cachePath = this.getCachePath(templateName);
-    if (fs.existsSync(cachePath)) {
-      return fs.readFileSync(cachePath, "utf-8");
+    if (existsSync(cachePath)) {
+      return readFileSync(cachePath, "utf-8");
     }
     return null;
   }
@@ -165,8 +166,8 @@ export class PreviewCacheManager {
    */
   async invalidateTemplate(templateName: string): Promise<void> {
     const cachePath = this.getCachePath(templateName);
-    if (fs.existsSync(cachePath)) {
-      await fs.remove(resolve(this.cacheDir, templateName));
+    if (existsSync(cachePath)) {
+      await rm(resolve(this.cacheDir, templateName), { recursive: true, force: true });
     }
   }
 
@@ -174,8 +175,8 @@ export class PreviewCacheManager {
    * Invalidar toda la cache.
    */
   async invalidateAll(): Promise<void> {
-    if (fs.existsSync(this.cacheDir)) {
-      await fs.remove(this.cacheDir);
+    if (existsSync(this.cacheDir)) {
+      await rm(this.cacheDir, { recursive: true, force: true });
     }
   }
 

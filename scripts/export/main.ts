@@ -3,9 +3,7 @@
  * Coordina el flujo: compilación → renderización → limpieza
  */
 
-import fs from "fs-extra";
-import { c, paint } from "../shared/index.ts";
-import { formatBytes } from "../shared/index.ts";
+import { statSync } from "node:fs";
 import { compileHtmlWithData } from "./compilers.ts";
 import {
   cleanupTempFile,
@@ -14,12 +12,13 @@ import {
   getOutputPaths,
 } from "./file-manager.ts";
 import { getPuppeteerLaunchError, tryPuppeteer } from "./renderers.ts";
+import { c, formatBytes, paint } from "../shared/index.ts";
 
 /**
  * Imprime mensaje de éxito.
  */
 function printSuccess(outPath: string): void {
-  const fileSize = fs.statSync(outPath).size;
+  const fileSize = statSync(outPath).size;
   const formattedSize = formatBytes(fileSize, { useKBOnly: true });
 
   console.log(paint(c.green + c.bold, "  ✅ Exportado exitosamente"));
