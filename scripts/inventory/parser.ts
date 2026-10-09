@@ -129,6 +129,7 @@ export function matchesLayer(relativePath: string, layerKey: string): boolean {
         relativePath.startsWith("scripts/ai/") ||
         relativePath.startsWith("scripts/perf/") ||
         relativePath.startsWith("scripts/inventory/") ||
+        relativePath.startsWith("scripts/pm/") ||
         (relativePath !== "vite.config.js" &&
           relativePath !== "vite.config.ts" &&
           (relativePath.endsWith(".config.js") ||

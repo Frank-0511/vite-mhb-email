@@ -54,6 +54,7 @@ describe("check-migration-inventory (MHB-29)", () => {
       expect(
         matchesLayer("scripts/inventory/check-migration-inventory.js", "layer-5-tooling"),
       ).toBe(true);
+      expect(matchesLayer("scripts/pm/run-scripts.ts", "layer-5-tooling")).toBe(true);
       expect(matchesLayer("tailwind.config.js", "layer-5-tooling")).toBe(true);
       expect(matchesLayer("maizzle.config.js", "layer-5-tooling")).toBe(true);
       expect(matchesLayer("eslint.config.js", "layer-5-tooling")).toBe(true);
