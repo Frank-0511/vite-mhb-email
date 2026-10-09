@@ -7,7 +7,7 @@ positivo y uno negativo, y cada helper crítico tiene casos felices y de borde.
 MHB-19 no impone un porcentaje global de cobertura; el criterio es pertinencia
 sobre comportamiento observable, no sobre detalles de implementación.
 
-Suite de referencia: `bun run test` → 477 pruebas en 51 archivos, 0 fallos.
+Suite de referencia: Vitest (`bun run test`) → 477 pruebas en 51 archivos, 0 fallos.
 
 ## Reglas de compatibilidad
 

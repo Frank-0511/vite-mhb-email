@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Añadido
 
+- Soporte para npm, Yarn 4 (con `nodeLinker: node-modules`), pnpm 12 y Bun 1.3.13 como package managers soportados para desarrollo local y ejecución de scripts (`<pm> run <script>`) (MHB-36).
+- Política de lockfiles: cada quien decide si congela su instalación; el repositorio versiona exclusivamente `bun.lock` como manager del mantenedor e ignora `package-lock.json`, `yarn.lock` y `pnpm-lock.yaml`, funcionando sin lockfile en los demás gestores (MHB-36).
+- Matriz de CI con Node 24 en GitHub Actions que ejecuta pruebas e instalaciones limpias desde cero en Yarn 4, npm y pnpm para asegurar compatibilidad continua sin lockfiles versionados (MHB-36).
+- Check `PR Guard` (`pr-guard.yml`) y guía `CONTRIBUTING.md` para la política de PR externas: rechazo automático de PRs que incluyan lockfiles ajenos o modificaciones en `.github/` desde forks, y aprobación obligatoria previa para workflows (MHB-36).
 - Manifiesto de variables ESP `dist/esp-manifest.json` generado automáticamente en el pipeline de build y ejecutable bajo demanda (`bun run esp:manifest`), con perfiles `sendgrid` (Dynamic Templates con Handlebars, bloques y helpers soportados) y `sendgrid-legacy` (etiquetas de sustitución `-variable-`), sanitización de datos de prueba (`exampleData`) contra fuga de datos personales o credenciales, reglas de compatibilidad de sintaxis `esp-syntax-profile` (ERROR) y `esp-legacy-compat` (WARNING) en `validate-email`, y guard de coherencia entre manifiesto y baseline versionado integrado en `bun run check:dist-baseline` (MHB-47).
 - Workflow trimestral `outdated-majors.yml` que abre un issue asignado al dueño
   con las versiones mayores pendientes de `bun outdated`.
@@ -47,6 +51,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Cambiado
 
+- Ejecución de scripts del proyecto migrada a `node` directo con detección dinámica del package manager en tiempo de ejecución (`detect-pm.ts`) para orquestación secuencial y mensajes CLI interactivos (MHB-36).
+- Migración integral de la suite de pruebas unitarias de `bun:test` a Vitest (`vitest.config.ts`), ejecutada con `node` sobre Node 24 manteniendo paridad completa de pruebas (MHB-36).
+- Retirada de los campos `packageManager` y `engines.bun` en `package.json`, y eliminación del bloque `overrides` de `postcss` (MHB-36).
+- Declaración de soporte de plataforma: Windows no soportado (entorno verificado y soportado en macOS y Linux con Node.js `>=24`) (MHB-36).
 - Cierre total de la migración a TypeScript con repositorio 100% tipado bajo allowlist cerrada (`eslint.config.js` y el wrapper `maizzle.config.js`) (MHB-34).
 - Migración a TypeScript de configuraciones raíz (`postcss.config.ts`, `tailwind.config.ts`, `tailwind.email.config.ts`, `maizzle.config.ts`) y actualización de rutas en directivas `@config` en hojas de estilo CSS (MHB-34).
 - Migración a TypeScript de automatizaciones de agentes y comprobación de rama en `scripts/ai/**`, actualizando los comandos `agents:sync`, `agents:check` y `check:task-branch` a sus rutas `.ts` con soporte para type stripping nativo (MHB-34).

@@ -5,7 +5,9 @@ description: Verificar tareas, ejecutar comandos permitidos, preparar ramas o co
 
 # Verificación y Git
 
-- Usar `bun run <script>`; no usar npm, npx, Yarn o pnpm sin autorización.
+- Los agentes ejecutan scripts con Bun (`bun run <script>`); el proyecto
+  soporta además npm, Yarn 4 y pnpm sin lockfile. No commitear `package-lock.json`,
+  `yarn.lock` ni `pnpm-lock.yaml`.
 - Aplicar Prettier solo sobre archivos de la tarea y confirmar con
   `bun run format:check`.
 - Ejecutar controles mínimos: docs → lint Markdown; JS → lint; email → build y

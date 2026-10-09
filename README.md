@@ -113,16 +113,12 @@ El pipeline principal es:
 ### Requisitos locales
 
 - **Node.js >= 24** (`engines.node`; ver `.nvmrc`; `@types/node` fijado a 24.x). Con NVM: `nvm use` dentro del repo.
-- **Bun >= 1.3.13** (CI y `packageManager` usan **1.3.13**). Instálalo
-  standalone y deja `~/.bun/bin` en tu `PATH`:
-
-```bash
-curl -fsSL https://bun.sh/install | bash
-```
-
-No hace falta `.npmrc` ni otro archivo de versión en el repo: Bun se fija con
-`packageManager` + `bun.lock`; Node con `.nvmrc`. Tu `~/.zshrc` es configuración
-personal (NVM, PATH de Bun, etc.) y no va en el repositorio.
+- Uno de los siguientes package managers:
+  - **npm** (incluido con Node.js)
+  - **Yarn 4** (con `nodeLinker: node-modules`, ya configurado en `.yarnrc.yml`)
+  - **pnpm 12**
+  - **Bun 1.3.13**
+- Sistema operativo: **Windows no soportado (probado en macOS y Linux)**.
 
 ### Setup del proyecto
 
@@ -130,12 +126,34 @@ personal (NVM, PATH de Bun, etc.) y no va en el repositorio.
 git clone https://github.com/Frank-0511/vite-mhb-email.git
 cd vite-mhb-email
 nvm use          # opcional si usas NVM y tienes Node 24 instalado
-bun install
 ```
 
-La exportación PNG usa Puppeteer. `bun install` descarga un navegador compatible
-para el proyecto; no necesitas instalar `wkhtmltoimage`, Chrome ni ImageMagick
+Instala las dependencias con el package manager que prefieras:
+
+```bash
+bun install
+yarn install
+npm install
+pnpm install
+```
+
+La exportación PNG usa Puppeteer. La instalación de dependencias descarga un navegador
+compatible para el proyecto; no necesitas instalar `wkhtmltoimage`, Chrome ni ImageMagick
 de forma global. La primera instalación requiere conexión y espacio adicional.
+
+### Lockfiles
+
+- Cada quien decide si congela su instalación.
+- Este repo versiona solo `bun.lock` (manager del mantenedor) e ignora `package-lock.json`, `yarn.lock` y `pnpm-lock.yaml`.
+- La CI instala con yarn, npm y pnpm desde cero en cada PR, así que el proyecto funciona con cualquiera de ellos sin lockfile.
+
+### Versionar tu lockfile en un fork
+
+1. Quitar del `.gitignore` la línea de tu lockfile.
+2. Opcional: borrar `bun.lock` si no usas Bun.
+3. Instalar con tu manager y commitear el lockfile generado.
+4. Opcional: cambiar el carril principal de `ci.yml` a tu manager con instalación congelada.
+5. **Aviso:** los pasos 1–4 son solo para tu fork. Una PR hacia este repo no debe incluir esos cambios (ver [CONTRIBUTING.md](CONTRIBUTING.md)).
 
 ---
 
@@ -400,29 +418,42 @@ TEST_APPLE_TO=
 
 ## Scripts de Referencia
 
-```bash
-bun install              # Instalar dependencias
-bun run dev              # Servidor de desarrollo
-bun run build            # Build de produccion (Maizzle + validacion)
-bun run test             # Suite de tests (bun:test)
-bun run test:watch       # Tests en modo watch
-bun run typecheck        # Verificacion de tipos JSDoc
-bun run lint             # Lint completo (HTML / JS / Markdown / JSON / CSS)
-bun run validate-email   # Solo el validador de compatibilidad email
-bun run cli              # Interfaz CLI interactiva
-bun run format           # Aplicar Prettier
-bun run format:check     # Verificar formato Prettier
-bun run build-selective  # Build de templates especificos
-bun run check-size       # Verificar tamano del HTML generado
-bun run agents:sync      # Sincronizar skills de agentes
-```
+> Nota: `<pm>` corresponde a tu package manager de preferencia (`bun`, `yarn`, `npm` o `pnpm`).
+
+| Comando                    | Descripción                                       |
+| -------------------------- | ------------------------------------------------- |
+| `<pm> install`             | Instalar dependencias                             |
+| `<pm> run dev`             | Servidor de desarrollo                            |
+| `<pm> run build`           | Build de producción (Maizzle + validación)        |
+| `<pm> run test`            | Suite de tests con Vitest                         |
+| `<pm> run test:watch`      | Tests en modo watch                               |
+| `<pm> run typecheck`       | Verificación de tipos TypeScript                  |
+| `<pm> run lint`            | Lint completo (HTML / JS / Markdown / JSON / CSS) |
+| `<pm> run validate-email`  | Solo el validador de compatibilidad email         |
+| `<pm> run cli`             | Interfaz CLI interactiva                          |
+| `<pm> run format`          | Aplicar Prettier                                  |
+| `<pm> run format:check`    | Verificar formato Prettier                        |
+| `<pm> run build-selective` | Build de templates específicos                    |
+| `<pm> run check-size`      | Verificar tamaño del HTML generado                |
+| `<pm> run agents:sync`     | Sincronizar skills de agentes                     |
 
 ---
 
 ## Requisitos
 
-- Node.js **24** (`.nvmrc`; mínimo declarado en `package.json`: >= 24)
-- Bun **>= 1.3.13** (recomendado: standalone; CI usa 1.3.13)
+- **Node.js >= 24** (`.nvmrc`; mínimo declarado en `package.json`: `>=24`)
+- Uno de los siguientes gestores de paquetes:
+  - **npm** (incluido con Node.js)
+  - **Yarn 4** (con `nodeLinker: node-modules`, configurado en `.yarnrc.yml`)
+  - **pnpm 12**
+  - **Bun 1.3.13**
+- Sistema operativo: **Windows no soportado (probado en macOS y Linux)**
+
+---
+
+## Contribución
+
+Consulta la guía de contribución en [CONTRIBUTING.md](CONTRIBUTING.md) para conocer las pautas de desarrollo local, validaciones previas y política de lockfiles para pull requests.
 
 ---
 
@@ -434,6 +465,4 @@ Este proyecto se distribuye bajo la [licencia MIT](LICENSE).
 
 ## Notas para Agentes
 
-Las reglas operativas viven en `docs/AGENTS.md` y en las skills repo-locales de
-`docs/agent-skills/`. Antes de modificar build, Vite, Maizzle, Handlebars,
-templates, CLI, validadores o scripts, lee la skill correspondiente.
+Las reglas operativas viven en `AGENTS.md` (fuente canónica: `docs/ai/AGENTS.md`) y en las skills repo-locales de `docs/ai/skills/`. Antes de modificar build, Vite, Maizzle, Handlebars, templates, CLI, validadores o scripts, lee la skill correspondiente.

@@ -45,7 +45,7 @@ asignado.
 
 ## Invariantes
 
-- Usar Bun; no `npm`, `npx`, `yarn` ni `pnpm` sin autorización explícita.
+- Los agentes de este repo usan Bun como manager de mantenimiento (`bun run …`, `bun install --frozen-lockfile`) porque `bun.lock` es el lockfile versionado; el proyecto soporta npm, Yarn 4 y pnpm sin lockfile. No commitear `package-lock.json`, `yarn.lock` ni `pnpm-lock.yaml`.
 - No usar `maizzle build` como solución final; usar `bun run build`.
 - Mantener `[[ page.* ]]` para Maizzle y `{{ }}` para el ESP.
 - No escribir fuera del workspace, exponer secretos, revertir trabajo ajeno ni
