@@ -146,7 +146,7 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
 - **Orden:** MHB-36 → MHB-49; MHB-48 en paralelo con MHB-36 por no compartir superficie.
 - **Entregables:** compatibilidad con npm, yarn, pnpm y bun, tests en Vitest y release `v1.4.0`.
 - **Riesgos:** incompatibilidades sutiles entre package managers o drift transitivo sin lockfile; romper un comando público.
-- **Criterio de salida:** MHB-36 confirma que el proyecto funciona con los 4 managers con `dist/` idéntico y `v1.4.0` publicada por MHB-49.
+- **Criterio de salida:** MHB-36 confirma que el proyecto funciona con los 4 managers; `dist/` idéntico al baseline en el carril congelado con bun.lock y `v1.4.0` publicada por MHB-49.
 
 ### MHB-36 — Compatibilidad multi-package-manager
 
@@ -165,9 +165,9 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
   - `.env` lo carga Bun automáticamente; con Node solo lo carga `loadEnv()` en `scripts/shared/env/env.ts`, que ya usan los envíos de correo (sin cambio necesario).
 - **Ensayos verificados el 2026-10-08 en un worktree desechable:**
   - **Migración a Vitest:** el codemod del plan y `vitest@5.0.3` (`pool: "forks"`) dejan 103/103 archivos y 795/795 tests en verde. `tsc` queda con 0 errores tras 2 retoques: `menu-filter.test.ts` y retirar un `@ts-expect-error` sobrante. ESLint queda limpio.
-  - **Yarn 4.18.1 sin lockfile ni `overrides`:** instala y el build deja `dist/` idéntico al baseline. Requiere `.yarnrc.yml` con `nodeLinker: node-modules` (Plug'n'Play no es compatible con Vite y Maizzle).
+  - **Resolución transitiva sin lockfile (hecho comprobado el 2026-10-09):** el ensayo preliminar con Yarn 4.18.1 no es reproducible sin lockfile. `bun.lock` fija `html-crush@6.1.3`, `email-comb@7.1.3` y `string-strip-html@13.5.3`, mientras que npm ya publicaba `6.3.5`, `7.4.5` y `13.7.7` (todas del 2026-09-29). Un install sin lockfile resuelve esas versiones y cambia el espaciado y saltos de línea de `dist/`, sin perder variables ESP. Yarn requiere `.yarnrc.yml` con `nodeLinker: node-modules` (Plug'n'Play no es compatible con Vite y Maizzle).
 - **Decisiones aprobadas (2026-10-08):**
-  - **Lockfiles: cada quien decide el suyo.** El repo versiona `bun.lock` porque es el manager del mantenedor; `package-lock.json`, `yarn.lock` y `pnpm-lock.yaml` se ignoran en Git. Quien haga fork puede versionar el suyo. El código no depende de ningún lockfile: la CI instala con yarn, npm y pnpm desde cero en cada PR y exige los mismos gates y `dist/` idéntico.
+  - **Lockfiles: cada quien decide el suyo.** El repo versiona `bun.lock` porque es el manager del mantenedor; `package-lock.json`, `yarn.lock` y `pnpm-lock.yaml` se ignoran en Git. Quien haga fork puede versionar el suyo. El código no depende de ningún lockfile: la CI instala con yarn, npm y pnpm desde cero en cada PR y exige build, validate-email, check-size, typecheck y test; `check:dist-baseline` es gate estricto solo del carril congelado con bun.
   - **Yarn:** solo `.yarnrc.yml` con `nodeLinker: node-modules`; sin binario versionado ni `yarnPath`. Sin campo `packageManager`, porque bloquea a los demás managers.
   - **Detección del manager:** sin variable `.env`. Se usa `npm_config_user_agent` (el manager que lanzó el script) y, sin él (hooks, `node` directo), `npm`, que viene con Node.
   - Windows no está soportado y se documenta.
@@ -205,7 +205,7 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
   3. Sin `bun:test`: `rg -l 'bun:test' scripts src types` vacío; `bunfig.toml` y `types/bun-test.d.ts` no existen.
   4. Suite completa en Vitest con el mismo número de tests que la línea base (795, o la cifra registrada en F0), con `bun run test` y con `npm run test`.
   5. `detect-pm.test.ts` cubre user agent de los 4 managers, user agent desconocido o ausente → `npm` y `formatRunCommand`; `run-scripts.test.ts` cubre la ejecución secuencial, la parada en el primer fallo y el uso sin argumentos.
-  6. En un clon desechable, cada manager termina en verde `install`, `typecheck`, `test`, `build` y `check:dist-baseline`: `bun install --frozen-lockfile`, `yarn install` (Yarn 4.18.1), `npm install` y `pnpm install` (pnpm 12.10.1). `dist/` queda idéntico al baseline.
+  6. En un clon desechable, cada manager termina en verde `install`, `typecheck`, `test`, `build`, `validate-email` y `check-size`: `bun install --frozen-lockfile`, `yarn install` (Yarn 4.18.1), `npm install` y `pnpm install` (pnpm 12.10.1); `check:dist-baseline` en verde estricto en el carril congelado con bun.
   7. `git status --porcelain` tras instalar con los 4 managers no muestra lockfiles nuevos ni cambios en `bun.lock`.
   8. `ci.yml` define el job `package-managers` (matriz npm/yarn/pnpm) incluido en `needs` y en la verificación de `CI Pipeline`; todos los jobs usan `actions/setup-node` con Node 24. Revisión manual del YAML y CI verde en la PR.
   9. Documentación: `rg -n 'bun:test|bun test\b' README.md docs/ai docs/implementation/TEST-INVENTORY.md` y `rg -n -i 'solo bun|únicamente bun|bun como único' README.md docs/ai` vacíos; `bun run agents:check` en verde. Revisión manual: cada `bun run`/`bun install` restante de `README.md` aparece junto a sus equivalentes multi-manager.
@@ -217,7 +217,7 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
   - Tabla de instalación y gates por manager con versiones.
   - Diff de `package.json`, conteo de archivos migrados a Vitest y salida de las allowlists de `rg`.
 - **Riesgos y reversión:**
-  - Diferencias de resolución transitiva entre managers que alteren `dist/`: las detecta `check:dist-baseline` y se escala.
+  - Drift transitivo sin lockfile: riesgo aceptado en los managers sin lockfile (variaciones menores de espaciado en HTML que no alteran variables ESP, contratos ni peso); `check:dist-baseline` garantiza reproducibilidad byte a byte en el carril congelado con `bun.lock`.
   - Vitest aísla por archivo y puede exponer estado compartido entre tests: se corrige el test, sin `skip`.
   - pnpm o Yarn rechazan alguna configuración: se escala con el error literal.
   - Cada fase es un commit revertible.
@@ -235,7 +235,7 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
 - **Implementador:** orquestador con perfil tooling/infraestructura, medio-alto, con un subagente nuevo por fase F1–F6.
 - **Revisor independiente:** revisor técnico (`task-review`).
 - **Condición de escalamiento:**
-  - Un manager no instala o altera `dist/`.
+  - Un manager no instala, falla funcionalmente, pierde variables ESP `{{ }}` o altera `dist/` en el carril congelado con `bun.lock`.
   - Node no ejecuta un `.ts` propio.
   - Vitest exige cambiar lógica no-test.
   - Retirar el `overrides` cambia `dist/` o reintroduce un `postcss < 8.5.23`.
