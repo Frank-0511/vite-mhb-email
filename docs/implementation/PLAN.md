@@ -7,8 +7,8 @@ trazabilidad de los IDs cerrados.
 ## Objetivo vigente
 
 Publicar el trabajo acumulado desde `v1.2.0` en releases incrementales, una por
-fase. Primero se cierra la puerta de calidad con evidencia en clientes reales y
-se publica `v1.3.0`; después se reduce y desacopla el tooling (dependencias y
+fase. Primero se cierra la puerta de calidad automatizable y se publica `v1.3.0`;
+la evidencia manual en clientes de correo se ejecuta en una etapa final (MHB-51); después se reduce y desacopla el tooling (dependencias y
 multi-package-manager) para publicar `v1.4.0`. La migración de stack de estilos
 y la demo de portafolio se planifican como fases propias.
 
@@ -44,6 +44,7 @@ cierre independientes.
 | E    | MHB-50 | Release de la migración de stack              | Pendiente | MHB-49 y MHB-38                |
 | F    | MHB-16 | Demo candidata pre-renderizada                | Opcional  | MHB-15                         |
 | F    | MHB-23 | Ampliar biblioteca de componentes             | Opcional  | Caso de uso aprobado           |
+| G    | MHB-51 | Verificación manual final en clientes         | Pendiente | MHB-15, MHB-49 y MHB-50        |
 
 ## Invariantes de calidad, arquitectura y refactor integrado
 
@@ -100,17 +101,17 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
 - **Contenido de la release:** todo lo completado y mergeado en `master` desde `v1.2.0` (`git log v1.2.0..master`: migración TypeScript completa hasta MHB-34, gobernanza MHB-40, contrato de salida MHB-41, protección de `master` MHB-45, compatibilidad HTML MHB-44, API local MHB-46 y contrato ESP MHB-47, higiene de dependencias MHB-43) más MHB-14.
 - **Orden:** MHB-14 → MHB-15.
 - **Riesgos:** afirmar evidencia de clientes sin pruebas; incluir secretos en capturas o documentación; publicar sin el checklist Go/No-Go.
-- **Criterio de salida:** MHB-14 cerrada con evidencia enlazable y `v1.3.0` publicada por MHB-15.
+- **Criterio de salida:** MHB-14 cerrada con evidencia automatizada enlazable y `v1.3.0` publicada por MHB-15; la evidencia en clientes de correo queda en MHB-51.
 
 ### MHB-14 — Evidencia de uso y compatibilidad
 
-- **Objetivo observable:** producir checklist reproducible de accesibilidad y matriz fechada de clientes reales.
+- **Objetivo observable:** producir checklist reproducible de accesibilidad y matriz fechada de clientes reales. La ejecución en clientes de correo se traslada a MHB-51 (etapa final).
 - **Superficies autorizadas:** protocolo/checklist, capturas, matriz documental y templates de producto.
 - **Dependencias y precondiciones:** MHB-44 completada, para que la evidencia en clientes reales se tome sobre el HTML ya corregido (colores, unidades e imágenes); el flujo de producto permanece disponible y se dispone de los clientes/dispositivos declarados.
 - **Pasos técnicos:** definir criterios de teclado/lector, ejecutar protocolo en Gmail, Outlook y Apple Mail, y registrar límites.
 - **Criterios de aceptación:** cada prueba tiene fecha, cliente, criterio, resultado y evidencia; no se sustituyen clientes reales por un validador estático.
 - **Validación automática:** validadores disponibles y lint de matriz, sin presentarlos como prueba real.
-- **Validación manual:** teclado, lector y clientes de correo según protocolo.
+- **Validación manual:** teclado y lector según protocolo. Clientes de correo: MHB-51.
 - **Evidencia requerida:** matriz por cliente/criterio, capturas sin secretos y limitaciones.
 - **Riesgos y reversión:** afirmar cobertura no realizada o filtrar datos; usar cuentas/fixtures seguros y marcar no verificado.
 - **Envíos reales:** los correos de prueba pueden enviarse con la integración ESP (SendGrid) del usuario usando `dist/<template>.html`, solo con autorización explícita por envío, destinatarios de prueba propios y sin API keys, tokens ni direcciones reales en capturas, `STATUS.md` o el repositorio. Esa integración vive fuera de este repositorio y no se incorpora a él.
@@ -139,6 +140,23 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
 - **Implementador:** perfil documentación/release, medio.
 - **Revisor independiente:** orquestador.
 - **Condición de escalamiento:** cualquier publicación, tag, versión o evidencia no sustentada, o un hallazgo que se proponga incluir pese al congelamiento de alcance.
+
+## Fase G — Verificación final en clientes
+
+- **Contenido:** MHB-51, ejecución manual del protocolo de clientes de correo para todas las etapas, después de la última release planificada.
+- **Orden:** tras MHB-15, MHB-49 y MHB-50.
+- **Riesgos:** afirmar compatibilidad con clientes no probados; detectar regresiones tarde, cuando ya hay releases publicadas.
+
+### MHB-51 — Verificación manual final en clientes de correo
+
+- **Objetivo observable:** registrar en `docs/guides/COMPATIBILITY-MATRIX.md` la ejecución fechada del protocolo en Gmail web/app, Outlook.com, Outlook Windows y Apple Mail macOS/iOS para los 4 templates publicados.
+- **Superficies autorizadas:** `docs/guides/COMPATIBILITY-MATRIX.md`, `docs/evidence/mhb-51/`, `docs/implementation/STATUS.md`.
+- **Criterios de aceptación:** cada fila tiene fecha, cliente, criterio, resultado (E0 a E3) y evidencia sanitizada; las filas no ejecutadas siguen `No verificado` y se declaran.
+- **Validación manual:** ejecución por el usuario en dispositivos reales.
+- **Evidencia requerida:** matriz por cliente y criterio, capturas sin secretos y limitaciones.
+- **Riesgos y reversión:** afirmar cobertura no realizada; filtrar datos. Usar cuentas y fixtures seguros.
+- **Exclusiones específicas:** no certificar compatibilidad universal.
+- **Condición de escalamiento:** falta acceso a cliente o dispositivo, o aparecen datos sensibles.
 
 ## Fase D — Portabilidad y release v1.4.0
 

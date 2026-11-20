@@ -3,7 +3,7 @@
 ## Resumen
 
 - ID activo: MHB-14
-- Estado: En progreso
+- Estado: En revisión
 - Implementador: perfil evidencia/compatibilidad, alto
 - Revisor: orquestador o revisor técnico independiente con acceso a clientes
 - Rama: `feature/mhb-14`
@@ -12,7 +12,7 @@
 
 ## Paquete activo
 
-- MHB-14: Evidencia de uso y compatibilidad (Fase C). Estado: `En progreso`.
+- MHB-14: Evidencia de uso y compatibilidad (Fase C). Estado: `En revisión` (entregado con limitaciones: sin ejecución manual en clientes de correo, ver Handoff).
 - Propiedad de archivos: `docs/guides/EMAIL-A11Y-CHECKLIST.md`, `docs/guides/COMPATIBILITY-MATRIX.md`, `docs/evidence/mhb-14/`, `scripts/validators/evidence-matrix/evidence-matrix.test.ts`, `src/emails/layouts/main.html`, `scripts/validators/email-rules/rules/structure/document.ts`, `scripts/validators/email-rules/rules/structure/document.test.ts`, `scripts/validators/email-rules/rules/registry.ts`, `dist/*.html`, `scripts/validators/dist-baseline/baseline.json`, `docs/implementation/STATUS.md`, `CHANGELOG.md`.
 - Controles:
   - `bun install --frozen-lockfile`: Verde
@@ -68,6 +68,8 @@
 
 ## Decisiones y desviaciones vigentes
 
+- **MHB-14 — Traslado de pruebas en clientes a etapa final (aprobado por el usuario, 2026-10-09):** la ejecución manual en Gmail, Outlook y Apple Mail pasa a MHB-51 (Fase G), ejecutada al final de todas las etapas. `PLAN.md` actualizado. Consecuencia: `v1.3.0` ya no espera evidencia en clientes; MHB-15 depende solo de MHB-14.
+
 - **MHB-36 — Decisiones de planificación (aprobadas por el usuario, 2026-10-08):** (1) ID único, una rama y una PR, un commit por fase y un subagente nuevo por fase; (2) lockfiles: cada quien decide el suyo; el repo versiona solo `bun.lock` (manager del mantenedor), ignora `package-lock.json`, `yarn.lock` y `pnpm-lock.yaml`, y la CI valida yarn, npm y pnpm instalando desde cero; `.yarnrc.yml` solo con `nodeLinker: node-modules`; sin campo `packageManager`; (3) sin variable `.env`: el manager se detecta por `npm_config_user_agent` con `npm` por defecto; (4) Windows no soportado, se documenta en `README.md`; (5) la CI conserva `oven-sh/setup-bun` solo para la instalación congelada del carril principal (ajusta el criterio «sin `setup-bun`» del contrato original).
 - **MHB-36 — Ampliación de alcance acordada (2026-10-09):** política de PR externas.
   - Workflow `pr-guard.yml` (`pull_request_target`, sin checkout): rechaza lockfiles ajenos y cambios en `.github/` desde forks.
@@ -114,7 +116,9 @@
 
 ## Handoff
 
-- Próxima acción inmediata: Ejecución manual de pruebas en clientes reales (F3) por el usuario con capturas sanitizadas, o confirmación del estado de los clientes para revisión independiente.
+- Próxima acción inmediata: revisión independiente de MHB-14 (`task-review`) sobre `feature/mhb-14`, con alcance automatizable más teclado/lector. Gates re-ejecutados en esta entrega: `check:task-branch`, `lint`, `typecheck`, `test`, `format:check`, `build`, `validate-email`, `check:dist-baseline`, `check-size`, `agents:check` y `git diff --check`: todos Verde (rc=0).
+- Ejecución en clientes de correo (Gmail, Outlook, Apple Mail): trasladada a MHB-51 en la etapa final (Fase G). Las filas de `COMPATIBILITY-MATRIX.md` siguen `No verificado` hasta esa etapa.
+- Pendiente de decisión del usuario: PR `feature/mhb-14` → `master`, push y merge; no se han ejecutado.
 - Siguiente tarea del roadmap (no iniciar sin asignación explícita):
   - MHB-15 (Fase C): bloqueada hasta completar MHB-14.
   - MHB-48 (Fase D): bloqueada hasta evaluar disparador de performance o decisión de release.
