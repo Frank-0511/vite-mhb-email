@@ -1,0 +1,218 @@
+[
+  {
+    "file": "example.html",
+    "viewport": "desktop",
+    "title": "{{title}}",
+    "hasDoctype": true,
+    "overflowX": false,
+    "espVarsInText": true,
+    "imagesWithoutAlt": 0,
+    "axeViolations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodes": 1
+      }
+    ],
+    "consoleErrors": [],
+    "failedRequests": []
+  },
+  {
+    "file": "example.html",
+    "viewport": "mobile",
+    "title": "{{title}}",
+    "hasDoctype": true,
+    "overflowX": false,
+    "espVarsInText": true,
+    "imagesWithoutAlt": 0,
+    "axeViolations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodes": 1
+      }
+    ],
+    "consoleErrors": [],
+    "failedRequests": []
+  },
+  {
+    "file": "newsletter.html",
+    "viewport": "desktop",
+    "title": "Novedades de este mes",
+    "hasDoctype": true,
+    "overflowX": false,
+    "espVarsInText": true,
+    "imagesWithoutAlt": 0,
+    "axeViolations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodes": 1
+      }
+    ],
+    "consoleErrors": [],
+    "failedRequests": []
+  },
+  {
+    "file": "newsletter.html",
+    "viewport": "mobile",
+    "title": "Novedades de este mes",
+    "hasDoctype": true,
+    "overflowX": false,
+    "espVarsInText": true,
+    "imagesWithoutAlt": 0,
+    "axeViolations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodes": 1
+      }
+    ],
+    "consoleErrors": [],
+    "failedRequests": []
+  },
+  {
+    "file": "password-reset.html",
+    "viewport": "desktop",
+    "title": "Restablece tu contraseña",
+    "hasDoctype": true,
+    "overflowX": false,
+    "espVarsInText": true,
+    "imagesWithoutAlt": 0,
+    "axeViolations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodes": 1
+      }
+    ],
+    "consoleErrors": [],
+    "failedRequests": []
+  },
+  {
+    "file": "password-reset.html",
+    "viewport": "mobile",
+    "title": "Restablece tu contraseña",
+    "hasDoctype": true,
+    "overflowX": false,
+    "espVarsInText": true,
+    "imagesWithoutAlt": 0,
+    "axeViolations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodes": 1
+      }
+    ],
+    "consoleErrors": [],
+    "failedRequests": []
+  },
+  {
+    "file": "receipt.html",
+    "viewport": "desktop",
+    "title": "Recibo de tu compra",
+    "hasDoctype": true,
+    "overflowX": false,
+    "espVarsInText": true,
+    "imagesWithoutAlt": 0,
+    "axeViolations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodes": 3
+      }
+    ],
+    "consoleErrors": [],
+    "failedRequests": []
+  },
+  {
+    "file": "receipt.html",
+    "viewport": "mobile",
+    "title": "Recibo de tu compra",
+    "hasDoctype": true,
+    "overflowX": false,
+    "espVarsInText": true,
+    "imagesWithoutAlt": 0,
+    "axeViolations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodes": 3
+      }
+    ],
+    "consoleErrors": [],
+    "failedRequests": []
+  },
+  {
+    "file": "user-created.html",
+    "viewport": "desktop",
+    "title": "Tu cuenta ha sido creada",
+    "hasDoctype": true,
+    "overflowX": false,
+    "espVarsInText": true,
+    "imagesWithoutAlt": 0,
+    "axeViolations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodes": 5
+      }
+    ],
+    "consoleErrors": [],
+    "failedRequests": []
+  },
+  {
+    "file": "user-created.html",
+    "viewport": "mobile",
+    "title": "Tu cuenta ha sido creada",
+    "hasDoctype": true,
+    "overflowX": false,
+    "espVarsInText": true,
+    "imagesWithoutAlt": 0,
+    "axeViolations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodes": 5
+      }
+    ],
+    "consoleErrors": [],
+    "failedRequests": []
+  },
+  {
+    "file": "welcome.html",
+    "viewport": "desktop",
+    "title": "Bienvenido a Mi Empresa",
+    "hasDoctype": true,
+    "overflowX": false,
+    "espVarsInText": true,
+    "imagesWithoutAlt": 0,
+    "axeViolations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodes": 3
+      }
+    ],
+    "consoleErrors": [],
+    "failedRequests": []
+  },
+  {
+    "file": "welcome.html",
+    "viewport": "mobile",
+    "title": "Bienvenido a Mi Empresa",
+    "hasDoctype": true,
+    "overflowX": false,
+    "espVarsInText": true,
+    "imagesWithoutAlt": 0,
+    "axeViolations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodes": 3
+      }
+    ],
+    "consoleErrors": [],
+    "failedRequests": []
+  }
+]
