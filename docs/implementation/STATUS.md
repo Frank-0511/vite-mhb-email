@@ -3,7 +3,7 @@
 ## Resumen
 
 - ID activo: MHB-14
-- Estado: En revisión
+- Estado: Completada
 - Implementador: perfil evidencia/compatibilidad, alto
 - Revisor: orquestador o revisor técnico independiente con acceso a clientes
 - Rama: `feature/mhb-14`
@@ -12,7 +12,7 @@
 
 ## Paquete activo
 
-- MHB-14: Evidencia de uso y compatibilidad (Fase C). Estado: `En revisión` (entregado con limitaciones: sin ejecución manual en clientes de correo, ver Handoff).
+- MHB-14: Evidencia de uso y compatibilidad (Fase C). Estado: `Completada` (2026-10-09; ejecución en clientes de correo trasladada a MHB-51).
 - Propiedad de archivos: `docs/guides/EMAIL-A11Y-CHECKLIST.md`, `docs/guides/COMPATIBILITY-MATRIX.md`, `docs/evidence/mhb-14/`, `scripts/validators/evidence-matrix/evidence-matrix.test.ts`, `src/emails/layouts/main.html`, `scripts/validators/email-rules/rules/structure/document.ts`, `scripts/validators/email-rules/rules/structure/document.test.ts`, `scripts/validators/email-rules/rules/registry.ts`, `dist/*.html`, `scripts/validators/dist-baseline/baseline.json`, `docs/implementation/STATUS.md`, `CHANGELOG.md`.
 - Controles:
   - `bun install --frozen-lockfile`: Verde
@@ -114,11 +114,19 @@
 - Excluido del cierre: bump ajeno `handlebars` 4.7.9 → 4.7.10 (`package.json`/`bun.lock`), fuera de alcance; queda fuera del commit.
 - Riesgo residual: `check:a11y` (requiere navegador) lo ejecuta CI en `audit.yml`.
 
+## Revisión de cierre — MHB-14
+
+- Veredicto: **Aprobado** (2026-10-09), rama `feature/mhb-14`, alcance automatizable más teclado/lector. Revisión en línea por el orquestador: el verificador independiente no se admitió por no declarar ítem de riesgo alto.
+- Controles re-ejecutados en árbol limpio (todos Verde, rc=0): `check:task-branch`, `lint`, `typecheck`, `test` (106 archivos, 820 tests), `format:check`, `build`, `validate-email`, `check:dist-baseline`, `check-size`, `agents:check`, `git diff --check`.
+- Auditoría del diff `master...HEAD`: sin `eslint-disable`, `@ts-*`, skip/todo, `.js`/`.mjs` nuevos, cambios en `ignores`/`tsconfig*.json` ni en `file-tree.test.ts`. `dist/`: solo 6 líneas añadidas (`<title>`), ninguna variable ESP `{{ }}` eliminada. Evidencia headless sin credenciales.
+- Matriz: 20 filas de cliente en `No verificado`, ninguna marcada verificada.
+- Riesgo residual: clientes de correo sin verificar hasta MHB-51; `check:a11y` lo ejecuta CI en `audit.yml`.
+- Tamaño: 1116 líneas autorales en 10 commits sobre `master`, por encima del corte de ~400; la forma de entrega (PR única o encadenada) requiere decisión del usuario.
+
 ## Handoff
 
-- Próxima acción inmediata: revisión independiente de MHB-14 (`task-review`) sobre `feature/mhb-14`, con alcance automatizable más teclado/lector. Gates re-ejecutados en esta entrega: `check:task-branch`, `lint`, `typecheck`, `test`, `format:check`, `build`, `validate-email`, `check:dist-baseline`, `check-size`, `agents:check` y `git diff --check`: todos Verde (rc=0).
+- Próxima acción inmediata: decidir la forma de entrega de `feature/mhb-14` (PR única o encadenada) y abrir la PR. El merge sigue siendo decisión del usuario.
 - Ejecución en clientes de correo (Gmail, Outlook, Apple Mail): trasladada a MHB-51 en la etapa final (Fase G). Las filas de `COMPATIBILITY-MATRIX.md` siguen `No verificado` hasta esa etapa.
-- Pendiente de decisión del usuario: PR `feature/mhb-14` → `master`, push y merge; no se han ejecutado.
 - Siguiente tarea del roadmap (no iniciar sin asignación explícita):
-  - MHB-15 (Fase C): bloqueada hasta completar MHB-14.
+  - MHB-15 (Fase C): desbloqueada por MHB-14; no iniciada.
   - MHB-48 (Fase D): bloqueada hasta evaluar disparador de performance o decisión de release.
