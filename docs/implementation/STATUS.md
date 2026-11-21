@@ -35,7 +35,7 @@
 
 ## Baseline vigente
 
-- La release [v1.2.0](https://github.com/Frank-0511/vite-mhb-email/releases/tag/v1.2.0) es el baseline funcional publicado; la release `v1.3.0` está consolidada y lista para etiquetar tras el merge.
+- La release [v1.2.0](https://github.com/Frank-0511/vite-mhb-email/releases/tag/v1.2.0) es el baseline funcional publicado; la release `v1.3.0` está publicada (tag `v1.3.0` en `81d2b7c`, 2026-11-21).
 - La migración a TypeScript por capas (núcleo, CLI, servidor Vite y dashboard web) está completada y mergeada a `master`; la trazabilidad de los IDs cerrados vive en Git.
 - Las variables ESP `{{ }}` se preservan en el HTML final; `[[ page.* ]]` queda reservado para Maizzle.
 
@@ -119,7 +119,7 @@
 
 ## Handoff
 
-- Próxima acción inmediata: fusión (merge) de `feature/mhb-15` a `master` y posterior creación del tag anotado `v1.3.0` por el usuario/orquestador (publicación autónoma prohibida).
+- Próxima acción inmediata: ninguna pendiente en MHB-15; la siguiente acción la decide el usuario.
 - Siguiente tarea del roadmap (no iniciar sin asignación explícita):
   - MHB-49 (Fase D): Release `v1.4.0` (tras MHB-15 y MHB-36; desbloqueada al mergear MHB-15).
   - MHB-48 (Fase D): actualización TypeScript 7 (bloqueada por disparador externo).
