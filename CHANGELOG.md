@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-11-20
+
+### Contrato de salida para integradores
+
+- **Validación del baseline frente a v1.2.0:** Todas las diferencias en `dist/*.html` respecto al baseline de la versión `v1.2.0` están debidamente justificadas y validadas por `bun run check:dist-baseline`:
+  - **Colores y unidades (MHB-44):** Adopción de `tailwindcss-preset-email` para garantizar salida de colores exclusivamente en notación hexadecimal (HEX) y dimensiones/espaciados en píxeles (`px`), eliminando sintaxis CSS Color 4 `rgb(r g b / a)` y unidades `rem`/`em` en email para máxima compatibilidad con Outlook de escritorio y clientes tradicionales.
+  - **Optimización de bloques de estilo (MHB-44):** Reactivación de `removeInlinedSelectors: true` en Maizzle para eliminar selectores redundantes del bloque `<style>`, reduciendo el tamaño total del HTML compilado de 123 KB a 42 KB y asegurando que ningún `<style>` supere el límite de 8192 bytes de Gmail.
+  - **Iconos optimizados en CDN (MHB-44):** Sustitución de SVGs remotos por 12 iconos PNG @2x alojados en CDN público (jsDelivr) con soporte para variantes de tema claro/oscuro.
+  - **Accesibilidad y título descriptivo (MHB-14):** Adición de `<title>[[ page.title ]]</title>` en el `<head>` de los 6 templates de producto desde su frontmatter, garantizando títulos descriptivos para lectores de pantalla y cumplimiento del checklist WCAG / regla `title-present`.
+- **Preservación estricta de variables ESP:** Se confirma que el 100% de las variables ESP con sintaxis Handlebars `{{ }}` se preservan exactamente intactas en los 6 templates de `dist/*.html` (`example.html`, `newsletter.html`, `password-reset.html`, `receipt.html`, `user-created.html` y `welcome.html`), sin colisión ni consumo prematuro durante las etapas de preview ni build.
+- **Manifiesto de variables ESP (MHB-47):** Generación automática de `dist/esp-manifest.json` describiendo variables requeridas, opcionales, datos de ejemplo sanitizados (`exampleData`) y mapeo a etiquetas de sustitución SendGrid Legacy (`-variable-`) para facilitar la ingesta programática en pipelines de despliegue y ESPs.
+
 ### Seguridad
 
 - Endpoints de escritura de la API local del servidor Vite rechazan con 403 peticiones cross-site (`Sec-Fetch-Site`/`Origin`) y cuerpos sin `application/json` (MHB-46).
@@ -196,6 +208,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - El renderizador de iconos escapa `&`, `<`, `>` y comillas en atributos antes
   de generar el SVG inline.
 
-[Unreleased]: https://github.com/Frank-0511/vite-mhb-email/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/Frank-0511/vite-mhb-email/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/Frank-0511/vite-mhb-email/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/Frank-0511/vite-mhb-email/releases/tag/v1.2.0
 [1.1.0]: https://github.com/Frank-0511/vite-mhb-email/releases/tag/v1.1.0

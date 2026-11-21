@@ -2,37 +2,36 @@
 
 ## Resumen
 
-- ID activo: MHB-14
-- Estado: Completada
-- Implementador: perfil evidencia/compatibilidad, alto
-- Revisor: orquestador o revisor técnico independiente con acceso a clientes
-- Rama: `feature/mhb-14`
-- Última actualización: 2026-10-09
-- Contrato activo: `docs/implementation/PLAN.md` (sección MHB-14)
+- ID activo: MHB-15
+- Estado: En revisión
+- Implementador: perfil documentación/release, medio
+- Revisor: orquestador
+- Rama: `feature/mhb-15`
+- Última actualización: 2026-11-20
+- Contrato activo: `docs/implementation/PLAN.md` (sección MHB-15)
 
 ## Paquete activo
 
-- MHB-14: Evidencia de uso y compatibilidad (Fase C). Estado: `Completada` (2026-10-09; ejecución en clientes de correo trasladada a MHB-51).
-- Propiedad de archivos: `docs/guides/EMAIL-A11Y-CHECKLIST.md`, `docs/guides/COMPATIBILITY-MATRIX.md`, `docs/evidence/mhb-14/`, `scripts/validators/evidence-matrix/evidence-matrix.test.ts`, `src/emails/layouts/main.html`, `scripts/validators/email-rules/rules/structure/document.ts`, `scripts/validators/email-rules/rules/structure/document.test.ts`, `scripts/validators/email-rules/rules/registry.ts`, `dist/*.html`, `scripts/validators/dist-baseline/baseline.json`, `docs/implementation/STATUS.md`, `CHANGELOG.md`.
+- MHB-15: Release v1.3.0 (Fase C). Estado: `En revisión`.
+- Propiedad de archivos: `package.json`, `CHANGELOG.md`, `README.md`, `docs/implementation/RELEASE_BASELINE.md`, `docs/implementation/STATUS.md`, `docs/implementation/STATUS-HISTORY.md`.
 - Controles:
   - `bun install --frozen-lockfile`: Verde
   - `bun run lint`: Verde
   - `bun run typecheck`: Verde
-  - `bun run test`: Verde (105 files, 812 tests)
+  - `bun run test`: Verde (106 files, 820 tests)
   - `bun run format:check`: Verde
   - `bun run build`: Verde
   - `bun run validate-email`: Verde (22 reglas OK)
   - `bun run check:dist-baseline`: Verde
-  - `bun run check-size`: Verde
+  - `bun run check-size`: Verde (43.01 KB total)
   - `bun run check:task-branch`: Verde
   - `git diff --check`: Verde
 - Hechos de la entrega:
-  1. Preparación F0 completada y baseline verificado.
-  2. Implementada regla `title-present` (ERROR) y layout `main.html` con `<title>[[ page.title ]]</title>` (F1b).
-  3. Diff justificado de `dist/`: adición de `<title>` en los 6 templates (preservando `{{title}}` en `example.html` sin tocar variables ESP); `baseline.json` actualizado.
-  4. Creado checklist de accesibilidad `docs/guides/EMAIL-A11Y-CHECKLIST.md` (12 criterios WCAG, resultados estáticos y guías para VoiceOver y teclado) (F1).
-  5. Actualizado `docs/guides/COMPATIBILITY-MATRIX.md` (protocolo E3 fechado, 22 reglas estáticas y tabla de registro E3 con 24 combinaciones) y creado guard `scripts/validators/evidence-matrix/evidence-matrix.test.ts` (8/8 tests pasando) (F2/F4).
-  6. Actualizado `CHANGELOG.md` bajo `[Unreleased]` con las novedades de MHB-14.
+  1. Congelamiento estricto de alcance de la release `v1.3.0` aplicado al iniciar MHB-15.
+  2. Actualización de versión de `1.2.0` a `1.3.0` en `package.json`.
+  3. Reconciliación de `CHANGELOG.md`: migración de `[Unreleased]` a `[1.3.0]` e incorporación de la sección «Contrato de salida para integradores».
+  4. Actualización de `README.md` y `docs/implementation/RELEASE_BASELINE.md` con trazabilidad del baseline `v1.3.0`.
+  5. Ejecución del checklist Go/No-Go y preparación de release notes para revisión del orquestador.
 
 ## Baseline vigente
 
@@ -42,6 +41,7 @@
 
 ## Últimas entregas
 
+- MHB-14: `Completada` el 2026-10-09; checklist de accesibilidad (12 criterios), matriz fechada E3, guard `evidence-matrix`, regla `title-present` y `<title>` descriptivo en 6 templates; pruebas en clientes de correo trasladadas a MHB-51.
 - MHB-36: `Completada` el 2026-10-09; compatibilidad con Bun, npm, Yarn 4 y pnpm (Vitest, detección de package manager, CI Node 24 con matriz, `PR Guard`, scripts 30 → 18), `dist/` idéntico en el carril congelado y revisión técnica independiente aprobada.
 - MHB-43: `Completada` el 2026-10-08; dependencias sin `maizzle`, `fs-extra` ni `glob`, build con API programática de Maizzle, reclasificación a `dependencies`, `@types/node` 24.x y fuentes vigiladas del preview unificadas, con `dist/` idéntico y revisión técnica independiente aprobada.
 - MHB-34: `Completada` el 2026-10-08; cierre total y modo estricto TypeScript (20 archivos migrados, allowlist JS de 2 archivos, `tsconfig.strict.json` eliminado, `check:inventory --require-zero` en CI), `dist/` idéntico y revisión técnica independiente aprobada.
@@ -106,14 +106,6 @@
 - **Pruebas de guards sintéticos:** En `eslint-guards.test.ts` se anula `parserOptions.project` para evaluar snippets en memoria mediante AST puro.
 - **Barrels index.ts puros:** Todos los `index.ts` bajo `scripts/` y `src/` actúan exclusivamente como puntos de reexport (`export ... from`).
 
-## Revisión de cierre — MHB-36
-
-- Veredicto: **Aprobado** (2026-10-09), rama `feature/mhb-36`, base commit `9cb9b40` más este cierre.
-- Controles re-ejecutados por el revisor en árbol limpio (todos Verde): `check:task-branch`, `lint`, `typecheck`, `test`, `format:check`, `build`, `validate-email`, `check:dist-baseline`, `check-size`, `agents:check`, `git diff --check`.
-- Auditoría del diff: sin `eslint-disable`, `@ts-*`, `any`, skip/todo, `.js`/`.mjs` nuevos, cambios en `ignores`/`tsconfig*.json` ni en `dist/`; scripts retirados sin referencias vivas (corregida una en `COMPATIBILITY-MATRIX.md`).
-- Excluido del cierre: bump ajeno `handlebars` 4.7.9 → 4.7.10 (`package.json`/`bun.lock`), fuera de alcance; queda fuera del commit.
-- Riesgo residual: `check:a11y` (requiere navegador) lo ejecuta CI en `audit.yml`.
-
 ## Revisión de cierre — MHB-14
 
 - Veredicto: **Aprobado** (2026-10-09), rama `feature/mhb-14`, alcance automatizable más teclado/lector. Revisión en línea por el orquestador: el verificador independiente no se admitió por no declarar ítem de riesgo alto.
@@ -121,12 +113,12 @@
 - Auditoría del diff `master...HEAD`: sin `eslint-disable`, `@ts-*`, skip/todo, `.js`/`.mjs` nuevos, cambios en `ignores`/`tsconfig*.json` ni en `file-tree.test.ts`. `dist/`: solo 6 líneas añadidas (`<title>`), ninguna variable ESP `{{ }}` eliminada. Evidencia headless sin credenciales.
 - Matriz: 20 filas de cliente en `No verificado`, ninguna marcada verificada.
 - Riesgo residual: clientes de correo sin verificar hasta MHB-51; `check:a11y` lo ejecuta CI en `audit.yml`.
-- Tamaño: 1116 líneas autorales en 10 commits sobre `master`, por encima del corte de ~400; la forma de entrega (PR única o encadenada) requiere decisión del usuario.
 
 ## Handoff
 
-- Próxima acción inmediata: decidir la forma de entrega de `feature/mhb-14` (PR única o encadenada) y abrir la PR. El merge sigue siendo decisión del usuario.
-- Ejecución en clientes de correo (Gmail, Outlook, Apple Mail): trasladada a MHB-51 en la etapa final (Fase G). Las filas de `COMPATIBILITY-MATRIX.md` siguen `No verificado` hasta esa etapa.
+- Próxima acción inmediata: ejecutar suite de controles de calidad, revisión del orquestador y firma de checklist Go/No-Go para autorizar el tag `v1.3.0`.
 - Siguiente tarea del roadmap (no iniciar sin asignación explícita):
-  - MHB-15 (Fase C): desbloqueada por MHB-14; no iniciada.
-  - MHB-48 (Fase D): bloqueada hasta evaluar disparador de performance o decisión de release.
+  - MHB-49 (Fase D): Release `v1.4.0` (tras MHB-15 y MHB-36; desbloqueada al mergear MHB-15).
+  - MHB-48 (Fase D): actualización TypeScript 7 (bloqueada por disparador externo).
+  - MHB-16 / MHB-23 (Fase F): demo/arquetipos opcionales, desbloqueados tras `v1.3.0`.
+  - MHB-51 (Fase G): verificación manual final en clientes de correo tras las releases de roadmap.

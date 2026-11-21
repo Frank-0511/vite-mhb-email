@@ -9,9 +9,13 @@ generar archivos finales planos en `dist/<template>.html`.
 
 ## Estado de release
 
-El tag `v1.2.0` es el baseline funcional publicado el 2026-09-18. La
-trazabilidad entre el snapshot y la línea base está en
-[la línea base de release](docs/implementation/RELEASE_BASELINE.md).
+La versión `v1.3.0` es la release funcional que consolida el trabajo
+completado desde `v1.2.0` (migración integral a TypeScript, soporte
+multi-package-manager, endurecimiento de API local, contrato ESP SendGrid,
+compatibilidad HTML para clientes reales, checklist de accesibilidad y quality
+gates en CI). La trazabilidad histórica entre releases se conserva en
+[la línea base de release](docs/implementation/RELEASE_BASELINE.md) y
+`CHANGELOG.md`.
 
 ---
 
@@ -309,8 +313,8 @@ bun run cli --help
 ```bash
 bun run lint          # HTML + JS + Markdown + JSON + CSS
 bun run validate-email
-bun run typecheck     # JSDoc + checkJs (scripts/shared + scripts/build + scripts/validators)
-bun run test          # bun test (*.test.js)
+bun run typecheck     # Verificación de tipos TypeScript estricto (tsc --noEmit)
+bun run test          # Suite de tests con Vitest
 bun run format:check
 ```
 
