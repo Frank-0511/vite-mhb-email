@@ -10,8 +10,8 @@ description: Procedimiento de revisión técnica independiente de tareas complet
 - La revisión técnica la realiza un agente o revisor distinto del implementador
   (típicamente el orquestador en el chat principal).
 - Lo declarado por el implementador en `STATUS.md` no se asume como válido por
-  sí solo; el revisor debe reproducir los controles y verificar la evidencia
-  directamente en el árbol de trabajo.
+  sí solo; el revisor debe reproducir los controles directamente en el árbol
+  de trabajo.
 
 ## Procedimiento de revisión paso a paso
 
@@ -55,13 +55,13 @@ description: Procedimiento de revisión técnica independiente de tareas complet
 5. **Contraste de criterios de aceptación:**
    - Contrastar cada criterio de aceptación del ID en `PLAN.md` contra su
      comando o prueba automatizada asociada.
-   - Para criterios no automatizables, verificar la evidencia manual registrada.
+   - Para criterios no automatizables, verificar el resultado manual registrado.
 
 6. **Emisión de veredicto y handoff:**
    - Emitir veredicto formal: `Aprobado` o `Rechazado`.
    - Si es **Rechazado**: detallar los hallazgos accionables para que el
      implementador los resuelva y mantener el estado en `En revisión` o `Bloqueada`.
    - Si es **Aprobado**: registrar la sección `## Revisión de cierre` en
-     `docs/implementation/STATUS.md` con criterios, controles, evidencia,
+     `docs/implementation/STATUS.md` con criterios, controles, resultados,
      rama y commit, actualizar `## Últimas entregas` y cambiar el estado a
      `Completada`.

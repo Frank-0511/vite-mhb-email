@@ -4,6 +4,24 @@ Este documento almacena el histórico de revisiones de cierre, tablas de validac
 
 ---
 
+## MHB-36 — Compatibilidad multi-package-manager y simplificación de scripts
+
+- **Fecha de cierre:** 2026-10-09
+- **Estado:** Completada
+- **Implementador:** Perfil tooling/CI, alto
+- **Revisor independiente:** `task-review`, aprobado 2026-10-09, rama `feature/mhb-36`, base commit `9cb9b40`
+- **Contrato:** `docs/implementation/PLAN.md` (MHB-36)
+
+### Revisión de cierre de MHB-36
+
+- **Veredicto:** Aprobado (2026-10-09), rama `feature/mhb-36`, base commit `9cb9b40`.
+- **Controles re-ejecutados:** `check:task-branch`, `lint`, `typecheck`, `test`, `format:check`, `build`, `validate-email`, `check:dist-baseline`, `check-size`, `agents:check`, `git diff --check` (todos Verde).
+- **Auditoría del diff:** sin `eslint-disable`, `@ts-*`, `any`, skip/todo, `.js`/`.mjs` nuevos, cambios en `ignores`/`tsconfig*.json` ni en `dist/`; scripts retirados sin referencias vivas (corregida una en `COMPATIBILITY-MATRIX.md`).
+- **Excluido del cierre:** bump ajeno `handlebars` 4.7.9 → 4.7.10 (`package.json`/`bun.lock`), fuera de alcance; queda fuera del commit.
+- **Riesgo residual:** `check:a11y` (requiere navegador) lo ejecuta CI en `audit.yml`.
+
+---
+
 ## MHB-43, MHB-34 y MHB-42 — Archivo de entrega y revisiones de cierre
 
 - **Archivado:** 2026-10-08, al planificar MHB-36 (MHB-43 mergeada a `master`; `docs/superpowers/mhb-43.md` eliminado).

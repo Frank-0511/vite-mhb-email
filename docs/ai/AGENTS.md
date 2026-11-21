@@ -33,7 +33,7 @@ validar y exportar templates HTML de email. Todo cambio debe preservar:
 | Layout responsive web, Grid, Flexbox o container queries | `email-responsive-web-ui`    |
 | Refactor, modularización o tipado gradual                | `email-refactor-type-safety` |
 | Convenciones de código, nombres, roles o estructura      | `email-code-conventions`     |
-| Evidencias, ramas, commits o cierre                      | `task-verification`          |
+| Resultados de controles, ramas, commits o cierre         | `task-verification`          |
 | Procedimiento del revisor independiente y gates          | `task-review`                |
 | Congelamiento de alcance, checklist Go/No-Go y SemVer    | `release-management`         |
 | Actualizar `docs/implementation/STATUS.md`               | `task-status-management`     |
@@ -51,7 +51,9 @@ asignado.
 - No escribir fuera del workspace, exponer secretos, revertir trabajo ajeno ni
   ocultar errores.
 - El implementador entrega a `En revisión`; un revisor distinto confirma
-  `Completada` con aceptación, diff y evidencia.
+  `Completada` con aceptación y diff. No se crean archivos de evidencia
+  (capturas, matrices, logs ni informes); los controles se registran como
+  resultado en `STATUS.md`.
 - Los planes y artefactos auxiliares de una tarea pueden existir solo de forma
   temporal bajo `docs/superpowers/`. Al confirmar el usuario que la tarea está
   completa, eliminarlos antes de preparar la PR; la rama entregable y `master`
@@ -122,7 +124,7 @@ asignado.
 4. Implementar únicamente la superficie autorizada y ejecutar sus controles.
 5. Entregar el ID `En revisión` con resultados resumidos y riesgos residuales.
 6. Un revisor independiente confirma o rechaza el cierre; registrar el handoff
-   con rama, commit, evidencia, desviaciones y siguiente acción.
+   con rama, commit, resultados de controles, desviaciones y siguiente acción.
 
 ## Orquestación
 

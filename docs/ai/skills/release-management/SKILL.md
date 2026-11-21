@@ -10,7 +10,7 @@ description: Gestionar congelamiento de alcance, checklist Go/No-Go, SemVer y pu
 - Prohibición terminante de publicar, etiquetar (crear Git tags o releases en
   GitHub) o modificar versiones sin la aprobación explícita y formal del
   orquestador (chat principal / usuario).
-- Toda release debe estar completamente sustentada en evidencias reproducibles,
+- Toda release debe estar completamente sustentada en controles reproducibles,
   con la suite y los pipelines de CI en verde sobre `master`.
 
 ## Congelamiento de alcance (Scope Freeze)
