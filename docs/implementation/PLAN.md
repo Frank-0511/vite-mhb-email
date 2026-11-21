@@ -8,7 +8,7 @@ trazabilidad de los IDs cerrados.
 
 Publicar el trabajo acumulado desde `v1.2.0` en releases incrementales, una por
 fase. Primero se cierra la puerta de calidad automatizable y se publica `v1.3.0`;
-la evidencia manual en clientes de correo se ejecuta en una etapa final (MHB-51); después se reduce y desacopla el tooling (dependencias y
+la comprobación manual en clientes de correo se ejecuta en una etapa final (MHB-51); después se reduce y desacopla el tooling (dependencias y
 multi-package-manager) para publicar `v1.4.0`. La migración de stack de estilos
 y la demo de portafolio se planifican como fases propias.
 
@@ -35,7 +35,7 @@ cierre independientes.
 
 | Fase | ID     | Entregable                                    | Estado    | Dependencia vigente            |
 | ---- | ------ | --------------------------------------------- | --------- | ------------------------------ |
-| C    | MHB-14 | Evidencia de uso y compatibilidad             | Pendiente | Satisfecha                     |
+| C    | MHB-14 | Comprobación de uso y compatibilidad          | Pendiente | Satisfecha                     |
 | C    | MHB-15 | Release `v1.3.0`                              | Pendiente | MHB-14                         |
 | D    | MHB-36 | Compatibilidad multi-package-manager          | Pendiente | Satisfecha (MHB-43 completada) |
 | D    | MHB-48 | Actualización a TypeScript 7                  | Pendiente | Disparador externo             |
@@ -96,27 +96,27 @@ Todo plan de implementación y contrato técnico futuro debe incluir obligatoria
 
 El cumplimiento de estos criterios es condición indispensable para que un revisor independiente marque una tarea como `Completada`.
 
-## Fase C — Evidencia y release v1.3.0
+## Fase C — Comprobación y release v1.3.0
 
 - **Contenido de la release:** todo lo completado y mergeado en `master` desde `v1.2.0` (`git log v1.2.0..master`: migración TypeScript completa hasta MHB-34, gobernanza MHB-40, contrato de salida MHB-41, protección de `master` MHB-45, compatibilidad HTML MHB-44, API local MHB-46 y contrato ESP MHB-47, higiene de dependencias MHB-43) más MHB-14.
 - **Orden:** MHB-14 → MHB-15.
-- **Riesgos:** afirmar evidencia de clientes sin pruebas; incluir secretos en capturas o documentación; publicar sin el checklist Go/No-Go.
-- **Criterio de salida:** MHB-14 cerrada con evidencia automatizada enlazable y `v1.3.0` publicada por MHB-15; la evidencia en clientes de correo queda en MHB-51.
+- **Riesgos:** afirmar resultados de clientes sin pruebas; incluir secretos en capturas o documentación; publicar sin el checklist Go/No-Go.
+- **Criterio de salida:** MHB-14 cerrada con controles automatizados reproducibles y `v1.3.0` publicada por MHB-15; la comprobación manual en clientes de correo queda en MHB-51.
 
-### MHB-14 — Evidencia de uso y compatibilidad
+### MHB-14 — Comprobación de uso y compatibilidad
 
 - **Objetivo observable:** producir checklist reproducible de accesibilidad y matriz fechada de clientes reales. La ejecución en clientes de correo se traslada a MHB-51 (etapa final).
 - **Superficies autorizadas:** protocolo/checklist, capturas, matriz documental y templates de producto.
-- **Dependencias y precondiciones:** MHB-44 completada, para que la evidencia en clientes reales se tome sobre el HTML ya corregido (colores, unidades e imágenes); el flujo de producto permanece disponible y se dispone de los clientes/dispositivos declarados.
+- **Dependencias y precondiciones:** MHB-44 completada, para que la comprobación en clientes reales se tome sobre el HTML ya corregido (colores, unidades e imágenes); el flujo de producto permanece disponible y se dispone de los clientes/dispositivos declarados.
 - **Pasos técnicos:** definir criterios de teclado/lector, ejecutar protocolo en Gmail, Outlook y Apple Mail, y registrar límites.
-- **Criterios de aceptación:** cada prueba tiene fecha, cliente, criterio, resultado y evidencia; no se sustituyen clientes reales por un validador estático.
+- **Criterios de aceptación:** cada prueba tiene fecha, cliente, criterio y resultado; no se sustituyen clientes reales por un validador estático.
 - **Validación automática:** validadores disponibles y lint de matriz, sin presentarlos como prueba real.
 - **Validación manual:** teclado y lector según protocolo. Clientes de correo: MHB-51.
-- **Evidencia requerida:** matriz por cliente/criterio, capturas sin secretos y limitaciones.
+- **Resultado requerido:** matriz por cliente/criterio, limitaciones declaradas en `STATUS.md`.
 - **Riesgos y reversión:** afirmar cobertura no realizada o filtrar datos; usar cuentas/fixtures seguros y marcar no verificado.
 - **Envíos reales:** los correos de prueba pueden enviarse con la integración ESP (SendGrid) del usuario usando `dist/<template>.html`, solo con autorización explícita por envío, destinatarios de prueba propios y sin API keys, tokens ni direcciones reales en capturas, `STATUS.md` o el repositorio. Esa integración vive fuera de este repositorio y no se incorpora a él.
 - **Exclusiones específicas:** no certificar accesibilidad ni compatibilidad universal.
-- **Implementador:** perfil de evidencia/compatibilidad, alto.
+- **Implementador:** perfil de comprobación/compatibilidad, alto.
 - **Revisor independiente:** orquestador o revisor con acceso a clientes.
 - **Condición de escalamiento:** falta acceso a cliente/dispositivo o aparecen datos sensibles.
 
@@ -129,17 +129,17 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
 - **Congelamiento de alcance:** al pasar MHB-15 a `En progreso` se congela el alcance. Un hallazgo nuevo se registra como ID de la Fase D y no bloquea la release, salvo que rompa un gate de MHB-41 (hashes de `dist/`, variables ESP `{{ }}`, `validate-email`), la suite o el build; solo esos casos bloquean y se corrigen dentro del alcance congelado. Un ID de la Fase D mergeado antes del congelamiento forma parte de `v1.3.0` y se declara en sus notas.
 - **Pasos técnicos:**
   - Aplicar la skill `release-management`: checklist Go/No-Go con cada ID de la release `Completada` y CI verde en `master`.
-  - Reconciliar narrativa y evidencia; mover `[Unreleased]` a `[1.3.0]` en CHANGELOG; actualizar `package.json`; preparar tag/release solo tras revisión.
+  - Reconciliar narrativa y resultados; mover `[Unreleased]` a `[1.3.0]` en CHANGELOG; actualizar `package.json`; preparar tag/release solo tras revisión.
   - Incluir en CHANGELOG y notas de release una sección «Contrato de salida para integradores»: resultado de `check:dist-baseline` frente a `v1.2.0` (diferencias justificadas por template, introducidas por MHB-44) y confirmación de que las variables ESP `{{ }}` de cada template se conservan, con referencia al manifiesto `dist/esp-manifest.json` (MHB-47).
 - **Criterios de aceptación:** documentación, versión, tag y release coinciden; las capturas son actuales y los límites no se presentan como hechos no probados; la sección de contrato de salida existe y coincide con la salida de `check:dist-baseline`.
 - **Validación automática:** lint Markdown, suite, build, `validate-email`, `check:dist-baseline` y comprobación de consistencia de versión.
 - **Validación manual:** revisar README, capturas, changelog, SHA/tag y notas antes de publicar.
-- **Evidencia requerida:** SHA, tag, URL de release, diff final, checklist de capturas y checklist Go/No-Go firmado por el orquestador.
+- **Resultado requerido:** SHA, tag, URL de release, diff final y checklist Go/No-Go firmado por el orquestador.
 - **Riesgos y reversión:** publicar una afirmación adelantada; detener antes de acciones externas y revertir documentación local si corresponde.
 - **Exclusiones específicas:** no publicar automáticamente ni modificar tags o releases ya publicados.
 - **Implementador:** perfil documentación/release, medio.
 - **Revisor independiente:** orquestador.
-- **Condición de escalamiento:** cualquier publicación, tag, versión o evidencia no sustentada, o un hallazgo que se proponga incluir pese al congelamiento de alcance.
+- **Condición de escalamiento:** cualquier publicación, tag, versión o resultado no sustentado, o un hallazgo que se proponga incluir pese al congelamiento de alcance.
 
 ## Fase G — Verificación final en clientes
 
@@ -150,10 +150,10 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
 ### MHB-51 — Verificación manual final en clientes de correo
 
 - **Objetivo observable:** registrar en `docs/guides/COMPATIBILITY-MATRIX.md` la ejecución fechada del protocolo en Gmail web/app, Outlook.com, Outlook Windows y Apple Mail macOS/iOS para los 4 templates publicados.
-- **Superficies autorizadas:** `docs/guides/COMPATIBILITY-MATRIX.md`, `docs/evidence/mhb-51/`, `docs/implementation/STATUS.md`.
-- **Criterios de aceptación:** cada fila tiene fecha, cliente, criterio, resultado (E0 a E3) y evidencia sanitizada; las filas no ejecutadas siguen `No verificado` y se declaran.
+- **Superficies autorizadas:** `docs/guides/COMPATIBILITY-MATRIX.md`, `docs/implementation/STATUS.md`.
+- **Criterios de aceptación:** cada fila tiene fecha, cliente, criterio, resultado (E0 a E3) y nota sanitizada; las filas no ejecutadas siguen `No verificado` y se declaran.
 - **Validación manual:** ejecución por el usuario en dispositivos reales.
-- **Evidencia requerida:** matriz por cliente y criterio, capturas sin secretos y limitaciones.
+- **Resultado requerido:** matriz por cliente y criterio, limitaciones declaradas en `STATUS.md`.
 - **Riesgos y reversión:** afirmar cobertura no realizada; filtrar datos. Usar cuentas y fixtures seguros.
 - **Exclusiones específicas:** no certificar compatibilidad universal.
 - **Condición de escalamiento:** falta acceso a cliente o dispositivo, o aparecen datos sensibles.
@@ -230,7 +230,7 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
   10. `pr-guard.yml` se dispara con `pull_request_target`, no usa `actions/checkout` y falla ante lockfiles ajenos (cualquier PR) o cambios en `.github/` (PR desde fork): el comando `node -e` del plan lo comprueba. Revisión manual tras el merge: la siguiente PR muestra el check `PR Guard` antes de marcarlo requerido.
 - **Validación automática:** con bun: `install --frozen-lockfile`, `lint`, `typecheck`, `test`, `format:check`, `build`, `validate-email`, `check:dist-baseline`, `check-size`, `agents:check` y `git diff --check`. Más el criterio 6 con npm, yarn y pnpm.
 - **Validación manual:** `yarn cli` y `bun run cli` hasta el menú. `yarn dev` y `bun run dev` responden 200 en `/` (sin Browser pane). Hook `pre-commit` en un commit real de la rama.
-- **Evidencia requerida:**
+- **Resultado requerido:**
   - Línea base y resultado (tests, hashes de `dist/`).
   - Tabla de instalación y gates por manager con versiones.
   - Diff de `package.json`, conteo de archivos migrados a Vitest y salida de las allowlists de `rg`.
@@ -279,7 +279,7 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
   - `rg -n "eslint-disable|@ts-ignore|@ts-expect-error" scripts src` sin entradas nuevas respecto al inicio.
 - **Validación automática:** `bun install --frozen-lockfile`, lint, typecheck, test, `format:check`, build, `validate-email`, `check:dist-baseline` y `git diff --check`.
 - **Validación manual:** ninguna.
-- **Evidencia requerida:** versiones antes/después, salida de `typecheck` y `lint`, diff de `package.json` y `tsconfig*.json`.
+- **Resultado requerido:** versiones antes/después, salida de `typecheck` y `lint`, diff de `package.json` y `tsconfig*.json`.
 - **Riesgos y reversión:** cambios de diagnósticos o de resolución de módulos que revelen errores nuevos; API del compilador ausente. Un único commit de versión, revertible por separado.
 - **Exclusiones específicas:** no cambiar `strict`, `verbatimModuleSyntax` ni `erasableSyntaxOnly`, no migrar otras dependencias y no tocar templates ni `dist/`.
 - **Análisis de mantenibilidad:** si el guard de árbol de archivos deja de depender de la API `ts`, se elimina el acoplamiento con el compilador.
@@ -294,7 +294,7 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
 - **Dependencias y precondiciones:** MHB-15 publicada, MHB-36 completada, CI verde en `master` y decisión explícita del usuario antes de publicar o etiquetar.
 - **Versión propuesta:** `v1.4.0` (minor), porque el soporte multi-package-manager es aditivo. Pasar a `v2.0.0` solo si algún ID de la fase eliminó o renombró un comando público o elevó el requisito de runtime declarado en `engines`.
 - **Procedimiento:** idéntico a MHB-15 (congelamiento de alcance, `release-management`, Go/No-Go, CHANGELOG `[1.4.0]` y sección «Contrato de salida para integradores» frente a `v1.3.0`, que debe declarar `dist/` idéntico). Las notas documentan la instalación con los 4 managers, la política de lockfile único (`bun.lock`) y la migración de tests a Vitest.
-- **Criterios de aceptación, validación, evidencia, riesgos y exclusiones:** los de MHB-15, añadiendo, desde un checkout limpio del tag, la instalación congelada con bun y la instalación desde cero con npm, ambas con `check:dist-baseline` verde.
+- **Criterios de aceptación, validación, resultados, riesgos y exclusiones:** los de MHB-15, añadiendo, desde un checkout limpio del tag, la instalación congelada con bun y la instalación desde cero con npm, ambas con `check:dist-baseline` verde.
 - **Implementador:** perfil documentación/release, medio.
 - **Revisor independiente:** orquestador.
 - **Condición de escalamiento:** la de MHB-15, o un cambio de comando público detectado al verificar.
@@ -358,7 +358,7 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
   - No quedan `postcss.config.js`, `tailwind*.config.js`, `autoprefixer` ni referencias a Maizzle 5 o Tailwind v3.
 - **Validación automática:** `bun install --frozen-lockfile`, lint, typecheck, test, `format:check`, build, `validate-email` con `modern-css-inline`, `check-size`, `check:a11y`, `agents:check` y `git diff --check`.
 - **Validación manual:** preview de los seis templates con datos, biblioteca de componentes, HMR al editar template/CSS, dashboard en seis combinaciones ancho×tema y, con envío autorizado, Gmail y Outlook con protocolo fechado.
-- **Evidencia requerida:** anexo con versiones y fechas revalidadas, resultado del checkpoint F2, salida de auditoría por template, diff justificado de `dist/`, matriz de dependencias eliminadas e instaladas, capturas del dashboard y ADR.
+- **Resultado requerido:** anexo con versiones y fechas revalidadas, resultado del checkpoint F2, salida de auditoría por template, diff justificado de `dist/`, matriz de dependencias eliminadas e instaladas y ADR.
 - **Riesgos y reversión:**
   - **Riesgos:** pérdida silenciosa de variables ESP por el plugin de delimitadores (mitigada con la regla ESP existente y tests del plugin); `color-mix()` filtrado por modificadores de opacidad; API de Maizzle 6 aún inestable; alcance grande.
   - **Reversión:** la rama no se mergea hasta el Go completo. Un commit por fase; revertir el merge restaura Maizzle 5 + Tailwind v3 con el `bun.lock` anterior.
@@ -389,13 +389,13 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
 ### MHB-16 — Demo candidata pre-renderizada
 
 - **Objetivo observable:** decidir y probar una demo solo lectura sin divergencia frente al HTML compilado.
-- **Superficies autorizadas:** build estático, configuración de demo/despliegue aprobada, rutas de navegación y documentación de evidencia.
+- **Superficies autorizadas:** build estático, configuración de demo/despliegue aprobada, rutas de navegación y documentación de resultados.
 - **Dependencias y precondiciones:** MHB-15 completada; aprobación explícita de proveedor/credenciales si fueran necesarios.
 - **Pasos técnicos:** comparar output, configurar demo mínima, ejecutar smoke y registrar SHA desplegado.
 - **Criterios de aceptación:** demo candidata coincide con HTML compilado, funciona en desktop/móvil y se enlaza para verificación.
 - **Validación automática:** smoke de build estático, enlaces y checks aplicables.
 - **Validación manual:** navegar la demo solo lectura en desktop/móvil.
-- **Evidencia requerida:** URL candidata, SHA desplegado y checklist.
+- **Resultado requerido:** URL candidata, SHA desplegado y checklist.
 - **Riesgos y reversión:** divergencia, coste o exposición de datos; no desplegar sin aprobación y retirar la configuración candidata de forma recuperable. `vite.config.ts` fija `build.outDir: "../../dist"` con `emptyOutDir: true`: un `vite build` del dashboard vaciaría el `dist/` de email versionado. Antes de cualquier build estático, usar un `outDir` propio y comprobar `check:dist-baseline`.
 - **Exclusiones específicas:** no publicar el caso como destacado ni añadir backend.
 - **Implementador:** perfil de deploy/preview, alto.
@@ -411,7 +411,7 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
 - **Criterios de aceptación:** cada componente adicional es email-safe, tiene schema, aparece en `/library` y pasa controles.
 - **Validación automática:** build, schema, validadores y tests aplicables por componente.
 - **Validación manual:** abrir library, editar datos y revisar output.
-- **Evidencia requerida:** schema, captura, build verde y resultados de validación.
+- **Resultado requerido:** schema, build verde y resultados de validación.
 - **Riesgos y reversión:** ampliar hacia un builder o duplicar componentes; mantener cada adición aislada y reversible.
 - **Exclusiones específicas:** no construir editor/builder de emails.
 - **Implementador:** perfil email/UI, medio.
@@ -420,21 +420,21 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
 
 ## Contrato obligatorio de cierre
 
-Cada elemento debe conservar en el contrato transferido objetivo, archivos, pasos, dependencias, aceptación, pruebas automáticas, validación manual, riesgos, exclusiones y evidencia esperada. Una skill puede añadir controles, pero no sustituir esos campos ni rebajar su aceptación.
+Cada elemento debe conservar en el contrato transferido objetivo, archivos, pasos, dependencias, aceptación, pruebas automáticas, validación manual, riesgos, exclusiones y resultado esperado. Una skill puede añadir controles, pero no sustituir esos campos ni rebajar su aceptación.
 
 ### Estados y revisión independiente
 
 1. `Pendiente`: dependencias o autorización todavía no satisfechas.
 2. `En progreso`: implementador asignado y propiedad de archivos registrada.
 3. `En revisión`: implementación terminada; se registran diff, comandos, resultados, desviaciones y riesgos. El implementador no puede marcarla `Completada`.
-4. `Bloqueada`: un control obligatorio falla o falta evidencia; no se inicia la tarea dependiente.
+4. `Bloqueada`: un control obligatorio falla o falta un resultado de control; no se inicia la tarea dependiente.
 5. `Completada`: un revisor independiente confirma aceptación, diff, pruebas, lint, typecheck/build cuando correspondan y ausencia de cambios fuera de alcance; el orquestador dicta el veredicto.
 
 ### Matriz mínima de comprobación
 
-| IDs    | Prueba automática mínima                                                             | Validación manual                                                                    | Evidencia de cierre                                                                |
+| IDs    | Prueba automática mínima                                                             | Validación manual                                                                    | Resultado de cierre                                                                |
 | ------ | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------- |
-| MHB-14 | Validadores disponibles; no sustituyen pruebas reales.                               | Teclado/lector y Gmail/Outlook/Apple Mail con protocolo fechado.                     | Matriz por cliente/criterio, capturas sin secretos y limitaciones.                 |
+| MHB-14 | Validadores disponibles; no sustituyen pruebas reales.                               | Teclado/lector y Gmail/Outlook/Apple Mail con protocolo fechado.                     | Matriz por cliente/criterio, limitaciones declaradas en `STATUS.md`.               |
 | MHB-15 | Lint, suite, build y consistencia de versión.                                        | Revisar README, capturas, changelog y release antes de publicar.                     | SHA, tag, URL de release y diff final.                                             |
 | MHB-36 | Instalación y gates completos con npm, yarn, pnpm y bun; suite Vitest verde.         | `cli` y `dev` con yarn y bun, y hook `pre-commit`.                                   | Logs de 4 managers, diff de imports, hashes `dist/` idénticos entre managers.      |
 | MHB-48 | Typecheck, lint tipado, suite y `check:dist-baseline` con TS 7.                      | Ninguna.                                                                             | Versiones antes/después y diff de `package.json`/`tsconfig*.json`.                 |
@@ -457,7 +457,7 @@ Cada elemento debe conservar en el contrato transferido objetivo, archivos, paso
 
 ## Orden de ejecución
 
-1. **Fase C:** ejecutar MHB-14 (evidencia en clientes reales sobre el HTML corregido por MHB-44) y después MHB-15 (release `v1.3.0`).
+1. **Fase C:** ejecutar MHB-14 (comprobación en clientes reales sobre el HTML corregido por MHB-44) y después MHB-15 (release `v1.3.0`).
 2. **Fase D:** MHB-36 puede ejecutarse en paralelo con MHB-14 por no compartir superficie; si se mergea antes del congelamiento de MHB-15, entra en `v1.3.0`. Después, MHB-49 (release `v1.4.0`).
 3. MHB-48 (TypeScript 7) solo cuando `typescript-eslint` soporte TS 7; en paralelo con MHB-36. Entra en la release cuyo congelamiento ocurra después de su cierre.
 4. **Fase E:** MHB-38 dentro de su ventana (no antes de 2027-01-15, límite 2027-06-30) o antes si se registra un disparador, siempre tras MHB-36; es, junto con un ID que lo autorice explícitamente, la única vía para actualizar el baseline de `dist/`. Después, MHB-50.
@@ -467,7 +467,7 @@ Cada elemento debe conservar en el contrato transferido objetivo, archivos, paso
 
 - Una tarea por rama `feature/<id-en-minusculas>` y PR directo a `master`; no se mezclan tareas ni se incrementa versión por cada una.
 - Cada fase cierra con su propio ID de release (MHB-15 → `v1.3.0`, MHB-49 → `v1.4.0`, MHB-50 → migración de stack); la versión solo cambia dentro de esos IDs.
-- `v1.2.0` es el baseline publicado. Cualquier versión, tag o release posterior requiere evidencia de su alcance y aprobación explícita del orquestador.
+- `v1.2.0` es el baseline publicado. Cualquier versión, tag o release posterior requiere alcance validado y aprobación explícita del orquestador.
 - Tag, CHANGELOG, versión y release deben apuntar al mismo alcance. Ningún subagente publica o mueve referencias sin aprobación del orquestador.
 - `dist/` permanece versionado; las capturas son entregables documentales. `task-verification` debe evitar commits accidentales fuera de tarea.
 
@@ -476,9 +476,9 @@ Cada elemento debe conservar en el contrato transferido objetivo, archivos, paso
 - CI cubre las rutas relevantes; lint, typecheck, pruebas, build y formato están verdes en la matriz declarada.
 - Todo el código propio del alcance está en TypeScript estricto y el guard de inventario impide reintroducir `.js`/`.mjs`.
 - Los templates de producto, preview seguro y descarga de HTML funcionan y están verificados.
-- Hay evidencia fechada de accesibilidad, rendimiento y clientes de correo.
+- Hay resultados fechados de accesibilidad, rendimiento y clientes de correo.
 - La documentación, versión, tag y release posterior concuerdan; existe una demostración candidata o instrucciones reproducibles para el flujo.
-- MHB-16 sigue opcional solo si la puerta final acepta la demostración local reproducible; si esa evidencia es insuficiente, pasa a requerida antes de `Listo para portafolio`.
+- MHB-16 sigue opcional solo si la puerta final acepta la demostración local reproducible; si ese resultado es insuficiente, pasa a requerida antes de `Listo para portafolio`.
 - La verificación final aprueba el caso. Publicarlo en una superficie externa del portafolio es una acción posterior y separada.
 
 ## Impacto de nombre o combinación de repositorios
@@ -489,12 +489,12 @@ No se cambia el repositorio ni se combina con otro caso. `EmailForge Toolkit` es
 
 Las skills son contratos de procedimiento; los subagentes son ejecuciones temporales. Cada subagente recibe IDs, skills obligatorias, archivos exclusivos, controles y condición de escalamiento. Ninguna identidad se persiste como agente permanente.
 
-### Orquestación — Fase C — Evidencia y release v1.3.0
+### Orquestación — Fase C — Comprobación y release v1.3.0
 
-| Línea                   | Skills obligatorias                              | Implementador y propiedad            | Revisor     | Controles                                                            | Escalar cuando                                                                                |
-| ----------------------- | ------------------------------------------------ | ------------------------------------ | ----------- | -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| MHB-14 evidencia manual | `email-compatibility`, `email-preview-dashboard` | Perfil alto; matriz/capturas         | Orquestador | Protocolo fechado, clientes reales y accesibilidad                   | No haya acceso a cliente/dispositivo o aparezcan datos sensibles.                             |
-| MHB-15 release          | `task-verification`, `release-management`        | Perfil medio; docs/version/changelog | Orquestador | Suite, inventario TS, `check:dist-baseline`, Go/No-Go, tag y release | Antes de publicación, tag o cambio de versión, o ante un hallazgo que rompa el congelamiento. |
+| Línea                      | Skills obligatorias                              | Implementador y propiedad            | Revisor     | Controles                                                            | Escalar cuando                                                                                |
+| -------------------------- | ------------------------------------------------ | ------------------------------------ | ----------- | -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| MHB-14 comprobación manual | `email-compatibility`, `email-preview-dashboard` | Perfil alto; matriz/capturas         | Orquestador | Protocolo fechado, clientes reales y accesibilidad                   | No haya acceso a cliente/dispositivo o aparezcan datos sensibles.                             |
+| MHB-15 release             | `task-verification`, `release-management`        | Perfil medio; docs/version/changelog | Orquestador | Suite, inventario TS, `check:dist-baseline`, Go/No-Go, tag y release | Antes de publicación, tag o cambio de versión, o ante un hallazgo que rompa el congelamiento. |
 
 ### Orquestación — Fase D — Portabilidad y release v1.4.0
 

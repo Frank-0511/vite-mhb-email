@@ -1,6 +1,6 @@
 ---
 name: task-verification
-description: Verificar tareas, ejecutar comandos permitidos, preparar ramas o commits, documentar evidencia y revisar cierres en EmailForge Toolkit. Usar para cualquier cierre de ID, cambios de CI/documentación o trabajo Git.
+description: Verificar tareas, ejecutar comandos permitidos, preparar ramas o commits, registrar resultados y revisar cierres en EmailForge Toolkit. Usar para cualquier cierre de ID, cambios de CI/documentación o trabajo Git.
 ---
 
 # Verificación y Git

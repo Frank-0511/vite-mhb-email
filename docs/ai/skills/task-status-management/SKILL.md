@@ -15,11 +15,11 @@ description: Actualizar docs/implementation/STATUS.md de EmailForge Toolkit dura
   cerrada reciente. Usar tablas para controles cuando reduzcan repetición.
 - Mover revisiones largas, logs, tablas antiguas de validación y decisiones
   cerradas a `docs/implementation/STATUS-HISTORY.md`. Ese archivo es un índice
-  de trazabilidad, no una copia del roadmap: resumir con ID, fecha, evidencia y
+  de trazabilidad, no una copia del roadmap: resumir con ID, fecha, resultado y
   enlace a commit/PR cuando exista.
 - Si `STATUS.md` se acerca al límite, compactar antes de añadir una nueva
-  entrega. Nunca eliminar un hecho vigente, una decisión aplicable, una
-  evidencia de cierre o un bloqueo sin trasladarlo al historial o a su fuente
+  entrega. Nunca eliminar un hecho vigente, una decisión aplicable, un
+  resultado de cierre o un bloqueo sin trasladarlo al historial o a su fuente
   canónica.
 
 - Mantener `STATUS.md` breve: fase/ID, estado, implementador, revisor,
@@ -31,7 +31,7 @@ description: Actualizar docs/implementation/STATUS.md de EmailForge Toolkit dura
   cambiar solo ese ID a `En progreso`.
 - Al entregar, marcar `En revisión`, resumir hasta cinco hechos, registrar cada
   control como Verde/Fallido/No ejecutado y bloquear tareas dependientes cuando
-  falte evidencia.
+  falte un resultado de control.
 - No registrar `Completada`: esa decisión pertenece al revisor indicado.
 - Registrar decisiones técnicas locales, no cambios de producto, IDs o
   aceptación; esos requieren actualizar el contrato de implementación.
@@ -48,7 +48,7 @@ description: Actualizar docs/implementation/STATUS.md de EmailForge Toolkit dura
   las líneas existentes. La sección detallada de la tarea no sustituye ese
   resumen.
 - En `## Handoff`, separar siempre:
-  - `Próxima acción inmediata`: revisión, merge, evidencia pendiente o bloqueo.
+  - `Próxima acción inmediata`: revisión, merge, control pendiente o bloqueo.
   - `Siguiente tarea del roadmap`: el primer ID posterior del `PLAN.md` cuyas
     dependencias estén satisfechas. Marcarlo como `desbloqueado` o
     `bloqueado`; no iniciarlo ni marcarlo `En progreso` sin asignación explícita.

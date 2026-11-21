@@ -19,4 +19,4 @@ description: Modificar templates, layouts, partials, CSS email, renderizado o va
   parsing, reglas y reporte si el validador crece.
 
 Los warnings no prueban compatibilidad en Gmail, Outlook o Apple Mail; registrar
-esa evidencia solo con el protocolo manual de la Fase C.
+esa comprobación solo con el protocolo manual de la Fase C.
