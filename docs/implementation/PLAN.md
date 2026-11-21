@@ -33,18 +33,18 @@ cierre independientes.
 
 ## Backlog activo
 
-| Fase | ID     | Entregable                                    | Estado    | Dependencia vigente            |
-| ---- | ------ | --------------------------------------------- | --------- | ------------------------------ |
-| C    | MHB-14 | Comprobación de uso y compatibilidad          | Pendiente | Satisfecha                     |
-| C    | MHB-15 | Release `v1.3.0`                              | Pendiente | MHB-14                         |
-| D    | MHB-36 | Compatibilidad multi-package-manager          | Pendiente | Satisfecha (MHB-43 completada) |
-| D    | MHB-48 | Actualización a TypeScript 7                  | Pendiente | Disparador externo             |
-| D    | MHB-49 | Release `v1.4.0`                              | Pendiente | MHB-15 y MHB-36                |
-| E    | MHB-38 | Migración en bloque a Maizzle 6 y Tailwind v4 | Pendiente | MHB-36 y ventana ≥ 2027-01-15  |
-| E    | MHB-50 | Release de la migración de stack              | Pendiente | MHB-49 y MHB-38                |
-| F    | MHB-16 | Demo candidata pre-renderizada                | Opcional  | MHB-15                         |
-| F    | MHB-23 | Ampliar biblioteca de componentes             | Opcional  | Caso de uso aprobado           |
-| G    | MHB-51 | Verificación manual final en clientes         | Pendiente | MHB-15, MHB-49 y MHB-50        |
+| Fase | ID     | Entregable                                    | Estado     | Dependencia vigente            |
+| ---- | ------ | --------------------------------------------- | ---------- | ------------------------------ |
+| C    | MHB-14 | Comprobación de uso y compatibilidad          | Completada | Satisfecha                     |
+| C    | MHB-15 | Release `v1.3.0`                              | Completada | MHB-14                         |
+| D    | MHB-36 | Compatibilidad multi-package-manager          | Pendiente  | Satisfecha (MHB-43 completada) |
+| D    | MHB-48 | Actualización a TypeScript 7                  | Pendiente  | Disparador externo             |
+| D    | MHB-49 | Release `v1.4.0`                              | Pendiente  | MHB-15 y MHB-36                |
+| E    | MHB-38 | Migración en bloque a Maizzle 6 y Tailwind v4 | Pendiente  | MHB-36 y ventana ≥ 2027-01-15  |
+| E    | MHB-50 | Release de la migración de stack              | Pendiente  | MHB-49 y MHB-38                |
+| F    | MHB-16 | Demo candidata pre-renderizada                | Opcional   | MHB-15                         |
+| F    | MHB-23 | Ampliar biblioteca de componentes             | Opcional   | Caso de uso aprobado           |
+| G    | MHB-51 | Verificación manual final en clientes         | Pendiente  | MHB-15, MHB-49 y MHB-50        |
 
 ## Invariantes de calidad, arquitectura y refactor integrado
 
@@ -123,6 +123,7 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
 ### MHB-15 — Release v1.3.0
 
 - **Objetivo observable:** publicar `v1.3.0` con README, CHANGELOG, versión, tag y release coherentes con el trabajo completado desde `v1.2.0`.
+- **Estado:** `Completada` (2026-11-21). Tag `v1.3.0` en `81d2b7c` y release publicada.
 - **Superficies autorizadas:** README, CHANGELOG, versión/package metadata, capturas, notas de release y documentación relacionada.
 - **Dependencias y precondiciones:** MHB-14 completada (el resto del contenido de la release ya está `Completada`), CI verde en `master` y decisión explícita del usuario antes de publicar o etiquetar; preservar el baseline publicado `v1.2.0`.
 - **Versión decidida (2026-10-08):** `v1.3.0` (minor). La API pública son los comandos listados en `CLAUDE.md` (`dev`, `build`, `test`, `lint`, `typecheck`, `validate-email`, `check:dist-baseline`, `format:check`, etc.); el resto de scripts de `package.json` son herramientas internas que pueden cambiar en un minor con nota de migración en `CHANGELOG.md`. Desde `v1.2.0` no cambió ningún comando de esa lista.
@@ -457,7 +458,7 @@ Cada elemento debe conservar en el contrato transferido objetivo, archivos, paso
 
 ## Orden de ejecución
 
-1. **Fase C:** ejecutar MHB-14 (comprobación en clientes reales sobre el HTML corregido por MHB-44) y después MHB-15 (release `v1.3.0`).
+1. **Fase C: completada.** MHB-14 cerrada y MHB-15 publicada como `v1.3.0` (tag `v1.3.0` en `81d2b7c`, 2026-11-21).
 2. **Fase D:** MHB-36 puede ejecutarse en paralelo con MHB-14 por no compartir superficie; si se mergea antes del congelamiento de MHB-15, entra en `v1.3.0`. Después, MHB-49 (release `v1.4.0`).
 3. MHB-48 (TypeScript 7) solo cuando `typescript-eslint` soporte TS 7; en paralelo con MHB-36. Entra en la release cuyo congelamiento ocurra después de su cierre.
 4. **Fase E:** MHB-38 dentro de su ventana (no antes de 2027-01-15, límite 2027-06-30) o antes si se registra un disparador, siempre tras MHB-36; es, junto con un ID que lo autorice explícitamente, la única vía para actualizar el baseline de `dist/`. Después, MHB-50.
@@ -467,7 +468,7 @@ Cada elemento debe conservar en el contrato transferido objetivo, archivos, paso
 
 - Una tarea por rama `feature/<id-en-minusculas>` y PR directo a `master`; no se mezclan tareas ni se incrementa versión por cada una.
 - Cada fase cierra con su propio ID de release (MHB-15 → `v1.3.0`, MHB-49 → `v1.4.0`, MHB-50 → migración de stack); la versión solo cambia dentro de esos IDs.
-- `v1.2.0` es el baseline publicado. Cualquier versión, tag o release posterior requiere alcance validado y aprobación explícita del orquestador.
+- `v1.3.0` es el baseline publicado (tag en `81d2b7c`); `v1.2.0` queda como referencia histórica. Cualquier versión, tag o release posterior requiere alcance validado y aprobación explícita del orquestador.
 - Tag, CHANGELOG, versión y release deben apuntar al mismo alcance. Ningún subagente publica o mueve referencias sin aprobación del orquestador.
 - `dist/` permanece versionado; las capturas son entregables documentales. `task-verification` debe evitar commits accidentales fuera de tarea.
 
