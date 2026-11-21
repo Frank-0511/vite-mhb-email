@@ -9,7 +9,7 @@ generar archivos finales planos en `dist/<template>.html`.
 
 ## Estado de release
 
-La versión `v1.3.0` es la release funcional que consolida el trabajo
+La versión `v1.3.0` está en preparación (pendiente de merge y publicación) y consolida el trabajo
 completado desde `v1.2.0` (migración integral a TypeScript, soporte
 multi-package-manager, endurecimiento de API local, contrato ESP SendGrid,
 compatibilidad HTML para clientes reales, checklist de accesibilidad y quality
