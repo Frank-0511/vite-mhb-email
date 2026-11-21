@@ -4,6 +4,24 @@ Este documento almacena el histórico de revisiones de cierre, tablas de validac
 
 ---
 
+## MHB-14 — Evidencia de uso y compatibilidad
+
+- **Fecha de cierre:** 2026-10-09
+- **Estado:** Completada
+- **Implementador:** Perfil evidencia/compatibilidad, alto
+- **Revisor independiente:** Orquestador (revisión en línea)
+- **Contrato:** `docs/implementation/PLAN.md` (MHB-14)
+
+### Revisión de cierre de MHB-14
+
+- **Veredicto:** Aprobado (2026-10-09), rama `feature/mhb-14`, alcance automatizable más teclado/lector.
+- **Controles re-ejecutados en árbol limpio (todos Verde, rc=0):** `check:task-branch`, `lint`, `typecheck`, `test` (106 archivos, 820 tests), `format:check`, `build`, `validate-email`, `check:dist-baseline`, `check-size`, `agents:check`, `git diff --check`.
+- **Auditoría del diff `master...HEAD`:** sin `eslint-disable`, `@ts-*`, skip/todo, `.js`/`.mjs` nuevos, cambios en `ignores`/`tsconfig*.json` ni en `file-tree.test.ts`. `dist/`: solo 6 líneas añadidas (`<title>`), ninguna variable ESP `{{ }}` eliminada. Evidencia headless sin credenciales.
+- **Matriz:** 20 filas de cliente en `No verificado`, ninguna marcada verificada.
+- **Riesgo residual:** clientes de correo sin verificar hasta MHB-51; `check:a11y` lo ejecuta CI en `audit.yml`.
+
+---
+
 ## MHB-36 — Compatibilidad multi-package-manager y simplificación de scripts
 
 - **Fecha de cierre:** 2026-10-09

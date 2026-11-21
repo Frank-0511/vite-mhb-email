@@ -3,16 +3,16 @@
 ## Resumen
 
 - ID activo: MHB-15
-- Estado: En revisión
+- Estado: Completada
 - Implementador: perfil documentación/release, medio
 - Revisor: orquestador
 - Rama: `feature/mhb-15`
-- Última actualización: 2026-11-20
+- Última actualización: 2026-11-21
 - Contrato activo: `docs/implementation/PLAN.md` (sección MHB-15)
 
 ## Paquete activo
 
-- MHB-15: Release v1.3.0 (Fase C). Estado: `En revisión`.
+- MHB-15: Release v1.3.0 (Fase C). Estado: `Completada` (2026-11-21).
 - Propiedad de archivos: `package.json`, `CHANGELOG.md`, `README.md`, `docs/implementation/RELEASE_BASELINE.md`, `docs/implementation/STATUS.md`, `docs/implementation/STATUS-HISTORY.md`.
 - Controles:
   - `bun install --frozen-lockfile`: Verde
@@ -31,16 +31,17 @@
   2. Actualización de versión de `1.2.0` a `1.3.0` en `package.json`.
   3. Reconciliación de `CHANGELOG.md`: migración de `[Unreleased]` a `[1.3.0]` e incorporación de la sección «Contrato de salida para integradores».
   4. Actualización de `README.md` y `docs/implementation/RELEASE_BASELINE.md` con trazabilidad del baseline `v1.3.0`.
-  5. Ejecución del checklist Go/No-Go y preparación de release notes para revisión del orquestador.
+  5. Ejecución y aprobación del checklist Go/No-Go y revisión de cierre completada.
 
 ## Baseline vigente
 
-- La release [v1.2.0](https://github.com/Frank-0511/vite-mhb-email/releases/tag/v1.2.0) es el baseline funcional publicado.
+- La release [v1.2.0](https://github.com/Frank-0511/vite-mhb-email/releases/tag/v1.2.0) es el baseline funcional publicado; la release `v1.3.0` está consolidada y lista para etiquetar tras el merge.
 - La migración a TypeScript por capas (núcleo, CLI, servidor Vite y dashboard web) está completada y mergeada a `master`; la trazabilidad de los IDs cerrados vive en Git.
 - Las variables ESP `{{ }}` se preservan en el HTML final; `[[ page.* ]]` queda reservado para Maizzle.
 
 ## Últimas entregas
 
+- MHB-15: `Completada` el 2026-11-21; release `v1.3.0` preparada y verificada, contrato de salida para integradores documentado en CHANGELOG, trazabilidad en `RELEASE_BASELINE.md` y checklist Go/No-Go aprobado.
 - MHB-14: `Completada` el 2026-10-09; checklist de accesibilidad (12 criterios), matriz fechada E3, guard `evidence-matrix`, regla `title-present` y `<title>` descriptivo en 6 templates; pruebas en clientes de correo trasladadas a MHB-51.
 - MHB-36: `Completada` el 2026-10-09; compatibilidad con Bun, npm, Yarn 4 y pnpm (Vitest, detección de package manager, CI Node 24 con matriz, `PR Guard`, scripts 30 → 18), `dist/` idéntico en el carril congelado y revisión técnica independiente aprobada.
 - MHB-43: `Completada` el 2026-10-08; dependencias sin `maizzle`, `fs-extra` ni `glob`, build con API programática de Maizzle, reclasificación a `dependencies`, `@types/node` 24.x y fuentes vigiladas del preview unificadas, con `dist/` idéntico y revisión técnica independiente aprobada.
@@ -106,17 +107,19 @@
 - **Pruebas de guards sintéticos:** En `eslint-guards.test.ts` se anula `parserOptions.project` para evaluar snippets en memoria mediante AST puro.
 - **Barrels index.ts puros:** Todos los `index.ts` bajo `scripts/` y `src/` actúan exclusivamente como puntos de reexport (`export ... from`).
 
-## Revisión de cierre — MHB-14
+## Revisión de cierre — MHB-15
 
-- Veredicto: **Aprobado** (2026-10-09), rama `feature/mhb-14`, alcance automatizable más teclado/lector. Revisión en línea por el orquestador: el verificador independiente no se admitió por no declarar ítem de riesgo alto.
-- Controles re-ejecutados en árbol limpio (todos Verde, rc=0): `check:task-branch`, `lint`, `typecheck`, `test` (106 archivos, 820 tests), `format:check`, `build`, `validate-email`, `check:dist-baseline`, `check-size`, `agents:check`, `git diff --check`.
-- Auditoría del diff `master...HEAD`: sin `eslint-disable`, `@ts-*`, skip/todo, `.js`/`.mjs` nuevos, cambios en `ignores`/`tsconfig*.json` ni en `file-tree.test.ts`. `dist/`: solo 6 líneas añadidas (`<title>`), ninguna variable ESP `{{ }}` eliminada. Evidencia headless sin credenciales.
-- Matriz: 20 filas de cliente en `No verificado`, ninguna marcada verificada.
-- Riesgo residual: clientes de correo sin verificar hasta MHB-51; `check:a11y` lo ejecuta CI en `audit.yml`.
+- Veredicto: **Aprobado** (2026-11-21), rama `feature/mhb-15`, base commit `bb21bd1` más este cierre.
+- Controles re-ejecutados en árbol limpio (todos Verde, rc=0): `check:task-branch`, `lint`, `typecheck`, `test` (106 archivos, 820 tests), `format:check`, `build`, `validate-email`, `check:dist-baseline`, `check-size` (43.01 KB), `agents:check`, `git diff --check`.
+- Auditoría del diff `master...HEAD`: sin `eslint-disable`, `@ts-*`, skip/todo, `.js`/`.mjs` nuevos, cambios en `ignores`/`tsconfig*.json` ni en `file-tree.test.ts`. `package.json` incrementa a `1.3.0`; `CHANGELOG.md` incorpora la release `[1.3.0]` y sección «Contrato de salida para integradores»; `README.md` y `RELEASE_BASELINE.md` actualizados.
+- Observaciones y riesgos residuales:
+  1. El control de contrato en `check:dist-baseline` compara contra `baseline.json` (actualizado justificadamente en MHB-44 y MHB-14); la comparación histórica frente a `v1.2.0` se verificó analítica y manualmente, no mediante un script automatizado contra el tag.
+  2. Las afirmaciones de colores HEX, medidas px y CDN de iconos se auditaron a nivel macro mediante las reglas de `validate-email`, tests unitarios y hash de baseline, sin revisión manual exhaustiva elemento por elemento ni en el changelog.
+  3. Clientes de correo reales sin verificar hasta la etapa final en MHB-51.
 
 ## Handoff
 
-- Próxima acción inmediata: ejecutar suite de controles de calidad, revisión del orquestador y firma de checklist Go/No-Go para autorizar el tag `v1.3.0`.
+- Próxima acción inmediata: fusión (merge) de `feature/mhb-15` a `master` y posterior creación del tag anotado `v1.3.0` por el usuario/orquestador (publicación autónoma prohibida).
 - Siguiente tarea del roadmap (no iniciar sin asignación explícita):
   - MHB-49 (Fase D): Release `v1.4.0` (tras MHB-15 y MHB-36; desbloqueada al mergear MHB-15).
   - MHB-48 (Fase D): actualización TypeScript 7 (bloqueada por disparador externo).
