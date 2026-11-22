@@ -37,7 +37,7 @@ cierre independientes.
 | ---- | ------ | --------------------------------------------- | ---------- | ------------------------------ |
 | C    | MHB-14 | Comprobación de uso y compatibilidad          | Completada | Satisfecha                     |
 | C    | MHB-15 | Release `v1.3.0`                              | Completada | MHB-14                         |
-| D    | MHB-36 | Compatibilidad multi-package-manager          | Pendiente  | Satisfecha (MHB-43 completada) |
+| D    | MHB-36 | Compatibilidad multi-package-manager          | Completada | Satisfecha (MHB-43 completada) |
 | D    | MHB-48 | Actualización a TypeScript 7                  | Pendiente  | Disparador externo             |
 | D    | MHB-49 | Release `v1.4.0`                              | Pendiente  | MHB-15 y MHB-36                |
 | E    | MHB-38 | Migración en bloque a Maizzle 6 y Tailwind v4 | Pendiente  | MHB-36 y ventana ≥ 2027-01-15  |
@@ -170,6 +170,7 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
 ### MHB-36 — Compatibilidad multi-package-manager
 
 - **Objetivo observable:** cualquier desarrollador clona el proyecto y trabaja con npm, yarn, pnpm o bun sin que ninguno sea obligatorio. Los scripts se ejecutan con `node` (type stripping nativo), los tests con Vitest y la CLI lanza procesos con el package manager detectado.
+- **Estado:** `Completada` (2026-10-09). Verificada en local y CI con los 4 gestores (Bun, npm, Yarn 4 y pnpm); integrada en master e incluida en la release `v1.3.0`.
 - **Diagnóstico al 2026-10-08 (post MHB-43):**
   - Con Node 22.23.1 local, `node` ejecuta sin cambios `build`, `validate-email`, `check:dist-baseline`, `check-size`, `lint` y `check:a11y`, y `dist/` queda idéntico.
   - Acoplamiento a Bun:
