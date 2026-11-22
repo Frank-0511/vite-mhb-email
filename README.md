@@ -116,7 +116,7 @@ El pipeline principal es:
 
 ### Requisitos locales
 
-- **Node.js >= 24** (`engines.node`; ver `.nvmrc`; `@types/node` fijado a 24.x). Con NVM: `nvm use` dentro del repo.
+- **Node.js >= 24.22.3** (`engines.node`; ver `.nvmrc`; `@types/node` fijado a 24.x). Con NVM: `nvm use` dentro del repo.
 - Uno de los siguientes package managers:
   - **npm** (incluido con Node.js)
   - **Yarn 4** (con `nodeLinker: node-modules`, ya configurado en `.yarnrc.yml`)
@@ -445,7 +445,7 @@ TEST_APPLE_TO=
 
 ## Requisitos
 
-- **Node.js >= 24** (`.nvmrc`; mínimo declarado en `package.json`: `>=24`)
+- **Node.js >= 24.22.3** (`.nvmrc`; mínimo declarado en `package.json`: `>=24.22.3`)
 - Uno de los siguientes gestores de paquetes:
   - **npm** (incluido con Node.js)
   - **Yarn 4** (con `nodeLinker: node-modules`, configurado en `.yarnrc.yml`)

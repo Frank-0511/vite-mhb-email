@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Cambiado
+
+- Actualizada la versión mínima de Node.js a `v24.22.3` (`engines.node` en `package.json`, `.nvmrc` y `.node-version`).
+
 ## [1.3.0] - 2026-11-20
 
 ### Contrato de salida para integradores
