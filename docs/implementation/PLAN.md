@@ -40,7 +40,7 @@ cierre independientes.
 | D    | MHB-36 | Compatibilidad multi-package-manager             | Completada  | Satisfecha (MHB-43 completada) |
 | D    | MHB-48 | Actualización a TypeScript 7                     | Pendiente   | Disparador externo             |
 | D    | MHB-61 | Versión mínima de Node.js 24.22.3                | En revisión | Ninguna                        |
-| D    | MHB-62 | Actualización de dependencias sin saltos mayores | En progreso | MHB-61                         |
+| D    | MHB-62 | Actualización de dependencias sin saltos mayores | En revisión | MHB-61                         |
 | D    | MHB-49 | Release `v1.4.0`                                 | Pendiente   | MHB-15, MHB-36 y MHB-61        |
 | E    | MHB-38 | Migración en bloque a Maizzle 6 y Tailwind v4    | Pendiente   | MHB-36 y ventana ≥ 2027-01-15  |
 | E    | MHB-50 | Release de la migración de stack                 | Pendiente   | MHB-49 y MHB-38                |

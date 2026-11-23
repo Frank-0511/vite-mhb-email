@@ -3,7 +3,7 @@
 ## Resumen
 
 - ID activo: MHB-62
-- Estado: En progreso
+- Estado: En revisión
 - Implementador: perfil tooling, bajo
 - Revisor: revisor técnico de tooling (distinto del implementador)
 - Rama: `feature/mhb-62`
@@ -12,9 +12,19 @@
 
 ## Paquete activo
 
-- MHB-62: Actualización de dependencias sin saltos mayores (Fase D). Estado: `En progreso`; depende de MHB-61 (`En revisión` en `feature/mhb-61`).
+- MHB-62: Actualización de dependencias sin saltos mayores (Fase D). Estado: `En revisión`; depende de MHB-61 (`En revisión` en `feature/mhb-61`).
 - Propiedad de archivos: `package.json`, `bun.lock`, `CHANGELOG.md`, `docs/implementation/PLAN.md`, `docs/implementation/STATUS.md`.
-- Controles: pendientes de registrar tras cada commit.
+- Controles (Node `v24.22.3`, tras cada uno de los 3 commits de dependencias):
+  - `bun install --frozen-lockfile`, `lint`, `typecheck`, `test`, `format:check`, `build`, `validate-email`, `check:dist-baseline`, `check-size`: Verde
+  - `git diff --exit-code -- dist/`: Verde (idéntico)
+  - `rg "eslint-disable|@ts-ignore|@ts-expect-error" scripts src`: 5 entradas, las mismas que en `origin/master`
+  - `validate-contrast` (parte de `check:a11y`): Verde (26 OK)
+  - `check-a11y` (axe-core): No ejecutado; `puppeteer` 25.18.1 exige Chrome 157 y la caché local solo tiene hasta la 155
+- Hechos de la entrega:
+  1. Herramientas de desarrollo actualizadas (incluye `stylelint` 18 y su config 41), sin cambios de configuración.
+  2. `nodemailer`, `lucide`, `puppeteer` y `vite` actualizados.
+  3. `postcss` y `autoprefixer` actualizados con `dist/` idéntico.
+  4. `CHANGELOG.md` `[Unreleased]` documenta los tres grupos.
 
 ## Baseline vigente
 
@@ -102,9 +112,9 @@
 
 ## Handoff
 
-- Próxima acción inmediata: revisión técnica independiente de MHB-61 y confirmación de CI en la PR.
+- Próxima acción inmediata: revisión técnica independiente de MHB-62 (debe ejecutar `check:a11y` con Chrome 157) y de MHB-61 (`feature/mhb-61`, base de esta rama); la PR de MHB-61 va primero.
 - Siguiente tarea del roadmap (no iniciar sin asignación explícita):
-  - MHB-49 (Fase D): Release `v1.4.0` (tras MHB-15, MHB-36 y MHB-61; bloqueada hasta cerrar MHB-61).
+  - MHB-49 (Fase D): Release `v1.4.0` (tras MHB-15, MHB-36, MHB-61 y MHB-62; bloqueada hasta cerrarlos).
   - MHB-48 (Fase D): actualización TypeScript 7 (bloqueada por disparador externo).
   - MHB-16 / MHB-23 (Fase F): demo/arquetipos opcionales, desbloqueados tras `v1.3.0`.
   - MHB-51 (Fase G): verificación manual final en clientes de correo tras las releases de roadmap.
