@@ -33,28 +33,28 @@ cierre independientes.
 
 ## Backlog activo
 
-| Fase | ID     | Entregable                                    | Estado                | Dependencia vigente            |
-| ---- | ------ | --------------------------------------------- | --------------------- | ------------------------------ |
-| C    | MHB-14 | Comprobación de uso y compatibilidad          | Completada            | Satisfecha                     |
-| C    | MHB-15 | Release `v1.3.0`                              | Completada            | MHB-14                         |
-| D    | MHB-36 | Compatibilidad multi-package-manager          | Completada            | Satisfecha (MHB-43 completada) |
-| D    | MHB-48 | Actualización a TypeScript 7                  | Pendiente             | Disparador externo             |
-| D    | MHB-61 | Versión mínima de Node.js 24.22.3             | Pendiente de revisión | Ninguna                        |
-| D    | MHB-49 | Release `v1.4.0`                              | Pendiente             | MHB-15, MHB-36 y MHB-61        |
-| E    | MHB-38 | Migración en bloque a Maizzle 6 y Tailwind v4 | Pendiente             | MHB-36 y ventana ≥ 2027-01-15  |
-| E    | MHB-50 | Release de la migración de stack              | Pendiente             | MHB-49 y MHB-38                |
-| F    | MHB-16 | Demo candidata pre-renderizada                | Opcional              | MHB-15                         |
-| F    | MHB-23 | Ampliar biblioteca de componentes             | Opcional              | Caso de uso aprobado           |
-| G    | MHB-51 | Verificación manual final en clientes         | Pendiente             | MHB-15, MHB-49 y MHB-50        |
-| H    | MHB-52 | PoC aislada de Vite+                          | Propuesta             | Acuerdo explícito              |
-| H    | MHB-53 | Paridad Oxfmt vs Prettier                     | Propuesta             | MHB-52                         |
-| H    | MHB-54 | Oxlint en paralelo (modo sombra)              | Propuesta             | MHB-52                         |
-| H    | MHB-55 | Reparto Oxlint + ESLint reducido              | Propuesta             | MHB-54                         |
-| H    | MHB-56 | Hooks y staged                                | Propuesta             | MHB-55 y MHB-53                |
-| H    | MHB-57 | Adaptación de CI                              | Propuesta             | MHB-55 y MHB-56                |
-| H    | MHB-58 | TypeScript 7 (reemplaza disparador de MHB-48) | Propuesta             | MHB-55                         |
-| H    | MHB-59 | Gentleman: instrucciones, skills y scripts    | Propuesta             | MHB-53 y MHB-55                |
-| H    | MHB-60 | Release del tooling                           | Propuesta             | MHB-55 a MHB-59                |
+| Fase | ID     | Entregable                                    | Estado      | Dependencia vigente            |
+| ---- | ------ | --------------------------------------------- | ----------- | ------------------------------ |
+| C    | MHB-14 | Comprobación de uso y compatibilidad          | Completada  | Satisfecha                     |
+| C    | MHB-15 | Release `v1.3.0`                              | Completada  | MHB-14                         |
+| D    | MHB-36 | Compatibilidad multi-package-manager          | Completada  | Satisfecha (MHB-43 completada) |
+| D    | MHB-48 | Actualización a TypeScript 7                  | Pendiente   | Disparador externo             |
+| D    | MHB-61 | Versión mínima de Node.js 24.22.3             | En revisión | Ninguna                        |
+| D    | MHB-49 | Release `v1.4.0`                              | Pendiente   | MHB-15, MHB-36 y MHB-61        |
+| E    | MHB-38 | Migración en bloque a Maizzle 6 y Tailwind v4 | Pendiente   | MHB-36 y ventana ≥ 2027-01-15  |
+| E    | MHB-50 | Release de la migración de stack              | Pendiente   | MHB-49 y MHB-38                |
+| F    | MHB-16 | Demo candidata pre-renderizada                | Opcional    | MHB-15                         |
+| F    | MHB-23 | Ampliar biblioteca de componentes             | Opcional    | Caso de uso aprobado           |
+| G    | MHB-51 | Verificación manual final en clientes         | Pendiente   | MHB-15, MHB-49 y MHB-50        |
+| H    | MHB-52 | PoC aislada de Vite+                          | Propuesta   | Acuerdo explícito              |
+| H    | MHB-53 | Paridad Oxfmt vs Prettier                     | Propuesta   | MHB-52                         |
+| H    | MHB-54 | Oxlint en paralelo (modo sombra)              | Propuesta   | MHB-52                         |
+| H    | MHB-55 | Reparto Oxlint + ESLint reducido              | Propuesta   | MHB-54                         |
+| H    | MHB-56 | Hooks y staged                                | Propuesta   | MHB-55 y MHB-53                |
+| H    | MHB-57 | Adaptación de CI                              | Propuesta   | MHB-55 y MHB-56                |
+| H    | MHB-58 | TypeScript 7 (reemplaza disparador de MHB-48) | Propuesta   | MHB-55                         |
+| H    | MHB-59 | Gentleman: instrucciones, skills y scripts    | Propuesta   | MHB-53 y MHB-55                |
+| H    | MHB-60 | Release del tooling                           | Propuesta   | MHB-55 a MHB-59                |
 
 ## Invariantes de calidad, arquitectura y refactor integrado
 
