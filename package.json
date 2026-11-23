@@ -128,12 +128,12 @@
     "@resvg/resvg-js": "2.6.2",
     "autoprefixer": "10.6.1",
     "handlebars": "4.7.10",
-    "lucide": "1.59.0",
-    "nodemailer": "10.1.2",
+    "lucide": "1.77.0",
+    "nodemailer": "10.6.1",
     "postcss": "8.5.31",
-    "puppeteer": "25.14.0",
+    "puppeteer": "25.18.1",
     "tailwindcss": "3.4.19",
     "tailwindcss-preset-email": "1.4.2",
-    "vite": "8.3.5"
+    "vite": "8.3.8"
   }
 }
