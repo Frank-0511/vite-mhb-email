@@ -129,7 +129,7 @@ El pipeline principal es:
 ```bash
 git clone https://github.com/Frank-0511/vite-mhb-email.git
 cd vite-mhb-email
-nvm use          # opcional si usas NVM y tienes Node 24 instalado
+nvm use          # opcional si usas NVM y tienes Node 24.22.3 instalado
 ```
 
 Instala las dependencias con el package manager que prefieras:
