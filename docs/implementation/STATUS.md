@@ -2,36 +2,35 @@
 
 ## Resumen
 
-- ID activo: MHB-15
-- Estado: Completada
-- Implementador: perfil documentación/release, medio
-- Revisor: orquestador
-- Rama: `feature/mhb-15`
-- Última actualización: 2026-11-21
-- Contrato activo: `docs/implementation/PLAN.md` (sección MHB-15)
+- ID activo: MHB-61
+- Estado: En revisión
+- Implementador: perfil tooling/documentación, bajo
+- Revisor: revisor técnico de tooling (distinto del implementador)
+- Rama: `feature/mhb-61`
+- Última actualización: 2026-11-22
+- Contrato activo: `docs/implementation/PLAN.md` (sección MHB-61)
 
 ## Paquete activo
 
-- MHB-15: Release v1.3.0 (Fase C). Estado: `Completada` (2026-11-21).
-- Propiedad de archivos: `package.json`, `CHANGELOG.md`, `README.md`, `docs/implementation/RELEASE_BASELINE.md`, `docs/implementation/STATUS.md`, `docs/implementation/STATUS-HISTORY.md`.
-- Controles:
+- MHB-61: Versión mínima de Node.js 24.22.3 (Fase D). Estado: `En revisión`.
+- Propiedad de archivos: `package.json`, `.nvmrc`, `.node-version`, `README.md`, `CHANGELOG.md`, `.github/workflows/ci.yml`, `.github/workflows/audit.yml`, `docs/implementation/PLAN.md`, `docs/implementation/STATUS.md`.
+- Controles (Node `v24.22.3` vía `nvm use`):
   - `bun install --frozen-lockfile`: Verde
   - `bun run lint`: Verde
   - `bun run typecheck`: Verde
-  - `bun run test`: Verde (106 files, 820 tests)
+  - `bun run test`: Verde
   - `bun run format:check`: Verde
   - `bun run build`: Verde
-  - `bun run validate-email`: Verde (22 reglas OK)
+  - `bun run validate-email`: Verde
   - `bun run check:dist-baseline`: Verde
   - `bun run check-size`: Verde (43.01 KB total)
-  - `bun run check:task-branch`: Verde
   - `git diff --check`: Verde
+  - CI con `node-version-file: ".nvmrc"`: No ejecutado (se confirma en la PR)
 - Hechos de la entrega:
-  1. Congelamiento estricto de alcance de la release `v1.3.0` aplicado al iniciar MHB-15.
-  2. Actualización de versión de `1.2.0` a `1.3.0` en `package.json`.
-  3. Reconciliación de `CHANGELOG.md`: migración de `[Unreleased]` a `[1.3.0]` e incorporación de la sección «Contrato de salida para integradores».
-  4. Actualización de `README.md` y `docs/implementation/RELEASE_BASELINE.md` con trazabilidad del baseline `v1.3.0`.
-  5. Ejecución y aprobación del checklist Go/No-Go y revisión de cierre completada.
+  1. `engines.node` sube de `>=24` a `>=24.22.3`; `.nvmrc` y `.node-version` fijan `24.22.3`.
+  2. `README.md` y `CHANGELOG.md` (`[Unreleased]`) reflejan el nuevo mínimo.
+  3. `ci.yml` y `audit.yml` leen la versión de Node desde `.nvmrc`, una sola fuente de verdad.
+  4. Decisión: la release que lo incluya se mantiene en `v1.4.0` (minor).
 
 ## Baseline vigente
 
@@ -119,9 +118,9 @@
 
 ## Handoff
 
-- Próxima acción inmediata: ninguna pendiente en MHB-15; la siguiente acción la decide el usuario.
+- Próxima acción inmediata: revisión técnica independiente de MHB-61 y confirmación de CI en la PR.
 - Siguiente tarea del roadmap (no iniciar sin asignación explícita):
-  - MHB-49 (Fase D): Release `v1.4.0` (tras MHB-15 y MHB-36; desbloqueada al mergear MHB-15).
+  - MHB-49 (Fase D): Release `v1.4.0` (tras MHB-15, MHB-36 y MHB-61; bloqueada hasta cerrar MHB-61).
   - MHB-48 (Fase D): actualización TypeScript 7 (bloqueada por disparador externo).
   - MHB-16 / MHB-23 (Fase F): demo/arquetipos opcionales, desbloqueados tras `v1.3.0`.
   - MHB-51 (Fase G): verificación manual final en clientes de correo tras las releases de roadmap.

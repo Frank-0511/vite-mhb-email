@@ -33,18 +33,28 @@ cierre independientes.
 
 ## Backlog activo
 
-| Fase | ID     | Entregable                                    | Estado     | Dependencia vigente            |
-| ---- | ------ | --------------------------------------------- | ---------- | ------------------------------ |
-| C    | MHB-14 | Comprobación de uso y compatibilidad          | Completada | Satisfecha                     |
-| C    | MHB-15 | Release `v1.3.0`                              | Completada | MHB-14                         |
-| D    | MHB-36 | Compatibilidad multi-package-manager          | Pendiente  | Satisfecha (MHB-43 completada) |
-| D    | MHB-48 | Actualización a TypeScript 7                  | Pendiente  | Disparador externo             |
-| D    | MHB-49 | Release `v1.4.0`                              | Pendiente  | MHB-15 y MHB-36                |
-| E    | MHB-38 | Migración en bloque a Maizzle 6 y Tailwind v4 | Pendiente  | MHB-36 y ventana ≥ 2027-01-15  |
-| E    | MHB-50 | Release de la migración de stack              | Pendiente  | MHB-49 y MHB-38                |
-| F    | MHB-16 | Demo candidata pre-renderizada                | Opcional   | MHB-15                         |
-| F    | MHB-23 | Ampliar biblioteca de componentes             | Opcional   | Caso de uso aprobado           |
-| G    | MHB-51 | Verificación manual final en clientes         | Pendiente  | MHB-15, MHB-49 y MHB-50        |
+| Fase | ID     | Entregable                                    | Estado      | Dependencia vigente            |
+| ---- | ------ | --------------------------------------------- | ----------- | ------------------------------ |
+| C    | MHB-14 | Comprobación de uso y compatibilidad          | Completada  | Satisfecha                     |
+| C    | MHB-15 | Release `v1.3.0`                              | Completada  | MHB-14                         |
+| D    | MHB-36 | Compatibilidad multi-package-manager          | Completada  | Satisfecha (MHB-43 completada) |
+| D    | MHB-48 | Actualización a TypeScript 7                  | Pendiente   | Disparador externo             |
+| D    | MHB-61 | Versión mínima de Node.js 24.22.3             | En revisión | Ninguna                        |
+| D    | MHB-49 | Release `v1.4.0`                              | Pendiente   | MHB-15, MHB-36 y MHB-61        |
+| E    | MHB-38 | Migración en bloque a Maizzle 6 y Tailwind v4 | Pendiente   | MHB-36 y ventana ≥ 2027-01-15  |
+| E    | MHB-50 | Release de la migración de stack              | Pendiente   | MHB-49 y MHB-38                |
+| F    | MHB-16 | Demo candidata pre-renderizada                | Opcional    | MHB-15                         |
+| F    | MHB-23 | Ampliar biblioteca de componentes             | Opcional    | Caso de uso aprobado           |
+| G    | MHB-51 | Verificación manual final en clientes         | Pendiente   | MHB-15, MHB-49 y MHB-50        |
+| H    | MHB-52 | PoC aislada de Vite+                          | Propuesta   | Acuerdo explícito              |
+| H    | MHB-53 | Paridad Oxfmt vs Prettier                     | Propuesta   | MHB-52                         |
+| H    | MHB-54 | Oxlint en paralelo (modo sombra)              | Propuesta   | MHB-52                         |
+| H    | MHB-55 | Reparto Oxlint + ESLint reducido              | Propuesta   | MHB-54                         |
+| H    | MHB-56 | Hooks y staged                                | Propuesta   | MHB-55 y MHB-53                |
+| H    | MHB-57 | Adaptación de CI                              | Propuesta   | MHB-55 y MHB-56                |
+| H    | MHB-58 | TypeScript 7 (reemplaza disparador de MHB-48) | Propuesta   | MHB-55                         |
+| H    | MHB-59 | Gentleman: instrucciones, skills y scripts    | Propuesta   | MHB-53 y MHB-55                |
+| H    | MHB-60 | Release del tooling                           | Propuesta   | MHB-55 a MHB-59                |
 
 ## Invariantes de calidad, arquitectura y refactor integrado
 
@@ -170,6 +180,7 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
 ### MHB-36 — Compatibilidad multi-package-manager
 
 - **Objetivo observable:** cualquier desarrollador clona el proyecto y trabaja con npm, yarn, pnpm o bun sin que ninguno sea obligatorio. Los scripts se ejecutan con `node` (type stripping nativo), los tests con Vitest y la CLI lanza procesos con el package manager detectado.
+- **Estado:** `Completada` (2026-10-09). Verificada en local y CI con los 4 gestores (Bun, npm, Yarn 4 y pnpm); integrada en master e incluida en la release `v1.3.0`.
 - **Diagnóstico al 2026-10-08 (post MHB-43):**
   - Con Node 22.23.1 local, `node` ejecuta sin cambios `build`, `validate-email`, `check:dist-baseline`, `check-size`, `lint` y `check:a11y`, y `dist/` queda idéntico.
   - Acoplamiento a Bun:
@@ -265,6 +276,7 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
 
 - **Objetivo observable:** subir `typescript` de `6.0.3` a `7.x` con `typecheck`, lint tipado y tests en verde, sin cambiar el HTML de `dist/`.
 - **Diagnóstico al 2026-10-01:** `typescript@7.0.2` es `latest` en npm y su paquete no declara `main` (solo el binario `tsc`). `typescript-eslint@8.71.0` (`latest`) y `8.71.1-alpha.5` (`canary`) declaran `peerDependencies.typescript: >=4.8.4 <6.1.0`, de modo que TS 7 no está soportado hoy. El repo importa la API del compilador en `scripts/validators/lint-guards/file-tree.test.ts` (`import ts from "typescript"`).
+- **Alternativa (Fase H):** MHB-58 cubre este mismo objetivo vía Oxlint type-aware y reemplazaría este ID si la Fase H se ejecuta; no se ejecutan ambos.
 - **Disparador externo (bloqueante):** una versión estable de `typescript-eslint` cuyo peer `typescript` admita 7.x, o una decisión explícita del usuario de sustituir el lint tipado. Hasta entonces el ID no se inicia ni se asigna.
 - **Superficies autorizadas:** `package.json`, `bun.lock`, `tsconfig*.json` solo para opciones deprecadas o removidas por TS 7, `scripts/validators/lint-guards/file-tree.test.ts` (o su sustituto si la API `ts` ya no existe), `docs/implementation/STATUS.md` y `CHANGELOG.md`.
 - **Dependencias y precondiciones:** MHB-34 completada (modo estricto ya cerrado, para aislar errores de la versión nueva) y el disparador externo satisfecho.
@@ -288,12 +300,41 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
 - **Revisor independiente:** revisor técnico de tooling distinto del implementador.
 - **Condición de escalamiento:** `typescript-eslint` no soporta TS 7, la API `ts` no existe o falla un gate global.
 
+### MHB-61 — Versión mínima de Node.js 24.22.3
+
+- **Objetivo observable:** el proyecto declara `Node.js >= 24.22.3` como mínimo y las herramientas de versión (`nvm`, `fnm`, `asdf`, `mise` u otras que lean `.node-version`) fijan exactamente `24.22.3`, de modo que un clon nuevo trabaja con una versión de Node que cumple el requisito de las dependencias vigentes.
+- **Motivo:** `engines.node` era `>=24`, que admitía 24.0 a 24.22.2; esas versiones quedan por debajo del mínimo que se quiere garantizar. Se declara el mínimo exacto y se agrega `.node-version` para los gestores que no leen `.nvmrc`.
+- **Estado:** implementado en la rama `feature/mhb-61` (commit `69d1ee0`); `En revisión`; pendiente de revisión independiente y de confirmar CI.
+- **Superficies autorizadas:** `package.json` (`engines.node`), `.nvmrc`, `.node-version` (nuevo), `README.md` (dos menciones de requisitos), `CHANGELOG.md` (`[Unreleased]`), `.github/workflows/ci.yml` y `.github/workflows/audit.yml` (versión de Node desde `.nvmrc`), `docs/implementation/STATUS.md`.
+- **Dependencias y precondiciones:** ninguna.
+- **Cambios realizados:**
+  1. `package.json`: `engines.node` de `>=24` a `>=24.22.3`.
+  2. `.nvmrc`: de `24` a `24.22.3`.
+  3. `.node-version`: archivo nuevo con `24.22.3`.
+  4. `README.md`: «Requisitos locales» y «Requisitos» indican `>= 24.22.3`.
+  5. `CHANGELOG.md`: entrada «Cambiado» en `[Unreleased]`.
+- **CI:** `ci.yml` y `audit.yml` usan `node-version-file: ".nvmrc"`, de modo que el runner instala exactamente `24.22.3`; se confirma en la primera PR.
+- **Criterios de aceptación:**
+  - `package.json`, `.nvmrc` y `.node-version` declaran la misma versión mínima (`24.22.3`), comprobable con `rg -n "24\\.22\\.3" package.json .nvmrc .node-version README.md`.
+  - `bun install --frozen-lockfile` y `bun run check:dist-baseline` verdes con Node `24.22.3`.
+  - CI usa una versión de Node `>= 24.22.3`.
+  - `README.md` y `CHANGELOG.md` coinciden con el mínimo declarado.
+- **Validación automática:** instalación congelada, lint, typecheck, test, `format:check`, build, `validate-email`, `check:dist-baseline`, `check-size`, `check:task-branch` y `git diff --check`, todos con Node `24.22.3`.
+- **Validación manual:** `nvm use` y `fnm use` en un clon limpio seleccionan `24.22.3`.
+- **Resultado requerido:** versión de Node usada en cada control, diff de los cinco archivos y salida de CI.
+- **Riesgos y reversión:** quien tenga Node 24.0 a 24.22.2 recibe aviso de `engines` o falla en gestores con `engine-strict`; `.node-version` y `.nvmrc` fijan una versión exacta que obliga a actualizar a futuro. Un único commit, revertible por separado. El cambio eleva el requisito de runtime declarado; la versión se mantiene en `v1.4.0` (decisión registrada en MHB-49).
+- **Exclusiones específicas:** no cambiar dependencias, `@types/node`, `tsconfig*.json`, templates ni `dist/`.
+- **Análisis de mantenibilidad:** una sola versión mínima repetida en tres archivos; no se agrega lógica nueva.
+- **Implementador:** perfil tooling/documentación, bajo.
+- **Revisor independiente:** revisor técnico de tooling distinto del implementador.
+- **Condición de escalamiento:** `dist/` cambia, una dependencia exige otra versión de Node, o CI no ofrece `24.22.3`.
+
 ### MHB-49 — Release v1.4.0
 
 - **Objetivo observable:** publicar `v1.4.0` con el alcance de la Fase D.
 - **Superficies autorizadas:** las mismas que MHB-15.
-- **Dependencias y precondiciones:** MHB-15 publicada, MHB-36 completada, CI verde en `master` y decisión explícita del usuario antes de publicar o etiquetar.
-- **Versión propuesta:** `v1.4.0` (minor), porque el soporte multi-package-manager es aditivo. Pasar a `v2.0.0` solo si algún ID de la fase eliminó o renombró un comando público o elevó el requisito de runtime declarado en `engines`.
+- **Dependencias y precondiciones:** MHB-15 publicada, MHB-36 y MHB-61 completadas, CI verde en `master` y decisión explícita del usuario antes de publicar o etiquetar.
+- **Versión propuesta:** `v1.4.0` (minor), porque el soporte multi-package-manager es aditivo. Pasar a `v2.0.0` solo si algún ID de la fase eliminó o renombró un comando público o elevó el requisito de runtime declarado en `engines`. **Decisión (usuario): MHB-61 eleva `engines.node` de `>=24` a `>=24.22.3` y se mantiene `v1.4.0` (minor), por tratarse de un parche dentro de Node 24; el CHANGELOG `[1.4.0]` debe declarar el nuevo mínimo.**
 - **Procedimiento:** idéntico a MHB-15 (congelamiento de alcance, `release-management`, Go/No-Go, CHANGELOG `[1.4.0]` y sección «Contrato de salida para integradores» frente a `v1.3.0`, que debe declarar `dist/` idéntico). Las notas documentan la instalación con los 4 managers, la política de lockfile único (`bun.lock`) y la migración de tests a Vitest.
 - **Criterios de aceptación, validación, resultados, riesgos y exclusiones:** los de MHB-15, añadiendo, desde un checkout limpio del tag, la instalación congelada con bun y la instalación desde cero con npm, ambas con `check:dist-baseline` verde.
 - **Implementador:** perfil documentación/release, medio.
@@ -419,6 +460,198 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
 - **Revisor independiente:** revisor de email/UI.
 - **Condición de escalamiento:** el alcance se amplía hacia un builder o requiere nueva arquitectura.
 
+## Fase H — Migración de tooling a Vite+ (propuesta, sin fecha)
+
+Fase de análisis y plan; **no autoriza ningún cambio**. Se ejecuta solo con acuerdo explícito. Cada ID conserva rama, revisión y cierre independientes. Etiquetas de evidencia: CONFIRMADO / COMPATIBLE CON AJUSTES / NO COMPATIBLE / NO VERIFICADO / RECOMENDACIÓN.
+
+### Veredicto de viabilidad
+
+- **RECOMENDACIÓN: viable solo como enfoque híbrido (B), por etapas y reversible. No migrar en bloque ni adoptar Oxlint exclusivo (A).**
+- **CONFIRMADO:** `no-restricted-syntax` (selectores AST) no existe en Oxlint (oxc#7342, "unable to support"). Sostiene 12 guards del repo (`selectors.ts:17-105`, `eslint.config.js:104-169`: enum, reexports, magic strings, `types.ts`/`constants.ts` sin runtime, claves de localStorage). Existe un plugin JS comunitario que re-expone la regla de ESLint, pero los JS plugins de Oxlint son alpha. Por tanto ESLint **no puede retirarse** hoy sin perder garantías.
+- **CONFIRMADO:** `check-file` (carpetas en kebab-case y blocklist de nombres, `eslint.config.js:182-196`) no tiene equivalente exacto; `unicorn/filename-case` solo cubre archivos. Se conserva en ESLint o en `file-tree.test.ts`.
+- **COMPATIBLE CON AJUSTES:** Oxlint cubre reglas nativas y las type-aware vía `tsgolint` (59/61 reglas según la documentación de Oxc) sin depender de `typescript-eslint`. Esto desbloquea TypeScript 7 en lo que respecta al lint tipado (peer actual de `typescript-eslint`: `<6.1.0`), pero **no** basta: `file-tree.test.ts:9,174-187` importa la API `ts` (`createSourceFile`, `isExportDeclaration`, `SyntaxKind`) y el paquete `typescript@7` no expone `main` (diagnóstico de MHB-48). Esa dependencia debe resolverse aparte.
+- **COMPATIBLE CON AJUSTES:** Vite+ (`vp`) empaqueta Vite, Vitest, Oxlint, Oxfmt y el runner; fija su propio Vitest (docs: 5.1.0; repo: `vitest 5.0.5`, `package.json:124`) y reemplaza `vite` por un alias propio (repo: `vite 8.3.5`, `:137`). Impacto sobre `scripts/vite/plugins/*`, el render Handlebars y Maizzle 5.5: **NO VERIFICADO**; requiere PoC en directorio temporal (MHB-52).
+- **COMPATIBLE CON AJUSTES:** Requisitos. Vite+ declara Node 22+; Vitest 5 requiere `^22.18 || ^24.11 || >=26`; el repo declara `engines.node >=24` (`package.json:33`, `.nvmrc:1`), que admite 24.0–24.10 y por tanto queda por debajo del requisito de Vitest 5 (ya hoy). Bun (`bun@1.3.13`, `ci.yml:43`) solo se usa como gestor; si `vp` lo soporta como gestor sin tocar el lockfile: **NO VERIFICADO**. Versión actual de Vite+ (docs muestran 1.7.0; RFC menciona 2.0.0-beta.0): **NO VERIFICADO**.
+- **NO COMPATIBLE (sin reemplazo):** HTMLHint, Stylelint, markdownlint, axe-core, contraste, tamaño HTML, validadores JSON y de compatibilidad de email. Oxlint/Oxfmt no cubren CSS/HTML/MD para lint. Se conservan tal cual.
+- **NO VERIFICADO:** diff real de Oxfmt contra Prettier 3.9.10 (Oxfmt declara base 3.10.1) sobre md/json/yaml/css/html del repo. Si hay diferencias no deseadas, **conservar Prettier** (decisión en MHB-53).
+- **Regla de gobierno:** ningún comando `vp` sustituye los scripts públicos (`build`, `lint`, `format`, `format:check`, `test`, `typecheck`, `check:a11y`, `check:dist-baseline`); los scripts internos pueden delegar en `vp`, el nombre público no cambia. `build` sigue siendo `node scripts/build/build.ts` (Maizzle 5.5; sin Maizzle 6).
+
+### Comparativa de enfoques
+
+| Enfoque             | Garantías                                                                                   | Riesgo                                                            | Veredicto                                              |
+| ------------------- | ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------ |
+| A) Oxlint exclusivo | Pierde `no-restricted-syntax`, `check-file`; regex de `no-restricted-imports` sin verificar | Alto: se rompen 12 guards arquitectónicos                         | NO COMPATIBLE hoy                                      |
+| B) Oxlint + ESLint  | Oxlint: reglas nativas y type-aware. ESLint reducido: solo AST, `check-file`, aislamiento   | Medio: reglas duplicadas si no se parte el conjunto por ownership | **RECOMENDACIÓN** (con matriz de ownership sin solape) |
+| C) ESLint principal | Cobertura total actual                                                                      | Bloquea TS 7 (peer `<6.1.0`), lint tipado lento                   | Línea base y rollback                                  |
+
+Cómo demostrar que no se pierde cobertura (aplica a toda etapa de lint): (1) corpus de **mutantes**: un fixture por regla que debe fallar con ESLint antes del cambio y con la herramienta nueva después (ya existe base en `eslint-guards.test.ts:50-395`; se amplía a runner agnóstico); (2) lint de `scripts/ src/web/ src/emails/` con ambas herramientas y `diff` de hallazgos = 0 sobre el código actual; (3) test de **ownership**: cada regla activa figura en exactamente una herramienta (sin duplicados ni huecos); (4) el test de política de `ignores` (`eslint-guards.test.ts:369-395`) se replica para la config de Oxlint.
+
+### Matriz de reglas ESLint → Oxlint
+
+| Regla / guard (origen)                                                                                                                          | Propósito                        | Equivalente Oxlint                                    | Nivel de equivalencia                                                                              | Tipos  | Solución propuesta                                                |
+| ----------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ------ | ----------------------------------------------------------------- |
+| `eqeqeq`, `prefer-const`, `no-var` (`eslint.config.js:71-73`)                                                                                   | Higiene JS                       | `eslint/eqeqeq`, `prefer-const`, `no-var`             | Mismo nombre; opciones por probar                                                                  | No     | Mover a Oxlint tras mutantes                                      |
+| `@typescript-eslint/no-unused-vars` (`:97`)                                                                                                     | Variables sin usar, `^_` en args | `eslint/no-unused-vars` / `typescript/no-unused-vars` | Parcial; patrón `argsIgnorePattern` por verificar                                                  | No     | Mover tras verificar opciones                                     |
+| `@typescript-eslint/no-explicit-any` (`:98`)                                                                                                    | Prohibir `any`                   | `typescript/no-explicit-any`                          | Alta                                                                                               | No     | Mover a Oxlint                                                    |
+| `consistent-type-imports` (`:99-102`)                                                                                                           | `import type` separado           | `typescript/consistent-type-imports`                  | Alta; `fixStyle` por verificar                                                                     | No     | Mover; Oxlint no sustituye `verbatimModuleSyntax` (TS)            |
+| `no-warning-comments` (`@typedef`, `:103`)                                                                                                      | Prohibir `@typedef` en `.ts`     | `eslint/no-warning-comments`                          | Parcial; `location: anywhere` por verificar                                                        | No     | Mover si pasa mutante; si no, test propio                         |
+| `no-floating-promises`, `no-misused-promises`, `await-thenable`, `no-redundant-type-constituents`, `require-await`, `return-await` (`:105-116`) | Corrección async/tipos           | Mismas reglas `typescript/*` vía `tsgolint`           | Alta por nombre; **comportamiento y opciones NO VERIFICADOS** (`checksVoidReturn`, `in-try-catch`) | **Sí** | Oxlint type-aware solo tras PoC y mutantes; hasta entonces ESLint |
+| Sin `enum` (`selectors.ts:46`)                                                                                                                  | Aislamiento de capa sintáctica   | `typescript/no-enum`? (nombre similar)                | NO VERIFICADO; no declarar equivalente                                                             | No     | Mantener en ESLint (AST) salvo prueba                             |
+| Sin reexports fuera de `index.ts` (`selectors.ts:56-70`)                                                                                        | Barrels puros                    | Ninguno                                               | NO COMPATIBLE                                                                                      | No     | ESLint (`no-restricted-syntax`) o `file-tree.test.ts`             |
+| `types.ts` sin runtime / `constants.ts` sin funciones (`:73-105`)                                                                               | Roles de archivo                 | Ninguno                                               | NO COMPATIBLE                                                                                      | No     | ESLint reducido                                                   |
+| Magic strings `/api/`, `X-ESP-Validation`, `RENDER_FAILED`, eventos (`:17-36`)                                                                  | Contratos compartidos            | Ninguno                                               | NO COMPATIBLE                                                                                      | No     | ESLint reducido                                                   |
+| Claves `localStorage` literales (`:38-43`)                                                                                                      | Storage keys centralizadas       | Ninguno                                               | NO COMPATIBLE                                                                                      | No     | ESLint reducido                                                   |
+| Imports de Node en `src/web` (`isolation-rules.ts:41-63`)                                                                                       | Aislamiento frontend             | `eslint/no-restricted-imports`                        | Parcial: `patterns[].regex` NO VERIFICADO                                                          | No     | Mover solo si el regex funciona; si no, ESLint                    |
+| Aislamiento `contracts/` (`isolation-rules.ts:8-39`)                                                                                            | Contratos hoja sin Node ni `../` | `eslint/no-restricted-imports`                        | Parcial: igual que arriba                                                                          | No     | Igual                                                             |
+| `check-file` nombres/carpetas kebab-case y blocklist (`:182-196`)                                                                               | Convención de nombres            | `unicorn/filename-case` (solo archivos)               | Parcial: sin carpetas ni blocklist                                                                 | No     | ESLint reducido o ampliar `file-tree.test.ts`                     |
+| Entorno `globals` node/browser (`:42-66`)                                                                                                       | Globales por capa                | `env`/`globals` de Oxlint                             | Alta                                                                                               | No     | Configurar equivalente                                            |
+
+### Oxfmt vs Prettier y lint-staged
+
+- Alcance real de formato (`package.json:50-51`, `lint-staged` `:58-104`): ts, html, css, json, md, yml, `*.code-workspace`. Config actual `.prettierrc.json`: `semi`, comillas dobles, `printWidth 100`, `trailingComma all`, `endOfLine lf`; `.prettierignore` (dist, node_modules, .yarn, yarn.lock, .atl).
+- **NO VERIFICADO:** salida de Oxfmt sobre los archivos reales. Procedimiento (MHB-53): copia en `mktemp -d`, formatear con ambas herramientas y `diff`; cualquier diferencia no pedida => conservar Prettier para ese tipo de archivo (híbrido por extensión es aceptable).
+- `vp staged` (bloque `staged` en `vite.config.ts`) sustituiría a `lint-staged`; mismo mapa glob→comandos que `package.json:58-104`, sin perder `htmlhint`, `stylelint --fix`, `markdownlint-cli2 --fix`, `validate-json`.
+
+### Etapas (ordenadas por riesgo; cada una es un futuro ID ODD)
+
+Cada etapa conserva: rama `feature/<id>`, un commit revertible, CHANGELOG `[Unreleased]` si hay efecto observable, `STATUS.md` y revisión independiente. Validación automática común (**VC**): `bun install --frozen-lockfile`, `bun run lint`, `bun run typecheck`, `bun run test`, `bun run format:check`, `bun run build`, `bun run validate-email`, `bun run check:dist-baseline`, `bun run check-size`, `bun run check:a11y`, `git diff --check`.
+
+#### MHB-52 — PoC aislada de Vite+ (solo lectura sobre el repo)
+
+- **Objetivo:** decidir con evidencia si `vp` convive con Vite 8, Vitest 5, Maizzle 5.5 y los plugins propios.
+- **Archivos:** ninguno del repo; copia en `mktemp -d`. Resultado en `STATUS.md`.
+- **Dependencias:** ninguna.
+- **Cambios de config:** ninguno en el repo.
+- **Comandos:** en la copia, instalar `vite-plus`, ejecutar `vp test`, `vp check`, build propio y `check:dist-baseline`; `node --version`, `bun --version`.
+- **Riesgos:** alias de `vite` rompe `scripts/vite/plugins/*`; Vitest pinneado difiere; Node 24 <24.11.
+- **Validaciones:** `process.chdir` de `env.test.ts:14,19`, `handlebars.test.ts:90,94`, `built-templates.test.ts:12,16` pasan con `pool: "forks"` (no se cambia); `dist/` idéntico; versión real de Vite+ y soporte Bun registrados.
+- **Aceptación:** informe go/no-go con resultados de los 4 puntos; cualquier fallo detiene la Fase H.
+- **Rollback:** borrar el directorio temporal.
+
+#### MHB-53 — Paridad de formato Oxfmt vs Prettier
+
+- **Objetivo:** decidir por extensión si Oxfmt reemplaza a Prettier.
+- **Archivos:** ninguno (análisis) o `package.json`/config de formato si se adopta.
+- **Dependencias:** MHB-52 go.
+- **Cambios de config:** bloque `fmt` en `vite.config.ts` con las opciones de `.prettierrc.json`; `.prettierignore` migrado.
+- **Comandos:** formateo con ambas herramientas en copia temporal y `diff -r`.
+- **Riesgos:** diff masivo de formato; divergencias md/yaml/html; ruido en `dist/` si se formatea.
+- **Validaciones:** `format:check` verde; diff 0 o cambios aprobados y aislados en commit propio; `dist/` excluido.
+- **Aceptación:** `bun run format` y `format:check` conservan nombre y semántica.
+- **Rollback:** revertir el commit; Prettier permanece disponible.
+
+#### MHB-54 — Oxlint en paralelo (modo sombra, sin retirar ESLint)
+
+- **Objetivo:** ejecutar Oxlint sobre reglas nativas sin que bloquee, y medir diferencias con ESLint.
+- **Archivos:** `vite.config.ts` (bloque `lint`), `package.json`, `scripts/validators/lint-guards/*` (runner agnóstico).
+- **Dependencias:** MHB-52 go.
+- **Cambios de config:** reglas de la matriz marcadas «Mover» únicamente; sin `ignores` nuevos ni `eslint-disable`.
+- **Comandos:** `vp lint` en modo informativo + `eslint` actual.
+- **Riesgos:** falsos negativos; duplicación de reglas.
+- **Validaciones:** corpus de mutantes y `diff` de hallazgos = 0 sobre código actual; test de ownership.
+- **Aceptación:** reporte de paridad por regla; `lint` público sin cambios.
+- **Rollback:** eliminar bloque `lint` y script auxiliar.
+
+#### MHB-55 — Reparto de reglas: ESLint reducido + Oxlint (enfoque B)
+
+- **Objetivo:** mover a Oxlint las reglas con paridad demostrada y dejar en ESLint solo AST, `check-file` y aislamiento no verificables.
+- **Archivos:** `eslint.config.js`, `vite.config.ts`, `package.json`, `eslint-guards.test.ts` (partir si supera 400 líneas), `docs/implementation/STATUS.md`.
+- **Dependencias:** MHB-54.
+- **Cambios de config:** quitar de ESLint solo las reglas movidas; `lint` encadena Oxlint y ESLint reducido más HTMLHint, markdownlint, `validate-json`, Stylelint.
+- **Riesgos:** regla duplicada o huérfana; pérdida del type-aware si `tsgolint` diverge.
+- **Validaciones:** mutantes por regla, ownership, política de `ignores` replicada.
+- **Aceptación:** `bun run lint` falla ante cada mutante y pasa en el repo; ninguna regla en dos herramientas.
+- **Rollback:** revertir el commit (restaura ESLint completo).
+
+#### MHB-56 — Hooks y staged
+
+- **Objetivo:** reemplazar `lint-staged` por `vp staged` y, si se acuerda, Husky por `vp config`, sin perder pasos.
+- **Archivos:** `package.json` (`lint-staged`, `prepare`), `vite.config.ts` (`staged`), `.husky/pre-commit`, `.husky/pre-push`.
+- **Dependencias:** MHB-55; MHB-53 para el formato.
+- **Cambios de config:** mantener `check-task-branch` antes del staged (`pre-commit:1`), `run-scripts.ts lint build` en pre-push, `post-checkout` (`agents:sync`) y `prepare-commit-msg` intactos.
+- **Riesgos:** `core.hooksPath=.husky/_` (confirmado en `.git/config:8`); hook roto bloquea commits.
+- **Validaciones:** commit de prueba en rama temporal con archivo que viola cada tipo (ts, html, css, md, json); todos se rechazan o corrigen.
+- **Aceptación:** mismo mapa glob→comando que `package.json:58-104`.
+- **Rollback:** restaurar `lint-staged` y `.husky/pre-commit`.
+
+#### MHB-57 — CI
+
+- **Objetivo:** adaptar `ci.yml` sin perder jobs ni gates.
+- **Archivos:** `.github/workflows/ci.yml`.
+- **Dependencias:** MHB-55 y MHB-56.
+- **Cambios de config:** el job «Format & Lint» (`:23`, `:60`, `:63-64`) sigue llamando `bun run format:check` y `bun run lint`; el agregador `CI Pipeline` (`:174-187`) mantiene los 5 resultados; matriz `package-managers` (`:123-171`) valida que Vite+ no rompe npm/yarn/pnpm.
+- **Riesgos:** nombre del check requerido cambia; caché de Bun; instalación del binario `vp`.
+- **Validaciones:** PR de prueba con CI completa en verde; `git diff --exit-code -- dist/ bun.lock`.
+- **Aceptación:** mismos jobs y gates; `pr-guard.yml`, `audit.yml` sin cambios.
+- **Rollback:** revertir el commit del workflow.
+
+#### MHB-58 — TypeScript 7 (reemplaza el disparador de MHB-48)
+
+- **Objetivo:** subir `typescript` a `7.x` con lint tipado vía Oxlint/`tsgolint` y sin la API `ts`.
+- **Archivos:** `package.json`, `bun.lock`, `tsconfig.json`, `scripts/validators/lint-guards/file-tree.test.ts`, `docs/implementation/STATUS.md`, `CHANGELOG.md`.
+- **Dependencias:** MHB-55 (el lint tipado ya no depende de `typescript-eslint`; si ESLint reducido conserva reglas tipadas, no se cumple y se detiene).
+- **Cambios de config:** versión fija de `typescript`; retirar `typescript-eslint` solo si ya no tiene reglas; reescribir el análisis de barrels de `file-tree.test.ts:174-187` sin `import ts` (p. ej. análisis textual/AST ligero).
+- **Riesgos:** `tsc` de TS 7 sin `main`; opciones removidas de `tsconfig`; `strict`, `verbatimModuleSyntax`, `erasableSyntaxOnly` no se tocan.
+- **Validaciones:** **VC** más `rg -n "eslint-disable|@ts-ignore|@ts-expect-error" scripts src` sin entradas nuevas.
+- **Aceptación:** `typecheck` y `lint` verdes con `typescript 7.x`; `dist/` idéntico.
+- **Rollback:** revertir el commit de versión (conserva TS 6.0.3).
+
+#### MHB-59 — Gentleman: instrucciones, skills y scripts
+
+- **Objetivo:** reflejar el tooling final sin romper adaptadores.
+- **Archivos (fuentes canónicas, nunca los adaptadores):** `docs/ai/AGENTS.md:78-79`; `docs/ai/skills/email-quality-gates/SKILL.md:11-19`, `task-verification/SKILL.md:11,33`, `email-code-conventions/SKILL.md:29`, `task-review/SKILL.md:30,36`, `task-status-management/SKILL.md:38`, `email-refactor-type-safety/SKILL.md:30`; `README.md:437-438`; `vite-mhb-email.code-workspace:24-52,126,130`; `scripts/inventory/check-migration-inventory.ts:17`; `CHANGELOG.md`.
+- **Dependencias:** MHB-55 y MHB-53.
+- **Cambios de config:** la prohibición de `ignores`, `eslint-disable`, `@ts-ignore` y `@ts-expect-error` se redacta de forma agnóstica a la herramienta (y cubre `oxlint-disable`); la allowlist `.js` (`eslint.config.js`, `maizzle.config.js`) se ajusta si `eslint.config.js` desaparece.
+- **Comandos:** `bun run agents:sync`, `bun run agents:check` (con su preflight; nunca el `sync-agents.js` heredado).
+- **Riesgos:** adaptadores raíz (`CLAUDE.md`, `.agents/skills` y demás symlinks) desincronizados.
+- **Validaciones:** `agents:check` verde; grep sin referencias huérfanas a herramientas retiradas.
+- **Aceptación:** ninguna instrucción cita una herramienta que ya no se ejecuta.
+- **Rollback:** revertir el commit y volver a sincronizar.
+
+#### MHB-60 — Release del tooling
+
+- **Objetivo:** publicar el cambio de tooling con `dist/` idéntico. Versión SemVer decidida al congelar (probablemente minor; major solo si cambia un comando público o `engines`).
+- **Archivos / procedimiento:** los de MHB-15 y `release-management`.
+- **Dependencias:** MHB-55 a MHB-59.
+- **Aceptación y rollback:** los de MHB-15; decisión explícita del usuario antes de etiquetar.
+
+### Matriz de conservación funcional
+
+| Funcionalidad                                                               | Herramienta actual                                 | Solución futura                                         | Estado                          | Prueba de aceptación                                           |
+| --------------------------------------------------------------------------- | -------------------------------------------------- | ------------------------------------------------------- | ------------------------------- | -------------------------------------------------------------- |
+| Reglas JS/TS nativas                                                        | ESLint + typescript-eslint                         | Oxlint                                                  | COMPATIBLE CON AJUSTES          | Mutantes por regla, `diff` de hallazgos = 0                    |
+| Lint tipado (promises, async, return-await)                                 | typescript-eslint con `tsconfig.json`              | Oxlint + `tsgolint`                                     | NO VERIFICADO                   | Mutantes tipados; opciones `checksVoidReturn` e `in-try-catch` |
+| Guards AST (enum, reexports, magic strings, roles de archivo, localStorage) | ESLint `no-restricted-syntax`                      | ESLint reducido (o plugin JS alpha)                     | NO COMPATIBLE en Oxlint         | `eslint-guards.test.ts` verde                                  |
+| Aislamiento contracts/web                                                   | ESLint `no-restricted-imports`                     | Oxlint si el regex funciona; si no, ESLint              | NO VERIFICADO                   | Fixtures de import prohibido fallan                            |
+| Nombres de archivos y carpetas                                              | `eslint-plugin-check-file`                         | ESLint reducido o `file-tree.test.ts`                   | NO COMPATIBLE en Oxlint         | Fixture de carpeta no kebab-case falla                         |
+| Árbol de archivos (límites, barrels)                                        | `file-tree.test.ts` con API `ts`                   | Mismo test sin `import ts`                              | COMPATIBLE CON AJUSTES (MHB-58) | `bun run test` verde con TS 7                                  |
+| Formato                                                                     | Prettier                                           | Oxfmt o Prettier por extensión                          | NO VERIFICADO                   | `diff -r` de formato = 0 en MHB-53                             |
+| Lint de HTML                                                                | HTMLHint                                           | Se conserva                                             | Sin cambio                      | `bun run lint`                                                 |
+| Lint de CSS                                                                 | Stylelint                                          | Se conserva                                             | Sin cambio                      | `bun run lint`                                                 |
+| Lint de Markdown                                                            | markdownlint-cli2                                  | Se conserva                                             | Sin cambio                      | `bun run lint`                                                 |
+| Validación JSON                                                             | `validate-json.ts`                                 | Se conserva                                             | Sin cambio                      | `bun run lint`                                                 |
+| Accesibilidad                                                               | axe-core + puppeteer (`check-a11y.ts`)             | Se conserva                                             | Sin cambio                      | `bun run check:a11y`                                           |
+| Contraste                                                                   | `validate-contrast.ts`                             | Se conserva                                             | Sin cambio                      | `bun run check:a11y`                                           |
+| Tamaño HTML                                                                 | `check-html-size.ts`                               | Se conserva                                             | Sin cambio                      | `bun run check-size`                                           |
+| Compatibilidad de email                                                     | `validate-email-html.ts` + `email-rules/**`        | Se conserva                                             | Sin cambio                      | `bun run validate-email`                                       |
+| Tests e aislamiento `chdir`                                                 | Vitest `pool: "forks"` (`vitest.config.ts:8`)      | `vp test` solo si pasa con `forks`; si no, `vitest run` | NO VERIFICADO                   | Suites con `process.chdir` verdes                              |
+| Build, inline CSS, flatten, variables SendGrid                              | `build.ts` + Maizzle 5.5                           | Se conserva                                             | Sin cambio                      | `check:dist-baseline` y `git diff --exit-code -- dist/`        |
+| Typecheck                                                                   | `tsc --noEmit` TS 6.0.3                            | `tsc` TS 7 (MHB-58); `vp check` es opcional             | COMPATIBLE CON AJUSTES          | `bun run typecheck`                                            |
+| Pre-commit                                                                  | Husky + `check-task-branch` + lint-staged          | `vp staged` (conserva la rama y el mapa)                | NO VERIFICADO                   | Commit de prueba por tipo de archivo                           |
+| Pre-push / post-checkout / commit-msg                                       | `run-scripts.ts lint build`, `agents-sync`, filtro | Se conservan                                            | Sin cambio                      | Ejecución de cada hook                                         |
+| CI                                                                          | `ci.yml` (5 jobs + agregador)                      | Mismos jobs                                             | COMPATIBLE CON AJUSTES          | PR de prueba verde                                             |
+| Matriz multi-package-manager                                                | CI `package-managers` (yarn, npm, pnpm)            | Se conserva                                             | NO VERIFICADO con `vp`          | Job verde; `bun.lock` intacto                                  |
+| Instrucciones y skills Gentleman                                            | `docs/ai/**` citan ESLint y Prettier               | Texto actualizado en MHB-59                             | Pendiente                       | `agents:check` y grep sin huérfanos                            |
+| Editor                                                                      | `.code-workspace` (Prettier, htmlhint)             | Ajustado según MHB-53                                   | Pendiente                       | Revisión manual declarada                                      |
+
+### Riesgos residuales y exclusiones
+
+- Vite+ reemplaza Vite y fija Vitest: puede chocar con `vite 8.3.5`, `vitest 5.0.5` y los plugins de `scripts/vite/plugins/*`; MHB-52 es el punto de parada.
+- `engines.node >=24` queda por debajo de `^24.11` de Vitest 5; decidir elevar a `>=24.11` (cambio de contrato, posible major).
+- Hallazgo ajeno: `check-a11y.ts:171` contiene un `@ts-expect-error` que contradice las invariantes; documentarlo como desviación o corregirlo en un ID propio, no en la Fase H.
+- Exclusiones: no cambiar `pool: "forks"`, no migrar a Maizzle 6, no tocar templates ni `dist/`, no tocar los adaptadores generados, no sustituir scripts públicos por comandos `vp`, no añadir exclusiones de lint.
+- Esta fase no depende del disparador externo de MHB-48; si se ejecuta MHB-58, MHB-48 queda reemplazado.
+
 ## Contrato obligatorio de cierre
 
 Cada elemento debe conservar en el contrato transferido objetivo, archivos, pasos, dependencias, aceptación, pruebas automáticas, validación manual, riesgos, exclusiones y resultado esperado. Una skill puede añadir controles, pero no sustituir esos campos ni rebajar su aceptación.
@@ -459,10 +692,11 @@ Cada elemento debe conservar en el contrato transferido objetivo, archivos, paso
 ## Orden de ejecución
 
 1. **Fase C: completada.** MHB-14 cerrada y MHB-15 publicada como `v1.3.0` (tag `v1.3.0` en `81d2b7c`, 2026-11-21).
-2. **Fase D:** MHB-36 puede ejecutarse en paralelo con MHB-14 por no compartir superficie; si se mergea antes del congelamiento de MHB-15, entra en `v1.3.0`. Después, MHB-49 (release `v1.4.0`).
+2. **Fase D:** MHB-36 puede ejecutarse en paralelo con MHB-14 por no compartir superficie; si se mergea antes del congelamiento de MHB-15, entra en `v1.3.0`. MHB-61 (versión mínima de Node) no depende de otros IDs y debe cerrarse antes del congelamiento. Después, MHB-49 (release `v1.4.0`).
 3. MHB-48 (TypeScript 7) solo cuando `typescript-eslint` soporte TS 7; en paralelo con MHB-36. Entra en la release cuyo congelamiento ocurra después de su cierre.
 4. **Fase E:** MHB-38 dentro de su ventana (no antes de 2027-01-15, límite 2027-06-30) o antes si se registra un disparador, siempre tras MHB-36; es, junto con un ID que lo autorice explícitamente, la única vía para actualizar el baseline de `dist/`. Después, MHB-50.
 5. **Fase F:** MHB-16 y MHB-23 desde la publicación de `v1.3.0`; someter el producto a revisión final independiente antes de declararlo listo para presentarse como caso de portafolio.
+6. **Fase H (propuesta, sin fecha):** solo con acuerdo explícito. Empieza por MHB-52 (PoC aislada); su resultado go/no-go decide si continúan MHB-53 a MHB-60. Es independiente de las Fases D a F y, si se ejecuta MHB-58, MHB-48 queda reemplazado.
 
 ### Política de ramas y versiones conservada
 
@@ -499,11 +733,12 @@ Las skills son contratos de procedimiento; los subagentes son ejecuciones tempor
 
 ### Orquestación — Fase D — Portabilidad y release v1.4.0
 
-| Línea               | Skills obligatorias                                               | Implementador y propiedad                                        | Revisor                    | Controles                                               | Escalar cuando                                                          |
-| ------------------- | ----------------------------------------------------------------- | ---------------------------------------------------------------- | -------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------- |
-| MHB-36 multi-PM     | `email-project-stack`, `email-quality-gates`, `task-verification` | Orquestador + un subagente nuevo por fase; scripts/tests/CI/docs | Revisor técnico            | Gates con 4 PMs, Vitest verde, hashes idénticos         | Un PM no instala o altera `dist/`, o Vitest exige tocar lógica no-test. |
-| MHB-48 TypeScript 7 | `email-project-stack`, `email-quality-gates`, `task-review`       | Perfil medio; `package.json`, `bun.lock`, `tsconfig*.json`       | Revisor técnico de tooling | Typecheck, lint tipado, suite y baseline                | `typescript-eslint` no soporta TS 7 o falta la API `ts`.                |
-| MHB-49 release      | `task-verification`, `release-management`                         | Perfil medio; docs/version/changelog                             | Orquestador                | Lo de MHB-15 más instalación con npm y bun desde el tag | Lo de MHB-15 o un cambio de comando público.                            |
+| Línea               | Skills obligatorias                                               | Implementador y propiedad                                                 | Revisor                    | Controles                                               | Escalar cuando                                                          |
+| ------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------- | -------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------- |
+| MHB-36 multi-PM     | `email-project-stack`, `email-quality-gates`, `task-verification` | Orquestador + un subagente nuevo por fase; scripts/tests/CI/docs          | Revisor técnico            | Gates con 4 PMs, Vitest verde, hashes idénticos         | Un PM no instala o altera `dist/`, o Vitest exige tocar lógica no-test. |
+| MHB-48 TypeScript 7 | `email-project-stack`, `email-quality-gates`, `task-review`       | Perfil medio; `package.json`, `bun.lock`, `tsconfig*.json`                | Revisor técnico de tooling | Typecheck, lint tipado, suite y baseline                | `typescript-eslint` no soporta TS 7 o falta la API `ts`.                |
+| MHB-61 Node mínimo  | `email-project-stack`, `task-verification`                        | Perfil bajo; `package.json`, `.nvmrc`, `.node-version`, README, CHANGELOG | Revisor técnico de tooling | Gates globales con Node 24.22.3 y CI                    | `dist/` cambia o CI no ofrece Node 24.22.3.                             |
+| MHB-49 release      | `task-verification`, `release-management`                         | Perfil medio; docs/version/changelog                                      | Orquestador                | Lo de MHB-15 más instalación con npm y bun desde el tag | Lo de MHB-15 o un cambio de comando público.                            |
 
 ### Orquestación — Fase E — Evolución del stack
 
@@ -518,5 +753,17 @@ Las skills son contratos de procedimiento; los subagentes son ejecuciones tempor
 | ------------------ | --------------------------------------------------------------------------------------------- | -------------------------------------- | ---------------- | ----------------------------------------- | ------------------------------------------------------- |
 | MHB-16 demo        | `email-project-stack`, `email-preview-dashboard`, skill de despliegue si se aprueba proveedor | Perfil alto; build/config de deploy    | Orquestador      | Smoke, URL, SHA y ausencia de divergencia | Requiera proveedor, credenciales o publicación externa. |
 | MHB-23 componentes | `email-compatibility`, `email-preview-dashboard`                                              | Perfil medio; partials/schemas/library | Revisor email/UI | Build, schema, library y visual           | Amplíe el alcance hacia un builder.                     |
+
+### Orquestación — Fase H — Migración de tooling a Vite+ (propuesta)
+
+| Línea                     | Skills obligatorias                                            | Implementador y propiedad                                     | Revisor                    | Controles                                        | Escalar cuando                                                               |
+| ------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------- | -------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------- |
+| MHB-52 PoC                | `email-project-stack`, `email-quality-gates`                   | Perfil alto; solo copia temporal                              | Orquestador                | Suite, build y baseline en la copia              | `vp` altere `dist/`, rompa `chdir`/`forks` o los plugins de `scripts/vite/`. |
+| MHB-53 formato            | `email-quality-gates`, `task-verification`                     | Perfil medio; config de formato                               | Revisor técnico de tooling | `diff -r` Prettier vs Oxfmt, `format:check`      | Haya diferencias no pedidas en md/yaml/html.                                 |
+| MHB-54, MHB-55 lint       | `email-quality-gates`, `email-code-conventions`, `task-review` | Perfil alto; `eslint.config.js`, `vite.config.ts`             | Revisor técnico de tooling | Mutantes por regla, ownership, diff de hallazgos | Una regla pierda cobertura o quede duplicada.                                |
+| MHB-56, MHB-57 hooks y CI | `email-project-stack`, `task-verification`                     | Perfil medio; `.husky`, `ci.yml`                              | Revisor técnico de tooling | Commit de prueba por tipo, PR de prueba en verde | Cambie un check requerido o se pierda un hook.                               |
+| MHB-58 TypeScript 7       | `email-project-stack`, `email-quality-gates`, `task-review`    | Perfil medio; `package.json`, `tsconfig`, `file-tree.test.ts` | Revisor técnico de tooling | **VC** de la Fase H                              | Quede una regla tipada en ESLint o falle la API `ts`.                        |
+| MHB-59 Gentleman          | `task-verification`, `email-code-conventions`                  | Perfil medio; `docs/ai/**`, README                            | Orquestador                | `agents:sync`, `agents:check`, grep de huérfanos | Los adaptadores queden desincronizados.                                      |
+| MHB-60 release            | `task-verification`, `release-management`                      | Perfil medio; docs/version/changelog                          | Orquestador                | Lo de MHB-15                                     | Lo de MHB-15 o cambio de `engines`.                                          |
 
 El orquestador conserva integración, decisiones transversales, cambios destructivos, versiones, releases y veredictos. Solo paraleliza líneas con archivos exclusivos y al menos dos ámbitos realmente independientes.
