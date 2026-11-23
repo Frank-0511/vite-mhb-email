@@ -2,35 +2,30 @@
 
 ## Resumen
 
-- ID activo: MHB-61
+- ID activo: MHB-62
 - Estado: En revisión
-- Implementador: perfil tooling/documentación, bajo
+- Implementador: perfil tooling, bajo
 - Revisor: revisor técnico de tooling (distinto del implementador)
-- Rama: `feature/mhb-61`
+- Rama: `feature/mhb-62`
 - Última actualización: 2026-11-22
-- Contrato activo: `docs/implementation/PLAN.md` (sección MHB-61)
+- Contrato activo: `docs/implementation/PLAN.md` (sección MHB-62)
 
 ## Paquete activo
 
-- MHB-61: Versión mínima de Node.js 24.22.3 (Fase D). Estado: `En revisión`.
-- Propiedad de archivos: `package.json`, `.nvmrc`, `.node-version`, `README.md`, `CHANGELOG.md`, `.github/workflows/ci.yml`, `.github/workflows/audit.yml`, `docs/implementation/PLAN.md`, `docs/implementation/STATUS.md`.
-- Controles (Node `v24.22.3` vía `nvm use`):
-  - `bun install --frozen-lockfile`: Verde
-  - `bun run lint`: Verde
-  - `bun run typecheck`: Verde
-  - `bun run test`: Verde
-  - `bun run format:check`: Verde
-  - `bun run build`: Verde
-  - `bun run validate-email`: Verde
-  - `bun run check:dist-baseline`: Verde
-  - `bun run check-size`: Verde (43.01 KB total)
-  - `git diff --check`: Verde
-  - CI con `node-version-file: ".nvmrc"`: No ejecutado (se confirma en la PR)
+- MHB-62: Actualización de dependencias sin saltos mayores (Fase D). Estado: `En revisión`; depende de MHB-61 (`En revisión` en `feature/mhb-61`).
+- Propiedad de archivos: `package.json`, `bun.lock`, `CHANGELOG.md`, `docs/implementation/PLAN.md`, `docs/implementation/STATUS.md`.
+- Controles (Node `v24.22.3`, tras cada uno de los 3 commits de dependencias):
+  - `bun install --frozen-lockfile`, `lint`, `typecheck`, `test`, `format:check`, `build`, `validate-email`, `check:dist-baseline`, `check-size`: Verde
+  - `git diff --exit-code -- dist/`: Verde (idéntico)
+  - `rg "eslint-disable|@ts-ignore|@ts-expect-error" scripts src`: 5 entradas, las mismas que en `origin/master`
+  - `validate-contrast` (parte de `check:a11y`): Verde (26 OK)
+  - `check:a11y` completo (contraste + axe-core): Verde con Chrome 157.0.8103.78, la versión que `puppeteer` 25.18.1 resuelve por defecto (0 errores)
 - Hechos de la entrega:
-  1. `engines.node` sube de `>=24` a `>=24.22.3`; `.nvmrc` y `.node-version` fijan `24.22.3`.
-  2. `README.md` y `CHANGELOG.md` (`[Unreleased]`) reflejan el nuevo mínimo.
-  3. `ci.yml` y `audit.yml` leen la versión de Node desde `.nvmrc`, una sola fuente de verdad.
-  4. Decisión: la release que lo incluya se mantiene en `v1.4.0` (minor).
+  1. Herramientas de desarrollo actualizadas (incluye `stylelint` 18 y su config 41), sin cambios de configuración.
+  2. `nodemailer`, `lucide`, `puppeteer` y `vite` actualizados.
+  3. `postcss` y `autoprefixer` actualizados con `dist/` idéntico.
+  4. `CHANGELOG.md` `[Unreleased]` documenta los tres grupos.
+  5. Desviación del contrato (aprobada por el usuario): `lint-staged` queda en `17.6.1` en vez de `17.6.2`. Yarn 4.18.1 pone en cuarentena `17.6.2` (publicada el 2026-11-22) y rompe `Compat (yarn)` en CI.
 
 ## Baseline vigente
 
@@ -118,9 +113,9 @@
 
 ## Handoff
 
-- Próxima acción inmediata: revisión técnica independiente de MHB-61 y confirmación de CI en la PR.
+- Próxima acción inmediata: confirmar CI de la PR #77 (MHB-62) y mergearla con squash. MHB-61 quedó mergeada en `master` como #76 (squash `7e5bd1c`).
 - Siguiente tarea del roadmap (no iniciar sin asignación explícita):
-  - MHB-49 (Fase D): Release `v1.4.0` (tras MHB-15, MHB-36 y MHB-61; bloqueada hasta cerrar MHB-61).
+  - MHB-49 (Fase D): Release `v1.4.0` (tras MHB-15, MHB-36, MHB-61 y MHB-62; bloqueada hasta cerrarlos).
   - MHB-48 (Fase D): actualización TypeScript 7 (bloqueada por disparador externo).
   - MHB-16 / MHB-23 (Fase F): demo/arquetipos opcionales, desbloqueados tras `v1.3.0`.
   - MHB-51 (Fase G): verificación manual final en clientes de correo tras las releases de roadmap.
