@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Cambiado
 
 - Actualizada la versión mínima de Node.js a `v24.22.3` (`engines.node` en `package.json`, `.nvmrc` y `.node-version`).
-- Actualizadas las herramientas de desarrollo: `axe-core` 4.14.1, `eslint` 10.15.0, `globals` 17.14.0, `lint-staged` 17.6.2, `markdownlint-cli2` 0.24.2, `prettier` 3.10.1, `stylelint` 18.1.0, `stylelint-config-standard` 41.1.0, `typescript-eslint` 8.73.0 y `vitest` 5.1.1, sin cambios de configuración ni en `dist/` (MHB-62).
+- Actualizadas las herramientas de desarrollo: `axe-core` 4.14.1, `eslint` 10.15.0, `globals` 17.14.0, `lint-staged` 17.6.1, `markdownlint-cli2` 0.24.2, `prettier` 3.10.1, `stylelint` 18.1.0, `stylelint-config-standard` 41.1.0, `typescript-eslint` 8.73.0 y `vitest` 5.1.1, sin cambios de configuración ni en `dist/` (MHB-62).
 - Actualizadas las dependencias de runtime y build: `nodemailer` 10.6.1, `lucide` 1.77.0, `puppeteer` 25.18.1 y `vite` 8.3.8, con `dist/` idéntico (MHB-62).
 - Actualizadas las dependencias del pipeline de email: `postcss` 8.5.33 y `autoprefixer` 10.7.0, con `dist/` idéntico (MHB-62).
 - Dependencias transitivas de MHB-62 con cambio de major en `bun.lock`: `cosmiconfig` 9.0.2→10.0.1 y `write-file-atomic` 7.0.1→8.0.0; se añade `minimatch` 11.0.9 junto a las versiones 9 y 10 ya existentes; `has-flag` 5.0.1 deja de estar en el lock (queda 4.0.0); `argparse` 3.0.2→3.0.4 (solo parche) (MHB-62).

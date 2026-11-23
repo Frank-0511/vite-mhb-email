@@ -25,6 +25,7 @@
   2. `nodemailer`, `lucide`, `puppeteer` y `vite` actualizados.
   3. `postcss` y `autoprefixer` actualizados con `dist/` idéntico.
   4. `CHANGELOG.md` `[Unreleased]` documenta los tres grupos.
+  5. Desviación del contrato (aprobada por el usuario): `lint-staged` queda en `17.6.1` en vez de `17.6.2`. Yarn 4.18.1 pone en cuarentena `17.6.2` (publicada el 2026-11-22) y rompe `Compat (yarn)` en CI.
 
 ## Baseline vigente
 

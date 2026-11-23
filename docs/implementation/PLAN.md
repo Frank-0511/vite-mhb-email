@@ -334,7 +334,7 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
 
 - **Objetivo observable:** subir a su última versión estable, dentro del mismo major, las dependencias y devDependencies que no requieren cambios de código, con `dist/` idéntico y todos los gates en verde.
 - **Alcance (versiones exactas, fijadas como el resto del proyecto):**
-  - Herramientas de desarrollo: `axe-core` 4.14.1, `eslint` 10.15.0, `globals` 17.14.0, `lint-staged` 17.6.2, `markdownlint-cli2` 0.24.2, `prettier` 3.10.1, `stylelint` 18.1.0 (major, probado sin cambios de config), `stylelint-config-standard` 41.1.0 (par obligatorio de `stylelint` 18), `typescript-eslint` 8.73.0, `vitest` 5.1.1.
+  - Herramientas de desarrollo: `axe-core` 4.14.1, `eslint` 10.15.0, `globals` 17.14.0, `lint-staged` 17.6.1, `markdownlint-cli2` 0.24.2, `prettier` 3.10.1, `stylelint` 18.1.0 (major, probado sin cambios de config), `stylelint-config-standard` 41.1.0 (par obligatorio de `stylelint` 18), `typescript-eslint` 8.73.0, `vitest` 5.1.1.
   - Runtime y build: `nodemailer` 10.6.1, `lucide` 1.77.0, `puppeteer` 25.18.1, `vite` 8.3.8.
   - Pipeline de email (revisión manual obligatoria): `postcss` 8.5.33, `autoprefixer` 10.7.0.
 - **Superficies autorizadas:** `package.json`, `bun.lock`, `CHANGELOG.md` (`[Unreleased]`), `docs/implementation/PLAN.md` y `docs/implementation/STATUS.md`.
