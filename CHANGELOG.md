@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Cambiado
 
 - Actualizada la versión mínima de Node.js a `v24.22.3` (`engines.node` en `package.json`, `.nvmrc` y `.node-version`).
+- Actualizadas las herramientas de desarrollo: `axe-core` 4.14.1, `eslint` 10.15.0, `globals` 17.14.0, `lint-staged` 17.6.2, `markdownlint-cli2` 0.24.2, `prettier` 3.10.1, `stylelint` 18.1.0, `stylelint-config-standard` 41.1.0, `typescript-eslint` 8.73.0 y `vitest` 5.1.1, sin cambios de configuración ni en `dist/` (MHB-62).
 
 ## [1.3.0] - 2026-11-20
 
