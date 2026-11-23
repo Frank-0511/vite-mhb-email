@@ -19,7 +19,7 @@
   - `git diff --exit-code -- dist/`: Verde (idéntico)
   - `rg "eslint-disable|@ts-ignore|@ts-expect-error" scripts src`: 5 entradas, las mismas que en `origin/master`
   - `validate-contrast` (parte de `check:a11y`): Verde (26 OK)
-  - `check-a11y` (axe-core): No ejecutado; `puppeteer` 25.18.1 exige Chrome 157 y la caché local solo tiene hasta la 155
+  - `check:a11y` completo (contraste + axe-core): Verde con Chrome 157.0.8103.78, la versión que `puppeteer` 25.18.1 resuelve por defecto (0 errores)
 - Hechos de la entrega:
   1. Herramientas de desarrollo actualizadas (incluye `stylelint` 18 y su config 41), sin cambios de configuración.
   2. `nodemailer`, `lucide`, `puppeteer` y `vite` actualizados.
@@ -112,7 +112,7 @@
 
 ## Handoff
 
-- Próxima acción inmediata: revisión técnica independiente de MHB-62 (debe ejecutar `check:a11y` con Chrome 157) y de MHB-61 (`feature/mhb-61`, base de esta rama); la PR de MHB-61 va primero.
+- Próxima acción inmediata: revisión técnica independiente de MHB-62 y de MHB-61 (`feature/mhb-61`, base de esta rama); la PR de MHB-61 va primero.
 - Siguiente tarea del roadmap (no iniciar sin asignación explícita):
   - MHB-49 (Fase D): Release `v1.4.0` (tras MHB-15, MHB-36, MHB-61 y MHB-62; bloqueada hasta cerrarlos).
   - MHB-48 (Fase D): actualización TypeScript 7 (bloqueada por disparador externo).
