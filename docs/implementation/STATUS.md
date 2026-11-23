@@ -112,7 +112,7 @@
 
 ## Handoff
 
-- Próxima acción inmediata: revisión técnica independiente de MHB-62 y de MHB-61 (`feature/mhb-61`, base de esta rama); la PR de MHB-61 va primero.
+- Próxima acción inmediata: confirmar CI de la PR #77 (MHB-62) y mergearla con squash. MHB-61 quedó mergeada en `master` como #76 (squash `7e5bd1c`).
 - Siguiente tarea del roadmap (no iniciar sin asignación explícita):
   - MHB-49 (Fase D): Release `v1.4.0` (tras MHB-15, MHB-36, MHB-61 y MHB-62; bloqueada hasta cerrarlos).
   - MHB-48 (Fase D): actualización TypeScript 7 (bloqueada por disparador externo).
