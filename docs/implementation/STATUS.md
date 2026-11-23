@@ -2,35 +2,19 @@
 
 ## Resumen
 
-- ID activo: MHB-61
-- Estado: En revisión
-- Implementador: perfil tooling/documentación, bajo
+- ID activo: MHB-62
+- Estado: En progreso
+- Implementador: perfil tooling, bajo
 - Revisor: revisor técnico de tooling (distinto del implementador)
-- Rama: `feature/mhb-61`
+- Rama: `feature/mhb-62`
 - Última actualización: 2026-11-22
-- Contrato activo: `docs/implementation/PLAN.md` (sección MHB-61)
+- Contrato activo: `docs/implementation/PLAN.md` (sección MHB-62)
 
 ## Paquete activo
 
-- MHB-61: Versión mínima de Node.js 24.22.3 (Fase D). Estado: `En revisión`.
-- Propiedad de archivos: `package.json`, `.nvmrc`, `.node-version`, `README.md`, `CHANGELOG.md`, `.github/workflows/ci.yml`, `.github/workflows/audit.yml`, `docs/implementation/PLAN.md`, `docs/implementation/STATUS.md`.
-- Controles (Node `v24.22.3` vía `nvm use`):
-  - `bun install --frozen-lockfile`: Verde
-  - `bun run lint`: Verde
-  - `bun run typecheck`: Verde
-  - `bun run test`: Verde
-  - `bun run format:check`: Verde
-  - `bun run build`: Verde
-  - `bun run validate-email`: Verde
-  - `bun run check:dist-baseline`: Verde
-  - `bun run check-size`: Verde (43.01 KB total)
-  - `git diff --check`: Verde
-  - CI con `node-version-file: ".nvmrc"`: No ejecutado (se confirma en la PR)
-- Hechos de la entrega:
-  1. `engines.node` sube de `>=24` a `>=24.22.3`; `.nvmrc` y `.node-version` fijan `24.22.3`.
-  2. `README.md` y `CHANGELOG.md` (`[Unreleased]`) reflejan el nuevo mínimo.
-  3. `ci.yml` y `audit.yml` leen la versión de Node desde `.nvmrc`, una sola fuente de verdad.
-  4. Decisión: la release que lo incluya se mantiene en `v1.4.0` (minor).
+- MHB-62: Actualización de dependencias sin saltos mayores (Fase D). Estado: `En progreso`; depende de MHB-61 (`En revisión` en `feature/mhb-61`).
+- Propiedad de archivos: `package.json`, `bun.lock`, `CHANGELOG.md`, `docs/implementation/PLAN.md`, `docs/implementation/STATUS.md`.
+- Controles: pendientes de registrar tras cada commit.
 
 ## Baseline vigente
 
