@@ -2,8 +2,8 @@
 
 ## Resumen
 
-- ID activo: ninguno
-- Estado: Completada (MHB-61 y MHB-62, 2026-11-23)
+- ID activo: MHB-49
+- Estado: En progreso (MHB-49, con la regla css-unsupported-props incluida en el alcance)
 - Implementador: perfil tooling, bajo
 - Revisor: revisor técnico de tooling (distinto del implementador)
 - Rama: `feature/mhb-62`
