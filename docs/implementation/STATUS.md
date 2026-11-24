@@ -2,8 +2,8 @@
 
 ## Resumen
 
-- ID activo: MHB-62
-- Estado: En revisión
+- ID activo: ninguno
+- Estado: Completada (MHB-61 y MHB-62, 2026-11-23)
 - Implementador: perfil tooling, bajo
 - Revisor: revisor técnico de tooling (distinto del implementador)
 - Rama: `feature/mhb-62`
@@ -12,7 +12,8 @@
 
 ## Paquete activo
 
-- MHB-62: Actualización de dependencias sin saltos mayores (Fase D). Estado: `En revisión`; depende de MHB-61 (`En revisión` en `feature/mhb-61`).
+- MHB-62: Actualización de dependencias sin saltos mayores (Fase D). Estado: `Completada` (2026-11-23), mergeada en `master` como #77 (squash `c277448`). Desviación aprobada: `lint-staged` 17.6.1 en vez de 17.6.2 (cuarentena de Yarn).
+- MHB-61: Versión mínima de Node.js 24.22.3 (Fase D). Estado: `Completada` (2026-11-23), mergeada en `master` como #76 (squash `7e5bd1c`).
 - Propiedad de archivos: `package.json`, `bun.lock`, `CHANGELOG.md`, `docs/implementation/PLAN.md`, `docs/implementation/STATUS.md`.
 - Controles (Node `v24.22.3`, tras cada uno de los 3 commits de dependencias):
   - `bun install --frozen-lockfile`, `lint`, `typecheck`, `test`, `format:check`, `build`, `validate-email`, `check:dist-baseline`, `check-size`: Verde
@@ -113,9 +114,9 @@
 
 ## Handoff
 
-- Próxima acción inmediata: confirmar CI de la PR #77 (MHB-62) y mergearla con squash. MHB-61 quedó mergeada en `master` como #76 (squash `7e5bd1c`).
+- Próxima acción inmediata: ninguna pendiente en MHB-61 ni MHB-62; la siguiente acción la decide el usuario.
 - Siguiente tarea del roadmap (no iniciar sin asignación explícita):
-  - MHB-49 (Fase D): Release `v1.4.0` (tras MHB-15, MHB-36, MHB-61 y MHB-62; bloqueada hasta cerrarlos).
+  - MHB-49 (Fase D): Release `v1.4.0` (tras MHB-15, MHB-36, MHB-61 y MHB-62; precondiciones cumplidas, pendiente de decisión explícita del usuario para publicar o etiquetar).
   - MHB-48 (Fase D): actualización TypeScript 7 (bloqueada por disparador externo).
   - MHB-16 / MHB-23 (Fase F): demo/arquetipos opcionales, desbloqueados tras `v1.3.0`.
   - MHB-51 (Fase G): verificación manual final en clientes de correo tras las releases de roadmap.

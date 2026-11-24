@@ -33,29 +33,29 @@ cierre independientes.
 
 ## Backlog activo
 
-| Fase | ID     | Entregable                                       | Estado      | Dependencia vigente            |
-| ---- | ------ | ------------------------------------------------ | ----------- | ------------------------------ |
-| C    | MHB-14 | Comprobación de uso y compatibilidad             | Completada  | Satisfecha                     |
-| C    | MHB-15 | Release `v1.3.0`                                 | Completada  | MHB-14                         |
-| D    | MHB-36 | Compatibilidad multi-package-manager             | Completada  | Satisfecha (MHB-43 completada) |
-| D    | MHB-48 | Actualización a TypeScript 7                     | Pendiente   | Disparador externo             |
-| D    | MHB-61 | Versión mínima de Node.js 24.22.3                | En revisión | Ninguna                        |
-| D    | MHB-62 | Actualización de dependencias sin saltos mayores | En revisión | MHB-61                         |
-| D    | MHB-49 | Release `v1.4.0`                                 | Pendiente   | MHB-15, MHB-36 y MHB-61        |
-| E    | MHB-38 | Migración en bloque a Maizzle 6 y Tailwind v4    | Pendiente   | MHB-36 y ventana ≥ 2027-01-15  |
-| E    | MHB-50 | Release de la migración de stack                 | Pendiente   | MHB-49 y MHB-38                |
-| F    | MHB-16 | Demo candidata pre-renderizada                   | Opcional    | MHB-15                         |
-| F    | MHB-23 | Ampliar biblioteca de componentes                | Opcional    | Caso de uso aprobado           |
-| G    | MHB-51 | Verificación manual final en clientes            | Pendiente   | MHB-15, MHB-49 y MHB-50        |
-| H    | MHB-52 | PoC aislada de Vite+                             | Propuesta   | Acuerdo explícito              |
-| H    | MHB-53 | Paridad Oxfmt vs Prettier                        | Propuesta   | MHB-52                         |
-| H    | MHB-54 | Oxlint en paralelo (modo sombra)                 | Propuesta   | MHB-52                         |
-| H    | MHB-55 | Reparto Oxlint + ESLint reducido                 | Propuesta   | MHB-54                         |
-| H    | MHB-56 | Hooks y staged                                   | Propuesta   | MHB-55 y MHB-53                |
-| H    | MHB-57 | Adaptación de CI                                 | Propuesta   | MHB-55 y MHB-56                |
-| H    | MHB-58 | TypeScript 7 (reemplaza disparador de MHB-48)    | Propuesta   | MHB-55                         |
-| H    | MHB-59 | Gentleman: instrucciones, skills y scripts       | Propuesta   | MHB-53 y MHB-55                |
-| H    | MHB-60 | Release del tooling                              | Propuesta   | MHB-55 a MHB-59                |
+| Fase | ID     | Entregable                                       | Estado     | Dependencia vigente            |
+| ---- | ------ | ------------------------------------------------ | ---------- | ------------------------------ |
+| C    | MHB-14 | Comprobación de uso y compatibilidad             | Completada | Satisfecha                     |
+| C    | MHB-15 | Release `v1.3.0`                                 | Completada | MHB-14                         |
+| D    | MHB-36 | Compatibilidad multi-package-manager             | Completada | Satisfecha (MHB-43 completada) |
+| D    | MHB-48 | Actualización a TypeScript 7                     | Pendiente  | Disparador externo             |
+| D    | MHB-61 | Versión mínima de Node.js 24.22.3                | Completada | Ninguna                        |
+| D    | MHB-62 | Actualización de dependencias sin saltos mayores | Completada | MHB-61                         |
+| D    | MHB-49 | Release `v1.4.0`                                 | Pendiente  | MHB-15, MHB-36 y MHB-61        |
+| E    | MHB-38 | Migración en bloque a Maizzle 6 y Tailwind v4    | Pendiente  | MHB-36 y ventana ≥ 2027-01-15  |
+| E    | MHB-50 | Release de la migración de stack                 | Pendiente  | MHB-49 y MHB-38                |
+| F    | MHB-16 | Demo candidata pre-renderizada                   | Opcional   | MHB-15                         |
+| F    | MHB-23 | Ampliar biblioteca de componentes                | Opcional   | Caso de uso aprobado           |
+| G    | MHB-51 | Verificación manual final en clientes            | Pendiente  | MHB-15, MHB-49 y MHB-50        |
+| H    | MHB-52 | PoC aislada de Vite+                             | Propuesta  | Acuerdo explícito              |
+| H    | MHB-53 | Paridad Oxfmt vs Prettier                        | Propuesta  | MHB-52                         |
+| H    | MHB-54 | Oxlint en paralelo (modo sombra)                 | Propuesta  | MHB-52                         |
+| H    | MHB-55 | Reparto Oxlint + ESLint reducido                 | Propuesta  | MHB-54                         |
+| H    | MHB-56 | Hooks y staged                                   | Propuesta  | MHB-55 y MHB-53                |
+| H    | MHB-57 | Adaptación de CI                                 | Propuesta  | MHB-55 y MHB-56                |
+| H    | MHB-58 | TypeScript 7 (reemplaza disparador de MHB-48)    | Propuesta  | MHB-55                         |
+| H    | MHB-59 | Gentleman: instrucciones, skills y scripts       | Propuesta  | MHB-53 y MHB-55                |
+| H    | MHB-60 | Release del tooling                              | Propuesta  | MHB-55 a MHB-59                |
 
 ## Invariantes de calidad, arquitectura y refactor integrado
 
@@ -305,7 +305,7 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
 
 - **Objetivo observable:** el proyecto declara `Node.js >= 24.22.3` como mínimo y las herramientas de versión (`nvm`, `fnm`, `asdf`, `mise` u otras que lean `.node-version`) fijan exactamente `24.22.3`, de modo que un clon nuevo trabaja con una versión de Node que cumple el requisito de las dependencias vigentes.
 - **Motivo:** `engines.node` era `>=24`, que admitía 24.0 a 24.22.2; esas versiones quedan por debajo del mínimo que se quiere garantizar. Se declara el mínimo exacto y se agrega `.node-version` para los gestores que no leen `.nvmrc`.
-- **Estado:** implementado en la rama `feature/mhb-61` (commit `69d1ee0`); `En revisión`; pendiente de revisión independiente y de confirmar CI.
+- **Estado:** `Completada` (2026-11-23). Mergeada en `master` como #76 (squash `7e5bd1c`); revisión independiente `APROBADO CON OBSERVACIONES` sin bloqueantes; CI verde.
 - **Superficies autorizadas:** `package.json` (`engines.node`), `.nvmrc`, `.node-version` (nuevo), `README.md` (dos menciones de requisitos), `CHANGELOG.md` (`[Unreleased]`), `.github/workflows/ci.yml` y `.github/workflows/audit.yml` (versión de Node desde `.nvmrc`), `docs/implementation/STATUS.md`.
 - **Dependencias y precondiciones:** ninguna.
 - **Cambios realizados:**
@@ -339,6 +339,7 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
   - Pipeline de email (revisión manual obligatoria): `postcss` 8.5.33, `autoprefixer` 10.7.0.
 - **Superficies autorizadas:** `package.json`, `bun.lock`, `CHANGELOG.md` (`[Unreleased]`), `docs/implementation/PLAN.md` y `docs/implementation/STATUS.md`.
 - **Dependencias y precondiciones:** MHB-61 (Node `>= 24.22.3`; `stylelint` 18 exige `^24.15`).
+- **Estado:** `Completada` (2026-11-23). Mergeada en `master` como #77 (squash `c277448`); revisión independiente `APROBADO CON OBSERVACIONES` sin bloqueantes; CI verde. Desviación aprobada por el usuario: `lint-staged` queda en 17.6.1 en vez de 17.6.2, porque Yarn 4.18.1 pone en cuarentena 17.6.2.
 - **Diagnóstico:** probado en un clon temporal con Node `24.22.3`: `lint`, `typecheck`, `test`, `format:check`, `build`, `check:dist-baseline`, `validate-email` y `check-size` en verde, sin cambios de configuración.
 - **Pasos:** tres commits revertibles por separado: (1) herramientas de desarrollo, (2) runtime y build, (3) pipeline de email; los gates se corren tras cada commit.
 - **Criterios de aceptación:**
