@@ -9,11 +9,10 @@ generar archivos finales planos en `dist/<template>.html`.
 
 ## Estado de release
 
-La versión `v1.3.0` está en preparación (pendiente de merge y publicación) y consolida el trabajo
-completado desde `v1.2.0` (migración integral a TypeScript, soporte
-multi-package-manager, endurecimiento de API local, contrato ESP SendGrid,
-compatibilidad HTML para clientes reales, checklist de accesibilidad y quality
-gates en CI). La trazabilidad histórica entre releases se conserva en
+La versión `v1.4.0` está en preparación (pendiente de merge y publicación) y consolida el trabajo
+completado desde `v1.3.0`: Node.js mínimo `24.22.3`, actualización de dependencias
+sin saltos mayores y la regla `css-unsupported-props` ampliada a estilos inline
+con severidad mixta. La trazabilidad histórica entre releases se conserva en
 [la línea base de release](docs/implementation/RELEASE_BASELINE.md) y
 `CHANGELOG.md`.
 
