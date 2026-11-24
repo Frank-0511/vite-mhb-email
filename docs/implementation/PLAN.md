@@ -358,7 +358,7 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
 
 ### MHB-49 — Release v1.4.0
 
-- **Estado:** `En progreso` (2026-11-23). Alcance congelado: incluye la feature `css-unsupported-props` (decisión del usuario) y MHB-61 y MHB-62 ya completadas. Pendiente: merge, tag y release.
+- **Estado:** `Completada` (2026-11-23). Alcance congelado: incluyó la feature `css-unsupported-props` (decisión del usuario) y MHB-61 y MHB-62. Release `v1.4.0` publicada: tag anotado `v1.4.0` en el commit `d9671ee`, release en GitHub; checkout limpio del tag verificado con `bun install --frozen-lockfile` y con npm desde cero, ambos con `check:dist-baseline` en verde.
 - **Objetivo observable:** publicar `v1.4.0` con el alcance de la Fase D.
 - **Superficies autorizadas:** las mismas que MHB-15.
 - **Dependencias y precondiciones:** MHB-15 publicada, MHB-36, MHB-61 y MHB-62 completadas, CI verde en `master` y decisión explícita del usuario antes de publicar o etiquetar.

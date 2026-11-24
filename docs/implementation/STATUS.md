@@ -2,8 +2,8 @@
 
 ## Resumen
 
-- ID activo: MHB-49
-- Estado: En progreso (MHB-49, con la regla css-unsupported-props incluida en el alcance)
+- ID activo: ninguno
+- Estado: Completada (MHB-49, release `v1.4.0` publicada el 2026-11-23)
 - Implementador: perfil tooling, bajo
 - Revisor: revisor técnico de tooling (distinto del implementador)
 - Rama: `feature/mhb-62`
@@ -116,7 +116,7 @@
 
 - Próxima acción inmediata: ninguna pendiente en MHB-61 ni MHB-62; la siguiente acción la decide el usuario.
 - Siguiente tarea del roadmap (no iniciar sin asignación explícita):
-  - MHB-49 (Fase D): Release `v1.4.0` (tras MHB-15, MHB-36, MHB-61 y MHB-62). En preparación con alcance congelado, que incluye `css-unsupported-props`; pendiente de merge, tag y release.
+  - MHB-49 (Fase D): Release `v1.4.0` publicada el 2026-11-23 (tag `v1.4.0` en `d9671ee`). Completada.
   - MHB-48 (Fase D): actualización TypeScript 7 (bloqueada por disparador externo).
   - MHB-16 / MHB-23 (Fase F): demo/arquetipos opcionales, desbloqueados tras `v1.3.0`.
   - MHB-51 (Fase G): verificación manual final en clientes de correo tras las releases de roadmap.
