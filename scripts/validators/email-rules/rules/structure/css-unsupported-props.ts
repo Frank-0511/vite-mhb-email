@@ -9,13 +9,12 @@ import {
   type SeverityType,
 } from "../../context.ts";
 
-// Textos de clientes verificados contra caniemail el 2026-11-23 (Outlook de
-// escritorio clásico, Gmail). Las filas marcadas "sin verificar en caniemail" no
-// afirman soporte por cliente hasta completar esa verificación.
+// Textos de clientes verificados el 2026-11-23 con el mapa de soporte de
+// @emailens/engine 0.19.3 (datos de caniemail, MIT), fuera del repo. "Outlook de
+// escritorio clásico" corresponde a outlook-windows-legacy (motor Word).
 
 const RULE_ID = "css-unsupported-props";
 const WORD_ENGINE = "Outlook de escritorio clásico (motor Word)";
-const UNVERIFIED_CLIENTS = "sin verificar en caniemail";
 const LAYOUT_HINT = "Reemplazar con alternativa compatible (ej: flex → table layout)";
 const DEGRADE_HINT =
   "Eliminar la propiedad o aceptar que el cliente la ignore sin romper el layout";
@@ -54,7 +53,7 @@ const UNSUPPORTED: UnsupportedEntry[] = [
     valuePattern: /^(?:absolute|fixed|sticky)$/i,
     level: Severity.ERROR,
     name: "position: absolute/fixed/sticky",
-    clients: UNVERIFIED_CLIENTS,
+    clients: `${WORD_ENGINE}, Gmail`,
     hint: LAYOUT_HINT,
   },
   { property: "gap", level: Severity.ERROR, name: "gap", clients: WORD_ENGINE, hint: LAYOUT_HINT },
@@ -84,7 +83,7 @@ const UNSUPPORTED: UnsupportedEntry[] = [
     valuePattern: /(?<![\w-])calc\s*\(/i,
     level: Severity.ERROR,
     name: "calc()",
-    clients: UNVERIFIED_CLIENTS,
+    clients: `${WORD_ENGINE}, Yahoo, Gmail (parcial)`,
     hint: FUNCTION_HINT,
   },
   {
@@ -92,7 +91,7 @@ const UNSUPPORTED: UnsupportedEntry[] = [
     valuePattern: /(?<![\w-])var\s*\(/i,
     level: Severity.ERROR,
     name: "var() (CSS custom properties)",
-    clients: UNVERIFIED_CLIENTS,
+    clients: "Outlook, Gmail y Yahoo (sin variables CSS)",
     hint: FUNCTION_HINT,
   },
   {
@@ -108,21 +107,21 @@ const UNSUPPORTED: UnsupportedEntry[] = [
     property: "opacity",
     level: Severity.WARNING,
     name: "opacity",
-    clients: UNVERIFIED_CLIENTS,
+    clients: WORD_ENGINE,
     hint: DEGRADE_HINT,
   },
   {
     property: "transform",
     level: Severity.WARNING,
     name: "transform",
-    clients: UNVERIFIED_CLIENTS,
+    clients: `${WORD_ENGINE}, Gmail, Yahoo`,
     hint: DEGRADE_HINT,
   },
   {
     property: "transition",
     level: Severity.WARNING,
     name: "transition",
-    clients: UNVERIFIED_CLIENTS,
+    clients: `${WORD_ENGINE}, Gmail, Yahoo (parcial)`,
     hint: DEGRADE_HINT,
   },
   {
@@ -172,7 +171,7 @@ const UNSUPPORTED: UnsupportedEntry[] = [
     property: "backdrop-filter",
     level: Severity.WARNING,
     name: "backdrop-filter",
-    clients: UNVERIFIED_CLIENTS,
+    clients: `${WORD_ENGINE}, Gmail, Yahoo`,
     hint: DEGRADE_HINT,
   },
 ];
