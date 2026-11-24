@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Actualizada la versión mínima de Node.js a `v24.22.3` (`engines.node` en `package.json`, `.nvmrc` y `.node-version`).
 - La regla `css-unsupported-props` analiza también los estilos inline (`style=""`), no solo `<style>`. Detecta `inline-flex`, `inline-grid`, `row-gap`, `column-gap` y `grid-gap`, y no reporta propiedades dentro de comentarios CSS ni dentro de `content: "..."`.
 - Las propiedades que solo degradan (`opacity`, `transform`, `transition`, `animation`, `aspect-ratio`, `object-fit`, `box-shadow`, `linear-gradient`, `filter`, `backdrop-filter`) pasan de error a warning; flex, grid, float, position, gap, calc(), var() y clamp() siguen como error.
-- Los textos de cliente de `css-unsupported-props` dejan de decir "todas las versiones" y solo afirman lo verificado en caniemail (2026-11-23).
+- Los textos de cliente de `css-unsupported-props` dejan de decir "todas las versiones" y se verificaron el 2026-11-23 con el mapa de soporte de `@emailens/engine` 0.19.3 (datos de caniemail, MIT).
 - Actualizadas las herramientas de desarrollo: `axe-core` 4.14.1, `eslint` 10.15.0, `globals` 17.14.0, `lint-staged` 17.6.1, `markdownlint-cli2` 0.24.2, `prettier` 3.10.1, `stylelint` 18.1.0, `stylelint-config-standard` 41.1.0, `typescript-eslint` 8.73.0 y `vitest` 5.1.1, sin cambios de configuración ni en `dist/` (MHB-62).
 - Actualizadas las dependencias de runtime y build: `nodemailer` 10.6.1, `lucide` 1.77.0, `puppeteer` 25.18.1 y `vite` 8.3.8, con `dist/` idéntico (MHB-62).
 - Actualizadas las dependencias del pipeline de email: `postcss` 8.5.33 y `autoprefixer` 10.7.0, con `dist/` idéntico (MHB-62).
