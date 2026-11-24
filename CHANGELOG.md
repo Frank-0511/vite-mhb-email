@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-11-23
+
+### Contrato de salida para integradores
+
+- **Comparación de `dist/*.html` frente a v1.3.0:** sin diferencias. `git diff v1.3.0 HEAD -- dist/` está vacío y `bun run check:dist-baseline` verifica el baseline vigente.
+- **Variables ESP frente a v1.3.0:** sin cambios, porque `dist/` no cambia.
+- **Comandos públicos frente a v1.3.0:** sin cambios. `package.json` solo cambia `engines.node` y devDependencies.
+- **Node.js mínimo:** `>=24.22.3` (MHB-61). Se mantiene la versión minor `v1.4.0` por decisión del usuario.
+
 ### Cambiado
 
 - Actualizada la versión mínima de Node.js a `v24.22.3` (`engines.node` en `package.json`, `.nvmrc` y `.node-version`).
@@ -219,7 +228,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - El renderizador de iconos escapa `&`, `<`, `>` y comillas en atributos antes
   de generar el SVG inline.
 
-[Unreleased]: https://github.com/Frank-0511/vite-mhb-email/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/Frank-0511/vite-mhb-email/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/Frank-0511/vite-mhb-email/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/Frank-0511/vite-mhb-email/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/Frank-0511/vite-mhb-email/releases/tag/v1.2.0
 [1.1.0]: https://github.com/Frank-0511/vite-mhb-email/releases/tag/v1.1.0
