@@ -320,23 +320,23 @@ bun run format:check
 
 ### Reglas de compatibilidad email
 
-| Severidad      | Regla                   | Valida                                                        |
-| -------------- | ----------------------- | ------------------------------------------------------------- |
-| Error          | `img-dimensions`        | Imagenes con `width` y `height` HTML                          |
-| Error          | `css-unsupported-props` | CSS problematico en clientes de email                         |
-| Error          | `doctype-present`       | Presencia de `<!doctype html>`                                |
-| Error          | `no-js-in-email`        | Ausencia de `<script>` en el output final                     |
-| Warning        | `img-alt`               | Texto alternativo en imagenes                                 |
-| Warning        | `meta-charset`          | Presencia de `<meta charset="utf-8">`                         |
-| Warning        | `link-targets`          | Links reales en vez de `href="#"`                             |
-| Warning        | `max-width-check`       | Ancho razonable para email                                    |
-| Warning        | `unsubscribe-link`      | Link de desuscripcion                                         |
-| Error          | `esp-syntax-profile`    | Sintaxis ESP soportada según el perfil configurado (SendGrid) |
-| Warning        | `esp-legacy-compat`     | Compatibilidad con etiquetas de sustitución SendGrid Legacy   |
-| Warning / Info | `esp-variables`         | Variables `{{ }}` declaradas en `data.json`                   |
-| Info           | `color-scheme-meta`     | Metadata de color scheme                                      |
-| Info           | `nested-tables-depth`   | Profundidad de tablas anidadas                                |
-| Info           | `css-class-vs-inline`   | Relacion entre reglas en `<style>` y estilos inline           |
+| Severidad       | Regla                   | Valida                                                                                                                                                                                          |
+| --------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Error           | `img-dimensions`        | Imagenes con `width` y `height` HTML                                                                                                                                                            |
+| Error y warning | `css-unsupported-props` | CSS no soportado en `<style>` e inline: error si rompe el layout (flex/grid, float, position, gap, calc, var, clamp), warning si solo degrada (opacity, transform, transition, animation, etc.) |
+| Error           | `doctype-present`       | Presencia de `<!doctype html>`                                                                                                                                                                  |
+| Error           | `no-js-in-email`        | Ausencia de `<script>` en el output final                                                                                                                                                       |
+| Warning         | `img-alt`               | Texto alternativo en imagenes                                                                                                                                                                   |
+| Warning         | `meta-charset`          | Presencia de `<meta charset="utf-8">`                                                                                                                                                           |
+| Warning         | `link-targets`          | Links reales en vez de `href="#"`                                                                                                                                                               |
+| Warning         | `max-width-check`       | Ancho razonable para email                                                                                                                                                                      |
+| Warning         | `unsubscribe-link`      | Link de desuscripcion                                                                                                                                                                           |
+| Error           | `esp-syntax-profile`    | Sintaxis ESP soportada según el perfil configurado (SendGrid)                                                                                                                                   |
+| Warning         | `esp-legacy-compat`     | Compatibilidad con etiquetas de sustitución SendGrid Legacy                                                                                                                                     |
+| Warning / Info  | `esp-variables`         | Variables `{{ }}` declaradas en `data.json`                                                                                                                                                     |
+| Info            | `color-scheme-meta`     | Metadata de color scheme                                                                                                                                                                        |
+| Info            | `nested-tables-depth`   | Profundidad de tablas anidadas                                                                                                                                                                  |
+| Info            | `css-class-vs-inline`   | Relacion entre reglas en `<style>` y estilos inline                                                                                                                                             |
 
 Los errores bloquean el build. Los warnings son informativos.
 
