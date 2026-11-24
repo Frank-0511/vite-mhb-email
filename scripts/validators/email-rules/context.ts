@@ -90,3 +90,46 @@ export function extractInlineStyleContent(html: string): string {
   }
   return values.join("\n");
 }
+
+/**
+ * Devuelve el contenido de cada atributo style="..." o style='...', por
+ * separado. Ignora atributos que solo terminan en "style" (p. ej. data-style).
+ */
+export function extractInlineStyles(html: string): string[] {
+  const styles: string[] = [];
+  const regex = /(?<![\w-])style\s*=\s*(["'])([\s\S]*?)\1/gi;
+  let match: RegExpExecArray | null;
+  while ((match = regex.exec(html)) !== null) {
+    styles.push(match[2]);
+  }
+  return styles;
+}
+
+export interface CssDeclaration {
+  property: string;
+  value: string;
+}
+
+const CSS_COMMENT = /\/\*[\s\S]*?\*\//g;
+const CSS_CONTENT_STRING = /((?<![\w-])content\s*:\s*)(?:"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/gi;
+const CSS_PROPERTY_NAME = /^-{0,2}[a-z_][\w-]*$/i;
+
+/**
+ * Convierte CSS (de un bloque <style> o de un atributo style) en pares
+ * propiedad/valor. Elimina comentarios y el contenido de content: "...",
+ * separa declaraciones por ";" (y por llaves, para bloques con selectores) y
+ * parte cada declaración por el primer ":". Descarta fragmentos cuyo nombre
+ * no es un identificador CSS, como "@media (max-width".
+ */
+export function parseCssDeclarations(css: string): CssDeclaration[] {
+  const cleaned = css.replace(CSS_COMMENT, "").replace(CSS_CONTENT_STRING, '$1""');
+  const declarations: CssDeclaration[] = [];
+  for (const segment of cleaned.split(/[;{}]/)) {
+    const colon = segment.indexOf(":");
+    if (colon === -1) continue;
+    const property = segment.slice(0, colon).trim().toLowerCase();
+    if (!CSS_PROPERTY_NAME.test(property)) continue;
+    declarations.push({ property, value: segment.slice(colon + 1).trim() });
+  }
+  return declarations;
+}

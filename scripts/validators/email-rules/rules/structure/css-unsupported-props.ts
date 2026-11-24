@@ -1,70 +1,224 @@
-import { extractStyleContent, Severity, type Issue, type Rule } from "../../context.ts";
+import {
+  extractInlineStyles,
+  extractStyleContent,
+  parseCssDeclarations,
+  Severity,
+  type CssDeclaration,
+  type Issue,
+  type Rule,
+  type SeverityType,
+} from "../../context.ts";
+
+// Textos de clientes verificados contra caniemail el 2026-11-23 (Outlook de
+// escritorio clásico, Gmail). Las filas marcadas "sin verificar en caniemail" no
+// afirman soporte por cliente hasta completar esa verificación.
+
+const RULE_ID = "css-unsupported-props";
+const WORD_ENGINE = "Outlook de escritorio clásico (motor Word)";
+const UNVERIFIED_CLIENTS = "sin verificar en caniemail";
+const LAYOUT_HINT = "Reemplazar con alternativa compatible (ej: flex → table layout)";
+const DEGRADE_HINT =
+  "Eliminar la propiedad o aceptar que el cliente la ignore sin romper el layout";
+const FUNCTION_HINT = "Usar valores estáticos en lugar de funciones CSS dinámicas";
+
+interface UnsupportedEntry {
+  /** Nombre exacto de la propiedad; null si la entrada busca una función en cualquier valor. */
+  property: string | null;
+  /** Patrón del valor. Sin patrón, cualquier valor de la propiedad coincide. */
+  valuePattern?: RegExp;
+  level: SeverityType;
+  name: string;
+  clients: string;
+  hint: string;
+}
+
+const UNSUPPORTED: UnsupportedEntry[] = [
+  // ERROR: rompen el layout.
+  {
+    property: "display",
+    valuePattern: /^(?:inline-)?(?:flex|grid)(?![\w-])/i,
+    level: Severity.ERROR,
+    name: "display: flex/grid/inline-flex/inline-grid",
+    clients: `${WORD_ENGINE}, Gmail (parcial)`,
+    hint: LAYOUT_HINT,
+  },
+  {
+    property: "float",
+    level: Severity.ERROR,
+    name: "float",
+    clients: WORD_ENGINE,
+    hint: LAYOUT_HINT,
+  },
+  {
+    property: "position",
+    valuePattern: /^(?:absolute|fixed|sticky)$/i,
+    level: Severity.ERROR,
+    name: "position: absolute/fixed/sticky",
+    clients: UNVERIFIED_CLIENTS,
+    hint: LAYOUT_HINT,
+  },
+  { property: "gap", level: Severity.ERROR, name: "gap", clients: WORD_ENGINE, hint: LAYOUT_HINT },
+  {
+    property: "row-gap",
+    level: Severity.ERROR,
+    name: "row-gap",
+    clients: WORD_ENGINE,
+    hint: LAYOUT_HINT,
+  },
+  {
+    property: "column-gap",
+    level: Severity.ERROR,
+    name: "column-gap",
+    clients: WORD_ENGINE,
+    hint: LAYOUT_HINT,
+  },
+  {
+    property: "grid-gap",
+    level: Severity.ERROR,
+    name: "grid-gap",
+    clients: WORD_ENGINE,
+    hint: LAYOUT_HINT,
+  },
+  {
+    property: null,
+    valuePattern: /(?<![\w-])calc\s*\(/i,
+    level: Severity.ERROR,
+    name: "calc()",
+    clients: UNVERIFIED_CLIENTS,
+    hint: FUNCTION_HINT,
+  },
+  {
+    property: null,
+    valuePattern: /(?<![\w-])var\s*\(/i,
+    level: Severity.ERROR,
+    name: "var() (CSS custom properties)",
+    clients: UNVERIFIED_CLIENTS,
+    hint: FUNCTION_HINT,
+  },
+  {
+    property: null,
+    valuePattern: /(?<![\w-])clamp\s*\(/i,
+    level: Severity.ERROR,
+    name: "clamp()",
+    clients: WORD_ENGINE,
+    hint: FUNCTION_HINT,
+  },
+  // WARNING: solo degradan.
+  {
+    property: "opacity",
+    level: Severity.WARNING,
+    name: "opacity",
+    clients: UNVERIFIED_CLIENTS,
+    hint: DEGRADE_HINT,
+  },
+  {
+    property: "transform",
+    level: Severity.WARNING,
+    name: "transform",
+    clients: UNVERIFIED_CLIENTS,
+    hint: DEGRADE_HINT,
+  },
+  {
+    property: "transition",
+    level: Severity.WARNING,
+    name: "transition",
+    clients: UNVERIFIED_CLIENTS,
+    hint: DEGRADE_HINT,
+  },
+  {
+    property: "animation",
+    level: Severity.WARNING,
+    name: "animation",
+    clients: WORD_ENGINE,
+    hint: DEGRADE_HINT,
+  },
+  {
+    property: "aspect-ratio",
+    level: Severity.WARNING,
+    name: "aspect-ratio",
+    clients: WORD_ENGINE,
+    hint: DEGRADE_HINT,
+  },
+  {
+    property: "object-fit",
+    level: Severity.WARNING,
+    name: "object-fit",
+    clients: WORD_ENGINE,
+    hint: DEGRADE_HINT,
+  },
+  {
+    property: "box-shadow",
+    level: Severity.WARNING,
+    name: "box-shadow",
+    clients: WORD_ENGINE,
+    hint: DEGRADE_HINT,
+  },
+  {
+    property: null,
+    valuePattern: /(?<![\w-])linear-gradient\s*\(/i,
+    level: Severity.WARNING,
+    name: "linear-gradient()",
+    clients: WORD_ENGINE,
+    hint: DEGRADE_HINT,
+  },
+  {
+    property: "filter",
+    level: Severity.WARNING,
+    name: "filter",
+    clients: WORD_ENGINE,
+    hint: DEGRADE_HINT,
+  },
+  {
+    property: "backdrop-filter",
+    level: Severity.WARNING,
+    name: "backdrop-filter",
+    clients: UNVERIFIED_CLIENTS,
+    hint: DEGRADE_HINT,
+  },
+];
+
+type Origin = "style" | "inline";
+
+function matches(entry: UnsupportedEntry, { property, value }: CssDeclaration): boolean {
+  if (entry.property !== null && entry.property !== property) return false;
+  return entry.valuePattern ? entry.valuePattern.test(value) : true;
+}
+
+function describeOrigins(origins: Set<Origin>): string {
+  if (origins.has("style") && origins.has("inline")) return "en <style> y en estilo inline";
+  return origins.has("style") ? "en <style>" : "en estilo inline";
+}
+
+function toIssue(entry: UnsupportedEntry, origins: Set<Origin>): Issue {
+  const kind = entry.property === null ? "Función CSS" : "Propiedad CSS";
+  return {
+    ruleId: RULE_ID,
+    severity: entry.level,
+    message: `${kind} "${entry.name}" no soportada en: ${entry.clients}; aparece ${describeOrigins(origins)}`,
+    hint: entry.hint,
+  };
+}
 
 const cssUnsupportedProps: Rule = {
-  id: "css-unsupported-props",
+  id: RULE_ID,
   severity: Severity.ERROR,
-  description: "Detecta propiedades CSS no soportadas en clientes de email",
+  description:
+    "Detecta propiedades CSS no soportadas en clientes de email en <style> y estilos inline (ERROR si rompen el layout, WARNING si solo degradan)",
   check(html: string): Issue[] {
-    const styleContent = extractStyleContent(html);
-    if (!styleContent) return [];
-    const unsupportedProps = [
-      { prop: "display:\\s*flex", name: "display: flex", clients: "Outlook (todas las versiones)" },
-      { prop: "display:\\s*grid", name: "display: grid", clients: "Outlook, Gmail (parcial)" },
-      {
-        prop: "(?<!\\-)position\\s*:\\s*(?:absolute|fixed|sticky)",
-        name: "position: absolute/fixed/sticky",
-        clients: "Outlook, Gmail",
-      },
-      { prop: "(?<!\\-)float\\s*:", name: "float", clients: "Outlook (Word rendering engine)" },
-      {
-        prop: "(?:^|[{;\\s])gap\\s*:",
-        name: "gap",
-        clients: "Outlook, Gmail, Yahoo (sin soporte flex/grid)",
-      },
-      {
-        prop: "(?<!\\-)opacity\\s*:",
-        name: "opacity",
-        clients: "Outlook (versiones de escritorio)",
-      },
-      {
-        prop: "(?<!\\-)transform\\s*:",
-        name: "transform",
-        clients: "Outlook (todas las versiones)",
-      },
-      {
-        prop: "(?<!\\-)animation\\s*:",
-        name: "animation",
-        clients: "Outlook, Gmail (eliminan animaciones)",
-      },
-      { prop: "(?<!\\-)transition\\s*:", name: "transition", clients: "Outlook, Gmail" },
-    ];
-    const unsupportedFunctions = [
-      { func: "calc\\s*\\(", name: "calc()", clients: "Outlook" },
-      { func: "var\\s*\\(", name: "var() (CSS custom properties)", clients: "Outlook, Gmail" },
-      { func: "clamp\\s*\\(", name: "clamp()", clients: "Outlook, Gmail, Yahoo" },
-    ];
-    const issues: Issue[] = [];
-    for (const { prop, name, clients } of unsupportedProps) {
-      if (new RegExp(prop, "gi").test(styleContent)) {
-        issues.push({
-          ruleId: "css-unsupported-props",
-          severity: Severity.ERROR,
-          message: `Propiedad CSS "${name}" no soportada en: ${clients}`,
-          hint: "Reemplazar con alternativa compatible (ej: flex → table layout)",
-        });
+    const found = new Map<UnsupportedEntry, Set<Origin>>();
+    const record = (css: string, origin: Origin): void => {
+      for (const declaration of parseCssDeclarations(css)) {
+        for (const entry of UNSUPPORTED) {
+          if (!matches(entry, declaration)) continue;
+          const origins = found.get(entry) ?? new Set<Origin>();
+          origins.add(origin);
+          found.set(entry, origins);
+        }
       }
-    }
-    for (const { func, name, clients } of unsupportedFunctions) {
-      if (new RegExp(func, "gi").test(styleContent)) {
-        issues.push({
-          ruleId: "css-unsupported-props",
-          severity: Severity.ERROR,
-          message: `Función CSS "${name}" no soportada en: ${clients}`,
-          hint: "Usar valores estáticos en lugar de funciones CSS dinámicas",
-        });
-      }
-    }
-    return issues;
+    };
+    record(extractStyleContent(html), "style");
+    for (const inlineStyle of extractInlineStyles(html)) record(inlineStyle, "inline");
+    return [...found].map(([entry, origins]) => toIssue(entry, origins));
   },
 };
 
