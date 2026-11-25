@@ -22,11 +22,11 @@ description: Aplicar o modificar el sistema visual Space Blue del dashboard web 
   light: navegación, foco visible, contraste y que ninguna operación crítica
   quede oculta en móvil.
 - Ejecutar `bun run lint`, `bun run format:check` y las pruebas focalizadas de
-  la fase antes de cerrar.
+  la feature afectada antes de dar el cambio por terminado.
 
 Este dominio es el opuesto de `email-compatibility`: aquí sí se permite CSS
 moderno (flex, grid, custom properties) porque el destino es un navegador, no
 un cliente de correo. No aplicar las restricciones de esa skill a `src/web/**`.
-Leer también `email-preview-dashboard` cuando el cambio cruce hacia estructura
+Leer también `email-web-app` cuando el cambio cruce hacia estructura
 DOM, APIs o interacción, y no tocar `src/emails/**`, iframes, Maizzle,
 Handlebars, variables ESP ni APIs Vite desde esta skill.
