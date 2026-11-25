@@ -1,7 +1,7 @@
 # Plan de implementación — EmailForge Toolkit
 
 Este documento contiene únicamente el trabajo pendiente. El baseline funcional
-publicado es `v1.2.0`; los artefactos de Git y `STATUS-HISTORY.md` conservan la
+publicado es `v1.2.0`; los artefactos de Git y la sección «Fases cerradas» conservan la
 trazabilidad de los IDs cerrados.
 
 ## Objetivo vigente
@@ -12,50 +12,37 @@ la comprobación manual en clientes de correo se ejecuta en una etapa final (MHB
 multi-package-manager) para publicar `v1.4.0`. La migración de stack de estilos
 y la demo de portafolio se planifican como fases propias.
 
-## Matriz de reestructuración del plan (2026-10-08)
+## Fases cerradas (resumen)
 
-| Ítem                               | Decisión  | Tratamiento vigente                                                                                    |
-| ---------------------------------- | --------- | ------------------------------------------------------------------------------------------------------ |
-| Fases                              | Ajustar   | Cada fase termina con su propio ID de release; no se espera al backlog completo para publicar.         |
-| MHB-44, MHB-46, MHB-47, MHB-42, 34 | Retirar   | Completadas; sus contratos salen del plan y su contenido forma parte de `v1.3.0`.                      |
-| MHB-14                             | Conservar | Último ID de la Fase C; su cierre habilita la release `v1.3.0`.                                        |
-| MHB-15                             | Ajustar   | Release `v1.3.0`; depende solo de MHB-14 (resto de su alcance ya completado).                          |
-| MHB-43                             | Retirar   | Completada (2026-10-08) antes del congelamiento de MHB-15; entra en `v1.3.0`.                          |
-| MHB-36                             | Mover     | Fase D; forma la release `v1.4.0`.                                                                     |
-| MHB-48                             | Mover     | Fase D si su disparador externo se cumple antes del congelamiento de MHB-49; si no, release siguiente. |
-| MHB-49                             | Crear     | Release `v1.4.0` tras MHB-36.                                                                          |
-| MHB-38                             | Mover     | Fase E propia, dentro de su ventana (≥ 2027-01-15).                                                    |
-| MHB-50                             | Crear     | Release de la Fase E tras MHB-38; versión SemVer decidida al congelar.                                 |
-| MHB-16, MHB-23                     | Mover     | Fase F (demo y portafolio), ejecutable en paralelo desde `v1.3.0`.                                     |
-
-No se reabre ninguna tarea completada. Cada ID conserva una rama, revisión y
-cierre independientes.
+- **Releases:** `v1.2.0` (baseline), `v1.3.0` (2026-11-21, tag `81d2b7c`), `v1.4.0` (2026-11-23, tag `d9671ee`).
+- **IDs cerrados:** MHB-14, MHB-15, MHB-34, MHB-36, MHB-40 a MHB-47, MHB-49, MHB-61 y MHB-62. Detalle en Git y `CHANGELOG.md`.
+- **MHB-48:** absorbido por MHB-58 (TypeScript 7, Fase H).
+- **Decisiones vigentes:**
+  - Lockfile: sólo `bun.lock` versionado; la CI instala con yarn, npm y pnpm desde cero.
+  - `check:dist-baseline` es gate estricto sólo en el carril con `bun.lock`.
+  - PR externas: `pr-guard.yml` rechaza lockfiles ajenos y cambios en `.github/`.
+  - Windows no soportado. Node mínimo `24.22.3` (`engines`, `.nvmrc`).
+  - Pruebas en clientes de correo trasladadas a MHB-51.
+  - `lint-staged` fijado en `17.6.1` (cuarentena de Yarn 4.18.1 sobre `17.6.2`).
 
 ## Backlog activo
 
-| Fase | ID     | Entregable                                       | Estado     | Dependencia vigente            |
-| ---- | ------ | ------------------------------------------------ | ---------- | ------------------------------ |
-| C    | MHB-14 | Comprobación de uso y compatibilidad             | Completada | Satisfecha                     |
-| C    | MHB-15 | Release `v1.3.0`                                 | Completada | MHB-14                         |
-| D    | MHB-36 | Compatibilidad multi-package-manager             | Completada | Satisfecha (MHB-43 completada) |
-| D    | MHB-48 | Actualización a TypeScript 7                     | Pendiente  | Disparador externo             |
-| D    | MHB-61 | Versión mínima de Node.js 24.22.3                | Completada | Ninguna                        |
-| D    | MHB-62 | Actualización de dependencias sin saltos mayores | Completada | MHB-61                         |
-| D    | MHB-49 | Release `v1.4.0`                                 | Completada | MHB-15, MHB-36 y MHB-61        |
-| E    | MHB-38 | Migración en bloque a Maizzle 6 y Tailwind v4    | Pendiente  | MHB-36 y ventana ≥ 2027-01-15  |
-| E    | MHB-50 | Release de la migración de stack                 | Pendiente  | MHB-49 y MHB-38                |
-| F    | MHB-16 | Demo candidata pre-renderizada                   | Opcional   | MHB-15                         |
-| F    | MHB-23 | Ampliar biblioteca de componentes                | Opcional   | Caso de uso aprobado           |
-| G    | MHB-51 | Verificación manual final en clientes            | Pendiente  | MHB-15, MHB-49 y MHB-50        |
-| H    | MHB-52 | PoC aislada de Vite+                             | Propuesta  | Acuerdo explícito              |
-| H    | MHB-53 | Paridad Oxfmt vs Prettier                        | Propuesta  | MHB-52                         |
-| H    | MHB-54 | Oxlint en paralelo (modo sombra)                 | Propuesta  | MHB-52                         |
-| H    | MHB-55 | Reparto Oxlint + ESLint reducido                 | Propuesta  | MHB-54                         |
-| H    | MHB-56 | Hooks y staged                                   | Propuesta  | MHB-55 y MHB-53                |
-| H    | MHB-57 | Adaptación de CI                                 | Propuesta  | MHB-55 y MHB-56                |
-| H    | MHB-58 | TypeScript 7 (reemplaza disparador de MHB-48)    | Propuesta  | MHB-55                         |
-| H    | MHB-59 | Gentleman: instrucciones, skills y scripts       | Propuesta  | MHB-53 y MHB-55                |
-| H    | MHB-60 | Release del tooling                              | Propuesta  | MHB-55 a MHB-59                |
+| Fase | ID     | Entregable                                    | Estado    | Dependencia vigente           |
+| ---- | ------ | --------------------------------------------- | --------- | ----------------------------- |
+| E    | MHB-38 | Migración en bloque a Maizzle 6 y Tailwind v4 | Pendiente | MHB-36 y ventana ≥ 2027-01-15 |
+| E    | MHB-50 | Release de la migración de stack              | Pendiente | MHB-49 y MHB-38               |
+| F    | MHB-16 | Demo candidata pre-renderizada                | Opcional  | MHB-15                        |
+| F    | MHB-23 | Ampliar biblioteca de componentes             | Opcional  | Caso de uso aprobado          |
+| G    | MHB-51 | Verificación manual final en clientes         | Pendiente | MHB-15, MHB-49 y MHB-50       |
+| H    | MHB-52 | PoC aislada de Vite+                          | Propuesta | Acuerdo explícito             |
+| H    | MHB-53 | Paridad Oxfmt vs Prettier                     | Propuesta | MHB-52                        |
+| H    | MHB-54 | Oxlint en paralelo (modo sombra)              | Propuesta | MHB-52                        |
+| H    | MHB-55 | Reparto Oxlint + ESLint reducido              | Propuesta | MHB-54                        |
+| H    | MHB-56 | Hooks y staged                                | Propuesta | MHB-55 y MHB-53               |
+| H    | MHB-57 | Adaptación de CI                              | Propuesta | MHB-55 y MHB-56               |
+| H    | MHB-58 | TypeScript 7 (reemplaza disparador de MHB-48) | Propuesta | MHB-55                        |
+| H    | MHB-59 | Gentleman: instrucciones, skills y scripts    | Propuesta | MHB-53 y MHB-55               |
+| H    | MHB-60 | Release del tooling                           | Propuesta | MHB-55 a MHB-59               |
 
 ## Invariantes de calidad, arquitectura y refactor integrado
 
@@ -107,52 +94,6 @@ Todo plan de implementación y contrato técnico futuro debe incluir obligatoria
 
 El cumplimiento de estos criterios es condición indispensable para que un revisor independiente marque una tarea como `Completada`.
 
-## Fase C — Comprobación y release v1.3.0
-
-- **Contenido de la release:** todo lo completado y mergeado en `master` desde `v1.2.0` (`git log v1.2.0..master`: migración TypeScript completa hasta MHB-34, gobernanza MHB-40, contrato de salida MHB-41, protección de `master` MHB-45, compatibilidad HTML MHB-44, API local MHB-46 y contrato ESP MHB-47, higiene de dependencias MHB-43) más MHB-14.
-- **Orden:** MHB-14 → MHB-15.
-- **Riesgos:** afirmar resultados de clientes sin pruebas; incluir secretos en capturas o documentación; publicar sin el checklist Go/No-Go.
-- **Criterio de salida:** MHB-14 cerrada con controles automatizados reproducibles y `v1.3.0` publicada por MHB-15; la comprobación manual en clientes de correo queda en MHB-51.
-
-### MHB-14 — Comprobación de uso y compatibilidad
-
-- **Objetivo observable:** producir checklist reproducible de accesibilidad y matriz fechada de clientes reales. La ejecución en clientes de correo se traslada a MHB-51 (etapa final).
-- **Superficies autorizadas:** protocolo/checklist, capturas, matriz documental y templates de producto.
-- **Dependencias y precondiciones:** MHB-44 completada, para que la comprobación en clientes reales se tome sobre el HTML ya corregido (colores, unidades e imágenes); el flujo de producto permanece disponible y se dispone de los clientes/dispositivos declarados.
-- **Pasos técnicos:** definir criterios de teclado/lector, ejecutar protocolo en Gmail, Outlook y Apple Mail, y registrar límites.
-- **Criterios de aceptación:** cada prueba tiene fecha, cliente, criterio y resultado; no se sustituyen clientes reales por un validador estático.
-- **Validación automática:** validadores disponibles y lint de matriz, sin presentarlos como prueba real.
-- **Validación manual:** teclado y lector según protocolo. Clientes de correo: MHB-51.
-- **Resultado requerido:** matriz por cliente/criterio, limitaciones declaradas en `STATUS.md`.
-- **Riesgos y reversión:** afirmar cobertura no realizada o filtrar datos; usar cuentas/fixtures seguros y marcar no verificado.
-- **Envíos reales:** los correos de prueba pueden enviarse con la integración ESP (SendGrid) del usuario usando `dist/<template>.html`, solo con autorización explícita por envío, destinatarios de prueba propios y sin API keys, tokens ni direcciones reales en capturas, `STATUS.md` o el repositorio. Esa integración vive fuera de este repositorio y no se incorpora a él.
-- **Exclusiones específicas:** no certificar accesibilidad ni compatibilidad universal.
-- **Implementador:** perfil de comprobación/compatibilidad, alto.
-- **Revisor independiente:** orquestador o revisor con acceso a clientes.
-- **Condición de escalamiento:** falta acceso a cliente/dispositivo o aparecen datos sensibles.
-
-### MHB-15 — Release v1.3.0
-
-- **Objetivo observable:** publicar `v1.3.0` con README, CHANGELOG, versión, tag y release coherentes con el trabajo completado desde `v1.2.0`.
-- **Estado:** `Completada` (2026-11-21). Tag `v1.3.0` en `81d2b7c` y release publicada.
-- **Superficies autorizadas:** README, CHANGELOG, versión/package metadata, capturas, notas de release y documentación relacionada.
-- **Dependencias y precondiciones:** MHB-14 completada (el resto del contenido de la release ya está `Completada`), CI verde en `master` y decisión explícita del usuario antes de publicar o etiquetar; preservar el baseline publicado `v1.2.0`.
-- **Versión decidida (2026-10-08):** `v1.3.0` (minor). La API pública son los comandos listados en `CLAUDE.md` (`dev`, `build`, `test`, `lint`, `typecheck`, `validate-email`, `check:dist-baseline`, `format:check`, etc.); el resto de scripts de `package.json` son herramientas internas que pueden cambiar en un minor con nota de migración en `CHANGELOG.md`. Desde `v1.2.0` no cambió ningún comando de esa lista.
-- **Congelamiento de alcance:** al pasar MHB-15 a `En progreso` se congela el alcance. Un hallazgo nuevo se registra como ID de la Fase D y no bloquea la release, salvo que rompa un gate de MHB-41 (hashes de `dist/`, variables ESP `{{ }}`, `validate-email`), la suite o el build; solo esos casos bloquean y se corrigen dentro del alcance congelado. Un ID de la Fase D mergeado antes del congelamiento forma parte de `v1.3.0` y se declara en sus notas.
-- **Pasos técnicos:**
-  - Aplicar la skill `release-management`: checklist Go/No-Go con cada ID de la release `Completada` y CI verde en `master`.
-  - Reconciliar narrativa y resultados; mover `[Unreleased]` a `[1.3.0]` en CHANGELOG; actualizar `package.json`; preparar tag/release solo tras revisión.
-  - Incluir en CHANGELOG y notas de release una sección «Contrato de salida para integradores»: resultado de `check:dist-baseline` frente a `v1.2.0` (diferencias justificadas por template, introducidas por MHB-44) y confirmación de que las variables ESP `{{ }}` de cada template se conservan, con referencia al manifiesto `dist/esp-manifest.json` (MHB-47).
-- **Criterios de aceptación:** documentación, versión, tag y release coinciden; las capturas son actuales y los límites no se presentan como hechos no probados; la sección de contrato de salida existe y coincide con la salida de `check:dist-baseline`.
-- **Validación automática:** lint Markdown, suite, build, `validate-email`, `check:dist-baseline` y comprobación de consistencia de versión.
-- **Validación manual:** revisar README, capturas, changelog, SHA/tag y notas antes de publicar.
-- **Resultado requerido:** SHA, tag, URL de release, diff final y checklist Go/No-Go firmado por el orquestador.
-- **Riesgos y reversión:** publicar una afirmación adelantada; detener antes de acciones externas y revertir documentación local si corresponde.
-- **Exclusiones específicas:** no publicar automáticamente ni modificar tags o releases ya publicados.
-- **Implementador:** perfil documentación/release, medio.
-- **Revisor independiente:** orquestador.
-- **Condición de escalamiento:** cualquier publicación, tag, versión o resultado no sustentado, o un hallazgo que se proponga incluir pese al congelamiento de alcance.
-
 ## Fase G — Verificación final en clientes
 
 - **Contenido:** MHB-51, ejecución manual del protocolo de clientes de correo para todas las etapas, después de la última release planificada.
@@ -169,205 +110,6 @@ El cumplimiento de estos criterios es condición indispensable para que un revis
 - **Riesgos y reversión:** afirmar cobertura no realizada; filtrar datos. Usar cuentas y fixtures seguros.
 - **Exclusiones específicas:** no certificar compatibilidad universal.
 - **Condición de escalamiento:** falta acceso a cliente o dispositivo, o aparecen datos sensibles.
-
-## Fase D — Portabilidad y release v1.4.0
-
-- **Contenido de la release:** MHB-36 y, si su disparador se cumple antes del congelamiento, MHB-48 (MHB-43 ya entra en `v1.3.0`).
-- **Orden:** MHB-36 → MHB-49; MHB-48 en paralelo con MHB-36 por no compartir superficie.
-- **Entregables:** compatibilidad con npm, yarn, pnpm y bun, tests en Vitest y release `v1.4.0`.
-- **Riesgos:** incompatibilidades sutiles entre package managers o drift transitivo sin lockfile; romper un comando público.
-- **Criterio de salida:** MHB-36 confirma que el proyecto funciona con los 4 managers; `dist/` idéntico al baseline en el carril congelado con bun.lock y `v1.4.0` publicada por MHB-49.
-
-### MHB-36 — Compatibilidad multi-package-manager
-
-- **Objetivo observable:** cualquier desarrollador clona el proyecto y trabaja con npm, yarn, pnpm o bun sin que ninguno sea obligatorio. Los scripts se ejecutan con `node` (type stripping nativo), los tests con Vitest y la CLI lanza procesos con el package manager detectado.
-- **Estado:** `Completada` (2026-10-09). Verificada en local y CI con los 4 gestores (Bun, npm, Yarn 4 y pnpm); integrada en master e incluida en la release `v1.3.0`.
-- **Diagnóstico al 2026-10-08 (post MHB-43):**
-  - Con Node 22.23.1 local, `node` ejecuta sin cambios `build`, `validate-email`, `check:dist-baseline`, `check-size`, `lint` y `check:a11y`, y `dist/` queda idéntico.
-  - Acoplamiento a Bun:
-    - 19 scripts `bun <archivo>.ts` en `package.json`, el encadenado `lint` con `bun run` y la entrada de `lint-staged` para `data.json`.
-    - 4 hooks Husky y el shebang `#!/usr/bin/env bun` de `scripts/ai/check-task-branch.ts`.
-    - 4 `run("bun", …)` en `scripts/cli/actions.ts` y el `spawn("bun", …)` de `scripts/build/ensure-build.ts`.
-    - Comandos `bun` en `scripts/perf/measure-benchmarks.ts` y el mensaje legacy `'yarn build'` en `scripts/cli/template-prompts.ts`.
-    - Unos 25 mensajes o comentarios de uso con `bun run …`.
-    - `"packageManager": "bun@1.3.13"`, que hace que pnpm aborte localmente con «This project is configured to use bun».
-  - Tests: 103 archivos `*.test.ts` más `src/web/features/preview/modules/runtime/test-helpers.ts` importan `bun:test`, con 795 tests. Usan `mock` (7), `spyOn` (6), el tipo `Mock` (5), el matcher `toBeString` exclusivo de Bun (2 archivos) e `import.meta.dir` exclusivo de Bun (`scripts/vite/plugins/dashboard.test.ts`). No usan `mock.module`. 3 archivos usan `process.chdir`.
-  - `overrides.postcss` (`8.5.23`) contradice la dependencia directa `postcss@8.5.28`; npm la rechaza (`EOVERRIDE`).
-  - `.env` lo carga Bun automáticamente; con Node solo lo carga `loadEnv()` en `scripts/shared/env/env.ts`, que ya usan los envíos de correo (sin cambio necesario).
-- **Ensayos verificados el 2026-10-08 en un worktree desechable:**
-  - **Migración a Vitest:** el codemod del plan y `vitest@5.0.3` (`pool: "forks"`) dejan 103/103 archivos y 795/795 tests en verde. `tsc` queda con 0 errores tras 2 retoques: `menu-filter.test.ts` y retirar un `@ts-expect-error` sobrante. ESLint queda limpio.
-  - **Resolución transitiva sin lockfile (hecho comprobado el 2026-10-09):** el ensayo preliminar con Yarn 4.18.1 no es reproducible sin lockfile. `bun.lock` fija `html-crush@6.1.3`, `email-comb@7.1.3` y `string-strip-html@13.5.3`, mientras que npm ya publicaba `6.3.5`, `7.4.5` y `13.7.7` (todas del 2026-09-29). Un install sin lockfile resuelve esas versiones y cambia el espaciado y saltos de línea de `dist/`, sin perder variables ESP. Yarn requiere `.yarnrc.yml` con `nodeLinker: node-modules` (Plug'n'Play no es compatible con Vite y Maizzle).
-- **Decisiones aprobadas (2026-10-08):**
-  - **Lockfiles: cada quien decide el suyo.** El repo versiona `bun.lock` porque es el manager del mantenedor; `package-lock.json`, `yarn.lock` y `pnpm-lock.yaml` se ignoran en Git. Quien haga fork puede versionar el suyo. El código no depende de ningún lockfile: la CI instala con yarn, npm y pnpm desde cero en cada PR y exige build, validate-email, check-size, typecheck y test; `check:dist-baseline` es gate estricto solo del carril congelado con bun.
-  - **Yarn:** solo `.yarnrc.yml` con `nodeLinker: node-modules`; sin binario versionado ni `yarnPath`. Sin campo `packageManager`, porque bloquea a los demás managers.
-  - **Detección del manager:** sin variable `.env`. Se usa `npm_config_user_agent` (el manager que lanzó el script) y, sin él (hooks, `node` directo), `npm`, que viene con Node.
-  - Windows no está soportado y se documenta.
-  - La CI conserva `oven-sh/setup-bun` solo para la instalación congelada del carril principal, que ejecuta los scripts con Node 24. Un job matricial instala npm, yarn y pnpm desde cero.
-  - Un ID, una rama, una PR y un commit por fase, con un subagente nuevo por fase.
-  - **PR externas (2026-10-09):** un fork puede usar el manager que quiera en su propio repositorio, pero una PR hacia este repo no puede cambiar la CI ni agregar lockfiles ajenos. En las PR desde forks, GitHub ejecuta el `ci.yml` de la rama de la PR, así que sus checks podrían salir verdes con una CI modificada. Para evitarlo:
-    - Se añade el workflow `pr-guard.yml` con `pull_request_target`: se ejecuta desde `master`, no hace checkout del código de la PR y falla si la PR agrega `package-lock.json`, `yarn.lock` o `pnpm-lock.yaml`, o si una PR desde un fork toca `.github/`.
-    - Se añade `CONTRIBUTING.md` con esa política.
-    - Los workflows de PR externas requieren aprobación manual (aplicado el 2026-10-09: `approval_policy = all_external_contributors`).
-    - Se descarta `CODEOWNERS` con revisión obligatoria: no aporta con un mantenedor único y bloquearía el auto-merge de Dependabot, que toca `package.json`, `bun.lock` y `.github/workflows/`.
-- **Superficies autorizadas:**
-  - Configuración raíz: `package.json`, `bun.lock`, `.yarnrc.yml` (nuevo), `.gitignore`, `vitest.config.ts` (nuevo), `pnpm-workspace.yaml` (nuevo, solo si pnpm lo exige para permitir el build de `puppeteer`); se eliminan `bunfig.toml` y `types/bun-test.d.ts`.
-  - Hooks y CI: `.husky/*`, `.github/workflows/ci.yml`, `.github/workflows/audit.yml` y `.github/workflows/pr-guard.yml` (nuevo).
-  - Detección y runner: `scripts/shared/env/detect-pm.ts` (nuevo) y `scripts/pm/run-scripts.ts` (nuevo), con sus tests.
-  - Módulos con comandos o mensajes del package manager listados en el diagnóstico, con sus tests.
-  - Todos los `*.test.ts` y `test-helpers.ts`.
-  - Documentación: `docs/ai/AGENTS.md`, `docs/ai/skills/*/SKILL.md` (sincronizados con `agents:sync`), `README.md`, `CONTRIBUTING.md` (nuevo), `CHANGELOG.md`, `docs/implementation/TEST-INVENTORY.md`, `PLAN.md` y `STATUS.md`.
-- **Dependencias y precondiciones:** MHB-43 completada y mergeada. Node `>=22.18` local (CI usa 24). npm, yarn y pnpm disponibles para la verificación local en un clon desechable.
-- **Pasos técnicos** (detalle ejecutable en `docs/superpowers/mhb-36.md`; un commit por fase):
-  - **F0 — Preparación:** rama, estado `En progreso` y línea base.
-  - **F1 — Detección:** `detect-pm.ts` (`detectPackageManager`, `formatRunCommand`) y el runner secuencial `scripts/pm/run-scripts.ts`.
-  - **F2 — `package.json`, hooks y lockfiles:** scripts con `node`, sin `packageManager`, `engines.bun` ni `overrides` (se conserva `trustedDependencies`), builds de pnpm permitidas solo para `puppeteer`, `.yarnrc.yml`, lockfiles ajenos ignorados y hooks agnósticos.
-  - **F3 — CLI y mensajes:** procesos con el manager detectado o `process.execPath`, mensajes con `formatRunCommand` y sin `'yarn build'`.
-  - **F4 — Vitest:** `vitest@5.0.3`, `vitest.config.ts`, codemod `bun:test` → `vitest`; se eliminan `bunfig.toml` y `types/bun-test.d.ts`.
-  - **F5 — CI:** Node 24 en todos los jobs, job `package-managers` requerido por `CI Pipeline`, `audit.yml` con Node 24 y workflow `pr-guard.yml`.
-  - **F6 — Documentación:** invariante de Bun, instalación con los 4 managers, política de lockfiles y de PR externas (`CONTRIBUTING.md`), Windows no soportado, `agents:sync` y `CHANGELOG.md`.
-  - **F7 — Verificación final** y entrega `En revisión`. Tras el merge, y con autorización del usuario, marcar `PR Guard` como check requerido de `master`.
-- **Criterios de aceptación** (cada uno con su comando):
-  1. Ningún script de `package.json` invoca `bun`: el comando `node -e` del plan devuelve 0 coincidencias.
-  2. Sin `bun` como ruta de ejecución en el código: `rg -n '\bbun\b' scripts src .husky -g '!*.test.ts'` devuelve solo la allowlist cerrada del plan:
-     - `detect-pm.ts`, por la lista de managers;
-     - `pilot.ts`, por la detección de runtime;
-     - `measure-benchmarks.ts`, por la comparación Bun vs Node;
-     - `benchmark-runner.ts`, por `bun -v` opcional.
-  3. Sin `bun:test`: `rg -l 'bun:test' scripts src types` vacío; `bunfig.toml` y `types/bun-test.d.ts` no existen.
-  4. Suite completa en Vitest con el mismo número de tests que la línea base (795, o la cifra registrada en F0), con `bun run test` y con `npm run test`.
-  5. `detect-pm.test.ts` cubre user agent de los 4 managers, user agent desconocido o ausente → `npm` y `formatRunCommand`; `run-scripts.test.ts` cubre la ejecución secuencial, la parada en el primer fallo y el uso sin argumentos.
-  6. En un clon desechable, cada manager termina en verde `install`, `typecheck`, `test`, `build`, `validate-email` y `check-size`: `bun install --frozen-lockfile`, `yarn install` (Yarn 4.18.1), `npm install` y `pnpm install` (pnpm 12.10.1); `check:dist-baseline` en verde estricto en el carril congelado con bun.
-  7. `git status --porcelain` tras instalar con los 4 managers no muestra lockfiles nuevos ni cambios en `bun.lock`.
-  8. `ci.yml` define el job `package-managers` (matriz npm/yarn/pnpm) incluido en `needs` y en la verificación de `CI Pipeline`; todos los jobs usan `actions/setup-node` con Node 24. Revisión manual del YAML y CI verde en la PR.
-  9. Documentación: `rg -n 'bun:test|bun test\b' README.md docs/ai docs/implementation/TEST-INVENTORY.md` y `rg -n -i 'solo bun|únicamente bun|bun como único' README.md docs/ai` vacíos; `bun run agents:check` en verde. Revisión manual: cada `bun run`/`bun install` restante de `README.md` aparece junto a sus equivalentes multi-manager.
-  10. `pr-guard.yml` se dispara con `pull_request_target`, no usa `actions/checkout` y falla ante lockfiles ajenos (cualquier PR) o cambios en `.github/` (PR desde fork): el comando `node -e` del plan lo comprueba. Revisión manual tras el merge: la siguiente PR muestra el check `PR Guard` antes de marcarlo requerido.
-- **Validación automática:** con bun: `install --frozen-lockfile`, `lint`, `typecheck`, `test`, `format:check`, `build`, `validate-email`, `check:dist-baseline`, `check-size`, `agents:check` y `git diff --check`. Más el criterio 6 con npm, yarn y pnpm.
-- **Validación manual:** `yarn cli` y `bun run cli` hasta el menú. `yarn dev` y `bun run dev` responden 200 en `/` (sin Browser pane). Hook `pre-commit` en un commit real de la rama.
-- **Resultado requerido:**
-  - Línea base y resultado (tests, hashes de `dist/`).
-  - Tabla de instalación y gates por manager con versiones.
-  - Diff de `package.json`, conteo de archivos migrados a Vitest y salida de las allowlists de `rg`.
-- **Riesgos y reversión:**
-  - Drift transitivo sin lockfile: riesgo aceptado en los managers sin lockfile (variaciones menores de espaciado en HTML que no alteran variables ESP, contratos ni peso); `check:dist-baseline` garantiza reproducibilidad byte a byte en el carril congelado con `bun.lock`.
-  - Vitest aísla por archivo y puede exponer estado compartido entre tests: se corrige el test, sin `skip`.
-  - pnpm o Yarn rechazan alguna configuración: se escala con el error literal.
-  - Cada fase es un commit revertible.
-  - `pull_request_target` corre con permisos del repo base: el guard solo lee la lista de archivos por API, con `contents: read` y `pull-requests: read`, y nunca ejecuta código de la PR.
-- **Exclusiones específicas:**
-  - No cambiar lógica de negocio, templates, output HTML ni APIs.
-  - No actualizar versiones de dependencias existentes (salvo retirar el `overrides` contradictorio) ni migrar a monorepo.
-  - No exigir Corepack, no soportar Windows y no versionar `package-lock.json` ni `pnpm-lock.yaml`.
-  - No tocar `outdated-majors.yml` ni `dependabot.yml`, que siguen sobre `bun.lock`.
-- **Análisis de mantenibilidad:**
-  - `detect-pm.ts` (~40 líneas) y `run-scripts.ts` (~50) tienen responsabilidad única.
-  - `formatRunCommand` sustituye unos 25 literales `bun run …` duplicados.
-  - `scripts/shared/env/` pasa a 3 fuentes y `scripts/pm/` es una carpeta nueva con 1 fuente.
-  - La migración de tests es mecánica: no se crean helpers de test nuevos.
-- **Implementador:** orquestador con perfil tooling/infraestructura, medio-alto, con un subagente nuevo por fase F1–F6.
-- **Revisor independiente:** revisor técnico (`task-review`).
-- **Condición de escalamiento:**
-  - Un manager no instala, falla funcionalmente, pierde variables ESP `{{ }}` o altera `dist/` en el carril congelado con `bun.lock`.
-  - Node no ejecuta un `.ts` propio.
-  - Vitest exige cambiar lógica no-test.
-  - Retirar el `overrides` cambia `dist/` o reintroduce un `postcss < 8.5.23`.
-  - Cambia un comando público.
-  - Hace falta `skip`, `eslint-disable` o `@ts-expect-error`.
-
-### MHB-48 — Actualización a TypeScript 7
-
-- **Objetivo observable:** subir `typescript` de `6.0.3` a `7.x` con `typecheck`, lint tipado y tests en verde, sin cambiar el HTML de `dist/`.
-- **Diagnóstico al 2026-10-01:** `typescript@7.0.2` es `latest` en npm y su paquete no declara `main` (solo el binario `tsc`). `typescript-eslint@8.71.0` (`latest`) y `8.71.1-alpha.5` (`canary`) declaran `peerDependencies.typescript: >=4.8.4 <6.1.0`, de modo que TS 7 no está soportado hoy. El repo importa la API del compilador en `scripts/validators/lint-guards/file-tree.test.ts` (`import ts from "typescript"`).
-- **Alternativa (Fase H):** MHB-58 cubre este mismo objetivo vía Oxlint type-aware y reemplazaría este ID si la Fase H se ejecuta; no se ejecutan ambos.
-- **Disparador externo (bloqueante):** una versión estable de `typescript-eslint` cuyo peer `typescript` admita 7.x, o una decisión explícita del usuario de sustituir el lint tipado. Hasta entonces el ID no se inicia ni se asigna.
-- **Superficies autorizadas:** `package.json`, `bun.lock`, `tsconfig*.json` solo para opciones deprecadas o removidas por TS 7, `scripts/validators/lint-guards/file-tree.test.ts` (o su sustituto si la API `ts` ya no existe), `docs/implementation/STATUS.md` y `CHANGELOG.md`.
-- **Dependencias y precondiciones:** MHB-34 completada (modo estricto ya cerrado, para aislar errores de la versión nueva) y el disparador externo satisfecho.
-- **Pasos técnicos:**
-  1. Confirmar el peer de `typescript-eslint` y la versión exacta a fijar; si no hay soporte, detener el ID.
-  2. Reemplazar `typescript` y `typescript-eslint` a versiones fijas compatibles y regenerar `bun.lock`.
-  3. Corregir opciones de `tsconfig*.json` removidas, sin añadir exclusiones ni `@ts-expect-error`.
-  4. Resolver la dependencia de la API `ts` en el guard de árbol de archivos: migrarla o sustituirla por un análisis equivalente.
-- **Criterios de aceptación:**
-  - `bun run typecheck` y `bun run lint` en verde con `typescript` en `7.x`.
-  - `bun run test` en verde, incluido el guard de árbol de archivos.
-  - `bun run check:dist-baseline` confirma `dist/` idéntico.
-  - `rg -n "eslint-disable|@ts-ignore|@ts-expect-error" scripts src` sin entradas nuevas respecto al inicio.
-- **Validación automática:** `bun install --frozen-lockfile`, lint, typecheck, test, `format:check`, build, `validate-email`, `check:dist-baseline` y `git diff --check`.
-- **Validación manual:** ninguna.
-- **Resultado requerido:** versiones antes/después, salida de `typecheck` y `lint`, diff de `package.json` y `tsconfig*.json`.
-- **Riesgos y reversión:** cambios de diagnósticos o de resolución de módulos que revelen errores nuevos; API del compilador ausente. Un único commit de versión, revertible por separado.
-- **Exclusiones específicas:** no cambiar `strict`, `verbatimModuleSyntax` ni `erasableSyntaxOnly`, no migrar otras dependencias y no tocar templates ni `dist/`.
-- **Análisis de mantenibilidad:** si el guard de árbol de archivos deja de depender de la API `ts`, se elimina el acoplamiento con el compilador.
-- **Implementador:** perfil TypeScript/tooling, medio.
-- **Revisor independiente:** revisor técnico de tooling distinto del implementador.
-- **Condición de escalamiento:** `typescript-eslint` no soporta TS 7, la API `ts` no existe o falla un gate global.
-
-### MHB-61 — Versión mínima de Node.js 24.22.3
-
-- **Objetivo observable:** el proyecto declara `Node.js >= 24.22.3` como mínimo y las herramientas de versión (`nvm`, `fnm`, `asdf`, `mise` u otras que lean `.node-version`) fijan exactamente `24.22.3`, de modo que un clon nuevo trabaja con una versión de Node que cumple el requisito de las dependencias vigentes.
-- **Motivo:** `engines.node` era `>=24`, que admitía 24.0 a 24.22.2; esas versiones quedan por debajo del mínimo que se quiere garantizar. Se declara el mínimo exacto y se agrega `.node-version` para los gestores que no leen `.nvmrc`.
-- **Estado:** `Completada` (2026-11-23). Mergeada en `master` como #76 (squash `7e5bd1c`); revisión independiente `APROBADO CON OBSERVACIONES` sin bloqueantes; CI verde.
-- **Superficies autorizadas:** `package.json` (`engines.node`), `.nvmrc`, `.node-version` (nuevo), `README.md` (dos menciones de requisitos), `CHANGELOG.md` (`[Unreleased]`), `.github/workflows/ci.yml` y `.github/workflows/audit.yml` (versión de Node desde `.nvmrc`), `docs/implementation/STATUS.md`.
-- **Dependencias y precondiciones:** ninguna.
-- **Cambios realizados:**
-  1. `package.json`: `engines.node` de `>=24` a `>=24.22.3`.
-  2. `.nvmrc`: de `24` a `24.22.3`.
-  3. `.node-version`: archivo nuevo con `24.22.3`.
-  4. `README.md`: «Requisitos locales» y «Requisitos» indican `>= 24.22.3`.
-  5. `CHANGELOG.md`: entrada «Cambiado» en `[Unreleased]`.
-- **CI:** `ci.yml` y `audit.yml` usan `node-version-file: ".nvmrc"`, de modo que el runner instala exactamente `24.22.3`; se confirma en la primera PR.
-- **Criterios de aceptación:**
-  - `package.json`, `.nvmrc` y `.node-version` declaran la misma versión mínima (`24.22.3`), comprobable con `rg -n "24\\.22\\.3" package.json .nvmrc .node-version README.md`.
-  - `bun install --frozen-lockfile` y `bun run check:dist-baseline` verdes con Node `24.22.3`.
-  - CI usa una versión de Node `>= 24.22.3`.
-  - `README.md` y `CHANGELOG.md` coinciden con el mínimo declarado.
-- **Validación automática:** instalación congelada, lint, typecheck, test, `format:check`, build, `validate-email`, `check:dist-baseline`, `check-size`, `check:task-branch` y `git diff --check`, todos con Node `24.22.3`.
-- **Validación manual:** `nvm use` y `fnm use` en un clon limpio seleccionan `24.22.3`.
-- **Resultado requerido:** versión de Node usada en cada control, diff de los cinco archivos y salida de CI.
-- **Riesgos y reversión:** quien tenga Node 24.0 a 24.22.2 recibe aviso de `engines` o falla en gestores con `engine-strict`; `.node-version` y `.nvmrc` fijan una versión exacta que obliga a actualizar a futuro. Un único commit, revertible por separado. El cambio eleva el requisito de runtime declarado; la versión se mantiene en `v1.4.0` (decisión registrada en MHB-49).
-- **Exclusiones específicas:** no cambiar dependencias, `@types/node`, `tsconfig*.json`, templates ni `dist/`.
-- **Análisis de mantenibilidad:** una sola versión mínima repetida en tres archivos; no se agrega lógica nueva.
-- **Implementador:** perfil tooling/documentación, bajo.
-- **Revisor independiente:** revisor técnico de tooling distinto del implementador.
-- **Condición de escalamiento:** `dist/` cambia, una dependencia exige otra versión de Node, o CI no ofrece `24.22.3`.
-
-### MHB-62 — Actualización de dependencias sin saltos mayores
-
-- **Objetivo observable:** subir a su última versión estable, dentro del mismo major, las dependencias y devDependencies que no requieren cambios de código, con `dist/` idéntico y todos los gates en verde.
-- **Alcance (versiones exactas, fijadas como el resto del proyecto):**
-  - Herramientas de desarrollo: `axe-core` 4.14.1, `eslint` 10.15.0, `globals` 17.14.0, `lint-staged` 17.6.1, `markdownlint-cli2` 0.24.2, `prettier` 3.10.1, `stylelint` 18.1.0 (major, probado sin cambios de config), `stylelint-config-standard` 41.1.0 (par obligatorio de `stylelint` 18), `typescript-eslint` 8.73.0, `vitest` 5.1.1.
-  - Runtime y build: `nodemailer` 10.6.1, `lucide` 1.77.0, `puppeteer` 25.18.1, `vite` 8.3.8.
-  - Pipeline de email (revisión manual obligatoria): `postcss` 8.5.33, `autoprefixer` 10.7.0.
-- **Superficies autorizadas:** `package.json`, `bun.lock`, `CHANGELOG.md` (`[Unreleased]`), `docs/implementation/PLAN.md` y `docs/implementation/STATUS.md`.
-- **Dependencias y precondiciones:** MHB-61 (Node `>= 24.22.3`; `stylelint` 18 exige `^24.15`).
-- **Estado:** `Completada` (2026-11-23). Mergeada en `master` como #77 (squash `c277448`); revisión independiente `APROBADO CON OBSERVACIONES` sin bloqueantes; CI verde. Desviación aprobada por el usuario: `lint-staged` queda en 17.6.1 en vez de 17.6.2, porque Yarn 4.18.1 pone en cuarentena 17.6.2.
-- **Diagnóstico:** probado en un clon temporal con Node `24.22.3`: `lint`, `typecheck`, `test`, `format:check`, `build`, `check:dist-baseline`, `validate-email` y `check-size` en verde, sin cambios de configuración.
-- **Pasos:** tres commits revertibles por separado: (1) herramientas de desarrollo, (2) runtime y build, (3) pipeline de email; los gates se corren tras cada commit.
-- **Criterios de aceptación:**
-  - `bun run check:dist-baseline` verde y `git diff --exit-code -- dist/` sin cambios tras cada commit.
-  - `bun install --frozen-lockfile`, `lint`, `typecheck`, `test`, `format:check`, `build`, `validate-email` y `check-size` verdes.
-  - `bun run check:a11y` verde, o declarado como no ejecutado con su causa.
-  - `rg -n "eslint-disable|@ts-ignore|@ts-expect-error" scripts src` sin entradas nuevas.
-- **Validación manual:** ninguna.
-- **Resultado requerido:** tabla de versiones antes y después y resultado de cada control.
-- **Riesgos y reversión:** `lucide` puede alterar iconos si se regeneran (`generate:icons` no se ejecuta); `puppeteer` y `axe-core` solo quedan cubiertos por tests mockeados salvo que se ejecute `check:a11y`. Cada commit se revierte por separado.
-- **Exclusiones específicas:** no actualizar `@maizzle/framework`, `tailwindcss`, `typescript`, `@types/node` ni cambiar configs; no regenerar iconos ni `dist/`.
-- **Análisis de mantenibilidad:** sin código nuevo; solo versiones.
-- **Implementador:** perfil tooling, bajo.
-- **Revisor independiente:** revisor técnico de tooling distinto del implementador.
-- **Condición de escalamiento:** `dist/` cambia, un gate falla o una dependencia exige cambio de configuración.
-
-### MHB-49 — Release v1.4.0
-
-- **Estado:** `Completada` (2026-11-23). Alcance congelado: incluyó la feature `css-unsupported-props` (decisión del usuario) y MHB-61 y MHB-62. Release `v1.4.0` publicada: tag anotado `v1.4.0` en el commit `d9671ee`, release en GitHub; checkout limpio del tag verificado con `bun install --frozen-lockfile` y con npm desde cero, ambos con `check:dist-baseline` en verde.
-- **Objetivo observable:** publicar `v1.4.0` con el alcance de la Fase D.
-- **Superficies autorizadas:** las mismas que MHB-15.
-- **Dependencias y precondiciones:** MHB-15 publicada, MHB-36, MHB-61 y MHB-62 completadas, CI verde en `master` y decisión explícita del usuario antes de publicar o etiquetar.
-- **Versión propuesta:** `v1.4.0` (minor), porque el soporte multi-package-manager es aditivo. Pasar a `v2.0.0` solo si algún ID de la fase eliminó o renombró un comando público o elevó el requisito de runtime declarado en `engines`. **Decisión (usuario): MHB-61 eleva `engines.node` de `>=24` a `>=24.22.3` y se mantiene `v1.4.0` (minor), por tratarse de un parche dentro de Node 24; el CHANGELOG `[1.4.0]` debe declarar el nuevo mínimo.**
-- **Procedimiento:** idéntico a MHB-15 (congelamiento de alcance, `release-management`, Go/No-Go, CHANGELOG `[1.4.0]` y sección «Contrato de salida para integradores» frente a `v1.3.0`, que debe declarar `dist/` idéntico). Las notas documentan la instalación con los 4 managers, la política de lockfile único (`bun.lock`) y la migración de tests a Vitest.
-- **Criterios de aceptación, validación, resultados, riesgos y exclusiones:** los de MHB-15, añadiendo, desde un checkout limpio del tag, la instalación congelada con bun y la instalación desde cero con npm, ambas con `check:dist-baseline` verde.
-- **Implementador:** perfil documentación/release, medio.
-- **Revisor independiente:** orquestador.
-- **Condición de escalamiento:** la de MHB-15, o un cambio de comando público detectado al verificar.
 
 ## Fase E — Evolución del stack de estilos
 
@@ -627,7 +369,7 @@ Cada etapa conserva: rama `feature/<id>`, un commit revertible, CHANGELOG `[Unre
 #### MHB-59 — Gentleman: instrucciones, skills y scripts
 
 - **Objetivo:** reflejar el tooling final sin romper adaptadores.
-- **Archivos (fuentes canónicas, nunca los adaptadores):** `docs/ai/AGENTS.md:78-79`; `docs/ai/skills/email-quality-gates/SKILL.md:11-19`, `task-verification/SKILL.md:11,33`, `email-code-conventions/SKILL.md:29`, `task-review/SKILL.md:30,36`, `task-status-management/SKILL.md:38`, `email-refactor-type-safety/SKILL.md:30`; `README.md:437-438`; `vite-mhb-email.code-workspace:24-52,126,130`; `scripts/inventory/check-migration-inventory.ts:17`; `CHANGELOG.md`.
+- **Archivos (fuentes canónicas, nunca los adaptadores):** `docs/ai/AGENTS.md:78-79`; `docs/ai/skills/email-quality-gates/SKILL.md:11-19`, `task-verification/SKILL.md:11,33`, `email-code-conventions/SKILL.md:29`, `task-review/SKILL.md:30,36`, `task-status-management/SKILL.md:38`; `README.md:437-438`; `vite-mhb-email.code-workspace:24-52,126,130`; `scripts/inventory/check-migration-inventory.ts:17`; `CHANGELOG.md`.
 - **Dependencias:** MHB-55 y MHB-53.
 - **Cambios de config:** la prohibición de `ignores`, `eslint-disable`, `@ts-ignore` y `@ts-expect-error` se redacta de forma agnóstica a la herramienta (y cubre `oxlint-disable`); la allowlist `.js` (`eslint.config.js`, `maizzle.config.js`) se ajusta si `eslint.config.js` desaparece.
 - **Comandos:** `bun run agents:sync`, `bun run agents:check` (con su preflight; nunca el `sync-agents.js` heredado).
@@ -752,36 +494,19 @@ No se cambia el repositorio ni se combina con otro caso. `EmailForge Toolkit` es
 
 Las skills son contratos de procedimiento; los subagentes son ejecuciones temporales. Cada subagente recibe IDs, skills obligatorias, archivos exclusivos, controles y condición de escalamiento. Ninguna identidad se persiste como agente permanente.
 
-### Orquestación — Fase C — Comprobación y release v1.3.0
-
-| Línea                      | Skills obligatorias                              | Implementador y propiedad            | Revisor     | Controles                                                            | Escalar cuando                                                                                |
-| -------------------------- | ------------------------------------------------ | ------------------------------------ | ----------- | -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| MHB-14 comprobación manual | `email-compatibility`, `email-preview-dashboard` | Perfil alto; matriz/capturas         | Orquestador | Protocolo fechado, clientes reales y accesibilidad                   | No haya acceso a cliente/dispositivo o aparezcan datos sensibles.                             |
-| MHB-15 release             | `task-verification`, `release-management`        | Perfil medio; docs/version/changelog | Orquestador | Suite, inventario TS, `check:dist-baseline`, Go/No-Go, tag y release | Antes de publicación, tag o cambio de versión, o ante un hallazgo que rompa el congelamiento. |
-
-### Orquestación — Fase D — Portabilidad y release v1.4.0
-
-| Línea               | Skills obligatorias                                               | Implementador y propiedad                                                 | Revisor                    | Controles                                               | Escalar cuando                                                          |
-| ------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------- | -------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------- |
-| MHB-36 multi-PM     | `email-project-stack`, `email-quality-gates`, `task-verification` | Orquestador + un subagente nuevo por fase; scripts/tests/CI/docs          | Revisor técnico            | Gates con 4 PMs, Vitest verde, hashes idénticos         | Un PM no instala o altera `dist/`, o Vitest exige tocar lógica no-test. |
-| MHB-48 TypeScript 7 | `email-project-stack`, `email-quality-gates`, `task-review`       | Perfil medio; `package.json`, `bun.lock`, `tsconfig*.json`                | Revisor técnico de tooling | Typecheck, lint tipado, suite y baseline                | `typescript-eslint` no soporta TS 7 o falta la API `ts`.                |
-| MHB-61 Node mínimo  | `email-project-stack`, `task-verification`                        | Perfil bajo; `package.json`, `.nvmrc`, `.node-version`, README, CHANGELOG | Revisor técnico de tooling | Gates globales con Node 24.22.3 y CI                    | `dist/` cambia o CI no ofrece Node 24.22.3.                             |
-| MHB-62 dependencias | `email-project-stack`, `email-quality-gates`, `task-verification` | Perfil bajo; `package.json`, `bun.lock`, CHANGELOG                        | Revisor técnico de tooling | Gates globales tras cada commit                         | `dist/` cambia o un gate falla.                                         |
-| MHB-49 release      | `task-verification`, `release-management`                         | Perfil medio; docs/version/changelog                                      | Orquestador                | Lo de MHB-15 más instalación con npm y bun desde el tag | Lo de MHB-15 o un cambio de comando público.                            |
-
 ### Orquestación — Fase E — Evolución del stack
 
-| Línea            | Skills obligatorias                                                     | Implementador y propiedad                    | Revisor                  | Controles                                           | Escalar cuando                                                           |
-| ---------------- | ----------------------------------------------------------------------- | -------------------------------------------- | ------------------------ | --------------------------------------------------- | ------------------------------------------------------------------------ |
-| MHB-38 Maizzle 6 | `email-project-stack`, `email-compatibility`, `email-preview-dashboard` | Perfil alto; email, build, preview y estilos | Revisor build/email y UI | Checkpoint PoC, auditoría, diff `dist/` y recorrido | La PoC pierda `{{ }}`/Handlebars o no exista API programática de render. |
-| MHB-50 release   | `task-verification`, `release-management`                               | Perfil medio; docs/version/changelog         | Orquestador              | Lo de MHB-15 más diff de `dist/` justificado        | Lo de MHB-15 o cambio del formato de templates fuente.                   |
+| Línea            | Skills obligatorias                                           | Implementador y propiedad                    | Revisor                  | Controles                                           | Escalar cuando                                                           |
+| ---------------- | ------------------------------------------------------------- | -------------------------------------------- | ------------------------ | --------------------------------------------------- | ------------------------------------------------------------------------ |
+| MHB-38 Maizzle 6 | `email-project-stack`, `email-compatibility`, `email-web-app` | Perfil alto; email, build, preview y estilos | Revisor build/email y UI | Checkpoint PoC, auditoría, diff `dist/` y recorrido | La PoC pierda `{{ }}`/Handlebars o no exista API programática de render. |
+| MHB-50 release   | `task-verification`, `release-management`                     | Perfil medio; docs/version/changelog         | Orquestador              | Lo de MHB-15 más diff de `dist/` justificado        | Lo de MHB-15 o cambio del formato de templates fuente.                   |
 
 ### Orquestación — Fase F — Demo y portafolio
 
-| Línea              | Skills obligatorias                                                                           | Implementador y propiedad              | Revisor          | Controles                                 | Escalar cuando                                          |
-| ------------------ | --------------------------------------------------------------------------------------------- | -------------------------------------- | ---------------- | ----------------------------------------- | ------------------------------------------------------- |
-| MHB-16 demo        | `email-project-stack`, `email-preview-dashboard`, skill de despliegue si se aprueba proveedor | Perfil alto; build/config de deploy    | Orquestador      | Smoke, URL, SHA y ausencia de divergencia | Requiera proveedor, credenciales o publicación externa. |
-| MHB-23 componentes | `email-compatibility`, `email-preview-dashboard`                                              | Perfil medio; partials/schemas/library | Revisor email/UI | Build, schema, library y visual           | Amplíe el alcance hacia un builder.                     |
+| Línea              | Skills obligatorias                                                                 | Implementador y propiedad              | Revisor          | Controles                                 | Escalar cuando                                          |
+| ------------------ | ----------------------------------------------------------------------------------- | -------------------------------------- | ---------------- | ----------------------------------------- | ------------------------------------------------------- |
+| MHB-16 demo        | `email-project-stack`, `email-web-app`, skill de despliegue si se aprueba proveedor | Perfil alto; build/config de deploy    | Orquestador      | Smoke, URL, SHA y ausencia de divergencia | Requiera proveedor, credenciales o publicación externa. |
+| MHB-23 componentes | `email-compatibility`, `email-web-app`                                              | Perfil medio; partials/schemas/library | Revisor email/UI | Build, schema, library y visual           | Amplíe el alcance hacia un builder.                     |
 
 ### Orquestación — Fase H — Migración de tooling a Vite+ (propuesta)
 
