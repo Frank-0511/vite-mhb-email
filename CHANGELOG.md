@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Corregido
+
+- `vite.config.ts` ya no usa `__dirname`: calcula la raíz con `fileURLToPath(import.meta.url)`, lo que elimina el aviso de Vite sobre `configLoader: 'native'` al arrancar `bun run dev`.
+
 ## [1.4.0] - 2026-11-23
 
 ### Contrato de salida para integradores
