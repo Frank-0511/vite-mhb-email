@@ -23,17 +23,19 @@ description: Verificar tareas, ejecutar comandos permitidos, preparar ramas o co
   accionables con código distinto de cero.
 - La comparación de `dist/*.html` contra el baseline se automatiza mediante
   `bun run check:dist-baseline` (requerido en todo gate de salida).
-- Los jobs de CI requeridos para verificación en MHB-45 son `CI Pipeline`
+- Los jobs de CI requeridos para verificación son `CI Pipeline`
   (`.github/workflows/ci.yml`) y `Accessibility & Contrast Audit` (`.github/workflows/audit.yml`).
-- Cada criterio de aceptación de un ID nuevo o ajustado se asocia a un comando o
-  test que falle si no se cumple; lo no automatizable se declara explícitamente
-  como revisión manual.
-- Un ID que borra o renombra archivos debe actualizar, en el mismo ID, las rutas
-  citadas por los contratos pendientes de `PLAN.md`.
+- Cada ID tiene su definición en `docs/implementation/PLAN.md` (objetivo,
+  superficies autorizadas, dependencias y criterios de aceptación). Cada
+  criterio de aceptación se asocia a un comando o test que falle si no se
+  cumple; lo no automatizable se declara explícitamente como revisión manual.
+- Una tarea que borra o renombra archivos debe actualizar, en la misma entrega,
+  toda ruta citada por documentación que siga en uso: README, `docs/guides/*`,
+  skills, `AGENTS.md` y los contratos pendientes de `docs/implementation/PLAN.md`.
 - Prohibido añadir `ignores` o exclusiones de ESLint, directivas `eslint-disable`,
   `@ts-ignore`/`@ts-expect-error`, exclusiones de `tsconfig*.json` o tests `skip`/`todo`
   sin registrarlos como desviación aprobada en `STATUS.md`.
-- Para cada MHB usar una rama `feature/<id-en-minusculas>` y PR directo a
+- Para cada ID usar una rama `feature/<id-en-minusculas>` y PR directo a
   `master`. Antes de editar, ejecutar `bun run check:task-branch`; crear o
   cambiar a la rama requerida si falla. El hook pre-commit aplica el mismo
   guard. No mezclar tareas ni incrementar versión por tarea.
@@ -46,8 +48,8 @@ description: Verificar tareas, ejecutar comandos permitidos, preparar ramas o co
 - Al confirmar el usuario que la tarea quedó completa, eliminar, antes de
   preparar la PR, los planes, specs y demás archivos auxiliares creados solo
   para trabajarla (borradores, notas de análisis, specs temporales). No borrar
-  documentación oficial del repo (`docs/implementation/PLAN.md`,
-  `docs/implementation/STATUS.md`, etc.); ante la duda de si un archivo es
+  documentación oficial del repo (p. ej. `docs/implementation/PLAN.md`,
+  `docs/implementation/STATUS.md` o `CHANGELOG.md`); ante la duda de si un archivo es
   oficial o de trabajo, confirmar antes de borrar.
 - `docs/superpowers/` es exclusivamente un área temporal: antes de entregar la
   PR debe quedar vacía y `master` debe permanecer vacío allí. Verificarlo de

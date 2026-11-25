@@ -1,6 +1,6 @@
 ---
 name: email-code-conventions
-description: Convenciones de nombres, estructura de archivos y tipado estricto en EmailForge Toolkit. Usar al crear, renombrar o mover archivos y módulos.
+description: Convenciones de nombres, estructura de archivos, tipado estricto, contratos y refactor en EmailForge Toolkit. Usar al crear, renombrar, mover, dividir o refactorizar archivos y módulos.
 ---
 
 # Convenciones de código y estructura
@@ -34,3 +34,28 @@ description: Convenciones de nombres, estructura de archivos y tipado estricto e
 - Middlewares asíncronos en `scripts/vite/api/`: envolver con `asyncHandler`
   de `scripts/vite/api/http.ts` para devolver middleware síncrono que capture
   errores no manejados y responda JSON 500.
+
+## Contratos, constantes y límites externos
+
+- Ubicar los contratos cliente-servidor en `scripts/shared/contracts/` como
+  módulos hoja puros, sin dependencias de `node:*`, módulos externos ni imports
+  ascendentes `../*`. Quedan fuera del barrel `scripts/shared/index.ts`.
+- No usar magic strings: rutas de API (`API_ROUTES`), headers
+  (`HEADER_X_ESP_VALIDATION`), errores (`RENDER_ERROR_CODE`), eventos (`EVENTS`)
+  y temas (`THEME`) se exportan como objetos `as const` con uniones tipadas
+  derivadas.
+- Validar con type guards y fallbacks seguros toda lectura de `localStorage`,
+  parámetros de URL o respuestas de red. El tipado no sustituye la validación
+  runtime.
+
+## Refactor
+
+- Refactorizar solo para reducir un riesgo observable; no mezclar formato,
+  extracción, renombres masivos y cambios de comportamiento.
+- Con un archivo cercano a 250 líneas o con responsabilidades mezcladas,
+  extraer una unidad por vez y conservar el comportamiento.
+- Reutilizar helpers y constantes de `shared/` antes de crear utilidades nuevas.
+  Mantener el JavaScript embebido limitado a bootstrap y llevar UI, fetch,
+  editor, storage e iframe a módulos de feature o shared.
+- Ejecutar lint, typecheck, pruebas y el control del flujo afectado antes de
+  dar el cambio por terminado.

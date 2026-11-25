@@ -1,51 +1,58 @@
 ---
 name: email-responsive-web-ui
-description: "Use when changing responsive layout, breakpoints, Grid, Flexbox, or container queries in EmailForge dashboard pages under src/web/**, especially when a header or control bar has less space than the viewport."
+description: "Usar al cambiar layout responsive, breakpoints, Grid, Flexbox o container queries en las páginas del dashboard de EmailForge bajo src/web/**, sobre todo cuando un encabezado o una barra de controles tiene menos espacio que el viewport."
 ---
 
-# Responsive web UI
+# UI web responsive
 
-Use the available space that actually governs the UI. Preserve product mode,
-DOM contracts, and accessible controls while changing visual distribution.
+Usar el espacio disponible que realmente gobierna la UI. Preservar el modo de
+producto, los contratos del DOM y los controles accesibles mientras cambia la
+distribución visual.
 
-Use alongside `email-preview-dashboard` for Preview/Dashboard behavior and
-`email-visual-design-system` when tokens, dark/light, or contrast are affected.
-This skill does not apply to `src/emails/**` or email-client CSS.
+Usar junto con `email-web-app` para el comportamiento de Preview/Dashboard y
+con `email-visual-design-system` cuando se afecten tokens, dark/light o
+contraste. Esta skill no aplica a `src/emails/**` ni al CSS de clientes de
+correo.
 
-## Choose the responsive mechanism
+## Elegir el mecanismo responsive
 
-| Decision                                                           | Mechanism          |
-| ------------------------------------------------------------------ | ------------------ |
-| Editor/preview mode, navigation, or another application-wide state | `@media`           |
-| Header, toolbar, card, or component reacting to its panel width    | named `@container` |
-| Known two-dimensional regions                                      | Grid               |
-| Linear controls, alignment, or intrinsic wrapping                  | Flexbox            |
+| Decisión                                                                   | Mecanismo               |
+| -------------------------------------------------------------------------- | ----------------------- |
+| Modo editor/preview, navegación u otro estado global de la aplicación      | `@media`                |
+| Encabezado, barra, tarjeta o componente que reacciona al ancho de su panel | `@container` con nombre |
+| Regiones bidimensionales conocidas                                         | Grid                    |
+| Controles lineales, alineación o ajuste intrínseco                         | Flexbox                 |
 
-Place a named container on a stable ancestor of every element that must react;
-an element cannot query itself. Keep `min-width: 0` on flexible tracks where
-content may otherwise overflow. Derive container thresholds from the minimum
-width of the actual groups, then verify each at `x - 1`, `x`, and `x + 1`.
+Colocar un contenedor con nombre en un ancestro estable de cada elemento que
+deba reaccionar; un elemento no puede consultarse a sí mismo. Mantener
+`min-width: 0` en las pistas flexibles donde el contenido pueda desbordar. Derivar
+los umbrales del contenedor del ancho mínimo de los grupos reales y verificar
+cada uno en `x - 1`, `x` y `x + 1`.
 
-## Preserve behavior before cleanup
+## Preservar el comportamiento antes de limpiar
 
-- Inspect the active task, current diff, CSS consumers, JS selectors, and tests.
-- Keep IDs, ARIA, keyboard behavior, storage, iframe boundaries, and conditional
-  states intact. Do not remove a wrapper or `display: contents` merely to make
-  the CSS shorter if it changes ordering or selectors.
-- Make a behavior-equivalent responsive migration first. Move DOM, consolidate
-  labels, or replace layout structure only in a separately accepted cleanup.
-- For shrinking controls, prefer `full label → short label → icon`; the
-  accessible name must remain stable.
+- Inspeccionar el cambio en curso, el diff actual, los consumidores del CSS, los
+  selectores de JS y los tests.
+- Mantener intactos IDs, ARIA, comportamiento de teclado, storage, límites de
+  iframe y estados condicionales. No quitar un wrapper ni `display: contents`
+  solo para acortar el CSS si eso cambia el orden o los selectores.
+- Hacer primero una migración responsive equivalente en comportamiento. Mover
+  DOM, consolidar etiquetas o reemplazar la estructura del layout solo en una
+  limpieza aceptada por separado.
+- Para controles que se encogen, preferir `etiqueta completa → etiqueta corta →
+ícono`; el nombre accesible debe permanecer estable.
 
-Example: a Preview header beside a fixed editor uses `@media` for the
-single-panel tab mode, but a `preview-panel` container on `#right-panel` for
-the header's one-row, two-row, and compact states.
+Ejemplo: un encabezado de Preview junto a un editor fijo usa `@media` para el
+modo de pestañas de un solo panel, pero un contenedor `preview-panel` en
+`#right-panel` para los estados de una fila, dos filas y compacto del
+encabezado.
 
-## Verify the visual contract
+## Verificar el contrato visual
 
-Run the focused Bun checks required by the affected feature, then distinguish
-them from manual visual acceptance. Check dark/light, loading skeleton, ready
-state, long error or status text, conditional inputs, keyboard focus, zoom, and
-horizontal overflow. Test representative viewports plus every container
-threshold boundary. Do not claim visual acceptance from lint, tests, or build
-alone. Open the Browser pane only when the user has explicitly requested it.
+Ejecutar las comprobaciones focalizadas con Bun que exija la feature afectada y
+distinguirlas de la aceptación visual manual. Revisar dark/light, skeleton de
+carga, estado listo, textos largos de error o estado, inputs condicionales,
+foco de teclado, zoom y desbordamiento horizontal. Probar viewports
+representativos y cada frontera de umbral del contenedor. No declarar
+aceptación visual solo con lint, tests o build. Abrir el Browser pane solo
+cuando el usuario lo haya pedido explícitamente.

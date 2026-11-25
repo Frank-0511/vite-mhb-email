@@ -20,7 +20,6 @@ description: "Trabajar en el stack de EmailForge Toolkit: Bun, Vite, Maizzle, Ha
   probar cualquier transformación de delimitadores.
 - Mantener separados Tailwind web (`src/web/shared/styles/tailwind.css`) y email
   (`src/emails/styles/tailwind.email.css`); no reutilizar sus configuraciones.
-- No usar `scripts/generators/css-switcher.js`: está obsoleto.
 
 Preservar el flujo editar → preview → Handlebars → Maizzle → validación →
 `dist/<template>.html`. Escalar cambios de contrato CLI, rutas del filesystem o

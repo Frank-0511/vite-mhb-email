@@ -1,0 +1,4 @@
+interface:
+  display_name: "Web app del dashboard"
+  short_description: "Mantiene la UI web y sus APIs Vite"
+  default_prompt: "Usa $email-web-app para modificar el dashboard, preview o APIs internas de EmailForge Toolkit."

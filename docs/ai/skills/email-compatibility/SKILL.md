@@ -18,5 +18,17 @@ description: Modificar templates, layouts, partials, CSS email, renderizado o va
 - Emitir issues con archivo, severidad, regla, mensaje y contexto. Separar
   parsing, reglas y reporte si el validador crece.
 
-Los warnings no prueban compatibilidad en Gmail, Outlook o Apple Mail; registrar
-esa comprobación solo con el protocolo manual de la Fase C.
+## Qué cuenta como evidencia de compatibilidad
+
+- La validación estática (`validate-email`, `check-size`, `build`) solo prueba
+  que el HTML no contiene los patrones que cada regla busca. Nunca prueba que
+  un cliente de correo lo muestre bien.
+- El render del preview o de una captura tampoco es un cliente real.
+- Solo cuenta como compatibilidad comprobada un mensaje entregado y abierto en
+  un cliente identificado (Gmail, Outlook, Apple Mail u otro), con fecha,
+  criterio y resultado. Esa prueba la ejecuta una persona en el dispositivo.
+- Registrar el resultado en `docs/guides/COMPATIBILITY-MATRIX.md`. Lo que no se
+  ejecutó queda como «No verificado»; no se afirma compatibilidad por analogía
+  ni se certifica compatibilidad universal.
+- No incluir datos sensibles (direcciones reales, claves, tokens) en la
+  evidencia.

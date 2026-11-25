@@ -11,7 +11,7 @@ description: Aplicar calidad, seguridad, JSDoc, validación runtime, errores, de
 - Mantener ESLint sobre `scripts/`, `src/web/`, `vite.config.ts`, `maizzle.config.ts` y `maizzle.config.js`.
   Prohibido añadir `ignores` o exclusiones de ESLint, directivas `eslint-disable`,
   `@ts-ignore`/`@ts-expect-error`, exclusiones de `tsconfig*.json` o tests `skip`/`todo`
-  sin registrarlos como desviación aprobada en `STATUS.md`.
+  salvo desviación aprobada de forma explícita y registrada, con su justificación técnica.
 - Todo archivo fuente es `.ts`, salvo la allowlist cerrada (`eslint.config.js` y `maizzle.config.js`).
 - Aplicar linting con tipos sobre `tsconfig.json` (reglas `@typescript-eslint`:
   `no-floating-promises`, `no-misused-promises`, `await-thenable`,
@@ -32,7 +32,7 @@ description: Aplicar calidad, seguridad, JSDoc, validación runtime, errores, de
   cualquier cambio de versión ejecutar `bun install` para mantener
   `bun.lock` sincronizado.
 - Para cambios de scripts o frontend ejecutar como mínimo `bun run lint`,
-  controles del ID y `bun run format:check`.
+  las comprobaciones afectadas por el cambio y `bun run format:check`.
 
 No convertir validación estática en prueba de compatibilidad real de clientes de
 email.

@@ -23,7 +23,7 @@ description: Procedimiento de revisión técnica independiente de tareas complet
      `bun run validate-email`, `bun run check:dist-baseline`,
      `bun run check-size`, `bun run agents:check` y `git diff --check`.
    - Si algún control falla, la entrega no puede aprobarse.
-   - Confirmar que los jobs requeridos en CI para MHB-45 coincidan con `CI Pipeline` (`ci.yml`) y `Accessibility & Contrast Audit` (`audit.yml`).
+   - Confirmar que los jobs requeridos en CI coincidan con `CI Pipeline` (`ci.yml`) y `Accessibility & Contrast Audit` (`audit.yml`).
 
 2. **Auditoría profunda del diff (`git diff master...HEAD`):**
    - Buscar exclusiones o supresiones no autorizadas:
@@ -47,21 +47,28 @@ description: Procedimiento de revisión técnica independiente de tareas complet
    - Comparar hashes de `dist/*.html` y variables ESP contra el baseline registrado
      mediante `bun run check:dist-baseline`.
 
-4. **Integridad de rutas y contratos en PLAN.md:**
-   - Si la tarea eliminó o renombró archivos, comprobar que todas las rutas
-     referenciadas en contratos pendientes de `docs/implementation/PLAN.md`
-     hayan sido actualizadas correspondientemente en la misma entrega.
+4. **Integridad de rutas:**
+   - Si la tarea eliminó o renombró archivos, buscar con `git grep` las rutas
+     antiguas en la documentación que siga en uso (README, `docs/guides/*`,
+     `docs/ai/skills/*`, `AGENTS.md` y los contratos pendientes de
+     `docs/implementation/PLAN.md`) y comprobar que la misma entrega las haya
+     actualizado.
+   - Una ruta antigua que siga citada en documentación en uso rechaza la
+     entrega.
 
 5. **Contraste de criterios de aceptación:**
+   - Usar como referencia la definición del ID en `docs/implementation/PLAN.md`
+     (objetivo, superficies autorizadas, dependencias y criterios de aceptación).
    - Contrastar cada criterio de aceptación del ID en `PLAN.md` contra su
-     comando o prueba automatizada asociada.
-   - Para criterios no automatizables, verificar el resultado manual registrado.
+     comando o test automatizado, que debe fallar si no se cumple.
+   - Para criterios no automatizables, verificar el resultado de la revisión
+     manual registrado en `docs/implementation/STATUS.md`.
 
 6. **Emisión de veredicto y handoff:**
    - Emitir veredicto formal: `Aprobado` o `Rechazado`.
    - Si es **Rechazado**: detallar los hallazgos accionables para que el
      implementador los resuelva y mantener el estado en `En revisión` o `Bloqueada`.
-   - Si es **Aprobado**: registrar la sección `## Revisión de cierre` en
-     `docs/implementation/STATUS.md` con criterios, controles, resultados,
-     rama y commit, actualizar `## Últimas entregas` y cambiar el estado a
-     `Completada`.
+   - Si es **Aprobado**: registrar en `docs/implementation/STATUS.md` el
+     veredicto y el resultado de los controles, cambiar el estado a
+     `Completada` y dejar el resumen de cierre en `CHANGELOG.md` (ID, fecha,
+     resultado, rama y commit/PR). `STATUS.md` no conserva historial.

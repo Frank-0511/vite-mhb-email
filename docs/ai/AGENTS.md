@@ -28,11 +28,10 @@ validar y exportar templates HTML de email. Todo cambio debe preservar:
 | Stack, rutas, Bun, Vite, Maizzle, Handlebars o CLI       | `email-project-stack`        |
 | Seguridad, JSDoc, errores, tests o validación            | `email-quality-gates`        |
 | Templates, layouts, CSS email o validadores              | `email-compatibility`        |
-| Preview, dashboard, biblioteca o API Vite                | `email-preview-dashboard`    |
+| Preview, dashboard, biblioteca o API Vite                | `email-web-app`              |
 | Tokens, temas dark/light o contraste del web             | `email-visual-design-system` |
 | Layout responsive web, Grid, Flexbox o container queries | `email-responsive-web-ui`    |
-| Refactor, modularización o tipado gradual                | `email-refactor-type-safety` |
-| Convenciones de código, nombres, roles o estructura      | `email-code-conventions`     |
+| Convenciones, refactor, nombres, roles o estructura      | `email-code-conventions`     |
 | Resultados de controles, ramas, commits o cierre         | `task-verification`          |
 | Procedimiento del revisor independiente y gates          | `task-review`                |
 | Congelamiento de alcance, checklist Go/No-Go y SemVer    | `release-management`         |
