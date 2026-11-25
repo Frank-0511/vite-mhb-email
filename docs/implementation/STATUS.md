@@ -3,11 +3,11 @@
 ## Resumen
 
 - ID activo: ninguno
-- Estado: Completada (MHB-49, release `v1.4.0` publicada el 2026-11-23)
+- Estado: Completada (MHB-49, release `v1.4.0` publicada el 2026-11-23; patch `v1.4.1` el 2026-11-24)
 - Implementador: perfil tooling, bajo
 - Revisor: revisor técnico de tooling (distinto del implementador)
 - Rama: `feature/mhb-62`
-- Última actualización: 2026-11-22
+- Última actualización: 2026-11-24
 - Contrato activo: `docs/implementation/PLAN.md` (sección MHB-62)
 
 ## Paquete activo

@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.1] - 2026-11-24
+
+### Contrato de salida para integradores
+
+- **Comparación de `dist/*.html` frente a v1.4.0:** sin diferencias. `git diff v1.4.0 HEAD -- dist/` está vacío y `bun run check:dist-baseline` confirma que `dist/` coincide con el baseline.
+- **Variables ESP frente a v1.4.0:** sin cambios, porque `dist/` no cambia.
+- **Comandos públicos frente a v1.4.0:** sin cambios.
+- **Node.js mínimo:** sin cambios (`>=24.22.3`).
+
+### Cambiado
+
+- El CI omite los jobs pesados en cambios que solo tocan documentación; `CONTRIBUTING.md` explica qué jobs se omiten.
+- Documentación del proyecto depurada: `PLAN.md` conserva solo el trabajo pendiente con un resumen de lo cerrado, y se eliminan `STATUS-HISTORY.md` y `TEST-INVENTORY.md`, desactualizados.
+- Skills de agentes reorganizadas por responsabilidad: `email-preview-dashboard` pasa a `email-web-app`, `email-refactor-type-safety` se fusiona en `email-code-conventions` y `email-responsive-web-ui` se traduce al español. Las skills de dominio ya no dependen del plan.
+
 ### Corregido
 
 - `vite.config.ts` ya no usa `__dirname`: calcula la raíz con `fileURLToPath(import.meta.url)`, lo que elimina el aviso de Vite sobre `configLoader: 'native'` al arrancar `bun run dev`.
@@ -232,7 +247,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - El renderizador de iconos escapa `&`, `<`, `>` y comillas en atributos antes
   de generar el SVG inline.
 
-[Unreleased]: https://github.com/Frank-0511/vite-mhb-email/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/Frank-0511/vite-mhb-email/compare/v1.4.1...HEAD
+[1.4.1]: https://github.com/Frank-0511/vite-mhb-email/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/Frank-0511/vite-mhb-email/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/Frank-0511/vite-mhb-email/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/Frank-0511/vite-mhb-email/releases/tag/v1.2.0

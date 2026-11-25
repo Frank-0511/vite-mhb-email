@@ -9,10 +9,10 @@ generar archivos finales planos en `dist/<template>.html`.
 
 ## Estado de release
 
-La versión `v1.4.0` está en preparación (pendiente de merge y publicación) y consolida el trabajo
-completado desde `v1.3.0`: Node.js mínimo `24.22.3`, actualización de dependencias
-sin saltos mayores y la regla `css-unsupported-props` ampliada a estilos inline
-con severidad mixta. La trazabilidad histórica entre releases se conserva en
+La versión vigente es `v1.4.1`, un patch sobre `v1.4.0` sin cambios en `dist/`, comandos ni
+variables ESP. `v1.4.0` consolidó el trabajo completado desde `v1.3.0`: Node.js mínimo
+`24.22.3`, actualización de dependencias sin saltos mayores y la regla
+`css-unsupported-props` ampliada a estilos inline con severidad mixta. La trazabilidad histórica entre releases se conserva en
 [la línea base de release](docs/implementation/RELEASE_BASELINE.md) y
 `CHANGELOG.md`.
 
